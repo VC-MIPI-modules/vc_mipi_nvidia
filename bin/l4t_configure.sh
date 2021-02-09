@@ -1,6 +1,7 @@
 #!/bin/bash
 
 export L4T_WD=$(dirname $PWD)
+export L4T_BIN_DIR=$L4T_WD/bin
 export L4T_BUILD_DIR=$L4T_WD/build
 export L4T_TMP_DIR=$L4T_WD/tmp
 
@@ -19,11 +20,9 @@ export L4T_DRV_FILE=Tegra210_Linux_R32.4.4_aarch64.tbz2
 export L4T_DRV_DIR=$L4T_BUILD_DIR
 
 if [ ! -d "$L4T_BUILD_DIR" ] ; then
-    echo "Create directroy for build"
     mkdir $L4T_BUILD_DIR
 fi
 if [ ! -d "$L4T_TMP_DIR" ] ; then
-    echo "Create directroy for downloads"
     mkdir $L4T_TMP_DIR
 fi
 

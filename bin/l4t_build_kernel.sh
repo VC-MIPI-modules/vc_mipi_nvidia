@@ -5,9 +5,9 @@
 #
 source l4t_configure.sh
 
-source l4t_setup_toolchain.sh
-source l4t_setup_kernel_sources.sh
-source l4t_patch_kernel_sources.sh
+source $L4T_BIN_DIR/l4t_setup_toolchain.sh
+source $L4T_BIN_DIR/l4t_setup_kernel_sources.sh
+source $L4T_BIN_DIR/l4t_patch_kernel_sources.sh
 
 echo "KERNEL_SOURCE=$KERNEL_SOURCE"
 echo "CROSS_COMPILE=$CROSS_COMPILE"
