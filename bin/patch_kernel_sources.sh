@@ -1,6 +1,6 @@
 #!/bin/bash
 #
-source l4t_configure.sh
+source configure.sh
 
 echo "Patching driver sources into kernel sources ..."
 export SRC_DIR=$L4T_WD/src/*

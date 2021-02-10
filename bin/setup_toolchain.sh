@@ -1,11 +1,11 @@
 #!/bin/bash
 #
-# Read this for detailed instructions
+# Read this for more details
 # https://docs.nvidia.com/jetson/l4t/index.html#page/Tegra%20Linux%20Driver%20Package%20Development%20Guide/xavier_toolchain.html#
 #
-source l4t_configure.sh
+source configure.sh
 
-apt install build-essential bc
+apt install build-essential bc python
 
 if [ ! -f "$L4T_TMP_DIR/$L4T_GCC_FILE" ] ; then
     echo "Downloading the Toolchain ..."
