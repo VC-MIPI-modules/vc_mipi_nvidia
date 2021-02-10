@@ -5,7 +5,7 @@
 #
 source configure.sh
 
-apt install build-essential bc python
+apt install build-essential bc python xxd
 
 if [ ! -f "$L4T_TMP_DIR/$L4T_GCC_FILE" ] ; then
     echo "Downloading the Toolchain ..."

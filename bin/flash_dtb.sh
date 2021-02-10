@@ -2,6 +2,11 @@
 #
 # Read this for more details
 # https://docs.nvidia.com/jetson/l4t/index.html#page/Tegra%20Linux%20Driver%20Package%20Development%20Guide/flashing.html
+# Read section "Flashing a Specific Partition"
+#
+# To flash the kernel on dtb on Jetson Nano 2GB using the default file 
+# <L4T>/kernel/dtb/tegra210-p3448-0003-p3542-0000.dtb:
+#   $ sudo ./flash.sh -k DTB jetson-nano-2gb-devkit mmcblk0p1
 #
 source configure.sh
 
