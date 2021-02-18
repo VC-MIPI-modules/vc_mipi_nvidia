@@ -1,6 +1,6 @@
 site_name: VC MIPI® CSI-2 camera modules
 nav:
-#    - Home: index.md
+    - Home: index.md
     - Getting Started: getting_started/index.md
     - Build SD Card Image: getting_started/build_sd_card_image.md
     - Setup Developer Kit: getting_started/setup_developer_kit.md

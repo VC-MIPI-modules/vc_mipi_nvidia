@@ -1,5 +1,7 @@
 # Setup NVIDIA Jetson Jetpack development enviroment from Scratch 
 
+> See the NVIDIA documentation for more details [Preparing a Jetson Developer Kit for Use](https://docs.nvidia.com/jetson/l4t/index.html#page/Tegra%20Linux%20Driver%20Package%20Development%20Guide/quick_start.html#wwpID0E0XC0HA)
+
 ## Setup your host machine
 
 1. Recommended OS is Ubuntu 16.04 LTS or 18.04 LTS.
@@ -18,7 +20,7 @@
 
 4. If you are using Docker you have to install some extra packages.
 
-        apt install -y wget bc xxd
+        apt install -y wget bc xxd     // libncurses-dev ???
 
     * The NVIDIA toolchain uses the plain python command. Create a symbolic link to python2.7.
 
