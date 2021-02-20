@@ -52,6 +52,9 @@ if [ ! -d "$GCC_DIR" ] ; then
     echo "Extraction of $GCC_FILE completed"
 fi
 
+if [ -d "$BUILD_DIR/Linux_for_Tegra" ] ; then
+    sudo rm -R $BUILD_DIR/Linux_for_Tegra
+fi
 # Extracting Kernelsources
 if [ ! -d "$BUILD_DIR/Linux_for_Tegra" ] ; then
     echo "Extracting files ..."

@@ -19,7 +19,7 @@
  */
 
 // Enable one driver only !
-#define VC_MIPI_OV9281      1   /* CCC - Enable VC MIPI OV9281 driver                */
+#define VC_MIPI_OV9281      0   /* CCC - Enable VC MIPI OV9281 driver                */
 #define VC_MIPI_IMX183      0   /* CCC - Enable VC MIPI IMX183 driver (mono)         */
 #define VC_MIPI_IMX183C     0   /* CCC - Enable VC MIPI IMX183 driver (color)        */
 #define VC_MIPI_IMX226      0   /* CCC - Enable VC MIPI IMX226 driver (mono)         */
@@ -37,7 +37,7 @@
 #define VC_MIPI_IMX296_VGL  0   /* CCC - Enable VC MIPI IMX296/296C VGL driver       */
 #define VC_MIPI_IMX327C     0   /* CCC - Enable VC MIPI IMX327C driver               */
 #define VC_MIPI_IMX412      0   /* CCC - Enable VC MIPI IMX412 driver                */
-#define VC_MIPI_IMX415      0   /* CCC - Enable VC MIPI IMX415 driver                */
+#define VC_MIPI_IMX415      1   /* CCC - Enable VC MIPI IMX415 driver                */
 
 #define NVIDIA_IMX219       0   /* CCC - Enable Nvidia IMX219 driver (RPI V2 camera) */
 
