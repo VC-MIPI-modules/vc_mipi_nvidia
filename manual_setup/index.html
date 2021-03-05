@@ -349,6 +349,9 @@
                 
                 
                 <h1 id="setup-nvidia-jetson-jetpack-development-enviroment-from-scratch">Setup NVIDIA Jetson Jetpack development enviroment from Scratch</h1>
+<blockquote>
+<p>See the NVIDIA documentation for more details <a href="https://docs.nvidia.com/jetson/l4t/index.html#page/Tegra%20Linux%20Driver%20Package%20Development%20Guide/quick_start.html#wwpID0E0XC0HA">Preparing a Jetson Developer Kit for Use</a></p>
+</blockquote>
 <h2 id="setup-your-host-machine">Setup your host machine</h2>
 <ol>
 <li>Recommended OS is Ubuntu 16.04 LTS or 18.04 LTS.</li>
@@ -372,7 +375,7 @@ apt install -y built-essential python2.7 gemu-user-static sshpass
 </li>
 <li>
 <p>If you are using Docker you have to install some extra packages.</p>
-<pre><code>apt install -y wget bc xxd
+<pre><code>apt install -y wget bc xxd     // libncurses-dev ???
 </code></pre>
 <ul>
 <li>The NVIDIA toolchain uses the plain python command. Create a symbolic link to python2.7.<pre><code>ln -s /usr/bin/python2.7 /usr/bin/python
