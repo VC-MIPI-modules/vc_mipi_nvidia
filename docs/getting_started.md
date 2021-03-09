@@ -13,7 +13,7 @@ NVIDIA recommends to run Ubuntu 16.04 LTS or 18.04 LTS.
 ## Setup NVIDIA toolchain and Jetpack Source Code
 
 ---
-**INFO** The Setup Scripts will install nessecary build tool packages  
+**INFO** The Setup Scripts will install necessary build tool packages  
 (build-essential, python2.7 python-to-python2, qemu-user-static)  
 download and extract the Toolchain and all files of the Jetpack BSP and the Kernel Sources.
 ---

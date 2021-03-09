@@ -9,7 +9,7 @@ We have developed a script to easily create a SD Card Image. The script execute 
 
 Just execute following script
 
-    $ cd vc_mipi_driver/bi0n
+    $ cd vc_mipi_driver/bin
 
     # Example 1: Jetpack 4.3 and Omnivision 9281 camera
     $ ./create_sd_card_image.sh 43 OV9281   

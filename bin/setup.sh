@@ -6,7 +6,7 @@
 #
 . config/configure.sh $1
 
-echo "Install nessecary build tool packages ..."
+echo "Install necessary build tool packages ..."
 sudo apt update
 sudo apt install -y build-essential     # For configuring and building kernel code
 sudo apt install -y python2.7           # Is used by the create-disc-image-tool ????
