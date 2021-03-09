@@ -10,7 +10,7 @@ function create_dir() {
 
 function create_disc_image() {
     cd $BUILD_DIR/Linux_for_Tegra/tools
-    sudo ./jetson-disk-image-creator.sh -o $1 -b jetson-nano -r 300
+    sudo ./jetson-disk-image-creator.sh -o $1 $CREATE_IMAGE_PARAM
     mv $BUILD_DIR/Linux_for_Tegra/tools/$1 $IMAGE_DIR
 }
 
