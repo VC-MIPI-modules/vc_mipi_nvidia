@@ -9,12 +9,12 @@ We have developed a script to easily create a SD Card Image. The script execute 
 
 Just execute following script
 
-    $ cd vc_mipi_driver/bin
-    $ ./create_sd_card_image.sh 43 OV9281   # Example 1: Jetpack 4.3 and Omnivision 9281 camera
+    $ cd vc_mipi_driver/bi0n
 
-    # Example 2
-    # If you want to use Jetpack 4.4.1 and the Driver for the 
-    # IMX 327C camera
+    # Example 1: Jetpack 4.3 and Omnivision 9281 camera
+    $ ./create_sd_card_image.sh 43 OV9281   
+
+    # Example 2: Jetpack 4.3 and IMX 327C camera
     $ ./create_sd_card_image.sh 441 IMX327C
 
 The build process and creation of the SD Card Image will take a while. If everything went well you will find the SD Card Image in the disc_images folder.

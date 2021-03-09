@@ -6,7 +6,7 @@ We assume that your Jetson Nano Dev Kit Board is powered up running with the cre
 
 Please power off the device and make shure that you habe connected the VCFPC 22->15 cable properly.
 
-![VCFPC 22->15 cable](/img/Jetson-Nano-VCFPC.jpeg)
+![VCFPC 22->15 cable](https://github.com/pmliquify/vc_mipi_driver/blob/master/docs/img/Jetson-Nano-VCFPC.jpeg?raw=true)
 
 ## Install Video4Linux Utilities
 
@@ -39,7 +39,7 @@ To start a live view execute a simple GStreamer Pipeline. It streams an image fr
         videoconvert ! \
         xvimagesink sync=false 
 
-![Live View](/img/Jetson-Nano-LiveView.png)   
+![Live View](https://github.com/pmliquify/vc_mipi_driver/blob/master/docs/img/Jetson-Nano-LiveView.png?raw=true)   
 
 ## Adjust Exposure and Gain
 
