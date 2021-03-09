@@ -14,7 +14,7 @@
     
     
       
-        <title>Getting Started - VC MIPI® CSI-2 camera modules</title>
+        <title>Getting Started - VC MIPI® CSI-2 Camera Modules</title>
       
     
     
@@ -73,7 +73,7 @@
 
 <header class="md-header" data-md-component="header">
   <nav class="md-header-nav md-grid" aria-label="Header">
-    <a href=".." title="VC MIPI® CSI-2 camera modules" class="md-header-nav__button md-logo" aria-label="VC MIPI® CSI-2 camera modules">
+    <a href=".." title="VC MIPI® CSI-2 Camera Modules" class="md-header-nav__button md-logo" aria-label="VC MIPI® CSI-2 Camera Modules">
       
   <img src="../img/favicon.png" alt="logo">
 
@@ -85,7 +85,7 @@
       <div class="md-header-nav__ellipsis">
         <div class="md-header-nav__topic">
           <span class="md-ellipsis">
-            VC MIPI® CSI-2 camera modules
+            VC MIPI® CSI-2 Camera Modules
           </span>
         </div>
         <div class="md-header-nav__topic">
@@ -152,12 +152,12 @@
 
 <nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
   <label class="md-nav__title" for="__drawer">
-    <a href=".." title="VC MIPI® CSI-2 camera modules" class="md-nav__button md-logo" aria-label="VC MIPI® CSI-2 camera modules">
+    <a href=".." title="VC MIPI® CSI-2 Camera Modules" class="md-nav__button md-logo" aria-label="VC MIPI® CSI-2 Camera Modules">
       
   <img src="../img/favicon.png" alt="logo">
 
     </a>
-    VC MIPI® CSI-2 camera modules
+    VC MIPI® CSI-2 Camera Modules
   </label>
   
   <ul class="md-nav__list" data-md-scrollfix>
@@ -171,7 +171,7 @@
   
     <li class="md-nav__item">
       <a href=".." class="md-nav__link">
-        Home
+        Introduction
       </a>
     </li>
   
@@ -193,9 +193,52 @@
         
       
       
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          Getting Started
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
       <a href="./" class="md-nav__link md-nav__link--active">
         Getting Started
       </a>
+      
+        
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#setup-your-host-machine" class="md-nav__link">
+    Setup your Host Machine
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#download-build-scripts" class="md-nav__link">
+    Download Build Scripts
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#setup-nvidia-toolchain-and-jetpack-source-code" class="md-nav__link">
+    Setup NVIDIA toolchain and Jetpack Source Code
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
       
     </li>
   
@@ -209,7 +252,7 @@
   
   
     <li class="md-nav__item">
-      <a href="build_sd_card_image/" class="md-nav__link">
+      <a href="../build_sd_card_image/" class="md-nav__link">
         Build SD Card Image
       </a>
     </li>
@@ -224,7 +267,7 @@
   
   
     <li class="md-nav__item">
-      <a href="setup_developer_kit/" class="md-nav__link">
+      <a href="../setup_developer_kit/" class="md-nav__link">
         Setup Developer Kit
       </a>
     </li>
@@ -239,23 +282,8 @@
   
   
     <li class="md-nav__item">
-      <a href="test_camera/" class="md-nav__link">
-        Test your Camera
-      </a>
-    </li>
-  
-
-    
-      
-      
-      
-
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../manual_setup/" class="md-nav__link">
-        Manual Setup
+      <a href="../test_camera/" class="md-nav__link">
+        Test Camera
       </a>
     </li>
   
@@ -279,6 +307,35 @@
     
   
   
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#setup-your-host-machine" class="md-nav__link">
+    Setup your Host Machine
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#download-build-scripts" class="md-nav__link">
+    Download Build Scripts
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#setup-nvidia-toolchain-and-jetpack-source-code" class="md-nav__link">
+    Setup NVIDIA toolchain and Jetpack Source Code
+  </a>
+  
+</li>
+      
+    </ul>
+  
 </nav>
                   </div>
                 </div>
@@ -291,7 +348,44 @@
                 
                 
                 <h1 id="getting-started">Getting Started</h1>
-<p>This documentation will guide you to build a ready to use SD Card Image file to get your Vision Components MIPI CSI-2 Camera up an running in just a few steps.</p>
+<p>This documentation will guide you to build a ready to use SD Card Image file to get your Vision Components MIPI CSI-2 Camera up an running in just a few steps. Currently we support NVIDIA Jetpack Version 4.3 and 4.4.1</p>
+<h2 id="setup-your-host-machine">Setup your Host Machine</h2>
+<p>First of all you need a Linux Host System to build the Linux Kernel Image. 
+NVIDIA recommends to run Ubuntu 16.04 LTS or 18.04 LTS.</p>
+<h2 id="download-build-scripts">Download Build Scripts</h2>
+<pre><code>$ git clone https://github.com/pmliquify/vc_mipi_driver.git
+</code></pre>
+<h2 id="setup-nvidia-toolchain-and-jetpack-source-code">Setup NVIDIA toolchain and Jetpack Source Code</h2>
+<hr />
+<p><strong>INFO</strong> The Setup Scripts will install nessecary build tool packages<br />
+(build-essential, python2.7 python-to-python2, qemu-user-static)<br />
+download and extract the Toolchain and all files of the Jetpack BSP and the Kernel Sources.</p>
+<hr />
+<pre><code>$ cd vc_mipi_driver/bin
+$ ./setup.sh 43         # Example 1: If you want to use Jetpack 4.3
+$ ./setup.sh 441        # Example 2: If you want to use Jetpack 4.4.1
+</code></pre>
+<hr />
+<p><strong>CHECK</strong> if everything went well. You will get an additional directory jp4.3 or jp4.4.1. Check if all folders are there.</p>
+<hr />
+<pre><code>vc_mipi_driver
+|-- bin
+|-- docs
+|-- jp4.3                               # Tools and sources for Jetpack 4.3
+|    |-- downloads                      # Downloaded archives
+|    |-- Linux_for_Tegra
+|    |    | ...                         # Board support package
+|    |    |-- rootfs                     
+|    |    |    | ...                    # Sample root file system
+|    |    +-- source/public/kernel/kernel-4.9
+|    |         | ...                    # Kernel sources
+|    +-- toolchain
+|         +-- gcc-linaro-7.3.1-2018.05-x86_64_aarch64-linux-gnu
+|              | ...                    # Cross compiler and other build tools
+|-- src
++-- test
+</code></pre>
+<p>In the next step you will create the SD Card Image.</p>
                 
               
               
@@ -319,13 +413,13 @@
                 <span class="md-footer-nav__direction">
                   Previous
                 </span>
-                Home
+                Introduction
               </div>
             </div>
           </a>
         
         
-          <a href="build_sd_card_image/" class="md-footer-nav__link md-footer-nav__link--next" rel="next">
+          <a href="../build_sd_card_image/" class="md-footer-nav__link md-footer-nav__link--next" rel="next">
             <div class="md-footer-nav__title">
               <div class="md-ellipsis">
                 <span class="md-footer-nav__direction">
