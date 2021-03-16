@@ -1,7 +1,9 @@
 ._*
 .DS_Store
 .vscode/
+build/
 temp/
 jp*/
 site/
 *_test_*
+test_results/
