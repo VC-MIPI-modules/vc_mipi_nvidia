@@ -16,7 +16,7 @@ if [[ -z $CAMERA ]]; then
 fi
 
 echo "Patching driver sources into kernel sources ..."
-cp -R $SRC_DIR/* $BUILD_DIR/Linux_for_Tegra/source/public
+cp -Ruv $SRC_DIR/* $BUILD_DIR/Linux_for_Tegra/source/public
 
 DTSI_DIR=$KERNEL_SOURCE/hardware/nvidia/platform/t210/porg/kernel-dts
 DTSI_FILE=$DTSI_DIR/tegra210-porg-p3448-common.dtsi

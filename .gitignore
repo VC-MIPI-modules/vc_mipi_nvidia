@@ -1,6 +1,7 @@
 ._*
 .DS_Store
 .vscode/
+.vscode-ctags
 build/
 temp/
 jp*/

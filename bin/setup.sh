@@ -6,6 +6,11 @@
 #
 . config/configure.sh $1
 
+if [ -d "$BUILD_DIR" ] ; then
+    echo "Remove all installed files ..."
+    sudo rm -R "$BUILD_DIR"
+fi
+
 echo "Install nessecary build tool packages ..."
 sudo apt update
 sudo apt install -y build-essential     # For configuring and building kernel code

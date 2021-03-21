@@ -11,6 +11,13 @@ fi
 
 START_TIME=$(date +%s.%N)
 
+#if [[ -d "$KERNEL_SOURCE/build" ]]; then
+#    sudo rm -R $KERNEL_SOURCE/build
+#fi
+#if [[ -d "$KERNEL_SOURCE/modules" ]]; then
+#    sudo rm -R $KERNEL_SOURCE/modules
+#fi
+
 cd $KERNEL_SOURCE
 make -C kernel/kernel-4.9/ O=$KERNEL_OUT tegra_defconfig
 make -C kernel/kernel-4.9/ O=$KERNEL_OUT -j2 --output-sync=target Image

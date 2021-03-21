@@ -7,7 +7,7 @@
 if [[ -z $1 ]]; then
   echo "Install nessecary test tool packages ..."
   sudo apt update
-  sudo apt install v4l-utils
+  sudo apt install -y v4l-utils
   chmod +x vcmipidemo
 fi
 
