@@ -1,24 +1,10 @@
 #!/bin/bash
 #
-. config/configure.sh $1
-
-for PATCH_MODEL in "${CAMERAS[@]}"; do
-    if [[ $PATCH_MODEL == $2 ]]; then
-        CAMERA=$PATCH_MODEL
-        echo "Using Camera Model: $CAMERA"
-    fi
-done
-
-if [[ -z $CAMERA ]]; then
-    echo "Camera model not supported!"
-    echo "Options: ${CAMERAS[@]}" 
-    exit
-fi
+. config/configure.sh $1 $2
 
 echo "Patching driver sources into kernel sources ..."
-cp -Ruv $SRC_DIR/* $BUILD_DIR/Linux_for_Tegra/source/public
-
-DTSI_DIR=$KERNEL_SOURCE/hardware/nvidia/platform/t210/porg/kernel-dts
-DTSI_FILE=$DTSI_DIR/tegra210-porg-p3448-common.dtsi
-sed -i -E "s/(VC_MIPI_.+ +)[0-1]( +)/\10\2/" $DTSI_FILE
-sed -i -E "s/(VC_MIPI_$CAMERA +)[0-1]( +)/\11\2/" $DTSI_FILE
+CP_FLAGS=-Ruv
+if [[ $CMD == "f" ]]; then
+        CP_FLAGS=-Rv       
+fi
+cp $CP_FLAGS $SRC_DIR/* $BUILD_DIR/Linux_for_Tegra/source/public

@@ -1,0 +1,8 @@
+**/bootloader/**
+**/disc-images/**
+**/downloads/**
+**/nv_tegra/**
+**/public/build/**
+**/rootfs/**
+**/toolchain/**
+**/tools/**
