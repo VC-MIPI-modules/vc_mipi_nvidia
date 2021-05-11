@@ -64,9 +64,8 @@ int vc_write_reg(struct camera_common_data *s_data, u16 addr, u8 val)
 
 int vc_set_mode(struct tegracam_device *tc_dev)
 {
-	// struct vc_cam *cam = tegracam_to_cam(tc_dev);
-	// return vc_mod_set_mode(cam);
-	return 0;
+	struct vc_cam *cam = tegracam_to_cam(tc_dev);
+	return vc_mod_set_mode(cam);
 }
 
 int vc_set_gain(struct tegracam_device *tc_dev, s64 val)
@@ -254,18 +253,17 @@ int vc_probe(struct i2c_client *client, const struct i2c_device_id *id)
 	}
 	tegracam_set_privdata(tc_dev, (void *)camera);
 
-	ret = tegracam_v4l2subdev_register(tc_dev, true);
-    	if (ret) {
-        	dev_err(dev, "%s(): tegra camera subdev registration failed\n", __FUNCTION__);
-        	return ret;
-    	}
-
 	ret = vc_core_init(&camera->cam, client);
 	if (ret)
 		return ret;
-
 	// TODO: Achtung es gibt einen Absturz, wenn zwei Kameras im DT 
 	//       konfiguriert sind, aber nur eine Kamera angeschlossen ist.
+
+	ret = tegracam_v4l2subdev_register(tc_dev, true);
+	if (ret) {
+       		dev_err(dev, "%s(): tegra camera subdev registration failed\n", __FUNCTION__);
+       		return ret;
+    	}
 
 	return 0;
 }

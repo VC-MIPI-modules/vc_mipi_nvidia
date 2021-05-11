@@ -30,6 +30,8 @@
 #define REG_STATUS_ERROR        0x01   // reg1[7:0] = 0x01 internal error during initialization
 #define REG_TRIGGER_IN_ENABLE   0x01
 #define REG_TRIGGER_IN_DISABLE  0x00
+#define REG_FLASH_OUT_ENABLE    0x01
+#define REG_FLASH_OUT_DISABLE   0x00
 
 #define SEN_MODE_STANDBY        0x01
 #define SEN_MODE_OPERATING      0x00
@@ -459,6 +461,7 @@ int vc_sen_write_mode(struct vc_ctrl *ctrl, int mode)
 
 	dev_dbg(dev, "%s(): Write sensor mode: %s\n", __FUNCTION__, (mode == SEN_MODE_STANDBY)? "standby" : "operating");
 
+	// TODO: Check if it is realy nessesary to swap order of write opertations.
 	if(mode == SEN_MODE_STANDBY) {
 		value = SEN_MODE_STANDBY;
 		if(ctrl->csr.sen.mode.l) {
@@ -559,11 +562,12 @@ int vc_sen_start_stream(struct vc_cam *cam)
 	dev_dbg(dev, "%s(): Start streaming\n", __FUNCTION__);
 
 	if(ctrl->flags & MASK_IO_ENABLED) {
-		ret  = vc_mod_set_trigger_in(client_mod, REG_TRIGGER_IN_DISABLE);
-		ret |= vc_mod_set_flash_out(client_mod, (state->flags & FLAG_FLASH_OUT)?1:0);
+		ret  = vc_mod_set_trigger_in(client_mod, 
+			(state->flags & FLAG_TRIGGER_IN) ? REG_TRIGGER_IN_ENABLE : REG_TRIGGER_IN_DISABLE);
+		ret |= vc_mod_set_flash_out(client_mod, 
+			(state->flags & FLAG_FLASH_OUT) ? REG_FLASH_OUT_ENABLE : REG_FLASH_OUT_DISABLE);
 	}
 
-	// Start sensor streaming
 	ret |= vc_sen_write_mode(ctrl, SEN_MODE_OPERATING);
 	if (ret)
 		dev_err(dev, "%s(): Unable to start streaming (error=%d)\n", __FUNCTION__, ret);
@@ -582,10 +586,9 @@ int vc_sen_stop_stream(struct vc_cam *cam)
 
 	if (ctrl->flags & MASK_IO_ENABLED) {
 		ret |= vc_mod_set_trigger_in(client_mod, REG_TRIGGER_IN_DISABLE);
-		// ret |= vc_mod_set_flash_out(client_mod, REG_IOCTRL_DISABLE);
+		ret |= vc_mod_set_flash_out(client_mod, REG_FLASH_OUT_DISABLE);
 	}
 
-	// Stop sensor streaming
 	ret |= vc_sen_write_mode(ctrl, SEN_MODE_STANDBY);
 	if (ret)
 		dev_err(dev, "%s(): Unable to stop streaming (error=%d)\n", __FUNCTION__, ret);

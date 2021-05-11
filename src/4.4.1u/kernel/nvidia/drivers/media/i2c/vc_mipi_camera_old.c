@@ -514,17 +514,16 @@ static void imx327c_gpio_set(struct camera_common_data *s_data,
 static int imx327c_set_gain(struct tegracam_device *tc_dev, s64 val)
 {
 
-#define TRACE_IMX327C_SET_GAIN        1   /* DDD - imx327c_set_gain() - trace */
+#define TRACE_IMX327C_SET_GAIN        0   /* DDD - imx327c_set_gain() - trace */
 //#define IMX327C_SET_GAIN_GROUP_HOLD   0   /* CCC - imx327c_set_gain() - enable group hold bef reg write */
-
 //    struct camera_common_data *s_data = tc_dev->s_data;
     struct imx327c *priv = (struct imx327c *)tc_dev->priv;
     struct device *dev = tc_dev->dev;
-
     imx327c_reg regs[3];
     s64 gain = val;
     int err;
 
+    dev_info(dev, "%s: Set gain = %d\n", __func__, (int)gain);
 
     if (gain < IMX327C_DIGITAL_GAIN_MIN)
       gain = IMX327C_DIGITAL_GAIN_MIN;
@@ -574,7 +573,6 @@ static int imx327c_set_exposure(struct tegracam_device *tc_dev, s64 val)
 #define TRACE_IMX327C_SET_EXPOSURE  1   /* DDD - imx327c_set_exposure() - trace */
 #define DUMP_EXPOSURE_PARAMS        1   /* DDD - imx327c_set_exposure() - dump DT exposure params */
 
-
 //    struct camera_common_data *s_data = tc_dev->s_data;
     struct device *dev = tc_dev->dev;
     struct imx327c *priv = tc_dev->priv;
@@ -586,6 +584,8 @@ static int imx327c_set_exposure(struct tegracam_device *tc_dev, s64 val)
     int err = 0;
 
     imx327c_reg regs[7];
+
+    dev_info(dev, "%s: Set exposure = %d\n", __func__, (int)val);
 
 #if IMX327C_ENB_MUTEX
     mutex_lock(&priv->mutex);
@@ -752,9 +752,11 @@ static int imx327c_set_frame_rate(struct tegracam_device *tc_dev, s64 val)
 #define TRACE_IMX327C_SET_FRAME_RATE     0   /* DDD - imx327c_set_frame_rate() - trace */
 
 //    struct camera_common_data *s_data = tc_dev->s_data;
-//    struct device *dev = tc_dev->dev;
+    struct device *dev = tc_dev->dev;
 //    struct imx327c *priv = tc_dev->priv;
     int err = 0;
+
+    dev_info(dev, "%s: Set frame rate = %d\n", __func__, (int)val);
 
 //    u32 frame_length;
 //    u32 frame_rate = (int)val;
@@ -828,6 +830,7 @@ static int imx327c_power_on(struct camera_common_data *s_data)
     struct camera_common_pdata *pdata = s_data->pdata;
     struct device *dev = s_data->dev;
 
+    dev_info(dev, "%s: Set power on\n", __func__);
 
 #if TRACE_IMX327C_POWER_ON
     dev_err(dev, "%s: power on\n", __func__);
@@ -934,6 +937,8 @@ static int imx327c_power_off(struct camera_common_data *s_data)
     struct device *dev = s_data->dev;
     struct camera_common_pdata *pdata = s_data->pdata;
 
+    dev_info(dev, "%s: Set power off\n", __func__);
+
 #if TRACE_IMX327C_POWER_OFF
     dev_err(dev, "%s: power off\n", __func__);
 #endif
@@ -978,7 +983,9 @@ static int imx327c_power_put(struct tegracam_device *tc_dev)
     struct camera_common_data *s_data = tc_dev->s_data;
     struct camera_common_power_rail *pw = s_data->power;
 //    struct camera_common_pdata *pdata = s_data->pdata;
-//    struct device *dev = tc_dev->dev;
+    struct device *dev = tc_dev->dev;
+
+    dev_info(dev, "%s: Power put\n", __func__);
 
     if (unlikely(!pw))
         return -EFAULT;
@@ -1020,6 +1027,8 @@ static int imx327c_power_get(struct tegracam_device *tc_dev)
 //    const char *parentclk_name;
     int err = 0;
 //    int ret = 0;
+
+    dev_info(dev, "%s: Power get\n", __func__);
 
 #if TRACE_IMX327C_POWER_GET
     dev_info(dev, "%s(): ...\n", __func__);
@@ -1231,6 +1240,9 @@ static int vc_mipi_reset (
     struct imx327c *priv = (struct imx327c *)tegracam_get_privdata(tc_dev);
     struct device *dev = tc_dev->dev;
     int err = 0;
+
+    dev_info(dev, "%s: Rest\n", __func__);
+
 
     if(priv->rom)
     {
@@ -1579,6 +1591,8 @@ static int imx327c_start_streaming(struct tegracam_device *tc_dev)
     int err = 0;
     int ret = 0;
 
+    dev_info(dev, "%s: Start stream\n", __func__);
+
 #if TRACE_IMX327C_START_STREAMING
 //    dev_err(dev, "%s():...\n", __func__);
 #endif
@@ -1690,6 +1704,8 @@ static int imx327c_stop_streaming(struct tegracam_device *tc_dev)
 //    struct imx327c *priv = (struct imx327c *)tc_dev->priv;
     struct device *dev = tc_dev->dev;
     int err = 0;
+
+    dev_info(dev, "%s: Stop stream\n", __func__);
 
 //    mutex_lock(&priv->mutex);
 
@@ -2218,19 +2234,19 @@ static int imx327c_probe(struct i2c_client *client,
     mutex_init(&priv->mutex);
 #endif
 
-
     err = imx327c_board_setup(priv);
     if (err) {
         dev_err(dev, "%s: imx327c_board_setup() error=%d\n", __func__, err);
-        return err;
+        // return err;
+    } else {
+        dev_info(dev, "%s(): imx327c_board_setup() OK\n", __func__);
     }
-    dev_info(dev, "%s(): imx327c_board_setup() OK\n", __func__);
 
     err = tegracam_v4l2subdev_register(tc_dev, true);
     if (err) {
         dev_err(dev, "tegra camera subdev registration failed\n");
         return err;
-    }
+    } 
     dev_info(dev, "%s(): tegracam_v4l2subdev_register() OK\n", __func__);
 
     priv->digital_gain  = IMX327C_DIGITAL_GAIN_DEFAULT;
