@@ -3,4 +3,4 @@
 
 TTY=/dev/ttyUSB0
 fuser -k $TTY
-minicom -D $TTY -b 115200 
+screen -a $TTY 115200
