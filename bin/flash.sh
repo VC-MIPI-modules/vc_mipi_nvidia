@@ -1,22 +1,78 @@
-#/bin/bash
-#
-. config/configure.sh $1 $2
+#!/bin/bash
 
-if [[ $CMD == "r" ]]; then
+usage() {
+	echo "Usage: $0 [options]"
+	echo ""
+	echo "Flash kernel image, modules and device tree to the target."
+	echo ""
+	echo "Supported options:"
+        echo "-a, --all                 Flash kernel image, modules and device tree"
+        echo "-d, --dt                  Flash device tree"
+        echo "-h, --help                Show this help text"
+        echo "-k, --kernel              Flash kernel image"
+}
+
+configure() {
+    . config/configure.sh
+}
+
+check_recovery_mode() {
     if [[ -z $(lsusb | grep "NVIDIA Corp.") ]]; then
        echo "Recovery Mode not startet!"
+       exit 1
     fi
+}
 
+flash_all() {
     cd $BUILD_DIR/Linux_for_Tegra/
-    #sudo ./flash.sh jetson-nano-emmc mmcblk0p1
-    sudo ./flash.sh jetson-nano-devkit mmcblk0p1
-fi
-if [[ $CMD == "a" || $CMD == "f" || $CMD == "k" ]]; then
-    scp $KERNEL_OUT/arch/arm64/boot/Image $TARGET_USER@$TARGET_NAME:/tmp
-fi
-if [[ $CMD == "a" || $CMD == "f" || $CMD == "d" ]]; then
-    sudo ./flash.sh -k DTB jetson-nano-devkit mmcblk0p1
-    ##scp $KERNEL_OUT/arch/arm64/boot/dts/*.dtb $TARGET_USER@$TARGET_NAME:/tmp
-fi
+    sudo ./flash.sh $TARGET_BOARD mmcblk0p1
+}
 
-#$TARGET_SHELL sudo /sbin/reboot
+flash_kernel() {
+    scp $KERNEL_OUT/arch/arm64/boot/Image $TARGET_USER@$TARGET_IP:/tmp
+}
+
+flash_device_tree() {
+    cd $BUILD_DIR/Linux_for_Tegra/
+    sudo ./flash.sh -r -k DTB $TARGET_BOARD mmcblk0p1
+}
+
+reboot_target() {
+    $TARGET_SHELL sudo /sbin/reboot
+}
+
+while [ $# != 0 ] ; do
+	option="$1"
+	shift
+
+	case "${option}" in
+	-a|--all)
+		configure
+        check_recovery_mode
+        flash_all
+        exit 0
+		;;
+    -d|--dt)
+        configure
+        check_recovery_mode
+        flash_device_tree
+        exit 0
+		;;
+	-h|--help)
+		usage
+		exit 0
+		;;
+	-k|--kernel)
+		configure
+		flash_kernel
+        exit 0
+		;;
+	*)
+		echo "Unknown option ${option}"
+		exit 1
+		;;
+	esac
+done
+
+usage
+exit 1

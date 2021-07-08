@@ -1,52 +1,107 @@
 #!/bin/bash
-#
-# Read this for more details
-# https://docs.nvidia.com/jetson/l4t/index.html#page/Tegra%20Linux%20Driver%20Package%20Development%20Guide/kernel_custom.html#
-#
-clear
 
-. config/configure.sh $1 $2
+usage() {
+	echo "Usage: $0 [options]"
+	echo ""
+	echo "Build kernel image, modules and device tree."
+	echo ""
+	echo "Supported options:"
+        echo "-a, --all                 Build kernel image, modules and device tree"
+        echo "-d, --dt                  Build device tree"
+        echo "-h, --help                Show this help text"
+        echo "-k, --kernel              Build kernel image"
+        echo "-m, --modules             Build kernel modules"
+}
 
-if [[ -z $CMD ]]; then 
-    ./patch.sh $1 f
-else
-    ./patch.sh $1 
-fi 
+configure() {
+    . config/configure.sh
+}
 
-#if [[ -d "$KERNEL_SOURCE/build" ]]; then
-#    sudo rm -R $KERNEL_SOURCE/build
-#fi
-#if [[ -d "$KERNEL_SOURCE/modules" ]]; then
-#    sudo rm -R $KERNEL_SOURCE/modules
-#fi
+patch_kernel() {
+    echo "Patching driver sources into kernel sources ..."
+    cp -Ruv $SRC_DIR/* $KERNEL_SOURCE
+}
 
-cd $KERNEL_SOURCE
-#make -C kernel/kernel-4.9/ O=$KERNEL_OUT mrproper
-make -C kernel/kernel-4.9/ O=$KERNEL_OUT tegra_defconfig
+configure_kernel() {
+    cd $KERNEL_SOURCE
+    make -C kernel/kernel-4.9/ O=$KERNEL_OUT tegra_defconfig
+}
 
-if [[ -z $CMD ]]; then 
-        make -C kernel/kernel-4.9/ O=$KERNEL_OUT -j$(nproc)
-        #create_modules
-fi
-if [[ $CMD == "a" || $CMD == "k" ]]; then 
-    echo "Build Kernel ..."
+build_kernel() {
+    echo "Build kernel ..."
+    cd $KERNEL_SOURCE
     make -C kernel/kernel-4.9/ O=$KERNEL_OUT -j$(nproc) --output-sync=target Image
     cp -rfv $KERNEL_OUT/arch/arm64/boot/Image $BUILD_DIR/Linux_for_Tegra/kernel/
-fi
-if [[ $CMD == "a" || $CMD == "m" ]]; then 
-    echo "Build Modules ..."      
+}
+
+build_modules() {
+    echo "Build kernel modules ..."
+    cd $KERNEL_SOURCE
     make -C kernel/kernel-4.9/ O=$KERNEL_OUT -j$(nproc) --output-sync=target modules
+}
+
+create_modules() {
+    cd $KERNEL_SOURCE
     make -C kernel/kernel-4.9/ O=$KERNEL_OUT INSTALL_MOD_PATH=$MODULES_OUT modules_install 
     sudo cp -arfv $MODULES_OUT/lib $BUILD_DIR/Linux_for_Tegra/rootfs/
-fi
-if [[ $CMD == "a" || $CMD == "d" ]]; then 
-    echo "Build Device Tree ..."
-    make -C kernel/kernel-4.9/ O=$KERNEL_OUT  --output-sync=target dtbs
+}
+
+build_device_tree() {
+    echo "Build device tree ..."
+    cd $KERNEL_SOURCE
+    make -C kernel/kernel-4.9/ O=$KERNEL_OUT --output-sync=target dtbs
     cp -rfv $KERNEL_OUT/arch/arm64/boot/dts/*.dtb $BUILD_DIR/Linux_for_Tegra/kernel/dtb/
-fi
-if [[ $CMD == "demo" ]]; then 
-    cd $WORKING_DIR/src/vcmipidemo/linux
-    make
-    mv vcmipidemo $WORKING_DIR/test
-    mv vcimgnetsrv $WORKING_DIR/test
-fi
+}
+
+set -e
+
+while [ $# != 0 ] ; do
+	option="$1"
+	shift
+
+	case "${option}" in
+	-a|--all)
+		configure
+        patch_kernel
+        configure_kernel
+        build_kernel
+        build_modules	
+        create_modules
+        build_device_tree
+        exit 0
+		;;
+    -d|--dt)
+		configure
+        patch_kernel
+        configure_kernel
+        build_device_tree
+        exit 0
+		;;
+	-h|--help)
+        usage
+        exit 0
+        ;;
+	-k|--kernel)
+		configure
+        patch_kernel
+        configure_kernel
+		build_kernel
+        exit 0
+		;;
+    -m|--modules)
+		configure
+        patch_kernel
+        configure_kernel
+        build_modules
+        create_modules
+        exit 0
+		;;
+	*)
+		echo "Unknown option ${option}"
+		exit 1
+		;;
+	esac
+done
+
+usage
+exit 1

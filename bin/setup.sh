@@ -1,94 +1,118 @@
 #!/bin/bash
-#
-# Read this for more details
-# https://docs.nvidia.com/jetson/l4t/index.html#page/Tegra%20Linux%20Driver%20Package%20Development%20Guide/kernel_custom.html#
-# https://docs.nvidia.com/jetson/l4t/index.html#page/Tegra%20Linux%20Driver%20Package%20Development%20Guide/xavier_toolchain.html#
-#
-. config/configure.sh $1 $2
 
-if [[ $CMD == "target" ]]; then
-    rm ~/.ssh/known_hosts
-    ssh-copy-id -i ~/.ssh/id_rsa.pub $TARGET_USER@$TARGET_NAME
-    
-    TARGET_DIR=/home/$TARGET_USER/test
-    #$TARGET_SHELL rm -R $TARGET_DIR
-    $TARGET_SHELL mkdir -p $TARGET_DIR
-    scp $WORKING_DIR/target/* $TARGET_USER@$TARGET_NAME:$TARGET_DIR
-    $TARGET_SHELL chmod +x $TARGET_DIR/*.sh
-    #$TARGET_SHELL . test/gst_play_226.sh
-fi
+usage() {
+	echo "Usage: $0 [options]"
+	echo ""
+	echo "Setup host and target for development and testing."
+	echo ""
+	echo "Supported options:"
+	echo "-h, --help                Show this help text"
+    echo "-k, --kernel              Setup/Reset kernel sources"
+    echo "-t, --target              Setup ssh login and installs some scripts."
+    echo "-o, --host                Installs some system tools, the toolchain and baord support package"
+}
 
-if [[ $CMD == "host" ]]; then
-    if [ -d "$BUILD_DIR" ] ; then
-        echo "Remove all installed files ..."
-        sudo rm -R "$BUILD_DIR"
-    fi
+configure() {
+    . config/configure.sh
+}
 
-    echo "Install nessecary build tool packages ..."
+install_system_tools() {
+    echo "Setup system tools."
     sudo apt update
     sudo apt install -y build-essential     # For configuring and building kernel code
     sudo apt install -y python2.7           # Is used by the create-disc-image-tool ????
     sudo apt install -y python-to-python2
     sudo apt install -y qemu-user-static    
+}
 
-    if [ ! -d "$BUILD_DIR" ] ; then
-        mkdir -p $BUILD_DIR
-    fi
-    if [ ! -d "$TMP_DIR" ] ; then
-        mkdir -p $TMP_DIR
-    fi
+setup_toolchain() {
+    echo "Setup tool chain ..."    
+    mkdir -p $BUILD_DIR
+    cd $BUILD_DIR
+    
+    rm -Rf $GCC_DIR
+    wget $GCC_URL/$GCC_FILE
+    mkdir -p $GCC_DIR
+    tar xvf $GCC_FILE -C $GCC_DIR
+    rm $GCC_FILE
+}
 
-    if [ ! -f "$TMP_DIR/$GCC_FILE" ] ; then
-        echo "Downloading the L4T Toolchain ..."
-        cd $TMP_DIR
-        wget $GCC_URL/$GCC_FILE
-    fi
+setup_kernel() {
+    echo "Setup kernel ..."
+    mkdir -p $BUILD_DIR
+    cd $BUILD_DIR
 
-    if [ ! -f "$TMP_DIR/$DRV_FILE" ] ; then
-        echo "Downloading the Driver Package Sources ..."
-        cd $TMP_DIR
-        wget $DRV_URL/$DRV_FILE
-    fi
+    rm -Rf $BUILD_DIR/Linux_for_Tegra/source/public
+    wget $SRC_URL/$SRC_FILE
+    tar xjvf $SRC_FILE
+    rm $SRC_FILE
 
-    if [ ! -f "$TMP_DIR/$SRC_FILE" ] ; then
-        echo "Downloading the Kernel Sources ..."
-        cd $TMP_DIR
-        wget $SRC_URL/$SRC_FILE
-    fi
+    cd $BUILD_DIR/Linux_for_Tegra/source/public
+    tar xvf kernel_src.tbz2   
+}
 
-    if [ ! -f "$TMP_DIR/$RFS_FILE" ] ; then
-        echo "Downloading the Sample Root Filesystem ..."
-        cd $TMP_DIR
-        wget $RFS_URL/$RFS_FILE
-    fi
+setup_bsp() {
+    echo "Setup board support package ..."
+    mkdir -p $BUILD_DIR
+    cd $BUILD_DIR
+    
+    sudo rm -Rf Linux_for_Tegra
+    wget $DRV_URL/$DRV_FILE
+    tar xjvf $DRV_FILE
+    rm $DRV_FILE
 
-    # Extracting Toolchain
-    if [ ! -d "$GCC_DIR" ] ; then  
-        mkdir -p $GCC_DIR
-        echo "Extracting files ..."
-        tar xf $TMP_DIR/$GCC_FILE -C $GCC_DIR
-        echo "Extraction of $GCC_FILE completed"
-    fi
+    wget $RFS_URL/$RFS_FILE
+    sudo tar xjvf $RFS_FILE -C $BUILD_DIR/Linux_for_Tegra/rootfs
+    rm $RFS_FILE
+ 
+    cd $BUILD_DIR/Linux_for_Tegra
+    sudo ./apply_binaries.sh
+}
 
-    if [ -d "$BUILD_DIR/Linux_for_Tegra" ] ; then
-        sudo rm -R $BUILD_DIR/Linux_for_Tegra
-    fi
-    # Extracting Kernelsources
-    if [ ! -d "$BUILD_DIR/Linux_for_Tegra" ] ; then
-        echo "Extracting files ..."
-        tar xjvf $TMP_DIR/$DRV_FILE -C $BUILD_DIR
-        sudo tar xjvf $TMP_DIR/$RFS_FILE -C $BUILD_DIR/Linux_for_Tegra/rootfs
-        tar xjvf $TMP_DIR/$SRC_FILE -C $BUILD_DIR
-        cd $BUILD_DIR/Linux_for_Tegra/source/public
-        tar xvf kernel_src.tbz2   
-        echo "Extraction of $DRV_FILE and $SRC_FILE completed"
+setup_target() {
+    rm ~/.ssh/known_hosts
+    ssh-copy-id -i ~/.ssh/id_rsa.pub $TARGET_USER@$TARGET_IP
+    
+    TARGET_DIR=/home/$TARGET_USER/test
+    $TARGET_SHELL rm -Rf $TARGET_DIR
+    $TARGET_SHELL mkdir -p $TARGET_DIR
+    scp $WORKING_DIR/target/* $TARGET_USER@$TARGET_IP:$TARGET_DIR
+    $TARGET_SHELL chmod +x $TARGET_DIR/*.sh
+}
 
-        # Applying binaries
-        cd $BUILD_DIR/Linux_for_Tegra
-        sudo ./apply_binaries.sh
+while [ $# != 0 ] ; do
+	option="$1"
+	shift
 
-        # TODO: Files will be removed by create_disk_image tool.
-        #echo "Copy tests to root file system ..."
-        #cp -R $WORKING_DIR/test $BUILD_DIR/Linux_for_Tegra/rootfs/tmp
-    fi
-fi
+	case "${option}" in
+	-h|--help)
+		usage
+		exit 0
+		;;
+	-k|--kernel)
+		configure
+		setup_kernel
+        exit 0
+		;;
+	-t|--target)
+		configure
+		setup_target
+        exit 0
+		;;
+	-o|--host)
+		configure
+        install_system_tools
+        setup_toolchain
+		setup_bsp
+        setup_kernel
+        exit 0
+		;;
+	*)
+		echo "Unknown option ${option}"
+		exit 1
+		;;
+	esac
+done
+
+usage
+exit 1
