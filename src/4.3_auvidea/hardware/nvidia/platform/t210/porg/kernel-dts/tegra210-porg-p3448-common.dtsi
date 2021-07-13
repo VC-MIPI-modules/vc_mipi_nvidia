@@ -17,14 +17,14 @@
  * 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  *
  */
-
-// Enable one driver only !
-#define VC_MIPI_IMX296      0   /* CCC - Enable VC MIPI IMX296/296C VGL driver	    	*/
-#define VC_MIPI_IMX226      1   /* CCC - Enable VC MIPI IMX226 driver (mono)			*/
-#define NVIDIA_IMX219       0   /* CCC - Enable Nvidia IMX219 driver (RPI V2 camera)	*/
-
 /dts-v1/;
 /memreserve/ 0x80000000 0x00020000;
+
+// Enable one driver only !
+#define NVIDIA_IMX219       0   /* CCC - Enable Nvidia IMX219 driver (RPI V2 camera)  */
+#define VC_MIPI_IMX226      0   /* CCC - Enable VC MIPI IMX226 driver                 */
+#define VC_MIPI_IMX252      1   /* CCC - Enable VC MIPI IMX252 driver                 */
+#define VC_MIPI_IMX296      0   /* CCC - Enable VC MIPI IMX296/296C driver            */
 
 #include <t210-common-platforms/tegra210-common.dtsi>
 #include <tegra210-soc/tegra210-sdhci.dtsi>
@@ -35,17 +35,15 @@
 #include "porg-platforms/tegra210-porg-pwm-fan.dtsi"
 #include "porg-platforms/tegra210-porg-camera.dtsi"
 
-#if VC_MIPI_IMX296
-	// Quad cam is still experimental
-	//#include "porg-platforms/imx296_vgl_quad.dtsi"
-	#include "porg-platforms/imx296_vgl_dual.dtsi"
+#if NVIDIA_IMX219
+	#include "porg-platforms/tegra210-porg-camera-rbpcv2-imx219.dtsi"
+	#include "porg-platforms/tegra210-porg-camera-rbpcv2-dual-imx219.dtsi"
 #elif VC_MIPI_IMX226
-	#include "porg-platforms/imx226_vgl_dual.dtsi"
-#elif NVIDIA_IMX219
-	// #include "porg-platforms/tegra210-porg-camera-rbpcv2-imx219.dtsi"
-	// #include "porg-platforms/tegra210-porg-camera-rbpcv2-dual-imx219.dtsi"
-	// #include "porg-platforms/imx219_quad.dtsi"
-	#include "porg-platforms/tegra210-porg-camera-rbpcv2-quad-imx219.dtsi"
+	#include "porg-platforms/tegra210-camera-vc-mipi-dual-imx226.dtsi"
+#elif VC_MIPI_IMX252
+	#include "porg-platforms/tegra210-camera-vc-mipi-dual-imx252.dtsi"
+#elif VC_MIPI_IMX296
+	#include "porg-platforms/tegra210-camera-vc-mipi-dual-imx296.dtsi"
 #endif
 
 #include <t210-common-platforms/tegra210-ers-hdmi-e2190-1100-a00.dtsi>
@@ -58,9 +56,7 @@
 #include "porg-platforms/tegra210-porg-cpufreq.dtsi"
 #include "porg-platforms/tegra210-porg-powermon-p3448-0000-a00.dtsi"
 #include "porg-plugin-manager/tegra210-porg-eeprom-manager.dtsi"
-// #if !VC_MIPI
-  #include "porg-plugin-manager/tegra210-porg-plugin-manager.dtsi"
-// #endif
+#include "porg-plugin-manager/tegra210-porg-plugin-manager.dtsi"
 #include <tegra210-soc/mods-simple-bus.dtsi>
 #include "porg-platforms/tegra210-porg-extcon-p3448-0000-a00.dtsi"
 #include "porg-platforms/tegra210-porg-p3448-emc-a00.dtsi"
@@ -69,9 +65,9 @@
 #include "porg-platforms/tegra210-porg-super-module-e2614.dtsi"
 
 / {
-		nvidia,boardids = "3448";
-		nvidia,proc-boardid = "3448";
-		nvidia,pmu-boardid = "3448";
+        nvidia,boardids = "3448";
+        nvidia,proc-boardid = "3448";
+        nvidia,pmu-boardid = "3448";
 	nvidia,fastboot-usb-pid = <0xb442>;
 
 	chosen {
@@ -230,19 +226,8 @@
 			compatible = "spidev";
 			reg = <0x0>;
 			spi-max-frequency = <33000000>;
-			controller-data {
-				nvidia,enable-hw-based-cs;
-				nvidia,rx-clk-tap-delay = <7>;
-			};
-		};
-		spi@1 {
-			compatible = "spidev";
-			reg = <0x1>;
-			spi-max-frequency = <33000000>;
-			controller-data {
-				nvidia,enable-hw-based-cs;
-				nvidia,rx-clk-tap-delay = <7>;
-			};
+			nvidia,enable-hw-based-cs;
+			nvidia,rx-clk-tap-delay = <7>;
 		};
 	};
 
@@ -252,19 +237,8 @@
 			compatible = "spidev";
 			reg = <0x0>;
 			spi-max-frequency = <33000000>;
-			controller-data {
-				nvidia,enable-hw-based-cs;
-				nvidia,rx-clk-tap-delay = <6>;
-			};
-		};
-		spi@1 {
-			compatible = "spidev";
-			reg = <0x1>;
-			spi-max-frequency = <33000000>;
-			controller-data {
-				nvidia,enable-hw-based-cs;
-				nvidia,rx-clk-tap-delay = <6>;
-			};
+			nvidia,enable-hw-based-cs;
+			nvidia,rx-clk-tap-delay = <6>;
 		};
 	};
 
@@ -309,14 +283,14 @@
 		max-clk-limit = <0xbebc200>;
 	};
 
-	sdhci@700b0400 { /* SDMMC3 for SD card on NANO*/
-		status = "okay";						//changed for SD card(fd)
+	sdhci@700b0400 {
+		status = "disabled";
 		/delete-property/ keep-power-in-suspend;
 		/delete-property/ non-removable;
 		mmc-ddr-1_8v;
 		mmc-ocr-mask = <3>;
 		uhs-mask = <0x0>;
-		//max-clk-limit = <400000>;					//removed for SD card to work with full speed(fd)
+		max-clk-limit = <400000>;
 		tap-delay = <3>;
 	};
 
@@ -376,7 +350,7 @@
 
 				/*
 				 * I2S4 on Jetson Nano uses the I2S4B pads
-								 * and to use these pads bit 0 in the I2S_CYA
+                                 * and to use these pads bit 0 in the I2S_CYA
 				 * register must be set.
 				 */
 				enable-cya;
@@ -790,9 +764,11 @@
 		#cooling-cells = <2>; /* min followed by max */
 	};
 
-	hdr40_i2c0: i2c@7000c000 {
-		tegra_nct72: temp-sensor@4c {
-			status = "disabled";
+	host1x {
+		hdr40_i2c0: i2c@7000c000 {
+			tegra_nct72: temp-sensor@4c {
+				status = "disabled";
+			};
 		};
 	};
 
@@ -822,8 +798,8 @@
 
 	dvfs {
 		compatible = "nvidia,tegra210-dvfs";
-				vdd-cpu-supply = <&cpu_ovr_reg>;
-				nvidia,gpu-max-freq-khz = <921600>;
+                vdd-cpu-supply = <&cpu_ovr_reg>;
+                nvidia,gpu-max-freq-khz = <921600>;
 	};
 
 	rtc {

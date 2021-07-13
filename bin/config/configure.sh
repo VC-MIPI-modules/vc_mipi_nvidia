@@ -10,17 +10,25 @@ else
     CMD=$1
 fi
 
-# TODO: Control the configuration by command parameters
+print_jetpack_version_definition() {
+    echo "Jetpack version not $1!"
+    echo "Please set VC_MIPI to one of the possible options."
+    echo "  $ export VC_MIPI=441"
+    echo "Options: 43, 43a, 441"
+}
+
+if [[ -z $VC_MIPI ]]; then
+    print_jetpack_version_definition "defined"
+    exit 1
+fi
+
 case $VC_MIPI in
     43)   . $BIN_DIR/config/config_JP4.3.sh ;;
-    43u)  . $BIN_DIR/config/config_JP4.3_universal.sh ;;
     43a)  . $BIN_DIR/config/config_JP4.3_auvidea.sh ;; 
     441)  . $BIN_DIR/config/config_JP4.4.1.sh ;;
-    441u)  . $BIN_DIR/config/config_JP4.4.1_universal.sh ;;
     *) 
-        echo "Jetpack version not supported!"
-        echo "Options: 43, 43u, 43a, 441, 441u"
-        exit 
+        print_jetpack_version_definition "supported"
+        exit 1
         ;;
 esac
 

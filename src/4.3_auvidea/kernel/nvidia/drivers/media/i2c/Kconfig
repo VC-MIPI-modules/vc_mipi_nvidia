@@ -22,6 +22,24 @@ config VIDEO_IMX219
       To compile this driver as a module, choose M here: the module
       will be called imx219.
 
+config VIDEO_IMX226
+        tristate "IMX226 camera sensor support"
+    depends on I2C && VIDEO_V4L2 && VIDEO_V4L2_SUBDEV_API
+    ---help---
+      This driver supports IMX226 camera sensor from Sony
+
+      To compile this driver as a module, choose M here: the module
+      will be called imx226.
+
+config VIDEO_IMX252
+        tristate "IMX252 camera sensor support"
+    depends on I2C && VIDEO_V4L2 && VIDEO_V4L2_SUBDEV_API
+    ---help---
+      This driver supports IMX252 camera sensor from Sony
+
+      To compile this driver as a module, choose M here: the module
+      will be called imx252.
+
 config VIDEO_IMX268
     tristate "IMX268 camera sensor support"
     depends on I2C && VIDEO_V4L2 && VIDEO_V4L2_SUBDEV_API
@@ -41,6 +59,15 @@ config VIDEO_IMX274
 
       To compile this driver as a module, choose M here: the module
       will be called imx274.
+
+config VIDEO_IMX296
+        tristate "IMX296 camera sensor support"
+    depends on I2C && VIDEO_V4L2 && VIDEO_V4L2_SUBDEV_API
+    ---help---
+      This driver supports IMX296 camera sensor from Sony
+
+      To compile this driver as a module, choose M here: the module
+      will be called imx296.
 
 config VIDEO_IMX318
     tristate "IMX318 camera sensor support"

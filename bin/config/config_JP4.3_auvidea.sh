@@ -4,6 +4,7 @@ JP_VERSION=4.3_auvidea
 echo "Using Jetpack Version: $JP_VERSION" 
 
 BUILD_DIR=$WORKING_DIR/build/jp$JP_VERSION
+PATCH_DIR=$WORKING_DIR/patch/$JP_VERSION
 SRC_DIR=$WORKING_DIR/src/$JP_VERSION
 TMP_DIR=$BUILD_DIR/downloads
 GCC_DIR=$BUILD_DIR/toolchain

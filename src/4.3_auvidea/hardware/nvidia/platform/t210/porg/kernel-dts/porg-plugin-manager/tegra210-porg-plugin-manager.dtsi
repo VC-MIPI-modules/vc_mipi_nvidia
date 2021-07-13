@@ -140,45 +140,43 @@
 		};
 
 		fragement@6 {
-			odm-data = "enable-tegra-wdt";
-			override@0 {
-					target = <&tegra_wdt>;
-					_overlay_ {
-							status = "okay";
-					};
-			};
-		};
+                        odm-data = "enable-tegra-wdt";
+                        override@0 {
+                                target = <&tegra_wdt>;
+                                _overlay_ {
+                                        status = "okay";
+                                };
+                        };
+                };
 
-		fragement@7 {
-			odm-data = "enable-pmic-wdt";
-			override@0 {
-				target = <&spmic_wdt>;
-				_overlay_ {
-					status = "okay";
-				};
-			};
-		};
+                fragement@7 {
+                        odm-data = "enable-pmic-wdt";
+                        override@0 {
+                                target = <&spmic_wdt>;
+                                _overlay_ {
+                                        status = "okay";
+                                };
+                        };
+                };
 
-		fragement@8 {
-			odm-data = "enable-pmic-wdt",
-				"enable-tegra-wdt";
-			override@0 {
-				target = <&soft_wdt>;
-				_overlay_ {
-					status = "disabled";
-				};
-			};
-		};
+                fragement@8 {
+                        odm-data = "enable-pmic-wdt",
+                                "enable-tegra-wdt";
+                        override@0 {
+                                target = <&soft_wdt>;
+                                _overlay_ {
+                                        status = "disabled";
+                                };
+                        };
+                };
 
-// I'll readd this later on...
-// #if NVIDIA_IMX219	 // [[[
-// Fragment IMX219 single sensor
+#if NVIDIA_IMX219 
 		fragement@9 {
 			ids = "<3448-0000-300", "<3448-0002-300";
 			override@0 {
 				target = <&max77620_ldo6>;
 				_overlay_ {
-                    status = "disabled";
+                                        status = "disabled";
 				};
 			};
 			override@1 {
@@ -186,11 +184,10 @@
 				_overlay_ {
 					keep-power-in-suspend;
 					non-removable;
-					status="okay";			//added for SD card(fd)
 				};
 			};
-			// IMX219 single sensor module 
-			/*override@2 {					//removed for second Rpi cam(fd)
+			/* IMX219 single sensor module */
+			override@2 {
 				target = <&imx219_single_cam0>;
 				_overlay_ {
 					status = "okay";
@@ -222,7 +219,7 @@
 					proc-device-tree = "/proc/device-tree/lens_imx219@RBPCV2/";
 				};
 			};
-			// Enable VI ports 
+			/* Enable VI ports */
 			override@6 {
 				target = <&vi_base>;
 				_overlay_ {
@@ -244,7 +241,7 @@
 					remote-endpoint = <&rbpcv2_imx219_csi_out0>;
 				};
 			};
-			// Enable CSI ports
+			/* Enable CSI ports */
 			override@9 {
 				target = <&csi_base>;
 				_overlay_ {
@@ -285,7 +282,7 @@
 					remote-endpoint = <&rbpcv2_imx219_vi_in0>;
 				};
 			};
-			// tegra-camera-platform settings 
+			/* tegra-camera-platform settings */
 			override@15 {
 				target = <&tcp>;
 				_overlay_ {
@@ -304,10 +301,9 @@
 				_overlay_ {
 					status = "disabled";
 				};
-			};*/
+			};
 		};
 
-// Fragment IMX219 dual sensor
 		fragement@10 {
 			ids = ">=3448-0000-300", ">=3448-0002-300";
 			override@0 {
@@ -319,7 +315,6 @@
 			override@1 {
 				target = <&sdhci2>;
 				_overlay_ {
-					status="okay";					//added for SD card(fd)
 					vqmmc-supply = <&max77620_ldo6>;
 					no-sdio;
 					no-mmc;
@@ -348,8 +343,7 @@
 					status = "okay";
 				};
 			};
-
-			/*// IMX219 dual sensor module 
+			/* IMX219 dual sensor module */
 			override@4 {
 				target = <&imx219_cam0>;
 				_overlay_ {
@@ -414,7 +408,7 @@
 					proc-device-tree = "/proc/device-tree/lens_imx219@RBPCV2/";
 				};
 			};
-			// Enable VI ports 
+			/* Enable VI ports */
 			override@12 {
 				target = <&vi_base>;
 				_overlay_ {
@@ -451,7 +445,7 @@
 					remote-endpoint = <&rbpcv2_imx219_csi_out1>;
 				};
 			};
-			// Enable CSI ports 
+			/* Enable CSI ports */
 			override@17 {
 				target = <&csi_base>;
 				_overlay_ {
@@ -524,7 +518,7 @@
 					status = "okay";
 				};
 			};
-			// tegra-camera-platform settings 
+			/* tegra-camera-platform settings */
 			override@28 {
 				target = <&tcp>;
 				_overlay_ {
@@ -538,7 +532,7 @@
 					isp_bw_margin_pct = <25>;
 				};
 			};
-			// gpio based i2c mux 
+			/* gpio based i2c mux */
 			override@29 {
 				target = <&{/cam_i2cmux}>;
 				_overlay_ {
@@ -557,9 +551,8 @@
 					status = "okay";
 				};
 			};
-			*/
 		};
-// #endif  // ]]]
+#endif
 
 		fragement@11 {
 			ids = ">=3448-0000-300", ">=3448-0002-300";

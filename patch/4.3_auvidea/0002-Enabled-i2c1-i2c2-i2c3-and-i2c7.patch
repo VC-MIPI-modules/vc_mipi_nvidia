@@ -1,0 +1,52 @@
+From 2464dfcd4a160d61c39a01b9531ceb0bbe35a144 Mon Sep 17 00:00:00 2001
+From: pmliquify <peter.martienssen@liquify-consulting.de>
+Date: Mon, 12 Jul 2021 19:15:20 +0200
+Subject: [PATCH 2/4] Enabled i2c1, i2c2, i2c3 and i2c7.
+
+---
+ .../t210/kernel-dts/tegra210-soc/tegra210-soc-base.dtsi   | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
+
+diff --git a/hardware/nvidia/soc/t210/kernel-dts/tegra210-soc/tegra210-soc-base.dtsi b/hardware/nvidia/soc/t210/kernel-dts/tegra210-soc/tegra210-soc-base.dtsi
+index 2363549..3e6c040 100644
+--- a/hardware/nvidia/soc/t210/kernel-dts/tegra210-soc/tegra210-soc-base.dtsi
++++ b/hardware/nvidia/soc/t210/kernel-dts/tegra210-soc/tegra210-soc-base.dtsi
+@@ -1381,7 +1381,7 @@
+ 			interrupts = <0 17 0x04>;
+ 			scl-gpio = <&gpio TEGRA_GPIO(S, 2) 0>;
+ 			sda-gpio = <&gpio TEGRA_GPIO(S, 3) 0>;
+-			status = "disabled";
++			status = "okay";
+ 			clocks = <&tegra_car TEGRA210_CLK_VI_I2C>,
+ 				<&tegra_car TEGRA210_CLK_I2CSLOW>,
+ 				<&tegra_car TEGRA210_CLK_HOST1X>;
+@@ -2066,7 +2066,7 @@
+ 			scl-gpio = <&gpio TEGRA_GPIO(J, 1) 0>;				//added for second Rpi cam(fd)
+ 			sda-gpio = <&gpio TEGRA_GPIO(J, 0) 0>;				//added for second Rpi cam(fd)
+ 			iommus = <&smmu TEGRA_SWGROUP_PPCS>;
+-			status = "disabled";
++			status = "okay";
+ 			clock-frequency = <400000>;
+ 			dmas = <&apbdma 21>, <&apbdma 21>;
+ 			dma-names = "rx", "tx";
+@@ -2084,7 +2084,7 @@
+ 		reg = <0x0 0x7000c400 0x0 0x100>;
+ 		interrupts = <0 84 0x04>;
+ 		iommus = <&smmu TEGRA_SWGROUP_PPCS>;
+-		status = "disabled";
++		status = "okay";
+ 		clock-frequency = <100000>;
+ 		dmas = <&apbdma 22>, <&apbdma 22>;
+ 		dma-names = "rx", "tx";
+@@ -2101,7 +2101,7 @@
+ 		reg = <0x0 0x7000c500 0x0 0x100>;
+ 		interrupts = <0 92 0x04>;
+ 		iommus = <&smmu TEGRA_SWGROUP_PPCS>;
+-		status = "disabled";
++		status = "okay";
+ 		clock-frequency = <400000>;
+ 		dmas = <&apbdma 23>, <&apbdma 23>;
+ 		dma-names = "rx", "tx";
+-- 
+2.25.1
+

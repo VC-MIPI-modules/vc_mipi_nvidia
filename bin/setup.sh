@@ -48,7 +48,16 @@ setup_kernel() {
     rm $SRC_FILE
 
     cd $BUILD_DIR/Linux_for_Tegra/source/public
-    tar xvf kernel_src.tbz2   
+    tar xvf kernel_src.tbz2
+ 
+    git init
+    git add hardware
+    git add kernel
+    git commit -m "Initial commit"
+    if [[ -d $PATCH_DIR ]]; then
+        git apply --whitespace=nowarn $PATCH_DIR/*.patch
+    fi
+    cp -Rv $SRC_DIR/* $KERNEL_SOURCE
 }
 
 setup_bsp() {
