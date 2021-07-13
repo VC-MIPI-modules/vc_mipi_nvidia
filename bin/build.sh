@@ -8,7 +8,7 @@ usage() {
 	echo "Supported options:"
         echo "-a, --all                 Build kernel image, modules and device tree"
         echo "-d, --dt                  Build device tree"
-        echo "-h, --help                Show this help text"
+        echo "-h, --help                Show this help te<xt"
         echo "-k, --kernel              Build kernel image"
         echo "-m, --modules             Build kernel modules"
 }
@@ -38,10 +38,6 @@ build_modules() {
     echo "Build kernel modules ..."
     cd $KERNEL_SOURCE
     make -C kernel/kernel-4.9/ O=$KERNEL_OUT -j$(nproc) --output-sync=target modules
-}
-
-create_modules() {
-    cd $KERNEL_SOURCE
     make -C kernel/kernel-4.9/ O=$KERNEL_OUT INSTALL_MOD_PATH=$MODULES_OUT modules_install 
     sudo cp -arfv $MODULES_OUT/lib $BUILD_DIR/Linux_for_Tegra/rootfs/
 }
@@ -66,7 +62,6 @@ while [ $# != 0 ] ; do
         configure_kernel
         build_kernel
         build_modules	
-        create_modules
         build_device_tree
         exit 0
 		;;
@@ -93,7 +88,6 @@ while [ $# != 0 ] ; do
         patch_kernel
         configure_kernel
         build_modules
-        create_modules
         exit 0
 		;;
 	*)
