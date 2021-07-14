@@ -6,6 +6,7 @@ usage() {
 	echo "Setup host and target for development and testing."
 	echo ""
 	echo "Supported options:"
+    echo "-c, --camera              Open device tree file to activate camera."
 	echo "-h, --help                Show this help text."
     echo "-k, --kernel              Setup/Reset kernel sources."
     echo "-t, --target              Setup ssh login and installs some scripts."
@@ -80,6 +81,10 @@ setup_bsp() {
     sudo ./apply_binaries.sh
 }
 
+setup_camera() {
+    nano -l +23 $SRC_DIR/hardware/nvidia/platform/t210/porg/kernel-dts/tegra210-porg-p3448-common.dtsi
+}
+
 setup_target() {
     rm ~/.ssh/known_hosts
     ssh-copy-id -i ~/.ssh/id_rsa.pub $TARGET_USER@$TARGET_IP
@@ -96,6 +101,11 @@ while [ $# != 0 ] ; do
 	shift
 
 	case "${option}" in
+    -c|--camera)
+		configure
+        setup_camera
+		exit 0
+		;;
 	-h|--help)
 		usage
 		exit 0
