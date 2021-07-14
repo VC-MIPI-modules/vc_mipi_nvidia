@@ -14,7 +14,7 @@ print_jetpack_version_definition() {
     echo "Jetpack version not $1!"
     echo "Please set VC_MIPI to one of the possible options."
     echo "  $ export VC_MIPI=441"
-    echo "Options: 43, 43a, 441"
+    echo "Options: 43, 43a, 441, 45a"
 }
 
 if [[ -z $VC_MIPI ]]; then
@@ -26,6 +26,7 @@ case $VC_MIPI in
     43)   . $BIN_DIR/config/config_JP4.3.sh ;;
     43a)  . $BIN_DIR/config/config_JP4.3_auvidea.sh ;; 
     441)  . $BIN_DIR/config/config_JP4.4.1.sh ;;
+    45a)  . $BIN_DIR/config/config_JP4.5_auvidea.sh ;;
     *) 
         print_jetpack_version_definition "supported"
         exit 1

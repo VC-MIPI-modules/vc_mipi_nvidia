@@ -1,0 +1,42 @@
+From 9bfac1d51635cf0098aef95092c4424dcef61b50 Mon Sep 17 00:00:00 2001
+From: pmliquify <peter.martienssen@liquify-consulting.de>
+Date: Wed, 14 Jul 2021 13:14:58 +0200
+Subject: [PATCH 4/4] Removed original i2c7 supply settings from host1x.
+ Removed GPIO for interrupt from tca9539@77.
+
+---
+ .../kernel-dts/tegra210-jetson-cv-base-p2597-2180-a00.dts | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
+
+diff --git a/hardware/nvidia/platform/t210/jetson/kernel-dts/tegra210-jetson-cv-base-p2597-2180-a00.dts b/hardware/nvidia/platform/t210/jetson/kernel-dts/tegra210-jetson-cv-base-p2597-2180-a00.dts
+index 09cf29ce8..9dea942e2 100644
+--- a/hardware/nvidia/platform/t210/jetson/kernel-dts/tegra210-jetson-cv-base-p2597-2180-a00.dts
++++ b/hardware/nvidia/platform/t210/jetson/kernel-dts/tegra210-jetson-cv-base-p2597-2180-a00.dts
+@@ -331,11 +331,11 @@
+ 			status = "okay";
+ 		};
+ 
+-		i2c@546c0000 {
++		/*i2c@546c0000 {					//removed for second Rpi cam(fd)
+ 			status = "okay";
+ 			bus-pullup-supply = <&max77620_sd3>;
+ 			avdd_dsi_csi-supply = <&max77620_ldo0>;
+-		};
++		};*/
+ 
+ 		vi {
+ 			status = "okay";
+@@ -900,8 +900,8 @@
+ 			gpio-controller;
+ 			#gpio-cells = <2>;
+ 			reg = <0x77>;
+-			interrupt-parent = <&gpio>;
+-			interrupts = <TEGRA_GPIO(Z, 2) 0x0>;
++			// interrupt-parent = <&gpio>;				//removed for SD card(fd)
++			// interrupts = <TEGRA_GPIO(Z, 2) 0x0>;			//removed for SD card(fd)
+ 			#interrupt-cells = <2>;
+ 			interrupt-controller;
+ 			vcc-supply = <&battery_reg>;
+-- 
+2.25.1
+

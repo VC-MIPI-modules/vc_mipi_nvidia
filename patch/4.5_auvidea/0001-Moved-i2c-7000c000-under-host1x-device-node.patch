@@ -1,0 +1,919 @@
+From d17c6b34997913add140f9ac34cd0387c981d556 Mon Sep 17 00:00:00 2001
+From: pmliquify <peter.martienssen@liquify-consulting.de>
+Date: Wed, 14 Jul 2021 12:55:37 +0200
+Subject: [PATCH 1/4] Moved i2c@7000c000 under host1x device node.
+
+---
+ .../tegra210-platform-common-sensor.dtsi      |  57 ++--
+ .../tegra210-thermal-nct72-p2530.dtsi         |  40 +--
+ .../tegra210-camera-e3323-a00.dtsi            | 106 +++----
+ .../tegra210-jetson-cv-camera-e3323-a00.dtsi  |  28 +-
+ .../tegra210-jetson-cv-camera-modules.dtsi    |   8 +-
+ ...tegra210-jetson-cv-super-module-e2614.dtsi | 262 +++++++++---------
+ ...10-jetson-e-power-tree-p2530-0930-e03.dtsi |  24 +-
+ ...ra210-jetson-cv-camera-plugin-manager.dtsi |   2 +-
+ ...tegra210-jetson-cv-base-p2597-2180-a00.dts |   6 +-
+ .../tegra210-jetson-e-base-p2595-0000-a00.dts |  28 +-
+ .../tegra210-porg-p3448-common.dtsi           |   8 +-
+ .../tegra210-soc/tegra210-soc-base.dtsi       |  34 ++-
+ .../tegra210-soc/tegra210-soc-shield.dtsi     |   6 +-
+ .../tegra210b01-soc-common-platform.dtsi      |   8 +-
+ .../tegra210b01-soc-i2c-prods.dtsi            |  36 +--
+ .../arch/arm64/boot/dts/nvidia/tegra210.dtsi  |  28 +-
+ 16 files changed, 354 insertions(+), 327 deletions(-)
+
+diff --git a/hardware/nvidia/platform/t210/common/kernel-dts/t210-common-platforms/tegra210-platform-common-sensor.dtsi b/hardware/nvidia/platform/t210/common/kernel-dts/t210-common-platforms/tegra210-platform-common-sensor.dtsi
+index ca0023d15..dcc03faf2 100644
+--- a/hardware/nvidia/platform/t210/common/kernel-dts/t210-common-platforms/tegra210-platform-common-sensor.dtsi
++++ b/hardware/nvidia/platform/t210/common/kernel-dts/t210-common-platforms/tegra210-platform-common-sensor.dtsi
+@@ -19,36 +19,37 @@
+ #include <dt-bindings/gpio/tegra-gpio.h>
+ 
+ / {
+-	i2c@7000c000 {
+-		icm20628@68 {
+-			compatible = "invensense,mpu6xxx";
+-			reg = <0x68>;
+-			interrupt-parent = <&gpio>;
+-			interrupts = <TEGRA_GPIO(X, 2) 0x00>;
+-			invensense,orientation = [ff 00 00 00 01 00 00 00 ff];
+-			accelerometer_matrix = [ff 00 00 00 01 00 00 00 ff];
+-			gyroscope_matrix = [ff 00 00 00 01 00 00 00 ff];
+-		};
++	host1x {
++		i2c@7000c000 {
++			icm20628@68 {
++				compatible = "invensense,mpu6xxx";
++				reg = <0x68>;
++				interrupt-parent = <&gpio>;
++				interrupts = <TEGRA_GPIO(X, 2) 0x00>;
++				invensense,orientation = [ff 00 00 00 01 00 00 00 ff];
++				accelerometer_matrix = [ff 00 00 00 01 00 00 00 ff];
++				gyroscope_matrix = [ff 00 00 00 01 00 00 00 ff];
++			};
+ 
+-		ak8963c@0c {
+-			compatible = "ak,ak89xx";
+-			reg = <0x0c>;
+-			orientation = [01 00 00 00 ff 00 00 00 ff];
+-			magnetic_field_matrix = [01 00 00 00 ff 00 00 00 ff];
+-		};
++			ak8963c@0c {
++				compatible = "ak,ak89xx";
++				reg = <0x0c>;
++				orientation = [01 00 00 00 ff 00 00 00 ff];
++				magnetic_field_matrix = [01 00 00 00 ff 00 00 00 ff];
++			};
+ 
+-		jsa1127@39 {
+-			compatible = "solteamopto,jsa1127";
+-			reg = <0x39>;
+-			light_hwm_maxrange_ival = <212000>;
+-			light_hwm_resolution_ival = <6>;
+-			light_hwm_resolution_fval = <610000>;
+-			light_hyb_maxrange_ival = <63>;
+-			light_hyb_maxrange_fval = <0>;
+-			light_hyb_resolution_ival = <6>;
+-			light_hyb_resolution_fval = <850000>;
+-			light_hyb_interval = <5000>;
++			jsa1127@39 {
++				compatible = "solteamopto,jsa1127";
++				reg = <0x39>;
++				light_hwm_maxrange_ival = <212000>;
++				light_hwm_resolution_ival = <6>;
++				light_hwm_resolution_fval = <610000>;
++				light_hyb_maxrange_ival = <63>;
++				light_hyb_maxrange_fval = <0>;
++				light_hyb_resolution_ival = <6>;
++				light_hyb_resolution_fval = <850000>;
++				light_hyb_interval = <5000>;
++			};
+ 		};
+ 	};
+-
+ };
+diff --git a/hardware/nvidia/platform/t210/common/kernel-dts/t210-common-platforms/tegra210-thermal-nct72-p2530.dtsi b/hardware/nvidia/platform/t210/common/kernel-dts/t210-common-platforms/tegra210-thermal-nct72-p2530.dtsi
+index fc08156f8..c334cc1f9 100644
+--- a/hardware/nvidia/platform/t210/common/kernel-dts/t210-common-platforms/tegra210-thermal-nct72-p2530.dtsi
++++ b/hardware/nvidia/platform/t210/common/kernel-dts/t210-common-platforms/tegra210-thermal-nct72-p2530.dtsi
+@@ -23,25 +23,27 @@
+ #define TEMP_ALERT		TEGRA_GPIO(X, 4)
+ 
+ / {
+-	i2c@7000c000 {
+-		tegra_nct72: temp-sensor@4c {
+-			#thermal-sensor-cells = <1>;
+-			compatible = "ti,tmp451";
+-			reg = <0x4c>;
+-			sensor-name = "tegra";
+-			supported-hwrev = <1>;
+-			offset = <0>;
+-			conv-rate = <0x06>;
+-			extended-rage = <1>;
+-			interrupt-parent = <&gpio>;
+-			interrupts = <TEMP_ALERT IRQ_TYPE_LEVEL_LOW>;
+-			vdd-supply = <&max77620_sd3>;
+-			temp-alert-gpio = <&gpio TEMP_ALERT 0>;
+-			loc {
+-				shutdown-limit = <120>;
+-			};
+-			ext {
+-				shutdown-limit = <105>;
++	host1x {
++		i2c@7000c000 {
++			tegra_nct72: temp-sensor@4c {
++				#thermal-sensor-cells = <1>;
++				compatible = "ti,tmp451";
++				reg = <0x4c>;
++				sensor-name = "tegra";
++				supported-hwrev = <1>;
++				offset = <0>;
++				conv-rate = <0x06>;
++				extended-rage = <1>;
++				interrupt-parent = <&gpio>;
++				interrupts = <TEMP_ALERT IRQ_TYPE_LEVEL_LOW>;
++				vdd-supply = <&max77620_sd3>;
++				temp-alert-gpio = <&gpio TEMP_ALERT 0>;
++				loc {
++					shutdown-limit = <120>;
++				};
++				ext {
++					shutdown-limit = <105>;
++				};
+ 			};
+ 		};
+ 	};
+diff --git a/hardware/nvidia/platform/t210/jetson/kernel-dts/jetson-platforms/tegra210-camera-e3323-a00.dtsi b/hardware/nvidia/platform/t210/jetson/kernel-dts/jetson-platforms/tegra210-camera-e3323-a00.dtsi
+index 24b2ea581..ff4aed932 100644
+--- a/hardware/nvidia/platform/t210/jetson/kernel-dts/jetson-platforms/tegra210-camera-e3323-a00.dtsi
++++ b/hardware/nvidia/platform/t210/jetson/kernel-dts/jetson-platforms/tegra210-camera-e3323-a00.dtsi
+@@ -227,65 +227,65 @@
+ 				};
+ 			};
+ 		};
+-	};
+ 
+-	i2c@7000c000 {
+-		ov23850_c@36 {
+-			compatible = "nvidia,ov23850";
++		i2c@7000c000 {
++			ov23850_c@36 {
++				compatible = "nvidia,ov23850";
+ 
+-			reg = <0x36>;
+-			/* Physical dimensions of sensor */
+-			physical_w = "7.3998";
+-			physical_h = "5.5998";
++				reg = <0x36>;
++				/* Physical dimensions of sensor */
++				physical_w = "7.3998";
++				physical_h = "5.5998";
+ 
+-			/* Define any required hw resources needed by driver */
+-			/* ie. clocks, io pins, power sources */
+-			avdd-reg = "vana";
+-			dvdd-reg = "vdig";
+-			iovdd-reg = "vif";
+-			vcmvdd-reg = "vvcm";
+-			devnode = "video1";
++				/* Define any required hw resources needed by driver */
++				/* ie. clocks, io pins, power sources */
++				avdd-reg = "vana";
++				dvdd-reg = "vdig";
++				iovdd-reg = "vif";
++				vcmvdd-reg = "vvcm";
++				devnode = "video1";
+ 
+-			mode0 { // OV23850_MODE_5632X3168
+-				mclk_khz = "24000";
+-				num_lanes = "4";
+-				tegra_sinterface = "serial_c";
+-				phy_mode = "DPHY";
+-				discontinuous_clk = "no";
+-				dpcm_enable = "false";
+-				cil_settletime = "0";
++				mode0 { // OV23850_MODE_5632X3168
++					mclk_khz = "24000";
++					num_lanes = "4";
++					tegra_sinterface = "serial_c";
++					phy_mode = "DPHY";
++					discontinuous_clk = "no";
++					dpcm_enable = "false";
++					cil_settletime = "0";
+ 
+-				active_w = "5632";
+-				active_h = "3168";
+-				mode_type = "bayer";
+-				pixel_phase = "bggr";
+-				csi_pixel_bit_depth = "10";
+-				readout_orientation = "270";
+-				line_length = "5922";
+-				inherent_gain = "1";
+-				mclk_multiplier = "25";
+-				pix_clk_hz = "600000000";
++					active_w = "5632";
++					active_h = "3168";
++					mode_type = "bayer";
++					pixel_phase = "bggr";
++					csi_pixel_bit_depth = "10";
++					readout_orientation = "270";
++					line_length = "5922";
++					inherent_gain = "1";
++					mclk_multiplier = "25";
++					pix_clk_hz = "600000000";
+ 
+-				min_gain_val = "1.0";
+-				max_gain_val = "15.5";
+-				min_hdr_ratio = "1";
+-				max_hdr_ratio = "1";
+-				min_framerate = "3.09135";
+-				max_framerate = "30";
+-				min_exp_time = "19.74";
+-				max_exp_time = "323094";
+-				embedded_metadata_height = "0";
+-			};
+-			ports {
+-				#address-cells = <1>;
+-				#size-cells = <0>;
++					min_gain_val = "1.0";
++					max_gain_val = "15.5";
++					min_hdr_ratio = "1";
++					max_hdr_ratio = "1";
++					min_framerate = "3.09135";
++					max_framerate = "30";
++					min_exp_time = "19.74";
++					max_exp_time = "323094";
++					embedded_metadata_height = "0";
++				};
++				ports {
++					#address-cells = <1>;
++					#size-cells = <0>;
+ 
+-				port@0 {
+-					reg = <0>;
+-					e3323_ov23850_out1: endpoint {
+-						port-index = <2>;
+-						bus-width = <4>;
+-						remote-endpoint = <&e3323_csi_in1>;
++					port@0 {
++						reg = <0>;
++						e3323_ov23850_out1: endpoint {
++							port-index = <2>;
++							bus-width = <4>;
++							remote-endpoint = <&e3323_csi_in1>;
++						};
+ 					};
+ 				};
+ 			};
+@@ -376,7 +376,7 @@ e3323_lens_ov23850@CH06P1 {
+ 					/* Driver v4l2 device name */
+ 					devname = "ov23850 0-0036";
+ 					/* Declare the device-tree hierarchy to driver instance */
+-					proc-device-tree = "/proc/device-tree/i2c@7000c000/ov23850_c@36";
++					proc-device-tree = "/proc/device-tree/host1x/i2c@7000c000/ov23850_c@36";
+ 				};
+ 				drivernode1 {
+ 					/* Declare PCL support driver (classically known as guid)  */
+diff --git a/hardware/nvidia/platform/t210/jetson/kernel-dts/jetson-platforms/tegra210-jetson-cv-camera-e3323-a00.dtsi b/hardware/nvidia/platform/t210/jetson/kernel-dts/jetson-platforms/tegra210-jetson-cv-camera-e3323-a00.dtsi
+index 63f6abf9b..e556c0adb 100644
+--- a/hardware/nvidia/platform/t210/jetson/kernel-dts/jetson-platforms/tegra210-jetson-cv-camera-e3323-a00.dtsi
++++ b/hardware/nvidia/platform/t210/jetson/kernel-dts/jetson-platforms/tegra210-jetson-cv-camera-e3323-a00.dtsi
+@@ -46,19 +46,21 @@
+ 		};
+ 	};
+ 
+-	i2c@7000c000 {
+-		ov23850_c@36 {
+-			/* Define any required hw resources needed by driver */
+-			/* ie. clocks, io pins, power sources */
+-			clocks = <&tegra_car TEGRA210_CLK_CLK_OUT_3>;
+-			clock-names = "clk_out_3";
+-			clock-frequency = <24000000>;
+-			mclk = "clk_out_3";
+-			reset-gpios = <&gpio CAM1_RST_L GPIO_ACTIVE_HIGH>;   //also for VCM_2V8 en
+-			pwdn-gpios = <&gpio CAM1_PWDN GPIO_ACTIVE_HIGH>;
+-			vana-supply = <&en_vdd_cam_hv_2v8>;
+-			vdig-supply = <&en_vdd_cam_1v2>;
+-			vif-supply = <&en_vdd_cam>;
++	host1x {
++		i2c@7000c000 {
++			ov23850_c@36 {
++				/* Define any required hw resources needed by driver */
++				/* ie. clocks, io pins, power sources */
++				clocks = <&tegra_car TEGRA210_CLK_CLK_OUT_3>;
++				clock-names = "clk_out_3";
++				clock-frequency = <24000000>;
++				mclk = "clk_out_3";
++				reset-gpios = <&gpio CAM1_RST_L GPIO_ACTIVE_HIGH>;   //also for VCM_2V8 en
++				pwdn-gpios = <&gpio CAM1_PWDN GPIO_ACTIVE_HIGH>;
++				vana-supply = <&en_vdd_cam_hv_2v8>;
++				vdig-supply = <&en_vdd_cam_1v2>;
++				vif-supply = <&en_vdd_cam>;
++			};
+ 		};
+ 	};
+ 
+diff --git a/hardware/nvidia/platform/t210/jetson/kernel-dts/jetson-platforms/tegra210-jetson-cv-camera-modules.dtsi b/hardware/nvidia/platform/t210/jetson/kernel-dts/jetson-platforms/tegra210-jetson-cv-camera-modules.dtsi
+index 778028fe5..4f5de06be 100644
+--- a/hardware/nvidia/platform/t210/jetson/kernel-dts/jetson-platforms/tegra210-jetson-cv-camera-modules.dtsi
++++ b/hardware/nvidia/platform/t210/jetson/kernel-dts/jetson-platforms/tegra210-jetson-cv-camera-modules.dtsi
+@@ -243,10 +243,10 @@
+ 				};
+ 			};
+ 		};
+-	};
+-	i2c@7000c000 {
+-		e3323_cam1: ov23850_c@36 {
+-			status = "disabled";
++		i2c@7000c000 {
++			e3323_cam1: ov23850_c@36 {
++				status = "disabled";
++			};
+ 		};
+ 	};
+ 
+diff --git a/hardware/nvidia/platform/t210/jetson/kernel-dts/jetson-platforms/tegra210-jetson-cv-super-module-e2614.dtsi b/hardware/nvidia/platform/t210/jetson/kernel-dts/jetson-platforms/tegra210-jetson-cv-super-module-e2614.dtsi
+index 130d33030..8e282f3a1 100644
+--- a/hardware/nvidia/platform/t210/jetson/kernel-dts/jetson-platforms/tegra210-jetson-cv-super-module-e2614.dtsi
++++ b/hardware/nvidia/platform/t210/jetson/kernel-dts/jetson-platforms/tegra210-jetson-cv-super-module-e2614.dtsi
+@@ -15,151 +15,153 @@
+  */
+ 
+ / {
+-	i2c@7000c000 {
+-		nvidia,clock-always-on;
++	host1x {
++		i2c@7000c000 {
++			nvidia,clock-always-on;
+ 
+-		tca6416_20: tca6416@20 {
+-			compatible = "ti,tca6416";
+-			gpio-controller;
+-			#gpio-cells = <2>;
+-			reg = <0x20>;
+-			interrupt-parent = <&gpio>;
+-			interrupts = <TEGRA_GPIO(X, 0) 0x0>;
+-			#interrupt-cells = <2>;
+-			interrupt-controller;
+-			status = "disabled";
+-			vcc-supply = <&battery_reg>;
+-			default {
+-				gpio-hog;
+-				output-low;
+-				gpios = <1 0>;
+-				label = "boot-default";
++			tca6416_20: tca6416@20 {
++				compatible = "ti,tca6416";
++				gpio-controller;
++				#gpio-cells = <2>;
++				reg = <0x20>;
++				interrupt-parent = <&gpio>;
++				interrupts = <TEGRA_GPIO(X, 0) 0x0>;
++				#interrupt-cells = <2>;
++				interrupt-controller;
++				status = "disabled";
++				vcc-supply = <&battery_reg>;
++				default {
++					gpio-hog;
++					output-low;
++					gpios = <1 0>;
++					label = "boot-default";
++				};
+ 			};
+-		};
+-
+-		icm20628_68: icm20628@68 {
+-			compatible = "invensense,mpu6xxx";
+-			reg = <0x68>;
+-			interrupt-parent = <&gpio>;
+-			interrupts = <TEGRA_GPIO(X, 2) 0x01>;
+-                        accelerometer_matrix	= [01 00 00 00 01 00 00 00 01];
+-                        gyroscope_matrix	= [01 00 00 00 01 00 00 00 01];
+-			status = "disabled";
+-		};
+-
+-		ak8963_0d: ak8963@0d {
+-			compatible = "ak,ak89xx";
+-			reg = <0x0d>;
+-                        magnetic_field_matrix = [01 00 00 00 01 00 00 00 01];
+-			status = "disabled";
+-		};
+ 
+-		bmp280_77: bmp280@77 {
+-			compatible = "bmp,bmpX80";
+-			reg = <0x77>;
+-			status = "disabled";
+-		};
+-
+-		cm32180_48: cm32180@48 {
+-			compatible = "capella,cm32180";
+-			reg = <0x48>;
+-			gpio_irq = <&gpio TEGRA_GPIO(X, 3) GPIO_ACTIVE_LOW>;
+-			light_uncalibrated_lo = <1>;
+-			light_calibrated_lo = <150>;
+-			light_uncalibrated_hi = <95000>;
+-			light_calibrated_hi = <1750000>;
+-			status = "disabled";
+-		};
++			icm20628_68: icm20628@68 {
++				compatible = "invensense,mpu6xxx";
++				reg = <0x68>;
++				interrupt-parent = <&gpio>;
++				interrupts = <TEGRA_GPIO(X, 2) 0x01>;
++				accelerometer_matrix	= [01 00 00 00 01 00 00 00 01];
++				gyroscope_matrix	= [01 00 00 00 01 00 00 00 01];
++				status = "disabled";
++			};
+ 
+-		iqs263@44 {
+-			compatible = "azoteq,iqs2x3";
+-			reg = <0x44>;
+-			gpio_rdy = <&tca6416_20 1 GPIO_ACTIVE_LOW>;
+-			gpio_sar = <&gpio TEGRA_GPIO(V, 5) GPIO_ACTIVE_HIGH>;
+-			gpio_sar_dev = "SAR_touch";
+-			irq_trigger_edge = <1>;
+-			os_options = <0>;
+-			stream_mode = <2>;
+-			263suspend_0 = [01 0D 01 FF];
+-			263suspend_1 = [03 0B 00 0A 0A FF FF FF];
+-			263suspend_2 = [01 09 10 FF];
+-			263suspend_3 = [FF FF];
+-			263suspend_4 = [FF FF];
+-			263suspend_5 = [05 09 80 40 00 00 00 FF FF FF FF FF];
+-			263suspend_6 = [03 0A FF FF FF FF FF FF];
+-			263suspend_7 = [01 0B 0F FF];
+-			263suspend_8 = [FF FF];
+-			263init_0 = [05 09 80 04 10 07 0F FF 04 FF FF FF];
+-			263init_1 = [01 0D 07 FF];
+-			263init_2 = [01 01 00 FF];
+-			263init_3 = [05 07 1D 0A 0C 00 11 FF FF FF FF FF];
+-			263init_4 = [04 08 B2 D9 D8 00 FF FF FF FF];
+-			263init_5 = [08 0A 08 03 03 03 0C 00 64 14 FF FF FF FF FF FF FF FF];
+-			263init_6 = [03 0B 00 A5 B4 FF FF FF];
+-			263en_prox_0 = [01 09 10 FF];
+-			263en_prox_1 = [FF FF];
+-			263en_prox_2 = [FF FF];
+-			263en_prox_3 = [FF FF];
+-			263en_prox_4 = [FF FF];
+-			263en_prox_5 = [02 09 00 54 FF FF];
+-			263en_prox_6 = [FF FF];
+-			status = "disabled";
+-		};
++			ak8963_0d: ak8963@0d {
++				compatible = "ak,ak89xx";
++				reg = <0x0d>;
++				magnetic_field_matrix = [01 00 00 00 01 00 00 00 01];
++				status = "disabled";
++			};
+ 
+-		i2cmux_70: i2cmux@70 {
+-			compatible = "nxp,pca9546";
+-			reg = <0x70>;
+-			#address-cells = <1>;
+-			#size-cells = <0>;
+-			vcc-supply = <&vdd_3v3>;
+-			vcc-pullup-supply = <&vdd_3v3>;
+-			status = "disabled";
+-			i2c@0 {
+-				reg = <0>;
+-				i2c-mux,deselect-on-exit;
+-				#address-cells = <1>;
+-				#size-cells = <0>;
++			bmp280_77: bmp280@77 {
++				compatible = "bmp,bmpX80";
++				reg = <0x77>;
++				status = "disabled";
+ 			};
+-			i2c@1 {
+-				reg = <1>;
+-				i2c-mux,deselect-on-exit;
+-				#address-cells = <1>;
+-				#size-cells = <0>;
++
++			cm32180_48: cm32180@48 {
++				compatible = "capella,cm32180";
++				reg = <0x48>;
++				gpio_irq = <&gpio TEGRA_GPIO(X, 3) GPIO_ACTIVE_LOW>;
++				light_uncalibrated_lo = <1>;
++				light_calibrated_lo = <150>;
++				light_uncalibrated_hi = <95000>;
++				light_calibrated_hi = <1750000>;
++				status = "disabled";
+ 			};
+-			i2c@2 {
+-				reg = <2>;
+-				i2c-mux,deselect-on-exit;
+-				#address-cells = <1>;
+-				#size-cells = <0>;
++
++			iqs263@44 {
++				compatible = "azoteq,iqs2x3";
++				reg = <0x44>;
++				gpio_rdy = <&tca6416_20 1 GPIO_ACTIVE_LOW>;
++				gpio_sar = <&gpio TEGRA_GPIO(V, 5) GPIO_ACTIVE_HIGH>;
++				gpio_sar_dev = "SAR_touch";
++				irq_trigger_edge = <1>;
++				os_options = <0>;
++				stream_mode = <2>;
++				263suspend_0 = [01 0D 01 FF];
++				263suspend_1 = [03 0B 00 0A 0A FF FF FF];
++				263suspend_2 = [01 09 10 FF];
++				263suspend_3 = [FF FF];
++				263suspend_4 = [FF FF];
++				263suspend_5 = [05 09 80 40 00 00 00 FF FF FF FF FF];
++				263suspend_6 = [03 0A FF FF FF FF FF FF];
++				263suspend_7 = [01 0B 0F FF];
++				263suspend_8 = [FF FF];
++				263init_0 = [05 09 80 04 10 07 0F FF 04 FF FF FF];
++				263init_1 = [01 0D 07 FF];
++				263init_2 = [01 01 00 FF];
++				263init_3 = [05 07 1D 0A 0C 00 11 FF FF FF FF FF];
++				263init_4 = [04 08 B2 D9 D8 00 FF FF FF FF];
++				263init_5 = [08 0A 08 03 03 03 0C 00 64 14 FF FF FF FF FF FF FF FF];
++				263init_6 = [03 0B 00 A5 B4 FF FF FF];
++				263en_prox_0 = [01 09 10 FF];
++				263en_prox_1 = [FF FF];
++				263en_prox_2 = [FF FF];
++				263en_prox_3 = [FF FF];
++				263en_prox_4 = [FF FF];
++				263en_prox_5 = [02 09 00 54 FF FF];
++				263en_prox_6 = [FF FF];
++				status = "disabled";
+ 			};
+-			i2c@3 {
+-				reg = <3>;
+-				i2c-mux,deselect-on-exit;
++
++			i2cmux_70: i2cmux@70 {
++				compatible = "nxp,pca9546";
++				reg = <0x70>;
+ 				#address-cells = <1>;
+ 				#size-cells = <0>;
+-				rt5658_b00: rt5659.10-001a@1a {
+-					compatible = "realtek,rt5658";
+-					reg = <0x1a>;
+-					status = "disabled";
+-					/* gpio for jack detection */
+-					gpios = <&gpio TEGRA_GPIO(E , 6) GPIO_ACTIVE_HIGH>;
++				vcc-supply = <&vdd_3v3>;
++				vcc-pullup-supply = <&vdd_3v3>;
++				status = "disabled";
++				i2c@0 {
++					reg = <0>;
++					i2c-mux,deselect-on-exit;
++					#address-cells = <1>;
++					#size-cells = <0>;
++				};
++				i2c@1 {
++					reg = <1>;
++					i2c-mux,deselect-on-exit;
++					#address-cells = <1>;
++					#size-cells = <0>;
++				};
++				i2c@2 {
++					reg = <2>;
++					i2c-mux,deselect-on-exit;
++					#address-cells = <1>;
++					#size-cells = <0>;
++				};
++				i2c@3 {
++					reg = <3>;
++					i2c-mux,deselect-on-exit;
++					#address-cells = <1>;
++					#size-cells = <0>;
++					rt5658_b00: rt5659.10-001a@1a {
++						compatible = "realtek,rt5658";
++						reg = <0x1a>;
++						status = "disabled";
++						/* gpio for jack detection */
++						gpios = <&gpio TEGRA_GPIO(E , 6) GPIO_ACTIVE_HIGH>;
+ 
+-					/* refer include/sound/rt5659.h for the values to be used */
+-					realtek,jd-src = <1>; /* RT5659_JD3 */
+-					realtek,dmic1-data-pin = <2>; /* RT5659_DMIC1_DATA_GPIO5 */
++						/* refer include/sound/rt5659.h for the values to be used */
++						realtek,jd-src = <1>; /* RT5659_JD3 */
++						realtek,dmic1-data-pin = <2>; /* RT5659_DMIC1_DATA_GPIO5 */
++					};
+ 				};
+ 			};
+-		};
+ 
+-		rt5658_a00: rt5659.0-001a@1a {
+-			compatible = "realtek,rt5658";
+-			reg = <0x1a>;
+-			status = "disabled";
+-			gpios = <&gpio TEGRA_GPIO(E , 6) GPIO_ACTIVE_HIGH>;
++			rt5658_a00: rt5659.0-001a@1a {
++				compatible = "realtek,rt5658";
++				reg = <0x1a>;
++				status = "disabled";
++				gpios = <&gpio TEGRA_GPIO(E , 6) GPIO_ACTIVE_HIGH>;
+ 
+-			/* refer include/sound/rt5659.h for the values to be used */
+-			realtek,jd-src = <1>; /* RT5659_JD3 */
+-			realtek,dmic1-data-pin = <2>; /* RT5659_DMIC1_DATA_GPIO5 */
++				/* refer include/sound/rt5659.h for the values to be used */
++				realtek,jd-src = <1>; /* RT5659_JD3 */
++				realtek,dmic1-data-pin = <2>; /* RT5659_DMIC1_DATA_GPIO5 */
++			};
+ 		};
+ 	};
+ 
+diff --git a/hardware/nvidia/platform/t210/jetson/kernel-dts/jetson-platforms/tegra210-jetson-e-power-tree-p2530-0930-e03.dtsi b/hardware/nvidia/platform/t210/jetson/kernel-dts/jetson-platforms/tegra210-jetson-e-power-tree-p2530-0930-e03.dtsi
+index 7ad237ede..da5224d92 100644
+--- a/hardware/nvidia/platform/t210/jetson/kernel-dts/jetson-platforms/tegra210-jetson-e-power-tree-p2530-0930-e03.dtsi
++++ b/hardware/nvidia/platform/t210/jetson/kernel-dts/jetson-platforms/tegra210-jetson-e-power-tree-p2530-0930-e03.dtsi
+@@ -349,19 +349,21 @@
+ 		vddio-dp-supply = <&max77620_sd3>;
+ 	};
+ 
+-	i2c@7000c000 {
+-		icm20628@68 {
+-			vlogic-supply = <&max77620_sd3>;
+-			vdd-supply = <&max77620_sd3>;
+-		};
++	host1x {
++		i2c@7000c000 {
++			icm20628@68 {
++				vlogic-supply = <&max77620_sd3>;
++				vdd-supply = <&max77620_sd3>;
++			};
+ 
+-		ak8963c@0c {
+-			vid-supply = <&max77620_sd3>;
+-			vdd-supply = <&vdd_3v3>;
+-		};
++			ak8963c@0c {
++				vid-supply = <&max77620_sd3>;
++				vdd-supply = <&vdd_3v3>;
++			};
+ 
+-		jsa1127@39 {
+-			vdd-supply = <&vdd_3v3>;
++			jsa1127@39 {
++				vdd-supply = <&vdd_3v3>;
++			};
+ 		};
+ 	};
+ };
+diff --git a/hardware/nvidia/platform/t210/jetson/kernel-dts/jetson-plugin-manager/tegra210-jetson-cv-camera-plugin-manager.dtsi b/hardware/nvidia/platform/t210/jetson/kernel-dts/jetson-plugin-manager/tegra210-jetson-cv-camera-plugin-manager.dtsi
+index 42fedc49c..07515383a 100644
+--- a/hardware/nvidia/platform/t210/jetson/kernel-dts/jetson-plugin-manager/tegra210-jetson-cv-camera-plugin-manager.dtsi
++++ b/hardware/nvidia/platform/t210/jetson/kernel-dts/jetson-plugin-manager/tegra210-jetson-cv-camera-plugin-manager.dtsi
+@@ -178,7 +178,7 @@
+ 					status = "okay";
+ 					pcl_id = "v4l2_sensor";
+ 					devname = "ov23850 0-0036";
+-					proc-device-tree = "/proc/device-tree/i2c@7000c000/ov23850_c@36";
++					proc-device-tree = "/proc/device-tree/host1x/i2c@7000c000/ov23850_c@36";
+ 				};
+ 			};
+ 			/* enable VI ports */
+diff --git a/hardware/nvidia/platform/t210/jetson/kernel-dts/tegra210-jetson-cv-base-p2597-2180-a00.dts b/hardware/nvidia/platform/t210/jetson/kernel-dts/tegra210-jetson-cv-base-p2597-2180-a00.dts
+index eb54d3994..09cf29ce8 100644
+--- a/hardware/nvidia/platform/t210/jetson/kernel-dts/tegra210-jetson-cv-base-p2597-2180-a00.dts
++++ b/hardware/nvidia/platform/t210/jetson/kernel-dts/tegra210-jetson-cv-base-p2597-2180-a00.dts
+@@ -1171,8 +1171,10 @@
+ 		dma-names = "tx";
+ 	};
+ 
+-	hdr40_i2c1: i2c@7000c000 {
+-		clock-frequency = <400000>;
++	host1x {
++		hdr40_i2c1: i2c@7000c000 {
++			clock-frequency = <400000>;
++		};
+ 	};
+ 
+ 	i2c@7000d000 {
+diff --git a/hardware/nvidia/platform/t210/jetson/kernel-dts/tegra210-jetson-e-base-p2595-0000-a00.dts b/hardware/nvidia/platform/t210/jetson/kernel-dts/tegra210-jetson-e-base-p2595-0000-a00.dts
+index 776b5171a..9c58ce854 100644
+--- a/hardware/nvidia/platform/t210/jetson/kernel-dts/tegra210-jetson-e-base-p2595-0000-a00.dts
++++ b/hardware/nvidia/platform/t210/jetson/kernel-dts/tegra210-jetson-e-base-p2595-0000-a00.dts
+@@ -762,21 +762,23 @@
+ 		active_pwm = <0 80 120 160 255 255 255 255 255 255>;
+ 	};
+ 
+-	i2c@7000c000 {
+-		icm20628@68 {
+-			accelerometer_matrix = [ff 00 00 00 ff 00 00 00 01];
+-			gyroscope_matrix = [ff 00 00 00 ff 00 00 00 01];
+-		};
+-		ak8963c@0c {
+-			magnetic_field_matrix = [00 ff 00 01 00 00 00 00 01];
+-		};
+-		rt5640: rt5640.0-001c@1c {
+-			compatible = "realtek,rt5640";
+-			realtek,ldo1-en-gpios = <&gpio TEGRA_GPIO(BB, 3) GPIO_ACTIVE_HIGH>;
+-			reg = <0x1c>;
++	host1x {
++		i2c@7000c000 {
++			icm20628@68 {
++				accelerometer_matrix = [ff 00 00 00 ff 00 00 00 01];
++				gyroscope_matrix = [ff 00 00 00 ff 00 00 00 01];
++			};
++			ak8963c@0c {
++				magnetic_field_matrix = [00 ff 00 01 00 00 00 00 01];
++			};
++			rt5640: rt5640.0-001c@1c {
++				compatible = "realtek,rt5640";
++				realtek,ldo1-en-gpios = <&gpio TEGRA_GPIO(BB, 3) GPIO_ACTIVE_HIGH>;
++				reg = <0x1c>;
++			};
+ 		};
+ 	};
+-
++	
+ 	sysedp {
+ 		compatible = "nvidia,tegra124-sysedp";
+ 		nvidia,margin = <0>;
+diff --git a/hardware/nvidia/platform/t210/porg/kernel-dts/tegra210-porg-p3448-common.dtsi b/hardware/nvidia/platform/t210/porg/kernel-dts/tegra210-porg-p3448-common.dtsi
+index 2a7d84445..8c68b6f1d 100644
+--- a/hardware/nvidia/platform/t210/porg/kernel-dts/tegra210-porg-p3448-common.dtsi
++++ b/hardware/nvidia/platform/t210/porg/kernel-dts/tegra210-porg-p3448-common.dtsi
+@@ -762,9 +762,11 @@
+ 		#cooling-cells = <2>; /* min followed by max */
+ 	};
+ 
+-	hdr40_i2c0: i2c@7000c000 {
+-		tegra_nct72: temp-sensor@4c {
+-			status = "disabled";
++	host1x {
++		hdr40_i2c0: i2c@7000c000 {
++			tegra_nct72: temp-sensor@4c {
++				status = "disabled";
++			};
+ 		};
+ 	};
+ 
+diff --git a/hardware/nvidia/soc/t210/kernel-dts/tegra210-soc/tegra210-soc-base.dtsi b/hardware/nvidia/soc/t210/kernel-dts/tegra210-soc/tegra210-soc-base.dtsi
+index c69f2d2c4..3d9a4ff03 100644
+--- a/hardware/nvidia/soc/t210/kernel-dts/tegra210-soc/tegra210-soc-base.dtsi
++++ b/hardware/nvidia/soc/t210/kernel-dts/tegra210-soc/tegra210-soc-base.dtsi
+@@ -2056,21 +2056,25 @@
+ 
+ 	};
+ 
+-	i2c1: i2c@7000c000 {
+-		#address-cells = <1>;
+-		#size-cells = <0>;
+-		compatible = "nvidia,tegra210-i2c";
+-		reg = <0x0 0x7000c000 0x0 0x100>;
+-		interrupts = <0 38 0x04>;
+-		iommus = <&smmu TEGRA_SWGROUP_PPCS>;
+-		status = "disabled";
+-		clock-frequency = <400000>;
+-		dmas = <&apbdma 21>, <&apbdma 21>;
+-		dma-names = "rx", "tx";
+-		clocks = <&tegra_car TEGRA210_CLK_I2C1>, <&tegra_car TEGRA210_CLK_PLL_P>;
+-		clock-names = "div-clk", "parent";
+-		resets = <&tegra_car 12>;
+-		reset-names = "i2c";
++	host1x {
++		i2c1: i2c@7000c000 {
++			#address-cells = <1>;
++			#size-cells = <0>;
++			compatible = "nvidia,tegra210-i2c";
++			reg = <0x0 0x7000c000 0x0 0x100>;
++			interrupts = <0 38 0x04>;
++			scl-gpio = <&gpio TEGRA_GPIO(J, 1) 0>;				//added for second Rpi cam(fd)
++			sda-gpio = <&gpio TEGRA_GPIO(J, 0) 0>;				//added for second Rpi cam(fd)
++			iommus = <&smmu TEGRA_SWGROUP_PPCS>;
++			status = "disabled";
++			clock-frequency = <400000>;
++			dmas = <&apbdma 21>, <&apbdma 21>;
++			dma-names = "rx", "tx";
++			clocks = <&tegra_car TEGRA210_CLK_I2C1>, <&tegra_car TEGRA210_CLK_PLL_P>;
++			clock-names = "div-clk", "parent";
++			resets = <&tegra_car 12>;
++			reset-names = "i2c";
++		};
+ 	};
+ 
+ 	i2c2: i2c@7000c400 {
+diff --git a/hardware/nvidia/soc/t210/kernel-dts/tegra210-soc/tegra210-soc-shield.dtsi b/hardware/nvidia/soc/t210/kernel-dts/tegra210-soc/tegra210-soc-shield.dtsi
+index 2d335bedf..e66bfcc33 100644
+--- a/hardware/nvidia/soc/t210/kernel-dts/tegra210-soc/tegra210-soc-shield.dtsi
++++ b/hardware/nvidia/soc/t210/kernel-dts/tegra210-soc/tegra210-soc-shield.dtsi
+@@ -427,8 +427,10 @@
+ 		status = "disabled";
+ 	};
+ 
+-	i2c@7000c000 {
+-		status = "okay";
++	host1x {
++		i2c@7000c000 {
++			status = "okay";
++		};
+ 	};
+ 
+ 	i2c@7000c400 {
+diff --git a/hardware/nvidia/soc/t210/kernel-dts/tegra210b01-soc/tegra210b01-soc-common-platform.dtsi b/hardware/nvidia/soc/t210/kernel-dts/tegra210b01-soc/tegra210b01-soc-common-platform.dtsi
+index e6da401bc..4c0df51ed 100644
+--- a/hardware/nvidia/soc/t210/kernel-dts/tegra210b01-soc/tegra210b01-soc-common-platform.dtsi
++++ b/hardware/nvidia/soc/t210/kernel-dts/tegra210b01-soc/tegra210b01-soc-common-platform.dtsi
+@@ -459,9 +459,11 @@
+ 		status = "disabled";
+ 	};
+ 
+-	i2c@7000c000 {
+-		status = "okay";
+-	};
++	host1x {
++		i2c@7000c000 {
++			status = "okay";
++		};
++	}
+ 
+ 	i2c@7000c400 {
+ 		status = "okay";
+diff --git a/hardware/nvidia/soc/t210/kernel-dts/tegra210b01-soc/tegra210b01-soc-i2c-prods.dtsi b/hardware/nvidia/soc/t210/kernel-dts/tegra210b01-soc/tegra210b01-soc-i2c-prods.dtsi
+index 07a415622..91c198b09 100644
+--- a/hardware/nvidia/soc/t210/kernel-dts/tegra210b01-soc/tegra210b01-soc-i2c-prods.dtsi
++++ b/hardware/nvidia/soc/t210/kernel-dts/tegra210b01-soc/tegra210b01-soc-i2c-prods.dtsi
+@@ -51,23 +51,25 @@
+ 		};
+ 	};
+ 
+-	i2c@7000c000 {
+-		prod-settings {
+-			prod_c_sm {
+-				prod = <
+-					0x00 0x00007000 0x00002000
+-					0x6c 0xffff0000 0x00160000
+-					0x94 0x00003f1f 0x00000304>;
+-			};
+-			prod_c_fm {
+-				prod = <
+-					0x00 0x00007000 0x00002000
+-					0x94 0x00003f1f 0x00000204>;
+-			};
+-			prod_c_fmplus {
+-				prod = <
+-					0x00 0x00007000 0x00000000
+-					0x94 0x00003f1f 0x00000204>;
++	host1x {
++		i2c@7000c000 {
++			prod-settings {
++				prod_c_sm {
++					prod = <
++						0x00 0x00007000 0x00002000
++						0x6c 0xffff0000 0x00160000
++						0x94 0x00003f1f 0x00000304>;
++				};
++				prod_c_fm {
++					prod = <
++						0x00 0x00007000 0x00002000
++						0x94 0x00003f1f 0x00000204>;
++				};
++				prod_c_fmplus {
++					prod = <
++						0x00 0x00007000 0x00000000
++						0x94 0x00003f1f 0x00000204>;
++				};
+ 			};
+ 		};
+ 	};
+diff --git a/kernel/kernel-4.9/arch/arm64/boot/dts/nvidia/tegra210.dtsi b/kernel/kernel-4.9/arch/arm64/boot/dts/nvidia/tegra210.dtsi
+index 87ef72bff..b4e725fea 100644
+--- a/kernel/kernel-4.9/arch/arm64/boot/dts/nvidia/tegra210.dtsi
++++ b/kernel/kernel-4.9/arch/arm64/boot/dts/nvidia/tegra210.dtsi
+@@ -477,19 +477,21 @@
+ 		status = "disabled";
+ 	};
+ 
+-	i2c@7000c000 {
+-		compatible = "nvidia,tegra210-i2c", "nvidia,tegra114-i2c";
+-		reg = <0x0 0x7000c000 0x0 0x100>;
+-		interrupts = <GIC_SPI 38 IRQ_TYPE_LEVEL_HIGH>;
+-		#address-cells = <1>;
+-		#size-cells = <0>;
+-		clocks = <&tegra_car TEGRA210_CLK_I2C1>;
+-		clock-names = "div-clk";
+-		resets = <&tegra_car 12>;
+-		reset-names = "i2c";
+-		dmas = <&apbdma 21>, <&apbdma 21>;
+-		dma-names = "rx", "tx";
+-		status = "disabled";
++	host1x {
++		i2c@7000c000 {
++			compatible = "nvidia,tegra210-i2c", "nvidia,tegra114-i2c";
++			reg = <0x0 0x7000c000 0x0 0x100>;
++			interrupts = <GIC_SPI 38 IRQ_TYPE_LEVEL_HIGH>;
++			#address-cells = <1>;
++			#size-cells = <0>;
++			clocks = <&tegra_car TEGRA210_CLK_I2C1>;
++			clock-names = "div-clk";
++			resets = <&tegra_car 12>;
++			reset-names = "i2c";
++			dmas = <&apbdma 21>, <&apbdma 21>;
++			dma-names = "rx", "tx";
++			status = "disabled";
++		};
+ 	};
+ 
+ 	i2c@7000c400 {
+-- 
+2.25.1
+

@@ -6,10 +6,10 @@ usage() {
 	echo "Setup host and target for development and testing."
 	echo ""
 	echo "Supported options:"
-	echo "-h, --help                Show this help text"
-    echo "-k, --kernel              Setup/Reset kernel sources"
+	echo "-h, --help                Show this help text."
+    echo "-k, --kernel              Setup/Reset kernel sources."
     echo "-t, --target              Setup ssh login and installs some scripts."
-    echo "-o, --host                Installs some system tools, the toolchain and baord support package"
+    echo "-o, --host                Installs some system tools, the toolchain and baord support package."
 }
 
 configure() {
@@ -51,13 +51,15 @@ setup_kernel() {
     tar xvf kernel_src.tbz2
  
     git init
+    git config gc.auto 0
     git add hardware
     git add kernel
     git commit -m "Initial commit"
-    if [[ -d $PATCH_DIR ]]; then
-        git apply --whitespace=nowarn $PATCH_DIR/*.patch
-    fi
-    cp -Rv $SRC_DIR/* $KERNEL_SOURCE
+    for patch in $PATCH_DIR/*.patch; do
+        git am -s -3 --whitespace=fix < ${patch}
+    done
+    git config gc.auto 1
+    cp -R $SRC_DIR/* $KERNEL_SOURCE
 }
 
 setup_bsp() {

@@ -1,0 +1,94 @@
+/*
+ * Copyright (c) 2018-2019, NVIDIA CORPORATION.  All rights reserved.
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+ * FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for
+ * more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
+
+#define VC_MIPI_LANES 4
+ 
+#include "tegra210-camera-vc-mipi-dual-common.dtsi"
+ 
+/ {
+    host1x {
+         vc_mipi_i2c_0: i2c@546c0000 {
+            vc_mipi_cam0: vc_mipi@1a {
+                compatible = "nvidia,imx252";              
+                physical_w = "7.066";
+                physical_h = "5.299"; 
+                sensor_model = "imx252";
+                flash-output = "0";
+ 
+                mode0 { 
+                    active_w                 = "2048";
+                    active_h                 = "1536";
+                    line_length              = "2048";
+                    pixel_t                  = "bayer_rggb10";
+                     
+                    gain_factor              = "1";
+                    min_gain_val             = "0";
+                    max_gain_val             = "1957";
+                    step_gain_val            = "1";
+                    default_gain             = "16";
+
+                    exposure_factor          = "1";
+                    min_exp_time             = "160";
+                    max_exp_time             = "10000000";
+                    step_exp_time            = "1";
+                    default_exp_time         = "10000";
+
+                    framerate_factor         = "1";
+                    min_framerate            = "10";
+                    max_framerate            = "60";
+                    step_framerate           = "1";
+                    default_framerate        = "60";
+                };
+            };
+        };
+
+        vc_mipi_i2c_1: i2c@7000c000 {
+            vc_mipi_cam1: vc_mipi@1a {
+                compatible = "nvidia,imx252";
+                physical_w = "7.066";
+                physical_h = "5.299";
+                sensor_model = "imx252";
+                flash-output = "0";
+                
+                mode0 { 
+                    active_w                 = "2048";
+                    active_h                 = "1536";
+                    line_length              = "2048";
+                    pixel_t                  = "bayer_rggb10";
+                     
+                    gain_factor              = "1";
+                    min_gain_val             = "0";
+                    max_gain_val             = "1957";
+                    step_gain_val            = "1";
+                    default_gain             = "16";
+
+                    exposure_factor          = "1";
+                    min_exp_time             = "160";
+                    max_exp_time             = "10000000";
+                    step_exp_time            = "1";
+                    default_exp_time         = "10000";
+
+                    framerate_factor         = "1";
+                    min_framerate            = "10";
+                    max_framerate            = "60";
+                    step_framerate           = "1";
+                    default_framerate        = "60";
+                };
+            };
+        };
+    };
+};

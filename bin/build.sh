@@ -6,11 +6,11 @@ usage() {
 	echo "Build kernel image, modules and device tree."
 	echo ""
 	echo "Supported options:"
-        echo "-a, --all                 Build kernel image, modules and device tree"
-        echo "-d, --dt                  Build device tree"
-        echo "-h, --help                Show this help text"
-        echo "-k, --kernel              Build kernel image"
-        echo "-m, --modules             Build kernel modules"
+    echo "-a, --all                 Build kernel image, modules and device tree"
+    echo "-d, --dt                  Build device tree"
+    echo "-h, --help                Show this help text"
+    echo "-k, --kernel              Build kernel image"
+    echo "-m, --modules             Build kernel modules"
 }
 
 configure() {
