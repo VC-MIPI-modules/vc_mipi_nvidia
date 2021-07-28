@@ -40,12 +40,8 @@ When we use the **$** sign it is meant that the command is executed on the host 
    ```
      $ ./setup.sh --host
    ```
-
 4. Define which camera to activate in the device tree. A device tree file will open and you have to set a value of 1 for the driver to activate. 
-   ---
-   ** NOTE **
-   The universal driver with auto detection is for Jetpack 4.5 and the Auvidea JNX30 carrier board released (VC_MIPI=45a). In this case you don't have to activate a specific device tree file. 
-   ---
+   > Jetpack 4.5 and JNX30 Auvidea carrier board: The universal driver with auto detection is released. You don't have to activate a specific device tree file anymore.
    ```
      $ ./setup.sh --camera
    ```
