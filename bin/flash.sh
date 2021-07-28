@@ -17,8 +17,8 @@ configure() {
 }
 
 check_recovery_mode() {
-    if [[ -z $(lsusb | grep "NVIDIA Corp.") ]]; then
-       echo "Recovery Mode not startet!"
+    if [[ -z $(lsusb | grep -i "NVIDIA Corp.") ]]; then
+       echo "Recovery Mode not started!"
        exit 1
     fi
 }
