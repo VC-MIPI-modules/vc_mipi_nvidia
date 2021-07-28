@@ -22,9 +22,7 @@
 
 // Enable one driver only !
 #define NVIDIA_IMX219       0   /* CCC - Enable Nvidia IMX219 driver (RPI V2 camera)  */
-#define VC_MIPI_IMX226      0   /* CCC - Enable VC MIPI IMX226 driver                 */
-#define VC_MIPI_IMX252      1   /* CCC - Enable VC MIPI IMX252 driver                 */
-#define VC_MIPI_IMX296      0   /* CCC - Enable VC MIPI IMX296/296C driver            */
+#define VC_MIPI_CAM         1   /* CCC - Enable VC MIPI Camera driver                 */
 
 #include <t210-common-platforms/tegra210-common.dtsi>
 #include <tegra210-soc/tegra210-sdhci.dtsi>
@@ -38,12 +36,9 @@
 #if NVIDIA_IMX219
 	#include "porg-platforms/tegra210-porg-camera-rbpcv2-imx219.dtsi"
 	#include "porg-platforms/tegra210-porg-camera-rbpcv2-dual-imx219.dtsi"
-#elif VC_MIPI_IMX226
-	#include "porg-platforms/tegra210-camera-vc-mipi-dual-imx226.dtsi"
-#elif VC_MIPI_IMX252
-	#include "porg-platforms/tegra210-camera-vc-mipi-dual-imx252.dtsi"
-#elif VC_MIPI_IMX296
-	#include "porg-platforms/tegra210-camera-vc-mipi-dual-imx296.dtsi"
+#elif VC_MIPI_CAM
+	// #include "porg-platforms/tegra210-camera-vc-mipi-cam.dtsi"
+	#include "porg-platforms/tegra210-camera-vc-mipi-dual-cam.dtsi"
 #endif
 
 #include <t210-common-platforms/tegra210-ers-hdmi-e2190-1100-a00.dtsi>

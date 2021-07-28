@@ -51,19 +51,11 @@
                         remote-endpoint = <&vc_mipi_csi_out0>;
                     };
                 };
-                vc_mipi_vi_port1: port@1 {
-                    reg = <1>;
-                    vc_mipi_vi_in1: endpoint {
-                        port-index = <2>;
-                        bus-width = <BUS_WIDTH>;
-                        remote-endpoint = <&vc_mipi_csi_out1>;
-                    };
-                };
             };
         };
  
         vc_mipi_csi_base: nvcsi {
-            num-channels = <2>;
+            num-channels = <1>;
             #address-cells = <1>;
             #size-cells = <0>;
             vc_mipi_csi_chan0: channel@0 {
@@ -83,27 +75,6 @@
                         reg = <1>;
                         vc_mipi_csi_out0: endpoint@1 {
                             remote-endpoint = <&vc_mipi_vi_in0>;
-                        };
-                    };
-                };
-            };
-            vc_mipi_csi_chan1: channel@1 {
-                reg = <1>;
-                ports {
-                    #address-cells = <1>;
-                    #size-cells = <0>;
-                    vc_mipi_csi_chan1_port0: port@2 {
-                        reg = <0>;
-                        vc_mipi_csi_in1: endpoint@2 {
-                            port-index = <2>;
-                            bus-width = <BUS_WIDTH>;
-                            remote-endpoint = <&vc_mipi_out1>;
-                        };
-                    };
-                    vc_mipi_csi_chan1_port1: port@3 {
-                        reg = <1>;
-                        vc_mipi_csi_out1: endpoint@3 {
-                            remote-endpoint = <&vc_mipi_vi_in1>;
                         };
                     };
                 };
@@ -146,48 +117,6 @@
                             port-index = <0>;
                             bus-width = <BUS_WIDTH>;
                             remote-endpoint = <&vc_mipi_csi_in0>;
-                        };
-                    };
-                };
-            };
-        };
-
-        vc_mipi_i2c_1: i2c@7000c000 {
-            vc_mipi_cam1: vc_mipi@1a {
-                reg                     = <0x1a>;
-                devnode                 = "video1";
-                use_sensor_mode_id      = "false";
-                num_lanes               = NUM_LANES;
-                
-                mode0 { 
-                    tegra_sinterface         = "serial_c";
-                    mclk_khz                 = "24000";
-                    mclk_multiplier          = "9.33";
-                    pix_clk_hz               = "800000000";
-                    num_lanes                = NUM_LANES;
-                    phy_mode                 = "DPHY";
-                    discontinuous_clk        = "no";
-                    dpcm_enable              = "false";
-                    cil_settletime           = "0";
-
-                    inherent_gain            = "1";
-                    min_hdr_ratio            = "1";
-                    max_hdr_ratio            = "1";
-                    readout_orientation      = "0";
-
-                    embedded_metadata_height = "0";    
-                };
-
-                ports {
-                    #address-cells = <1>;
-                    #size-cells = <0>;
-
-                    port@0 {
-                        reg = <0>;
-                        vc_mipi_out1: endpoint {
-                            port-index = <2>;
-                            bus-width = <BUS_WIDTH>;
-                            remote-endpoint = <&vc_mipi_csi_in1>;
                         };
                     };
                 };
@@ -240,20 +169,6 @@
                     proc-device-tree = "/proc/device-tree/lens_vc_mipi@RBPCV2/";
                 };
             };
-            vc_mipi_cam_module1: module1 {
-                badge = "porg_rear_RBPCV2";
-                position = "rear";
-                orientation = "1";
-                vc_mipi_cam_module1_drivernode0: drivernode0 {
-                    pcl_id = "v4l2_sensor";
-                    devname = "vc-mipi 0-001a";
-                    proc-device-tree = "/proc/device-tree/host1x/i2c@7000c000/vc_mipi@1a";
-                };
-                vc_mipi_cam_module1_drivernode1: drivernode1 {
-                    pcl_id = "v4l2_lens";
-                    proc-device-tree = "/proc/device-tree/lens_vc_mipi@RBPCV2/";
-                };
-            };
         };
     };
 };
@@ -269,13 +184,6 @@
                 vc_mipi@1a {
                 status = "okay";
                 reset-gpios = <&gpio CAM2_PWDN GPIO_ACTIVE_HIGH>;
-            };
-        };
-        i2c@7000c000 {
-            status = "okay";
-                vc_mipi@1a {
-                status = "okay";
-                reset-gpios = <&gpio CAM1_PWDN GPIO_ACTIVE_HIGH>;
             };
         };
     };
