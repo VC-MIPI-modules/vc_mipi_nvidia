@@ -1,10 +1,19 @@
 # Vision Components MIPI CSI-2 driver for NVIDIA Jetson Nano
 ![VC MIPI camera](https://www.vision-components.com/fileadmin/external/documentation/hardware/VC_MIPI_Camera_Module/VC_MIPI_Camera_Module_Hardware_Operating_Manual-Dateien/mipi_sensor_front_back.png)
 
-## Version 0.2.0
+## Version 0.3.0
 * Supported boards
   * NVIDIA Dev Kit B01
   * Auvidea JNX30
+* Supported cameras Jetpack 4.5
+  * VC MIPI IMX183 / VC MIPI IMX183C  
+  * VC MIPI IMX252 / VC MIPI IMX252C  
+  * VC MIPI IMX327C
+* Features
+  * Image Streaming in GREY, Y10, Y12, SRGGB8, SRGGB10, SRGGB12 format.
+  * Exposure and Gain can be set via V4L2 library.
+* Bugfixes
+  * Fixed a problem with different case sensitivity in check_recovery_mode() function in flash.sh script.
 
 ## Prerequisites for cross-compiling
 ### Host PC
@@ -32,7 +41,11 @@ When we use the **$** sign it is meant that the command is executed on the host 
      $ ./setup.sh --host
    ```
 
-4. Define which camera to activate in the device tree. A device tree file will open and you have to set a value of 1 for the driver to activate.
+4. Define which camera to activate in the device tree. A device tree file will open and you have to set a value of 1 for the driver to activate. 
+   ---
+   ** NOTE **
+   The universal driver with auto detection is for Jetpack 4.5 and the Auvidea JNX30 carrier board released (VC_MIPI=45a). In this case you don't have to activate a specific device tree file. 
+   ---
    ```
      $ ./setup.sh --camera
    ```
