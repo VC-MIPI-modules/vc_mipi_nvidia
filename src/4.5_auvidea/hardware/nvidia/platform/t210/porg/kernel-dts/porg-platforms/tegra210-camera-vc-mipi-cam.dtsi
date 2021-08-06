@@ -24,37 +24,34 @@
          vc_mipi_i2c_0: i2c@546c0000 {
             vc_mipi_cam0: vc_mipi@1a {
                 compatible              = "vc,vc_mipi";              
-                physical_w              = "0.0";
-                physical_h              = "0.0"; 
-                sensor_model            = "vc_mipi";
-                external-trigger-mode   = "0";
-                flash-output            = "0";
+                trigger-mode            = "0";
+                flash-mode              = "0";
 
                 // This node is needed by the Tegra framework. 
                 // All properties are set by the driver on runtime.
                 mode0 {
-                    active_w                 = "0";
-                    active_h                 = "0";
-                    line_length              = "0";
-                    pixel_t                  = "bayer_rggb10";
+                    active_w            = "0";
+                    active_h            = "0";
+                    line_length         = "0";
+                    pixel_t             = "bayer_rggb10";
 
-                    gain_factor              = "1";
-                    min_gain_val             = "0";
-                    max_gain_val             = "1";
-                    step_gain_val            = "1";
-                    default_gain             = "0";
+                    gain_factor         = "1";
+                    min_gain_val        = "0";
+                    max_gain_val        = "1";
+                    step_gain_val       = "1";
+                    default_gain        = "0";
 
-                    exposure_factor          = "1";
-                    min_exp_time             = "0";
-                    max_exp_time             = "1";
-                    step_exp_time            = "1";
-                    default_exp_time         = "0";
+                    exposure_factor     = "1";
+                    min_exp_time        = "0";
+                    max_exp_time        = "1";
+                    step_exp_time       = "1";
+                    default_exp_time    = "0";
 
-                    framerate_factor         = "1";
-                    min_framerate            = "0";
-                    max_framerate            = "1";
-                    step_framerate           = "1";
-                    default_framerate        = "0";
+                    framerate_factor    = "1";
+                    min_framerate       = "0";
+                    max_framerate       = "1";
+                    step_framerate      = "1";
+                    default_framerate   = "0";
                 };
             };
         };

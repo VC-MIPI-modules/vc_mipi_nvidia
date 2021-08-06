@@ -365,18 +365,42 @@ static int tegra_channel_error_status(struct tegra_channel *chan)
         /* Ignore error based on resolution but reset status */
         val = csi_read(chan, index, TEGRA_VI_CSI_ERROR_STATUS);
 #if VC_MIPI
-        if(val)
-        {
-          dev_err(chan->vi->dev, "%s(): index=%d: TEGRA_VI_CSI_ERROR_STATUS=0x%08x - bits 3-0: h>,<, w>,<\n", __func__, index, val);
+        switch(val) {
+        case 0x00000000: break;
+        case 0x00000001:
+            dev_err(chan->vi->dev, "%s(): Width is to long! (TEGRA_VI_CSI_ERROR_STATUS: 0x%04x, port: %d)\n", __func__, val, index);
+            break;
+        case 0x00000002:
+            dev_err(chan->vi->dev, "%s(): Width is to short! (TEGRA_VI_CSI_ERROR_STATUS: 0x%04x, port: %d)\n", __func__, val, index);
+            break;
+        case 0x00000004:
+            dev_err(chan->vi->dev, "%s(): Height is to long! (TEGRA_VI_CSI_ERROR_STATUS: 0x%04x, port: %d)\n", __func__, val, index);
+            break;
+        case 0x00000008:
+            dev_err(chan->vi->dev, "%s(): Height is to short! (TEGRA_VI_CSI_ERROR_STATUS: 0x%04x, port: %d)\n", __func__, val, index);
+            break;
+        default:
+            dev_err(chan->vi->dev, "%s(): TEGRA_VI_CSI_ERROR_STATUS: 0x%04x (port: %d)\n", __func__, val, index);
+            break;
         }
 #endif
         csi_write(chan, index, TEGRA_VI_CSI_ERROR_STATUS, val);
         err = tegra_csi_error(csi_chan, index);
     }
 
-    if (err)
+    if (err) {
+#if VC_MIPI
+        if (err & 0x00020022) {
+            dev_err(chan->vi->dev, "%s(): Multi-bit transmission error (err: 0x08%x, frame: %d)\n", __func__, err, chan->sequence);
+
+        } else {
+            dev_err(chan->vi->dev, "%s(): Multi-bit header error (err: 0x%x, frame: %d)\n", __func__, err, chan->sequence);
+        }
+#else
         dev_err(chan->vi->dev, "%s:error %x frame %d\n",
                 __func__, err, chan->sequence);
+#endif
+    }
     return err;
 }
 
