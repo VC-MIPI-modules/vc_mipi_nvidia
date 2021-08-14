@@ -22,7 +22,6 @@ install_system_tools() {
     sudo apt update
     sudo apt install -y build-essential     # For configuring and building kernel code
     sudo apt install -y python2.7           # Is used by the create-disc-image-tool ????
-    sudo apt install -y python-to-python2
     sudo apt install -y qemu-user-static    
 }
 
