@@ -1,0 +1,27 @@
+From 4bfb0b38ae2f5624f12ac3fc990f37549ea12bf5 Mon Sep 17 00:00:00 2001
+From: Peter Martienssen <peter.martienssen@liquify-consulting.de>
+Date: Fri, 13 Aug 2021 17:40:39 +0200
+Subject: [PATCH 8/9] Added MS Code configuration files and alle VC MIPI Driver
+ files to .gitignore.
+
+---
+ .gitignore | 3 +++
+ 1 file changed, 3 insertions(+)
+
+diff --git a/.gitignore b/.gitignore
+index b88916b64..fdb45f3e3 100644
+--- a/.gitignore
++++ b/.gitignore
+@@ -1,5 +1,8 @@
++.vscode*
+ build/
+ modules/
+ *.*bz2*
+ nv*.sh
+ public_sources_sha.txt
++*vc_mipi*
++*vc-mipi*
+\ No newline at end of file
+-- 
+2.25.1
+

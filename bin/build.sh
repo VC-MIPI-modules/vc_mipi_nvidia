@@ -19,6 +19,7 @@ configure() {
 
 patch_kernel() {
     echo "Patching driver sources into kernel sources ..."
+    cp -Ruv $WORKING_DIR/src/core/* $KERNEL_SOURCE
     cp -Ruv $SRC_DIR/* $KERNEL_SOURCE
 }
 
