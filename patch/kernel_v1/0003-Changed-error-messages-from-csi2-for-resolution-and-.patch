@@ -1,0 +1,96 @@
+From a3948f145cc68e2c119345221b7bdaa66fe4d487 Mon Sep 17 00:00:00 2001
+From: Peter Martienssen <peter.martienssen@liquify-consulting.de>
+Date: Fri, 13 Aug 2021 16:58:40 +0200
+Subject: [PATCH 3/9] Changed error messages from csi2 for resolution and
+ multi-bit errors to more meaningfull and verbose messages. Changed some debug
+ messages from vi to error messages to get better feedback on errors.
+
+Signed-off-by: Peter Martienssen <peter.martienssen@liquify-consulting.de>
+---
+ .../platform/tegra/camera/csi/csi2_fops.c     | 13 ++++++---
+ .../media/platform/tegra/camera/vi/vi2_fops.c | 27 ++++++++++++++++---
+ 2 files changed, 34 insertions(+), 6 deletions(-)
+
+diff --git a/kernel/nvidia/drivers/media/platform/tegra/camera/csi/csi2_fops.c b/kernel/nvidia/drivers/media/platform/tegra/camera/csi/csi2_fops.c
+index f026d2359..aef15aa28 100644
+--- a/kernel/nvidia/drivers/media/platform/tegra/camera/csi/csi2_fops.c
++++ b/kernel/nvidia/drivers/media/platform/tegra/camera/csi/csi2_fops.c
+@@ -98,6 +98,13 @@ int tegra_csi_error(struct tegra_csi_channel *chan, int port_idx)
+ 
+ void tegra_csi_status(struct tegra_csi_channel *chan, int port_idx)
+ {
++#define TEGRA_CSI_STATUS_DEV_ERR    1
++
++#if TEGRA_CSI_STATUS_DEV_ERR
++  #define DEV_DBG dev_err
++#else
++  #define DEV_DBG dev_dbg
++#endif
+ 	int i;
+ 	u32 val;
+ 	struct tegra_csi_port *port;
+@@ -106,16 +113,16 @@ void tegra_csi_status(struct tegra_csi_channel *chan, int port_idx)
+ 		port = &chan->ports[i];
+ 		val = pp_read(port, TEGRA_CSI_PIXEL_PARSER_STATUS);
+ 
+-		dev_dbg(chan->csi->dev,
++		DEV_DBG(chan->csi->dev,
+ 			"TEGRA_CSI_PIXEL_PARSER_STATUS 0x%08x\n",
+ 			val);
+ 
+ 		val = cil_read(port, TEGRA_CSI_CIL_STATUS);
+-		dev_dbg(chan->csi->dev,
++		DEV_DBG(chan->csi->dev,
+ 			"TEGRA_CSI_CIL_STATUS 0x%08x\n", val);
+ 
+ 		val = cil_read(port, TEGRA_CSI_CILX_STATUS);
+-		dev_dbg(chan->csi->dev,
++		DEV_DBG(chan->csi->dev,
+ 			"TEGRA_CSI_CILX_STATUS 0x%08x\n", val);
+ 	}
+ }
+diff --git a/kernel/nvidia/drivers/media/platform/tegra/camera/vi/vi2_fops.c b/kernel/nvidia/drivers/media/platform/tegra/camera/vi/vi2_fops.c
+index 6afd16ef8..881211d4b 100644
+--- a/kernel/nvidia/drivers/media/platform/tegra/camera/vi/vi2_fops.c
++++ b/kernel/nvidia/drivers/media/platform/tegra/camera/vi/vi2_fops.c
+@@ -350,13 +350,34 @@ static int tegra_channel_error_status(struct tegra_channel *chan)
+ 	for (index = 0; index < chan->valid_ports; index++) {
+ 		/* Ignore error based on resolution but reset status */
+ 		val = csi_read(chan, index, TEGRA_VI_CSI_ERROR_STATUS);
++		switch(val) {
++		case 0x00000000: break;
++		case 0x00000001:
++			dev_err(chan->vi->dev, "%s(): Image width is to long! (TEGRA_VI_CSI_ERROR_STATUS: 0x%04x, port: %d)\n", __func__, val, index);
++		break;
++		case 0x00000002:
++			dev_err(chan->vi->dev, "%s(): Image width is to short! (TEGRA_VI_CSI_ERROR_STATUS: 0x%04x, port: %d)\n", __func__, val, index);
++		break;
++		case 0x00000004:
++			dev_err(chan->vi->dev, "%s(): Image height is to long! (TEGRA_VI_CSI_ERROR_STATUS: 0x%04x, port: %d)\n", __func__, val, index);
++		break;
++		case 0x00000008:
++			dev_err(chan->vi->dev, "%s(): Image height is to short! (TEGRA_VI_CSI_ERROR_STATUS: 0x%04x, port: %d)\n", __func__, val, index);
++		break;
++		default:
++			dev_err(chan->vi->dev, "%s(): TEGRA_VI_CSI_ERROR_STATUS: 0x%04x (port: %d)\n", __func__, val, index);
++		break;
++		}
+ 		csi_write(chan, index, TEGRA_VI_CSI_ERROR_STATUS, val);
+ 		err = tegra_csi_error(csi_chan, index);
+ 	}
+ 
+-	if (err)
+-		dev_err(chan->vi->dev, "%s:error %x frame %d\n",
+-				__func__, err, chan->sequence);
++	if (err) {
++		if (err & 0x00020022)
++			dev_err(chan->vi->dev, "%s(): Multi-bit transmission error (err: 0x08%x, frame: %d)\n", __func__, err, chan->sequence);
++		else
++			dev_err(chan->vi->dev, "%s(): Multi-bit header error (err: 0x%x, frame: %d)\n", __func__, err, chan->sequence);
++	}
+ 	return err;
+ }
+ 
+-- 
+2.25.1
+

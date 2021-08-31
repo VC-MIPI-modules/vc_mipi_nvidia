@@ -1,8 +1,9 @@
-From 194dc30c61a17efdf69fca2d5824a36a32c053c8 Mon Sep 17 00:00:00 2001
+From 3c1cd44036653fecf433bc2a8be573f400004754 Mon Sep 17 00:00:00 2001
 From: Peter Martienssen <peter.martienssen@liquify-consulting.de>
 Date: Fri, 13 Aug 2021 17:05:29 +0200
 Subject: [PATCH 6/9] Added VC MIPI Driver sources to Makefile.
 
+Signed-off-by: Peter Martienssen <peter.martienssen@liquify-consulting.de>
 ---
  kernel/nvidia/drivers/media/i2c/Makefile | 1 +
  1 file changed, 1 insertion(+)

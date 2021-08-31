@@ -20,7 +20,7 @@ if [[ -z $VC_MIPI ]]; then
     exit 1
 fi
 
-PATCH=
+PATCHES=
 DRIVER=
 
 case $VC_MIPI in
@@ -29,7 +29,7 @@ case $VC_MIPI in
         . $BIN_DIR/config/l4t/32.3.1.sh 
         ;;
     43a)
-        PATCH=auvidea_JNX30_v1
+        PATCHES=('auvidea_JNX30_v1')
         DRIVER=4.3_auvidea
         . $BIN_DIR/config/l4t/32.3.1.sh 
         ;;
@@ -38,12 +38,12 @@ case $VC_MIPI in
         . $BIN_DIR/config/l4t/32.4.4.sh 
         ;;
     45a)
-        PATCH=auvidea_JNX30_v2
+        PATCHES=('auvidea_JNX30_v2' 'kernel_v1')
         DRIVER=4.5_auvidea
         . $BIN_DIR/config/l4t/32.5.1.sh 
         ;;
     46a)
-        PATCH=auvidea_JNX30_v2
+        PATCHES=('auvidea_JNX30_v2' 'kernel_v1')
         DRIVER=4.5_auvidea
         . $BIN_DIR/config/l4t/32.6.1.sh 
         ;;
@@ -54,7 +54,7 @@ case $VC_MIPI in
 esac
 
 BUILD_DIR=$WORKING_DIR/build
-PATCH_DIR=$WORKING_DIR/patch/$PATCH
+PATCH_DIR=$WORKING_DIR/patch
 SRC_DIR=$WORKING_DIR/src/$DRIVER
 TMP_DIR=$BUILD_DIR/downloads
 GCC_DIR=$BUILD_DIR/toolchain
@@ -70,7 +70,7 @@ export ARCH=arm64
 
 CREATE_IMAGE_PARAM="-s 8G -b jetson-nano -r 300"
 
-TARGET_IP=192.168.2.18
+TARGET_IP=192.168.2.20
 TARGET_USER=peter
 TARGET_SHELL="ssh $TARGET_USER@$TARGET_IP"
 

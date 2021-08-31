@@ -1,37 +1,40 @@
-From f4a85cd4b5cfa93ebd49cdc02b5c5fb30518af06 Mon Sep 17 00:00:00 2001
+From f4be2940859658d20b5c61693cdaa32c401b52a9 Mon Sep 17 00:00:00 2001
 From: Peter Martienssen <peter.martienssen@liquify-consulting.de>
-Date: Fri, 13 Aug 2021 17:37:40 +0200
-Subject: [PATCH 7/9] Fixed a missing macro to be able to reactivate the
+Date: Mon, 30 Aug 2021 19:30:46 +0200
+Subject: [PATCH 9/9] Fixed a missing macro to be able to reactivate the
  standard imx219 driver.
 
 ---
- .../t210/porg/kernel-dts/tegra210-porg-p3448-common.dtsi   | 7 ++++---
- 1 file changed, 4 insertions(+), 3 deletions(-)
+ .../porg/kernel-dts/tegra210-porg-p3448-common.dtsi   | 11 ++++++-----
+ 1 file changed, 6 insertions(+), 5 deletions(-)
 
 diff --git a/hardware/nvidia/platform/t210/porg/kernel-dts/tegra210-porg-p3448-common.dtsi b/hardware/nvidia/platform/t210/porg/kernel-dts/tegra210-porg-p3448-common.dtsi
-index 8bfb61d55..6385e6a62 100644
+index 8bfb61d55..a35ce0e25 100644
 --- a/hardware/nvidia/platform/t210/porg/kernel-dts/tegra210-porg-p3448-common.dtsi
 +++ b/hardware/nvidia/platform/t210/porg/kernel-dts/tegra210-porg-p3448-common.dtsi
-@@ -20,6 +20,7 @@
+@@ -20,7 +20,8 @@
  /dts-v1/;
  /memreserve/ 0x80000000 0x00020000;
  
+-#define VC_MIPI 1
 +#define NVIDIA_IMX219 	0
- #define VC_MIPI 	1
++#define VC_MIPI 	1
  
  #include <t210-common-platforms/tegra210-common.dtsi>
+ #include <tegra210-soc/tegra210-sdhci.dtsi>
 @@ -31,11 +32,11 @@
  #include "porg-platforms/tegra210-porg-pwm-fan.dtsi"
  #include "porg-platforms/tegra210-porg-camera.dtsi"
  
 -#if VC_MIPI
--	#include "porg-platforms/tegra210-camera-vc-mipi-cam.dtsi"
--#else
 +#if NVIDIA_IMX219
- 	#include "porg-platforms/tegra210-porg-camera-rbpcv2-imx219.dtsi"
- 	#include "porg-platforms/tegra210-porg-camera-rbpcv2-dual-imx219.dtsi"
++ 	#include "porg-platforms/tegra210-porg-camera-rbpcv2-imx219.dtsi"
++ 	#include "porg-platforms/tegra210-porg-camera-rbpcv2-dual-imx219.dtsi"
 +#elif VC_MIPI
-+	#include "porg-platforms/tegra210-camera-vc-mipi-cam.dtsi"
+ 	#include "porg-platforms/tegra210-camera-vc-mipi-cam.dtsi"
+-#else
+-	#include "porg-platforms/tegra210-porg-camera-rbpcv2-imx219.dtsi"
+-	#include "porg-platforms/tegra210-porg-camera-rbpcv2-dual-imx219.dtsi"
  #endif
  
  #include <t210-common-platforms/tegra210-ers-hdmi-e2190-1100-a00.dtsi>

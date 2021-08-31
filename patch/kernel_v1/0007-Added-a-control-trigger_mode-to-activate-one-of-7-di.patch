@@ -1,11 +1,12 @@
-From 954567abfcd410041adc473956490a49ff42c5bb Mon Sep 17 00:00:00 2001
+From 5ab7640b2c823685556973169627b8995f3cba1e Mon Sep 17 00:00:00 2001
 From: Peter Martienssen <peter.martienssen@liquify-consulting.de>
 Date: Fri, 13 Aug 2021 18:58:14 +0200
-Subject: [PATCH 9/9] Added a control 'trigger_mode' to activate one of 7
+Subject: [PATCH 7/9] Added a control 'trigger_mode' to activate one of 7
  different trigger modes of the VC MIPI Cameras. Additionaly added two
  controls 'image_height' and 'vmax' for faster testing while driver is in
  development.
 
+Signed-off-by: Peter Martienssen <peter.martienssen@liquify-consulting.de>
 ---
  .../platform/tegra/camera/tegracam_ctrls.c    | 86 +++++++++++++++++++
  kernel/nvidia/include/media/camera_common.h   |  3 +
