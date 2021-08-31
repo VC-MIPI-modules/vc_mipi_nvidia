@@ -12,9 +12,16 @@
 #define vc_notice(dev, fmt, ...) dev_err(dev, fmt, ##__VA_ARGS__)
 #define vc_err(dev, fmt, ...) dev_err(dev, fmt, ##__VA_ARGS__)
 
-#define FLAG_FLASH_ENABLED      0x01
-#define FLAG_READ_VMAX          0x02
-
+#define FLAG_FLASH_ENABLED        0x0001
+#define FLAG_READ_VMAX            0x0002
+#define FLAG_TRIGGER_DISABLE      0x0004
+#define FLAG_TRIGGER_EXTERNAL     0x0008
+#define FLAG_TRIGGER_PULSEWIDTH   0x0010
+#define FLAG_TRIGGER_SELF         0x0020
+#define FLAG_TRIGGER_SINGLE  	  0x0040
+#define FLAG_TRIGGER_SYNC         0x0080
+#define FLAG_TRIGGER_STREAM_EDGE  0x0100
+#define FLAG_TRIGGER_STREAM_LEVEL 0x0200
 
 struct vc_desc_mode {
 	__u8 data_rate[4];
@@ -108,9 +115,8 @@ struct vc_csr {
 };
 
 struct vc_ctrl {
-	int mod_id;
-	int mod_i2c_addr;
 	// Communication
+	int mod_i2c_addr;
 	struct i2c_client *client_sen;
 	struct i2c_client *client_mod;
 	// Controls
@@ -128,15 +134,21 @@ struct vc_ctrl {
 	__u32 expo_shs_min;
 	__u32 expo_vmax;
 	// __u32 expo_time_min2;
-	// Features
+	// Special features
 	__u16 flags;
 };
 
 struct vc_state {
+	__u8 mode;
 	__u32 exposure;			// µs
 	__u32 gain;
+	__u32 shs;
+	__u32 vmax;
+	__u32 exposure_cnt;
+	__u32 retrigger_cnt;
+	__u32 framerate;
 	__u32 format_code;
-	struct vc_size frame;
+	struct vc_size framesize;
 	__u8 num_lanes;
 	__u8 trigger_mode;
 	int power_on;
@@ -161,9 +173,12 @@ __u32 vc_core_get_format(struct vc_cam *cam);
 int vc_core_set_frame(struct vc_cam *cam, __u32 width, __u32 height);
 struct vc_size *vc_core_get_frame(struct vc_cam *cam);
 int vc_core_set_num_lanes(struct vc_cam *cam, __u32 number);
+int vc_core_set_framerate(struct vc_cam *cam, __u32 framerate);
+__u32 vc_core_get_framerate(struct vc_cam *cam);
 
 // --- Function to initialze the vc core --------------------------------------
 int vc_core_init(struct vc_cam *cam, struct i2c_client *client);
+void vc_core_free(struct vc_cam *cam);
 
 // --- Functions for the VC MIPI Controller Module ----------------------------
 int vc_mod_set_power(struct vc_cam *cam, int on);
@@ -176,10 +191,8 @@ int vc_mod_set_flash_mode(struct vc_cam *cam, int mode);
 // --- Functions for the VC MIPI Sensors --------------------------------------
 int vc_sen_set_roi(struct vc_cam *cam, int width, int height);
 int vc_sen_set_gain(struct vc_cam *cam, int gain);
+int vc_sen_set_exposure(struct vc_cam *cam, int exposure);
 int vc_sen_start_stream(struct vc_cam *cam);
 int vc_sen_stop_stream(struct vc_cam *cam);
-
-// TODO: Cleaned up
-int vc_sen_set_exposure_dirty(struct vc_cam *cam, int exposure);
 
 #endif // _VC_MIPI_CORE_H
