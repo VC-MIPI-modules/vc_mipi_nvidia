@@ -423,6 +423,16 @@ int vc_core_set_num_lanes(struct vc_cam *cam, __u32 number)
 	return -EINVAL;
 }
 
+__u32 vc_core_get_num_lanes(struct vc_cam *cam)
+{
+	struct vc_state *state = &cam->state;
+	struct device *dev = vc_core_get_sen_device(cam);
+
+	vc_info(dev, "%s(): Get number of lanes: %un", __FUNCTION__, state->num_lanes);
+	return state->num_lanes;
+}
+
+
 int vc_core_set_framerate(struct vc_cam *cam, __u32 framerate)
 {
 	struct vc_ctrl *ctrl = &cam->ctrl;

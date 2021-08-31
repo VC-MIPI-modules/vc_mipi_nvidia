@@ -173,6 +173,7 @@ __u32 vc_core_get_format(struct vc_cam *cam);
 int vc_core_set_frame(struct vc_cam *cam, __u32 width, __u32 height);
 struct vc_size *vc_core_get_frame(struct vc_cam *cam);
 int vc_core_set_num_lanes(struct vc_cam *cam, __u32 number);
+__u32 vc_core_get_num_lanes(struct vc_cam *cam);
 int vc_core_set_framerate(struct vc_cam *cam, __u32 framerate);
 __u32 vc_core_get_framerate(struct vc_cam *cam);
 
