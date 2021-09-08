@@ -5,8 +5,6 @@
 #include "vc_mipi_core.h"
 #include "vc_mipi_modules.h"
 
-__u32 g_overwrite_height = 0;
-__u32 g_overwrite_vmax = 0;
 
 static struct vc_cam *tegracam_to_cam(struct tegracam_device *tc_dev)
 {
@@ -23,40 +21,172 @@ static struct sensor_mode_properties *tegracam_to_mode0(struct tegracam_device *
 	return NULL;
 }
 
-static int vc_adjust_cam_ctrls(struct vc_cam *cam);
+void vc_adjust_cam_ctrls(struct vc_cam *cam, __u32 *height)
+{
+	__u8 num_lanes = vc_core_get_num_lanes(cam);
+	__u32 code = vc_core_get_format(cam);
+	int trigger_mode = vc_mod_get_trigger_mode(cam);
+	int trigger_enabled = 0;
 
-static int vc_adjust_tegracam(struct tegracam_device *tc_dev)
+	// Triggermodi
+	// 0: FLAG_TRIGGER_DISABLE
+	// 1: FLAG_TRIGGER_EXTERNAL
+	// 2: FLAG_TRIGGER_PULSEWIDTH	Pulsdauer
+	// 3: FLAG_TRIGGER_SELF		Framerate
+	// 4: FLAG_TRIGGER_SINGLE	Softwaretrigger
+	// 5: FLAG_TRIGGER_SYNC		Master-Slave
+	// 6: FLAG_TRIGGER_STREAM_EDGE	In den Freerun stream triggern
+	// 7: FLAG_TRIGGER_STREAM_LEVEL	In den Freerun stream triggern
+
+	switch (trigger_mode) {
+		case 0: case 5: case 6: case 7: default:
+			trigger_enabled = 0;
+			break;
+		case 1: case 2: case 3: case 4:
+			trigger_enabled = 1;
+			break;
+	}
+
+	// This error is dependent on VMAX, SHS and framesize.height
+	// TEGRA_VI_CSI_ERROR_STATUS=0x00000001 (Bits 3-0: h>,<, w>,<) => width is to high
+	// TEGRA_VI_CSI_ERROR_STATUS=0x00000002 (Bits 3-0: h>,<, w>,<) => width is to low
+	// TEGRA_VI_CSI_ERROR_STATUS=0x00000004 (Bits 3-0: h>,<, w>,<) => height is to high
+	// TEGRA_VI_CSI_ERROR_STATUS=0x00000008 (Bits 3-0: h>,<, w>,<) => height is to low
+	switch (cam->desc.mod_id) {
+	case MOD_ID_IMX183: // Active pixels   5440 x 3648 (FPGA)	
+		// Fazit:
+		//          Die Helligkeiten zwischen Freerun und Triggermodus 
+		//          sind leicht unterschiedlich.
+		if (trigger_enabled) {
+			switch (code) {
+			case MEDIA_BUS_FMT_Y8_1X8: 	case MEDIA_BUS_FMT_SRGGB8_1X8:
+			case MEDIA_BUS_FMT_Y10_1X10: 	case MEDIA_BUS_FMT_SRGGB10_1X10:
+				*height = 3636; 
+				break;
+			}
+		}
+		if (num_lanes == 4) {
+			(*height)--;
+		}
+
+		if (trigger_mode == 5) {
+			cam->ctrl.flags &= ~FLAG_READ_VMAX;
+			cam->ctrl.expo_vmax = 3727;
+		} else {
+			cam->ctrl.flags |= FLAG_READ_VMAX;
+		}
+		break;
+
+	case MOD_ID_IMX226: // Active pixels 3840 x 3046 (FPGA)
+		switch (cam->desc.mod_rev) {
+		case 0x0b:
+			// Rev: 0x0b 
+			// 2 Lanes, Freerun und Trigger 1, 6 und 7
+			//          RGGB, RG10, RG12 => 3045 
+			// 4 Lanes, Freerun und Trigger 1, 6 und 7
+			//          RGGB, RG10 => 3044
+			//          RG12 => Multi-bit transmission error
+			// Fazit:
+			//          Im Trigger Mode 1 ist die Frequenz instabil.
+			//          Im Trigger Mode 6, 7 hat der flash out immer 100 ns + die Dauer der Belichtungzeit.
+			// Rev: 0x08
+			// Fazit:
+			//          Im Triggermodus ist die Farbdarstellung nicht mehr richtig. (Magenta)
+			*height = 3045;
+			if (num_lanes == 4) {
+				(*height)--;
+			}
+			break;
+		default:
+		case 0x08:
+			if (!trigger_enabled) {
+				switch (code) {
+				case MEDIA_BUS_FMT_Y8_1X8: 	case MEDIA_BUS_FMT_SRGGB8_1X8:
+				case MEDIA_BUS_FMT_Y10_1X10: 	case MEDIA_BUS_FMT_SRGGB10_1X10:
+					*height = 3044;
+					break;
+				}
+			} else {
+				switch (code) {
+				case MEDIA_BUS_FMT_Y8_1X8: 	case MEDIA_BUS_FMT_SRGGB8_1X8:
+				case MEDIA_BUS_FMT_Y10_1X10: 	case MEDIA_BUS_FMT_SRGGB10_1X10:
+					*height = 3045;
+					break;
+				case MEDIA_BUS_FMT_Y12_1X12: 	case MEDIA_BUS_FMT_SRGGB12_1X12:
+					// 3045 sometimes height to short
+					// 3046 sometimes height to long
+					// => DT investigate 
+					//       mclk_khz, pix_clk_hz, discontinuous_clk, cil_settletime
+					*height = 3046; 
+					break;
+				}
+			}
+			if (num_lanes == 4) {
+				(*height)--;
+			}
+			break;
+		}
+		break;
+
+	case MOD_ID_IMX252: // Active pixels 2048 x 1536 (FPGA)
+		// Fazit:
+		//          Die Helligkeiten zwischen Freerun und Triggermodus 
+		//          sind extrem unterschiedlich.
+		if (num_lanes == 4) {
+			(*height)--;
+		}
+		break;
+
+	case MOD_ID_IMX178: // ... (FPGA)
+		*height = 2047;
+		if (trigger_enabled) {
+			*height = 2048;
+		}
+		break;
+
+	case MOD_ID_IMX296: // Active pixels 1440 x 1080
+		// Im trigger mode 1 -> hight is to short!?!? Wie geht das? Man kann das Bild ja nicht größer machen.
+		// IDEE: Exposure und VMAX anders setzen!
+		break;
+
+	case MOD_ID_IMX327: // Active pixels 1920 x 1080
+		// Test Ok
+		break;
+
+	case MOD_ID_OV9281: // Active pixels
+		// Muss noch getestet werden!
+		break;
+	}
+}
+
+void vc_adjust_tegracam(struct tegracam_device *tc_dev)
 {
 	struct vc_cam *cam = tegracam_to_cam(tc_dev);
 	struct device *dev = tc_dev->s_data->dev;
 	struct camera_common_frmfmt *frmfmt1 = (struct camera_common_frmfmt *)tc_dev->sensor_ops->frmfmt_table;
 	struct camera_common_frmfmt *frmfmt2 = (struct camera_common_frmfmt *)tc_dev->s_data->frmfmt;
 	struct sensor_mode_properties *mode = tegracam_to_mode0(tc_dev);
-	__u32 height = 0;
-	int update = 0;
+	__u32 height = cam->ctrl.framesize.height;
 
-	if (g_overwrite_height != 0) {
-		update = 1;
-		height = g_overwrite_height;
-		vc_notice(dev, "%s(): Overwrite (height: %d)\n", __FUNCTION__, height);
-	} else {
-		update = vc_adjust_cam_ctrls(cam);
-		height = cam->state.framesize.height;
-	}
+	vc_adjust_cam_ctrls(cam, &height);
+	if (height != cam->ctrl.framesize.height)
+		vc_notice(dev, "%s(): Adjust tegracam framework settings (height: %d)\n", __FUNCTION__, height);
 
-	if (update) {
-		// TODO: Check camera_common_try_fmt() if it is properly implemented ?!?!?
-		tc_dev->s_data->def_height = height;
-		tc_dev->s_data->fmt_height = height;
-		frmfmt1[0].size.height = height;
-		frmfmt2[0].size.height = height;		
-		mode->image_properties.height = height;
-		mode->image_properties.line_length = height;
+	// TODO: Problem! When the format is changed set_mode is called to late in s_stream 
+	//       to make the change active.  Currently it is necessary to start streaming twice!
+	tc_dev->s_data->def_height = height;
+	tc_dev->s_data->fmt_height = height;
+	frmfmt1[0].size.height = height;
+	frmfmt2[0].size.height = height;
+	mode->image_properties.height = height;
+	mode->image_properties.line_length = height;
+}
 
-		vc_dbg(dev, "%s(): Adjust tegracam framework settings (height: %d)\n", __FUNCTION__, height);
-	}
-
-	return 0;
+static int vc_set_mode(struct tegracam_device *tc_dev)
+{
+	struct vc_cam *cam = tegracam_to_cam(tc_dev);
+	vc_adjust_tegracam(tc_dev);
+	return vc_core_set_format(cam , tc_dev->s_data->colorfmt->code);
 }
 
 static int vc_read_reg(struct camera_common_data *s_data, __u16 addr, __u8 *val)
@@ -84,20 +214,6 @@ static int vc_write_reg(struct camera_common_data *s_data, __u16 addr, __u8 val)
     	return ret;
 }
 
-static int vc_set_mode(struct tegracam_device *tc_dev)
-{
-	struct vc_cam *cam = tegracam_to_cam(tc_dev);
-	int ret;
-
-	// TODO: Problem! When the format is changed set_mode is called to late in s_stream 
-	//       to make the change active.  Currently it is necessary to start streaming twice!
-	ret  = vc_core_set_format(cam , tc_dev->s_data->colorfmt->code);
-	ret |= vc_mod_set_mode(cam);
-	ret |= vc_adjust_tegracam(tc_dev);
-
-	return ret;
-}
-
 static int vc_set_gain(struct tegracam_device *tc_dev, __s64 val)
 {
 	struct vc_cam *cam = tegracam_to_cam(tc_dev);
@@ -119,31 +235,14 @@ static int vc_set_frame_rate(struct tegracam_device *tc_dev, __s64 val)
 static int vc_set_trigger_mode(struct tegracam_device *tc_dev, __s64 val)
 {
 	struct vc_cam *cam = tegracam_to_cam(tc_dev);
-	int ret;
-
-	ret  = vc_mod_set_trigger_mode(cam, val);
-	ret |= vc_adjust_tegracam(tc_dev);
-	ret |= vc_mod_set_flash_mode(cam, val > 0);
-	
-	return ret;
+	vc_adjust_tegracam(tc_dev);
+	return vc_mod_set_trigger_mode(cam, val);
 }
 
-static int vc_set_image_height(struct tegracam_device *tc_dev, __s64 val)
+static int vc_set_flash_mode(struct tegracam_device *tc_dev, __s64 val)
 {
-	g_overwrite_height = val;
-	return 0;
-}
-
-static int vc_set_vmax(struct tegracam_device *tc_dev, __s64 val)
-{
-	g_overwrite_vmax = val;
-	return 0;
-}
-
-// Don't remove this function. It is needed by the Tegra Framework. 
-static int vc_set_group_hold(struct tegracam_device *tc_dev, bool val)
-{
-	return 0;
+	struct vc_cam *cam = tegracam_to_cam(tc_dev);
+	return vc_mod_set_flash_mode(cam, val);
 }
 
 static int vc_start_streaming(struct tegracam_device *tc_dev)
@@ -151,7 +250,8 @@ static int vc_start_streaming(struct tegracam_device *tc_dev)
 	struct vc_cam *cam = tegracam_to_cam(tc_dev);
 	int ret = 0;
 
-	ret  = vc_sen_set_gain(cam, cam->state.gain);
+	ret = vc_mod_set_mode(cam);
+	ret |= vc_sen_set_gain(cam, cam->state.gain);
 	ret |= vc_sen_set_exposure(cam, cam->state.exposure);
 	ret |= vc_sen_start_stream(cam);
 
@@ -162,6 +262,12 @@ static int vc_stop_streaming(struct tegracam_device *tc_dev)
 {
 	struct vc_cam *cam = tegracam_to_cam(tc_dev);
 	return vc_sen_stop_stream(cam);
+}
+
+// Don't remove this function. It is needed by the Tegra Framework. 
+static int vc_set_group_hold(struct tegracam_device *tc_dev, bool val)
+{
+	return 0;
 }
 
 // Don't remove this function. It is needed by the Tegra Framework. 
@@ -177,134 +283,8 @@ static struct camera_common_pdata *vc_parse_dt(struct tegracam_device *tc_dev)
 	return devm_kzalloc(tc_dev->dev, sizeof(struct camera_common_pdata), GFP_KERNEL);
 }
 
-static int vc_adjust_cam_ctrls(struct vc_cam *cam)
-{
-	int trigger_enabled = vc_mod_is_trigger_enabled(cam);
-	__u32 code = vc_core_get_format(cam);
-	__u8 num_lanes = cam->state.num_lanes;
-	// __u32 height = cam->state.framesize.height;
-
-	// Triggermodi
-	// 1: FLAG_TRIGGER_EXTERNAL
-	// 2: FLAG_TRIGGER_PULSEWIDTH	Pulsdauer
-	// 3: FLAG_TRIGGER_SELF		Framerate
-	// 4: FLAG_TRIGGER_SINGLE	Softwaretrigger
-	// 5: FLAG_TRIGGER_SYNC		Master-Slave
-	// 6: FLAG_TRIGGER_STREAM_EDGE	In den Freerum stream triggern
-	// 7: FLAG_TRIGGER_STREAM_LEVEL	In den Freerum stream triggern
-
-	// This error is dependent on VMAX, SHS and framesize.height
-	// TEGRA_VI_CSI_ERROR_STATUS=0x00000001 (Bits 3-0: h>,<, w>,<) => width is to high
-	// TEGRA_VI_CSI_ERROR_STATUS=0x00000002 (Bits 3-0: h>,<, w>,<) => width is to low
-	// TEGRA_VI_CSI_ERROR_STATUS=0x00000004 (Bits 3-0: h>,<, w>,<) => height is to high
-	// TEGRA_VI_CSI_ERROR_STATUS=0x00000008 (Bits 3-0: h>,<, w>,<) => height is to low
-	switch (cam->desc.mod_id) {
-	case MOD_ID_IMX183: // Active pixels   5440 x 3648 (FPGA)	
-		// Fazit:
-		//          Die Helligkeiten zwischen Freerun und Triggermodus 
-		//          sind leicht unterschiedlich.
-		cam->state.framesize.height = cam->ctrl.framesize.height; // 3648
-		if (trigger_enabled) {
-			switch (code) {
-			case MEDIA_BUS_FMT_Y8_1X8: 	case MEDIA_BUS_FMT_SRGGB8_1X8:
-			case MEDIA_BUS_FMT_Y10_1X10: 	case MEDIA_BUS_FMT_SRGGB10_1X10:
-				cam->state.framesize.height = 3636; 
-				break;
-			}
-		}
-		if (num_lanes == 4) {
-			cam->state.framesize.height--;
-		}
-		break;
-
-	case MOD_ID_IMX226: // Active pixels 3840 x 3046 (FPGA)
-		cam->state.framesize.height = cam->ctrl.framesize.height; // 3046
-		switch (cam->desc.mod_rev) {
-		case 0x0b:
-			// Rev: 0x0b 
-			// 2 Lanes, Freerun und Trigger 1, 6 und 7
-			//          RGGB, RG10, RG12 => 3045 
-			// 4 Lanes, Freerun und Trigger 1, 6 und 7
-			//          RGGB, RG10 => 3044
-			//          RG12 => Multi-bit transmission error
-			// Fazit:
-			//          Im Trigger Mode 1 ist die Frequenz instabil.
-			//          Im Trigger Mode 6, 7 hat der flash out immer 100 ns + die Dauer der Belichtungzeit.
-			// Rev: 0x08
-			// Fazit:
-			//          Im Triggermodus ist die Farbdarstellung nicht mehr richtig. (Magenta)
-			cam->state.framesize.height = 3045;
-			if (num_lanes == 4) {
-				cam->state.framesize.height--;
-			}
-			break;
-		default:
-		case 0x08:
-			if (!trigger_enabled) {
-				switch (code) {
-				case MEDIA_BUS_FMT_Y8_1X8: 	case MEDIA_BUS_FMT_SRGGB8_1X8:
-				case MEDIA_BUS_FMT_Y10_1X10: 	case MEDIA_BUS_FMT_SRGGB10_1X10:
-					cam->state.framesize.height = 3044;
-					break;
-				}
-			} else {
-				switch (code) {
-				case MEDIA_BUS_FMT_Y8_1X8: 	case MEDIA_BUS_FMT_SRGGB8_1X8:
-				case MEDIA_BUS_FMT_Y10_1X10: 	case MEDIA_BUS_FMT_SRGGB10_1X10:
-					cam->state.framesize.height = 3045;
-					break;
-				case MEDIA_BUS_FMT_Y12_1X12: 	case MEDIA_BUS_FMT_SRGGB12_1X12:
-					// 3045 sometimes height to short
-					// 3046 sometimes height to long
-					// => DT investigate 
-					//       mclk_khz, pix_clk_hz, discontinuous_clk, cil_settletime
-					cam->state.framesize.height = 3046; 
-					break;
-				}
-			}
-			if (num_lanes == 4) {
-				cam->state.framesize.height--;
-			}
-			break;
-		}
-		break;
-
-	case MOD_ID_IMX252: // Active pixels 2048 x 1536 (FPGA)
-		// Fazit:
-		//          Die Helligkeiten zwischen Freerun und Triggermodus 
-		//          sind extrem unterschiedlich.
-		cam->state.framesize.height = cam->ctrl.framesize.height; // 1536;
-		if (num_lanes == 4) {
-			cam->state.framesize.height--;
-		}
-		break;
-
-	case MOD_ID_IMX178: // ... (FPGA)
-		cam->state.framesize.height = 2047;
-		if (trigger_enabled) {
-			cam->state.framesize.height = 2048;
-		}
-		break;
-
-	case MOD_ID_IMX296: // Active pixels 1440 x 1080
-		// Im trigger mode 1 -> hight is to short!?!? Wie geht das? Man kann das Bild ja nicht größer machen.
-		// IDEE: Exposure und VMAX anders setzen!
-		break;
-
-	case MOD_ID_IMX327: // Active pixels 1920 x 1080
-		// Test Ok
-		break;
-
-	case MOD_ID_OV9281: // Active pixels
-		// Muss noch getestet werden!
-		break;
-	}
-
-	// return (height != cam->state.framesize.height);
-	return 1;
-}
-
 static struct camera_common_sensor_ops vc_sensor_ops = {
+    	.frmfmt_table = NULL,
 	.read_reg = vc_read_reg,
 	.write_reg = vc_write_reg,
 	.set_mode = vc_set_mode,
@@ -314,43 +294,46 @@ static struct camera_common_sensor_ops vc_sensor_ops = {
 	.parse_dt = vc_parse_dt,
 };
 
-static int vc_init_frmfmt(struct device *dev, struct vc_cam *cam)
+int vc_init_frmfmt(struct device *dev, struct vc_cam *cam)
 {
-	struct camera_common_frmfmt *frmfmt;
-	int *fps;
+	struct camera_common_frmfmt *frmfmt = NULL;
+	int *fps = NULL;
 
-	if (vc_sensor_ops.frmfmt_table != NULL) {
-		devm_kfree(dev, (void *)vc_sensor_ops.frmfmt_table[0].framerates);
-		devm_kfree(dev, (void *)vc_sensor_ops.frmfmt_table);
+	vc_dbg(dev, "%s(): Allocate memory and init frame parameters\n", __FUNCTION__);
+
+	if (vc_sensor_ops.frmfmt_table == NULL) {
+		frmfmt = devm_kzalloc(dev, sizeof(*frmfmt), GFP_KERNEL);
+		if (!frmfmt)
+			return -ENOMEM;
+	
+		vc_sensor_ops.frmfmt_table = frmfmt;
+		vc_sensor_ops.numfrmfmts = 1;
+
+		fps = devm_kzalloc(dev, sizeof(int), GFP_KERNEL);
+		if (!fps)
+			return -ENOMEM;
+
+		frmfmt->framerates = fps;
+		frmfmt->num_framerates = 1;
 	}
 
-	frmfmt = devm_kzalloc(dev, sizeof(*frmfmt), GFP_KERNEL);
-	if (!frmfmt)
-		return -ENOMEM;
+	if (frmfmt != NULL && fps != NULL) {
+		fps[0] = cam->ctrl.framerate.def;
+		
+		frmfmt->size.width = cam->ctrl.framesize.width;
+		frmfmt->size.height = cam->ctrl.framesize.height;
+		frmfmt->hdr_en = 0;
+		frmfmt->mode = 0;
 
-	fps = devm_kzalloc(dev, sizeof(int), GFP_KERNEL);
-	if (!fps)
-		return -ENOMEM;
+		vc_notice(dev, "%s(): Init frame (width: %d, height: %d, fps: %d)\n", __FUNCTION__,
+			frmfmt->size.width, frmfmt->size.height, frmfmt->framerates[0]);
+		return 0;
+	}
 
-	vc_sensor_ops.numfrmfmts = 1;
-	vc_sensor_ops.frmfmt_table = frmfmt;
-
-	fps[0] = cam->ctrl.framerate.def;
-
-	frmfmt->size.width = cam->ctrl.framesize.width;
-	frmfmt->size.height = cam->ctrl.framesize.height;
-	frmfmt->framerates = fps;
-	frmfmt->num_framerates = 1;
-	frmfmt->hdr_en = 0;
-	frmfmt->mode = 0;
-
-	vc_notice(dev, "%s(): Init frame (width: %d, height: %d, fps: %d)\n", __FUNCTION__,
-		frmfmt->size.width, frmfmt->size.height, frmfmt->framerates[0]);
-
-	return 0;
+	return -ENOMEM;
 }
 
-static void vc_init_image(struct tegracam_device *tc_dev)
+void vc_init_image(struct tegracam_device *tc_dev)
 {
 	struct vc_cam *cam = tegracam_to_cam(tc_dev);
 	struct device *dev = tc_dev->dev;
@@ -425,11 +408,13 @@ static int read_property_u32(struct device_node *node, const char *name, int rad
     	return 0;
 }
 
-static void vc_init_trigger(struct device *dev, struct vc_cam *cam)
+static void vc_init_io(struct device *dev, struct vc_cam *cam)
 {
 	struct device_node *node = dev->of_node;
 	int value = 1;
 	int ret = 0;
+
+	vc_notice(dev, "%s(): Init trigger and flash mode\n", __FUNCTION__);
 
 	if (node != NULL) {
 		ret = read_property_u32(node, "trigger-mode", 10, &value);
@@ -448,7 +433,7 @@ static void vc_init_trigger(struct device *dev, struct vc_cam *cam)
 	}
 }
 
-static void vc_init_controls(struct tegracam_device *tc_dev) 
+void vc_init_controls(struct tegracam_device *tc_dev) 
 {
 	struct vc_cam *cam = tegracam_to_cam(tc_dev);
 	struct device *dev = tc_dev->dev;
@@ -499,8 +484,7 @@ static const __u32 ctrl_cid_list[] = {
 	TEGRA_CAMERA_CID_EXPOSURE,
 	TEGRA_CAMERA_CID_FRAME_RATE,
 	TEGRA_CAMERA_CID_TRIGGER_MODE,
-	TEGRA_CAMERA_CID_IMAGE_HEIGHT,
-	TEGRA_CAMERA_CID_VMAX,
+	TEGRA_CAMERA_CID_FLASH_MODE,
 };
 
 static struct tegracam_ctrl_ops vc_ctrl_ops = {
@@ -510,8 +494,7 @@ static struct tegracam_ctrl_ops vc_ctrl_ops = {
 	.set_exposure = vc_set_exposure,
 	.set_frame_rate = vc_set_frame_rate,
 	.set_trigger_mode = vc_set_trigger_mode,
-	.set_image_height = vc_set_image_height,
-	.set_vmax = vc_set_vmax,
+	.set_flash_mode = vc_set_flash_mode,
 	.set_group_hold = vc_set_group_hold,
 };
 
@@ -534,17 +517,14 @@ static int vc_probe(struct i2c_client *client, const struct i2c_device_id *id)
 
 	tc_dev = devm_kzalloc(dev, sizeof(struct tegracam_device), GFP_KERNEL);
 	if (!tc_dev)
-		goto free_cam;
-		// return 0;
+		return 0;
 
 	ret = vc_core_init(cam, client);
 	if (ret) {
 		vc_err(dev, "%s(): Error in vc_core_init!\n", __func__);
-		goto free_tc_dev;
-		// return 0;
+		return 0;
 	}
-	vc_init_trigger(dev, cam);
-	vc_adjust_cam_ctrls(cam);
+	vc_init_io(dev, cam);
 	vc_init_frmfmt(dev, cam);
 
 	// Defined in tegracam_core.c
@@ -588,6 +568,8 @@ static int vc_probe(struct i2c_client *client, const struct i2c_device_id *id)
 	if (ret)
 		goto unregister_subdev;
 
+	vc_adjust_tegracam(tc_dev);
+	
 	return 0;
 
 unregister_subdev:
@@ -598,12 +580,6 @@ unregister_subdev:
 // 	tegracam_device_unregister(tc_dev);
 // free_vc_core:
 // 	vc_core_free(cam);
-// 	devm_kfree(dev, (void *)vc_sensor_ops.frmfmt_table[0].framerates);
-// 	devm_kfree(dev, (void *)vc_sensor_ops.frmfmt_table);
-free_tc_dev:
-	devm_kfree(dev, tc_dev);
-free_cam:
-	devm_kfree(dev, cam);
 	return 0;
 }
 
@@ -617,10 +593,6 @@ static int vc_remove(struct i2c_client *client)
 	tegracam_v4l2subdev_unregister(tc_dev);
 	tegracam_device_unregister(tc_dev);
 	// vc_core_free(cam);
-	// devm_kfree(dev, (void *)vc_sensor_ops.frmfmt_table[0].framerates);
-	// devm_kfree(dev, (void *)vc_sensor_ops.frmfmt_table);
-	// devm_kfree(dev, tc_dev);
-	// devm_kfree(dev, cam);
 	return 0;
 }
 

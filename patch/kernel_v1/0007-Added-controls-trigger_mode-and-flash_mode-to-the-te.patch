@@ -1,23 +1,20 @@
-From 5ab7640b2c823685556973169627b8995f3cba1e Mon Sep 17 00:00:00 2001
+From cf4eff9ed09b53f62b4856e92642d7cc492dfe30 Mon Sep 17 00:00:00 2001
 From: Peter Martienssen <peter.martienssen@liquify-consulting.de>
-Date: Fri, 13 Aug 2021 18:58:14 +0200
-Subject: [PATCH 7/9] Added a control 'trigger_mode' to activate one of 7
- different trigger modes of the VC MIPI Cameras. Additionaly added two
- controls 'image_height' and 'vmax' for faster testing while driver is in
- development.
+Date: Wed, 8 Sep 2021 14:56:40 +0200
+Subject: [PATCH 7/9] Added controls 'trigger_mode' and 'flash_mode' to the
+ tegra framework.
 
-Signed-off-by: Peter Martienssen <peter.martienssen@liquify-consulting.de>
 ---
- .../platform/tegra/camera/tegracam_ctrls.c    | 86 +++++++++++++++++++
- kernel/nvidia/include/media/camera_common.h   |  3 +
- .../nvidia/include/media/tegra-v4l2-camera.h  |  3 +
- 3 files changed, 92 insertions(+)
+ .../platform/tegra/camera/tegracam_ctrls.c    | 56 +++++++++++++++++++
+ kernel/nvidia/include/media/camera_common.h   |  2 +
+ .../nvidia/include/media/tegra-v4l2-camera.h  |  2 +
+ 3 files changed, 60 insertions(+)
 
 diff --git a/kernel/nvidia/drivers/media/platform/tegra/camera/tegracam_ctrls.c b/kernel/nvidia/drivers/media/platform/tegra/camera/tegracam_ctrls.c
-index 4bca039d4..99468af34 100644
+index 4bca039d4..36eabc185 100644
 --- a/kernel/nvidia/drivers/media/platform/tegra/camera/tegracam_ctrls.c
 +++ b/kernel/nvidia/drivers/media/platform/tegra/camera/tegracam_ctrls.c
-@@ -174,6 +174,36 @@ static struct v4l2_ctrl_config ctrl_cfg_list[] = {
+@@ -174,6 +174,26 @@ static struct v4l2_ctrl_config ctrl_cfg_list[] = {
  		.max = STEREO_EEPROM_SIZE,
  		.step = 2,
  	},
@@ -33,44 +30,31 @@ index 4bca039d4..99468af34 100644
 +	},
 +	{
 +		.ops = &tegracam_ctrl_ops,
-+		.id = TEGRA_CAMERA_CID_IMAGE_HEIGHT,
-+		.name = "Image Height",
++		.id = TEGRA_CAMERA_CID_FLASH_MODE,
++		.name = "Flash Mode",
 +		.type = V4L2_CTRL_TYPE_INTEGER64,
 +		.flags = V4L2_CTRL_FLAG_SLIDER,
 +		.min = 0,
-+		.max = 10000,
-+		.step = 1,
-+	},
-+	{
-+		.ops = &tegracam_ctrl_ops,
-+		.id = TEGRA_CAMERA_CID_VMAX,
-+		.name = "Vmax",
-+		.type = V4L2_CTRL_TYPE_INTEGER64,
-+		.flags = V4L2_CTRL_FLAG_SLIDER,
-+		.min = 0,
-+		.max = 10000,
++		.max = 1,
 +		.step = 1,
 +	},
  };
  
  static int tegracam_get_ctrl_index(u32 cid)
-@@ -307,6 +337,15 @@ static int tegracam_set_ctrls(struct tegracam_ctrl_handler *handler,
+@@ -307,6 +327,12 @@ static int tegracam_set_ctrls(struct tegracam_ctrl_handler *handler,
  
  	/* For controls that require sensor to be on */
  	switch (ctrl->id) {
 +	case TEGRA_CAMERA_CID_TRIGGER_MODE:
 +		err = ops->set_trigger_mode(tc_dev, *ctrl->p_new.p_s64);
 +		break;
-+	case TEGRA_CAMERA_CID_IMAGE_HEIGHT:
-+		err = ops->set_image_height(tc_dev, *ctrl->p_new.p_s64);
-+		break;
-+	case TEGRA_CAMERA_CID_VMAX:
-+		err = ops->set_vmax(tc_dev, *ctrl->p_new.p_s64);
++	case TEGRA_CAMERA_CID_FLASH_MODE:
++		err = ops->set_flash_mode(tc_dev, *ctrl->p_new.p_s64);
 +		break;
  	case TEGRA_CAMERA_CID_GAIN:
  		err = ops->set_gain(tc_dev, *ctrl->p_new.p_s64);
  		break;
-@@ -696,6 +735,28 @@ static int tegracam_check_ctrl_ops(
+@@ -696,6 +722,20 @@ static int tegracam_check_ctrl_ops(
  			else
  				string_ops++;
  			break;
@@ -81,25 +65,17 @@ index 4bca039d4..99468af34 100644
 +			if (ops->set_trigger_mode != NULL)
 +				sensor_ops++;
 +			break;
-+		case TEGRA_CAMERA_CID_IMAGE_HEIGHT:
-+			if (ops->set_image_height == NULL)
++		case TEGRA_CAMERA_CID_FLASH_MODE:
++			if (ops->set_flash_mode == NULL)
 +				dev_err(dev,
-+					"Missing TEGRA_CAMERA_CID_IMAGE_HEIGHT implementation\n");
-+			if (ops->set_image_height != NULL)
++					"Missing TEGRA_CAMERA_CID_FLASH_MODE implementation\n");
++			if (ops->set_flash_mode != NULL)
 +				sensor_ops++;
 +			break;
-+		case TEGRA_CAMERA_CID_VMAX:
-+			if (ops->set_vmax == NULL)
-+				dev_err(dev,
-+					"Missing TEGRA_CAMERA_CID_VMAX implementation\n");
-+			if (ops->set_vmax != NULL)
-+				sensor_ops++;
-+			break;
-+
  		case TEGRA_CAMERA_CID_FUSE_ID:
  			if (tegracam_get_string_ctrl_size(
  					TEGRA_CAMERA_CID_FUSE_ID, ops) == 0)
-@@ -855,6 +916,31 @@ static int tegracam_check_ctrl_cids(struct tegracam_ctrl_handler *handler)
+@@ -855,6 +895,22 @@ static int tegracam_check_ctrl_cids(struct tegracam_ctrl_handler *handler)
  			errors_found++;
  		}
  	}
@@ -111,51 +87,40 @@ index 4bca039d4..99468af34 100644
 +			errors_found++;
 +		}
 +	}
-+	if (ops->set_image_height != NULL) {
++	if (ops->set_flash_mode != NULL) {
 +		if (!find_matching_cid(ops->ctrl_cid_list,
 +			ops->numctrls,
-+			TEGRA_CAMERA_CID_IMAGE_HEIGHT)) {
-+			dev_err(dev, "Missing TEGRA_CAMERA_CID_IMAGE_HEIGHT registration\n");
++			TEGRA_CAMERA_CID_FLASH_MODE)) {
++			dev_err(dev, "Missing TEGRA_CAMERA_CID_FLASH_MODE registration\n");
 +			errors_found++;
 +		}
 +	}
-+	if (ops->set_vmax != NULL) {
-+		if (!find_matching_cid(ops->ctrl_cid_list,
-+			ops->numctrls,
-+			TEGRA_CAMERA_CID_VMAX)) {
-+			dev_err(dev, "Missing TEGRA_CAMERA_CID_VMAX registration\n");
-+			errors_found++;
-+		}
-+	}
-+
  
  	/* Find missing string control IDs */
  	if (ops->fill_string_ctrl != NULL) {
 diff --git a/kernel/nvidia/include/media/camera_common.h b/kernel/nvidia/include/media/camera_common.h
-index d2d7906c2..857d85952 100644
+index d2d7906c2..6b92aa2ac 100644
 --- a/kernel/nvidia/include/media/camera_common.h
 +++ b/kernel/nvidia/include/media/camera_common.h
-@@ -191,6 +191,9 @@ struct tegracam_ctrl_ops {
+@@ -191,6 +191,8 @@ struct tegracam_ctrl_ops {
  	u32 compound_ctrl_size[TEGRA_CAM_MAX_COMPOUND_CONTROLS];
  	const u32 *ctrl_cid_list;
  	bool is_blob_supported;
 +	int (*set_trigger_mode)(struct tegracam_device *tc_dev, s64 val);
-+	int (*set_image_height)(struct tegracam_device *tc_dev, s64 val);
-+	int (*set_vmax)(struct tegracam_device *tc_dev, s64 val);
++	int (*set_flash_mode)(struct tegracam_device *tc_dev, s64 val);
  	int (*set_gain)(struct tegracam_device *tc_dev, s64 val);
  	int (*set_exposure)(struct tegracam_device *tc_dev, s64 val);
  	int (*set_exposure_short)(struct tegracam_device *tc_dev, s64 val);
 diff --git a/kernel/nvidia/include/media/tegra-v4l2-camera.h b/kernel/nvidia/include/media/tegra-v4l2-camera.h
-index 619218d70..a4cc008ca 100644
+index 619218d70..13958e34b 100644
 --- a/kernel/nvidia/include/media/tegra-v4l2-camera.h
 +++ b/kernel/nvidia/include/media/tegra-v4l2-camera.h
-@@ -38,6 +38,9 @@
+@@ -38,6 +38,8 @@
  #define TEGRA_CAMERA_CID_FRAME_RATE		(TEGRA_CAMERA_CID_BASE+11)
  #define TEGRA_CAMERA_CID_EXPOSURE_SHORT		(TEGRA_CAMERA_CID_BASE+12)
  #define TEGRA_CAMERA_CID_STEREO_EEPROM		(TEGRA_CAMERA_CID_BASE+13)
 +#define TEGRA_CAMERA_CID_TRIGGER_MODE		(TEGRA_CAMERA_CID_BASE+14)
-+#define TEGRA_CAMERA_CID_IMAGE_HEIGHT		(TEGRA_CAMERA_CID_BASE+15)
-+#define TEGRA_CAMERA_CID_VMAX			(TEGRA_CAMERA_CID_BASE+16)
++#define TEGRA_CAMERA_CID_FLASH_MODE		(TEGRA_CAMERA_CID_BASE+15)
  
  #define TEGRA_CAMERA_CID_SENSOR_CONFIG		(TEGRA_CAMERA_CID_BASE+50)
  #define TEGRA_CAMERA_CID_SENSOR_MODE_BLOB	(TEGRA_CAMERA_CID_BASE+51)
