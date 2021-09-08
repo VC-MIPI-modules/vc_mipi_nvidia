@@ -1,17 +1,23 @@
 # Vision Components MIPI CSI-2 driver for NVIDIA Jetson Nano
 ![VC MIPI camera](https://www.vision-components.com/fileadmin/external/documentation/hardware/VC_MIPI_Camera_Module/VC_MIPI_Camera_Module_Hardware_Operating_Manual-Dateien/mipi_sensor_front_back.png)
 
-## Version 0.3.0
+## Version 0.4.0
 * Supported boards
   * NVIDIA Dev Kit B01
   * Auvidea JNX30
 * Supported cameras Jetpack 4.5
-  * VC MIPI IMX183 / VC MIPI IMX183C  
-  * VC MIPI IMX252 / VC MIPI IMX252C  
+  * VC MIPI IMX178
+  * VC MIPI IMX183 / VC MIPI IMX183C
+  * VC MIPI IMX226 / VC MIPI IMX226C
+  * VC MIPI IMX252 / VC MIPI IMX252C
+  * VC MIPI IMX296 / VC MIPI IMX296C
   * VC MIPI IMX327C
+  * VC MIPI OV9281
 * Features
   * Image Streaming in GREY, Y10, Y12, SRGGB8, SRGGB10, SRGGB12 format.
   * Exposure and Gain can be set via V4L2 library.
+  * Trigger modes '1: external', '2: pulsewidth', '3: self', '4: single', '5: sync', '6: stream_edge', '7: stream level' can be set via device tree or V4L2 control 'trigger_mode'
+  * Flash mode can be set via device tree or V4L2 control 'flash_mode'
 * Bugfixes
   * Fixed a problem with different case sensitivity in check_recovery_mode() function in flash.sh script.
 
