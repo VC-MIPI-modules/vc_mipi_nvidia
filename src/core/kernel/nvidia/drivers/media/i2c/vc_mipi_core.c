@@ -73,7 +73,7 @@ static __u8 i2c_read_reg(struct i2c_client *client, const __u16 addr)
 
 	ret = i2c_transfer(client->adapter, msgs, ARRAY_SIZE(msgs));
 	if (ret < 0) {
-		vc_err(&client->dev, "%s(): Reading register %x from %x failed\n", __FUNCTION__, addr, client->addr);
+		vc_err(&client->dev, "%s(): Reading register 0x%04x from 0x%02x failed\n", __FUNCTION__, addr, client->addr);
 		return ret;
 	}
 
@@ -432,7 +432,6 @@ __u32 vc_core_get_num_lanes(struct vc_cam *cam)
 	return state->num_lanes;
 }
 
-
 int vc_core_set_framerate(struct vc_cam *cam, __u32 framerate)
 {
 	struct vc_ctrl *ctrl = &cam->ctrl;
@@ -667,7 +666,7 @@ int vc_core_init(struct vc_cam *cam, struct i2c_client *client)
 	vc_sen_read_image_size(ctrl, &ctrl->framesize);
 	vc_core_state_init(cam);
 
-	vc_notice(&ctrl->client_mod->dev, "VC MIPI Core succesfully initialized.");
+	vc_notice(&ctrl->client_mod->dev, "VC MIPI Core succesfully initialized");
 	return 0;
 }
 
@@ -1016,8 +1015,8 @@ int vc_sen_start_stream(struct vc_cam *cam)
 	ret |= vc_mod_write_flash_mode(client_mod, 
 		vc_mod_is_flash_enabled(cam) ? REG_FLASH_ENABLE : REG_FLASH_DISABLE);
 
-	vc_notice(dev, "%s(): MM: 0x%02x, TM: 0x%02x, VMAX: %5u, SHS: %5u, EXPC: %6u, RETC: %6u\n",
-		__FUNCTION__, state->mode, state->trigger_mode, state->vmax, state->shs, 
+	vc_notice(dev, "%s(): MM: 0x%02x, TM: 0x%02x, FL: 0x%02x, VMAX: %5u, SHS: %5u, EXPC: %6u, RETC: %6u\n",
+		__FUNCTION__, state->mode, state->trigger_mode, state->flags, state->vmax, state->shs, 
 		state->exposure_cnt, state->retrigger_cnt);
 
 	ret |= vc_sen_write_mode(ctrl, ctrl->csr.sen.mode_operating);
