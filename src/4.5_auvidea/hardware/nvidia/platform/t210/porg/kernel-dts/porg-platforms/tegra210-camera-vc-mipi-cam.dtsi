@@ -18,9 +18,13 @@
 #include <dt-bindings/media/camera.h>
 #include <dt-bindings/platform/t210/t210.h>
 
-#define VC_MIPI_LANES   1
+#define VC_MIPI_CAM_AB  1
+#define VC_MIPI_CAM_CD  1
+#define VC_MIPI_CAM_E   0
+#define VC_MIPI_CAM_F   0
 #define VC_MIPI_CAMERAS 2
 
+#define VC_MIPI_LANES   4
 #if VC_MIPI_LANES == 1
     #define BUS_WIDTH 1
     #define NUM_LANES "1" 
@@ -46,6 +50,7 @@
             ports {
                 #address-cells = <1>;
                 #size-cells = <0>;
+#if VC_MIPI_CAM_AB == 1
                 vc_mipi_vi_port0: port@0 {
                     reg = <0>;
                     vc_mipi_vi_in0: endpoint {
@@ -54,13 +59,34 @@
                         remote-endpoint = <&vc_mipi_csi_out0>;
                     };
                 };
-#if VC_MIPI_CAMERAS == 2
+#endif
+#if VC_MIPI_CAM_CD == 1
                 vc_mipi_vi_port1: port@1 {
                     reg = <1>;
                     vc_mipi_vi_in1: endpoint {
                         port-index = <2>;
                         bus-width = <BUS_WIDTH>;
                         remote-endpoint = <&vc_mipi_csi_out1>;
+                    };
+                };
+#endif
+#if VC_MIPI_CAM_E == 1
+                vc_mipi_vi_port2: port@2 {
+                    reg = <2>;
+                    vc_mipi_vi_in2: endpoint {
+                        port-index = <4>;
+                        bus-width = <BUS_WIDTH>;
+                        remote-endpoint = <&vc_mipi_csi_out2>;
+                    };
+                };
+#endif
+#if VC_MIPI_CAM_F == 1
+                vc_mipi_vi_port3: port@3 {
+                    reg = <3>;
+                    vc_mipi_vi_in3: endpoint {
+                        port-index = <6>;
+                        bus-width = <BUS_WIDTH>;
+                        remote-endpoint = <&vc_mipi_csi_out3>;
                     };
                 };
 #endif
@@ -71,6 +97,7 @@
             num-channels = <VC_MIPI_CAMERAS>;
             #address-cells = <1>;
             #size-cells = <0>;
+#if VC_MIPI_CAM_AB == 1
             vc_mipi_csi_chan0: channel@0 {
                 reg = <0>;
                 ports {
@@ -92,7 +119,8 @@
                     };
                 };
             };
-#if VC_MIPI_CAMERAS == 2
+#endif
+#if VC_MIPI_CAM_CD == 1
             vc_mipi_csi_chan1: channel@1 {
                 reg = <1>;
                 ports {
@@ -115,8 +143,55 @@
                 };
             };
 #endif
+#if VC_MIPI_CAM_E == 1
+            vc_mipi_csi_chan2: channel@2 {
+                reg = <2>;
+                ports {
+                    #address-cells = <1>;
+                    #size-cells = <0>;
+                    vc_mipi_csi_chan2_port0: port@4 {
+                        reg = <0>;
+                        vc_mipi_csi_in2: endpoint@4 {
+                            port-index = <4>;
+                            bus-width = <BUS_WIDTH>;
+                            remote-endpoint = <&vc_mipi_out2>;
+                        };
+                    };
+                    vc_mipi_csi_chan2_port1: port@5 {
+                        reg = <1>;
+                        vc_mipi_csi_out2: endpoint@5 {
+                            remote-endpoint = <&vc_mipi_vi_in2>;
+                        };
+                    };
+                };
+            };
+ #endif
+ #if VC_MIPI_CAM_F == 1
+            vc_mipi_csi_chan3: channel@3 {
+                reg = <3>;
+                ports {
+                    #address-cells = <1>;
+                    #size-cells = <0>;
+                    vc_mipi_csi_chan3_port0: port@6 {
+                        reg = <0>;
+                        vc_mipi_csi_in3: endpoint@6 {
+                            port-index = <6>;
+                            bus-width = <BUS_WIDTH>;
+                            remote-endpoint = <&vc_mipi_out3>;
+                        };
+                    };
+                    vc_mipi_csi_chan3_port1: port@7 {
+                        reg = <1>;
+                        vc_mipi_csi_out3: endpoint@7 {
+                            remote-endpoint = <&vc_mipi_vi_in3>;
+                        };
+                    };
+                };
+            };
+#endif
         };
 
+#if VC_MIPI_CAM_AB == 1
         vc_mipi_i2c_0: i2c@546c0000 {
             vc_mipi_cam0: vc_mipi@1a {           
                 compatible              = "vc,vc_mipi";                   
@@ -199,8 +274,8 @@
                 };
             };
         };
-
-#if VC_MIPI_CAMERAS == 2
+#endif
+#if VC_MIPI_CAM_CD == 1
         vc_mipi_i2c_1: i2c@7000c000 {
             vc_mipi_cam1: vc_mipi@1a {
                 compatible              = "vc,vc_mipi";              
@@ -274,6 +349,153 @@
         };
 #endif
     };
+      
+#if VC_MIPI_CAM_E == 1
+    vc_mipi_i2c_2: i2c@7000c400 {
+        vc_mipi_cam2: vc_mipi@1a {
+            compatible              = "vc,vc_mipi";              
+            reg                     = <0x1a>;
+            devnode                 = "video2";
+            use_sensor_mode_id      = "false";
+            num_lanes               = NUM_LANES;
+            trigger-mode            = "0";
+            flash-mode              = "0";
+
+            // This node is needed by the Tegra framework. 
+            // All properties are set by the driver on runtime.
+            mode0 { 
+                num_lanes                = NUM_LANES;
+                tegra_sinterface         = "serial_e";
+                phy_mode                 = "DPHY";
+
+                discontinuous_clk        = "no";
+                mclk_khz                 = "24000";
+                pix_clk_hz               = "800000000";
+                cil_settletime           = "0";
+
+                // mclk_multiplier          = "9.33";
+                // dpcm_enable              = "false";
+
+                inherent_gain            = "1";
+                min_hdr_ratio            = "1";
+                max_hdr_ratio            = "1";
+                readout_orientation      = "0";
+
+                active_w                 = "0";
+                active_h                 = "0";
+                line_length              = "0";
+                pixel_t                  = "bayer_rggb10";
+
+                gain_factor              = "1";
+                min_gain_val             = "0"; 
+                max_gain_val             = "1"; 
+                step_gain_val            = "1"; 
+                default_gain             = "0"; 
+
+                exposure_factor          = "1"; 
+                min_exp_time             = "0";
+                max_exp_time             = "1";
+                step_exp_time            = "1";
+                default_exp_time         = "0";
+
+                framerate_factor         = "1";
+                min_framerate            = "0";
+                max_framerate            = "1";
+                step_framerate           = "1";
+                default_framerate        = "0";
+
+                embedded_metadata_height = "0";    
+            };
+
+            ports {
+                #address-cells = <1>;
+                #size-cells = <0>;
+
+                port@0 {
+                    reg = <0>;
+                    vc_mipi_out2: endpoint {
+                        port-index = <4>;
+                        bus-width = <BUS_WIDTH>;
+                        remote-endpoint = <&vc_mipi_csi_in2>;
+                    };
+                };
+            };
+        };
+    };
+#endif
+#if VC_MIPI_CAM_F == 1
+    vc_mipi_i2c_3: i2c@7000c500 {
+        vc_mipi_cam3: vc_mipi@1a {
+            compatible              = "vc,vc_mipi";              
+            reg                     = <0x1a>;
+            devnode                 = "video3";
+            use_sensor_mode_id      = "false";
+            num_lanes               = NUM_LANES;
+            trigger-mode            = "0";
+            flash-mode              = "0";
+
+            // This node is needed by the Tegra framework. 
+            // All properties are set by the driver on runtime.
+            mode0 { 
+                num_lanes                = NUM_LANES;
+                tegra_sinterface         = "serial_f";
+                phy_mode                 = "DPHY";
+
+                discontinuous_clk        = "no";
+                mclk_khz                 = "24000";
+                pix_clk_hz               = "800000000";
+                cil_settletime           = "0";
+
+                // mclk_multiplier          = "9.33";
+                // dpcm_enable              = "false";
+
+                inherent_gain            = "1";
+                min_hdr_ratio            = "1";
+                max_hdr_ratio            = "1";
+                readout_orientation      = "0";
+
+                active_w                 = "0";
+                active_h                 = "0";
+                line_length              = "0";
+                pixel_t                  = "bayer_rggb10";
+
+                gain_factor              = "1";
+                min_gain_val             = "0"; 
+                max_gain_val             = "1"; 
+                step_gain_val            = "1"; 
+                default_gain             = "0"; 
+
+                exposure_factor          = "1"; 
+                min_exp_time             = "0";
+                max_exp_time             = "1";
+                step_exp_time            = "1";
+                default_exp_time         = "0";
+
+                framerate_factor         = "1";
+                min_framerate            = "0";
+                max_framerate            = "1";
+                step_framerate           = "1";
+                default_framerate        = "0";
+
+                embedded_metadata_height = "0";    
+            };
+
+            ports {
+                #address-cells = <1>;
+                #size-cells = <0>;
+
+                port@0 {
+                    reg = <0>;
+                    vc_mipi_out3: endpoint {
+                        port-index = <6>;
+                        bus-width = <BUS_WIDTH>;
+                        remote-endpoint = <&vc_mipi_csi_in3>;
+                    };
+                };
+            };
+        };
+    };
+#endif
 
     lens_vc_mipi@RBPCV2 {
         min_focus_distance  = "0.0";
@@ -309,9 +531,10 @@
          * in the module's specsheet from the vendor.
          */
         modules {
+#if VC_MIPI_CAM_AB == 1
             vc_mipi_cam_module0: module0 {
-                badge = "porg_front_RBPCV2";
-                position = "front";
+                badge = "porg_topleft_RBPCV2";
+                position = "topleft";
                 orientation = "1";
                 vc_mipi_cam_module0_drivernode0: drivernode0 {
                     pcl_id = "v4l2_sensor";
@@ -323,10 +546,11 @@
                     proc-device-tree = "/proc/device-tree/lens_vc_mipi@RBPCV2/";
                 };
             };
-#if VC_MIPI_CAMERAS == 2
+#endif
+#if VC_MIPI_CAM_CD == 1
             vc_mipi_cam_module1: module1 {
-                badge = "porg_rear_RBPCV2";
-                position = "rear";
+                badge = "porg_topright_RBPCV2";
+                position = "topright";
                 orientation = "1";
                 vc_mipi_cam_module1_drivernode0: drivernode0 {
                     pcl_id = "v4l2_sensor";
@@ -339,25 +563,56 @@
                 };
             };
 #endif
+#if VC_MIPI_CAM_E == 1
+            vc_mipi_cam_module2: module2 {
+                badge = "porg_bottomleft_RBPCV2";
+                position = "bottomleft";
+                orientation = "1";
+                vc_mipi_cam_module2_drivernode0: drivernode0 {
+                    status = "okay";
+                    pcl_id = "v4l2_sensor";
+                    devname = "vc_mipi 1-001a";
+                    proc-device-tree = "/proc/device-tree/i2c@7000c400/vc_mipi@1a";
+                };
+                vc_mipi_cam_module2_drivernode1: drivernode1 {
+                    status = "okay";
+                    pcl_id = "v4l2_lens";
+                    proc-device-tree = "/proc/device-tree/lens_vc_mipi@RBPCV2/";
+                };
+            };
+#endif
+#if VC_MIPI_CAM_F == 1
+            vc_mipi_cam_module3: module3 {
+                badge = "porg_bottomright_RBPCV2";
+                position = "bottomright";
+                orientation = "1";
+                vc_mipi_cam_module3_drivernode0: drivernode0 {
+                    status = "okay";
+                    pcl_id = "v4l2_sensor";
+                    devname = "vc_mipi 2-001a";
+                    proc-device-tree = "/proc/device-tree/i2c@7000c500/vc_mipi@1a";
+                };
+                vc_mipi_cam_module3_drivernode1: drivernode1 {
+                    status = "okay";
+                    pcl_id = "v4l2_lens";
+                    proc-device-tree = "/proc/device-tree/lens_vc_mipi@RBPCV2/";
+                };
+            };
+#endif
         };
     };
 };
 
 #define CAM1_PWDN       TEGRA_GPIO(S, 7)
 #define CAM2_PWDN       TEGRA_GPIO(T, 0)
-#define CAM_TRIGGER     TEGRA_GPIO(V, 0)
+#define CAM3_PWDN		TEGRA_GPIO(S, 5)
+#define CAM4_PWDN		TEGRA_GPIO(T, 1)
+#define CAM_TRIGGER		TEGRA_GPIO(V, 0)
 
 / {
     host1x {
+#if VC_MIPI_CAM_AB == 1
         i2c@546c0000 {
-            status = "okay";
-                vc_mipi@1a {
-                status = "okay";
-                reset-gpios = <&gpio CAM2_PWDN GPIO_ACTIVE_HIGH>;
-            };
-        };
-#if VC_MIPI_CAMERAS == 2
-        i2c@7000c000 {
             status = "okay";
                 vc_mipi@1a {
                 status = "okay";
@@ -365,8 +620,36 @@
             };
         };
 #endif
+#if VC_MIPI_CAM_CD == 1
+        i2c@7000c000 {
+            status = "okay";
+                vc_mipi@1a {
+                status = "okay";
+                reset-gpios = <&gpio CAM2_PWDN GPIO_ACTIVE_HIGH>;
+            };
+        };
+#endif
     };
- 
+
+#if VC_MIPI_CAM_E == 1
+    i2c@7000c400 {
+        status = "okay";
+        vc_mipi@1a {
+            status = "okay";
+            reset-gpios = <&gpio CAM3_PWDN GPIO_ACTIVE_HIGH>;
+        };
+    };
+#endif
+#if VC_MIPI_CAM_F == 1
+    i2c@7000c500 {
+        status = "okay";
+        vc_mipi@1a {
+            status = "okay";
+            reset-gpios = <&gpio CAM4_PWDN GPIO_ACTIVE_HIGH>;
+        };
+    };
+#endif
+
     gpio@6000d000 {
         camera-trigger-high {
             status = "okay";
