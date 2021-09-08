@@ -870,17 +870,17 @@ int vc_mod_set_flash_mode(struct vc_cam *cam, int mode)
 	struct i2c_client *client_mod = ctrl->client_mod;
 	struct device *dev = &client_mod->dev;
 
-	vc_info(dev, "%s(): Set flash mode: %s\n", __FUNCTION__, mode ? "ENABLED" : "DISABLED");
+	if (ctrl->flags & FLAG_FLASH_ENABLED) {
+		vc_info(dev, "%s(): Set flash mode: %s\n", __FUNCTION__, mode ? "ENABLED" : "DISABLED");
 
-	// TODO: Check if flash mode is suppored by the module.
-	switch (mode) {
-	case 0:	state->flags &= ~FLAG_FLASH_ENABLED; break;
-	case 1: state->flags |= FLAG_FLASH_ENABLED; break;
-	default: 
-		return -EINVAL;
-	}
+		switch (mode) {
+		case 0:	state->flags &= ~FLAG_FLASH_ENABLED; return 0;
+		case 1: state->flags |= FLAG_FLASH_ENABLED; return 0;
+		}
+	} 
 
-	return 0;
+	vc_err(dev, "%s(): Flash mode %u not supported!\n", __FUNCTION__, mode);
+	return -EINVAL;
 }
 
 
