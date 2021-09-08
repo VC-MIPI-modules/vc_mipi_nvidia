@@ -181,7 +181,6 @@ __u32 vc_core_get_framerate(struct vc_cam *cam);
 
 // --- Function to initialze the vc core --------------------------------------
 int vc_core_init(struct vc_cam *cam, struct i2c_client *client);
-void vc_core_free(struct vc_cam *cam);
 
 // --- Functions for the VC MIPI Controller Module ----------------------------
 int vc_mod_set_power(struct vc_cam *cam, int on);

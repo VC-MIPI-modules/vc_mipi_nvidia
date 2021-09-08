@@ -670,11 +670,6 @@ int vc_core_init(struct vc_cam *cam, struct i2c_client *client)
 	return 0;
 }
 
-void vc_core_free(struct vc_cam *cam)
-{
-	// TODO: Free all allocated memory!
-}
-
 static int vc_mod_write_exposure(struct i2c_client *client, __u32 value)
 {
 	struct device *dev = &client->dev;
