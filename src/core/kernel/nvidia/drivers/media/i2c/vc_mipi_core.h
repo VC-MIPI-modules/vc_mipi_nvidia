@@ -167,6 +167,8 @@ int vc_read_i2c_reg(struct i2c_client *client, const __u16 addr);
 int vc_write_i2c_reg(struct i2c_client *client, const __u16 addr, const __u8 value);
 
 // --- Helper functions for internal data structures --------------------------
+struct device *vc_core_get_sen_device(struct vc_cam *cam);
+struct device *vc_core_get_mod_device(struct vc_cam *cam);
 int vc_core_try_format(struct vc_cam *cam, __u32 code);
 int vc_core_set_format(struct vc_cam *cam, __u32 code);
 __u32 vc_core_get_format(struct vc_cam *cam);
