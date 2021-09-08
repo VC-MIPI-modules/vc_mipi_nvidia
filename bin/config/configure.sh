@@ -70,7 +70,7 @@ export ARCH=arm64
 
 CREATE_IMAGE_PARAM="-s 8G -b jetson-nano -r 300"
 
-TARGET_IP=192.168.2.20
+TARGET_IP=nano
 TARGET_USER=peter
 TARGET_SHELL="ssh $TARGET_USER@$TARGET_IP"
 
