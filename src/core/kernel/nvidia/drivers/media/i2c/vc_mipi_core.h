@@ -187,6 +187,7 @@ int vc_mod_set_power(struct vc_cam *cam, int on);
 int vc_mod_set_mode(struct vc_cam *cam);
 int vc_mod_is_trigger_enabled(struct vc_cam *cam);
 int vc_mod_set_trigger_mode(struct vc_cam *cam, int mode);
+int vc_mod_get_trigger_mode(struct vc_cam *cam);
 int vc_mod_is_flash_enabled(struct vc_cam *cam);
 int vc_mod_set_flash_mode(struct vc_cam *cam, int mode);
 

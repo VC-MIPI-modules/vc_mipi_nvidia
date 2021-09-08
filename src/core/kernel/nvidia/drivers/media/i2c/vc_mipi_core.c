@@ -843,6 +843,21 @@ int vc_mod_set_trigger_mode(struct vc_cam *cam, int mode)
 	return 0;
 }
 
+int vc_mod_get_trigger_mode(struct vc_cam *cam)
+{
+	switch (cam->state.trigger_mode)  {
+	case REG_TRIGGER_DISABLE: 	return 0;
+	case REG_TRIGGER_EXTERNAL: 	return 1;
+	case REG_TRIGGER_PULSEWIDTH: 	return 2;
+	case REG_TRIGGER_SELF:		return 3;
+	case REG_TRIGGER_SINGLE:	return 4;
+	case REG_TRIGGER_SYNC:		return 5;
+	case REG_TRIGGER_STREAM_EDGE:	return 6;
+	case REG_TRIGGER_STREAM_LEVEL:	return 7;
+	}
+	return 0;
+}
+
 int vc_mod_is_flash_enabled(struct vc_cam *cam)
 {
 	return cam->state.flags & FLAG_FLASH_ENABLED;
