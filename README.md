@@ -18,8 +18,6 @@
   * Exposure and Gain can be set via V4L2 library.
   * Trigger modes '1: external', '2: pulsewidth', '3: self', '4: single', '5: sync', '6: stream_edge', '7: stream level' can be set via device tree or V4L2 control 'trigger_mode'
   * Flash mode can be set via device tree or V4L2 control 'flash_mode'
-* Bugfixes
-  * Fixed a problem with different case sensitivity in check_recovery_mode() function in flash.sh script.
 
 ## Prerequisites for cross-compiling
 ### Host PC
