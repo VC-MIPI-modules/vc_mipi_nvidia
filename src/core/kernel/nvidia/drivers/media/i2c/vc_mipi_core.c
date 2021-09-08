@@ -761,6 +761,7 @@ int vc_mod_set_mode(struct vc_cam *cam)
 
 	switch (cam->state.trigger_mode) {
 	case REG_TRIGGER_DISABLE:
+	case REG_TRIGGER_SYNC:
 	case REG_TRIGGER_STREAM_EDGE:
 	case REG_TRIGGER_STREAM_LEVEL:
 	default:
@@ -770,7 +771,6 @@ int vc_mod_set_mode(struct vc_cam *cam)
 	case REG_TRIGGER_PULSEWIDTH:
 	case REG_TRIGGER_SELF:
 	case REG_TRIGGER_SINGLE:
-	case REG_TRIGGER_SYNC:
 		type = 0x02;
 		break;
 	}
@@ -821,7 +821,7 @@ int vc_mod_set_trigger_mode(struct vc_cam *cam, int mode)
 		mode_desc = "SINGLE";
 		state->trigger_mode = REG_TRIGGER_SINGLE;
 		
-	} else if (mode == 5 &&  ctrl->flags & FLAG_TRIGGER_SYNC) {
+	} else if (mode == 5 && ctrl->flags & FLAG_TRIGGER_SYNC) {
 		mode_desc = "SYNC";
 		state->trigger_mode = REG_TRIGGER_SYNC;
 		
@@ -1148,13 +1148,14 @@ int vc_sen_set_exposure(struct vc_cam *cam, int exposure)
 	state->exposure_cnt = 0;
 	state->retrigger_cnt = 0;
 
+	// TODO: read shs and vmax when using vc_mod_write_exposure.
+
 	switch (state->trigger_mode) {
 	case REG_TRIGGER_EXTERNAL:
 	case REG_TRIGGER_SINGLE:
-	case REG_TRIGGER_SYNC:
 		state->exposure_cnt = ((__u64)exposure * cam->ctrl.sen_clk) / 1000000;
 		ret  = vc_mod_write_exposure(client_mod, state->exposure_cnt);
-		// ret |= vc_mod_write_retrigger(client_mod, 0);
+		ret |= vc_mod_write_retrigger(client_mod, 0);
 		break;
 	case REG_TRIGGER_PULSEWIDTH:
 		ret  = vc_mod_write_exposure(client_mod, 0);
@@ -1173,6 +1174,7 @@ int vc_sen_set_exposure(struct vc_cam *cam, int exposure)
 		ret  = vc_mod_write_retrigger(client_mod, state->retrigger_cnt);
 		break;
 	case REG_TRIGGER_DISABLE:
+	case REG_TRIGGER_SYNC:
 	case REG_TRIGGER_STREAM_EDGE:
 	case REG_TRIGGER_STREAM_LEVEL:
 		vc_calculate_shs_vmax_V1(cam, exposure);
