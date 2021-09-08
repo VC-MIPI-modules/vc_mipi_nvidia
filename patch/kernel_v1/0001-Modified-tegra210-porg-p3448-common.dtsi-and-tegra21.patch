@@ -1,0 +1,66 @@
+From 6603314136a181dcfed1ab12a0c680bd105ccc40 Mon Sep 17 00:00:00 2001
+From: Peter Martienssen <peter.martienssen@liquify-consulting.de>
+Date: Fri, 13 Aug 2021 15:10:58 +0200
+Subject: [PATCH 1/9] Modified tegra210-porg-p3448-common.dtsi and
+ tegra210-porg-plugin-manager.dtsi to intergrate VC MIPI Driver and deaktivate
+ IMX219 driver.
+
+Signed-off-by: Peter Martienssen <peter.martienssen@liquify-consulting.de>
+---
+ .../tegra210-porg-plugin-manager.dtsi                |  2 ++
+ .../porg/kernel-dts/tegra210-porg-p3448-common.dtsi  | 12 ++++++++++--
+ 2 files changed, 12 insertions(+), 2 deletions(-)
+
+diff --git a/hardware/nvidia/platform/t210/porg/kernel-dts/porg-plugin-manager/tegra210-porg-plugin-manager.dtsi b/hardware/nvidia/platform/t210/porg/kernel-dts/porg-plugin-manager/tegra210-porg-plugin-manager.dtsi
+index 93ec6e387..b43647c03 100644
+--- a/hardware/nvidia/platform/t210/porg/kernel-dts/porg-plugin-manager/tegra210-porg-plugin-manager.dtsi
++++ b/hardware/nvidia/platform/t210/porg/kernel-dts/porg-plugin-manager/tegra210-porg-plugin-manager.dtsi
+@@ -170,6 +170,7 @@
+                         };
+                 };
+ 
++#if NVIDIA_IMX219
+ 		fragement@9 {
+ 			ids = "<3448-0000-300", "<3448-0002-300" , ">=3448-0003-000";
+ 			override@0 {
+@@ -515,6 +516,7 @@
+ 				};
+ 			};
+ 		};
++#endif
+ 
+ 		fragment@12 {
+ 			ids = ">=3448-0003-400";
+diff --git a/hardware/nvidia/platform/t210/porg/kernel-dts/tegra210-porg-p3448-common.dtsi b/hardware/nvidia/platform/t210/porg/kernel-dts/tegra210-porg-p3448-common.dtsi
+index 8c68b6f1d..8bfb61d55 100644
+--- a/hardware/nvidia/platform/t210/porg/kernel-dts/tegra210-porg-p3448-common.dtsi
++++ b/hardware/nvidia/platform/t210/porg/kernel-dts/tegra210-porg-p3448-common.dtsi
+@@ -20,6 +20,8 @@
+ /dts-v1/;
+ /memreserve/ 0x80000000 0x00020000;
+ 
++#define VC_MIPI 1
++
+ #include <t210-common-platforms/tegra210-common.dtsi>
+ #include <tegra210-soc/tegra210-sdhci.dtsi>
+ #include <t210-common-platforms/tegra210-thermal-nct72-p2530.dtsi>
+@@ -28,8 +30,14 @@
+ #include "porg-platforms/tegra210-pinmux-drive-sdmmc-common.dtsi"
+ #include "porg-platforms/tegra210-porg-pwm-fan.dtsi"
+ #include "porg-platforms/tegra210-porg-camera.dtsi"
+-#include "porg-platforms/tegra210-porg-camera-rbpcv2-imx219.dtsi"
+-#include "porg-platforms/tegra210-porg-camera-rbpcv2-dual-imx219.dtsi"
++
++#if VC_MIPI
++	#include "porg-platforms/tegra210-camera-vc-mipi-cam.dtsi"
++#else
++	#include "porg-platforms/tegra210-porg-camera-rbpcv2-imx219.dtsi"
++	#include "porg-platforms/tegra210-porg-camera-rbpcv2-dual-imx219.dtsi"
++#endif
++
+ #include <t210-common-platforms/tegra210-ers-hdmi-e2190-1100-a00.dtsi>
+ #include <t210-common-platforms/tegra210-dp.dtsi>
+ #include <t210-common-platforms/tegra210-thermal-userspace-alert.dtsi>
+-- 
+2.25.1
+

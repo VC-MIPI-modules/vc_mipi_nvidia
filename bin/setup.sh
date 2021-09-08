@@ -55,10 +55,13 @@ setup_kernel() {
     git add hardware
     git add kernel
     git commit -m "Initial commit"
-    for patch in $PATCH_DIR/*.patch; do
-        git am -s -3 --whitespace=fix < ${patch}
+    for patch in ${PATCHES[@]}; do
+        for patchfile in $PATCH_DIR/${patch}/*.patch; do
+            git am -s -3 --whitespace=fix < ${patchfile}
+        done
     done
     git config gc.auto 1
+    cp -R $WORKING_DIR/src/core/* $KERNEL_SOURCE
     cp -R $SRC_DIR/* $KERNEL_SOURCE
 }
 
