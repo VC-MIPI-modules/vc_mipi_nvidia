@@ -11,6 +11,7 @@ print_jetpack_version_definition() {
     echo "  43  : Jetpack 4.3   for NVIDIA Dev Kit B01"
     echo "  43a : Jetpack 4.3   for Auvidea JNX30"
     echo "  441 : Jetpack 4.4.1 for NVIDIA Dev Kit B01"
+    echo "  45  : Jetpack 4.5   for NVIDIA Dev Kit B01"
     echo "  45a : Jetpack 4.5   for Auvidea JNX30"
     echo "  46a : Jetpack 4.6   for Auvidea JNX30"
 }
@@ -36,6 +37,11 @@ case $VC_MIPI in
     441)
         DRIVER=4.4.1
         . $BIN_DIR/config/l4t/32.4.4.sh 
+        ;;
+    45)
+        PATCHES=('kernel_v1')
+        DRIVER=4.5
+        . $BIN_DIR/config/l4t/32.5.1.sh 
         ;;
     45a)
         PATCHES=('auvidea_JNX30_v2' 'kernel_v1')
