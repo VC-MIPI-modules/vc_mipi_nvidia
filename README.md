@@ -1,7 +1,7 @@
 # Vision Components MIPI CSI-2 driver for NVIDIA Jetson Nano
 ![VC MIPI camera](https://www.vision-components.com/fileadmin/external/documentation/hardware/VC_MIPI_Camera_Module/VC_MIPI_Camera_Module_Hardware_Operating_Manual-Dateien/mipi_sensor_front_back.png)
 
-## Version 0.4.0
+## Version 0.4.1
 * Supported boards
   * NVIDIA Dev Kit B01
   * Auvidea JNX30
