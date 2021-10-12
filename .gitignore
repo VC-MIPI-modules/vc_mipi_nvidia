@@ -1,10 +1,5 @@
 ._*
 .DS_Store
-.vscode/
-.vscode-ctags
+.vscode-ctags*
 build/
 temp/
-jp*/
-site/
-*_test_*
-test_results/
