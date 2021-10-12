@@ -87,7 +87,7 @@ case $TEST in
           xvimagesink sync=false
         ;;
       esac
-    ;;
+    ;;<
 
   2)
     # *** GST with ARGUS *******************************************************************

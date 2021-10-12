@@ -11,12 +11,11 @@ if [[ -z $1 ]]; then
   chmod +x vcmipidemo
 fi
 
-gnome-terminal -e "tail -f /var/log/syslog" --geometry 200x20+0+0
+# gnome-terminal -e "tail -f /var/log/syslog" --geometry 200x20+0+0
 
-if [[ -z $1 ]]; then
-  . ./config/configure.sh generic
-  test_standard
-fi
+# if [[ -z $1 ]]; then
+#   . ./config/configure.sh generic
+#   test_standard
+# fi
 
 v4l2-ctl --all
-
