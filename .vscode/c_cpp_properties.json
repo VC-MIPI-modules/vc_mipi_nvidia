@@ -1,0 +1,21 @@
+{
+    "configurations": [
+        {
+            "name": "Linux",
+            "includePath": [
+                "${default}",
+                "${workspaceFolder}/build/Linux_for_Tegra/source/public/kernel/kernel-4.9/include/**",
+                "${workspaceFolder}/build/Linux_for_Tegra/source/public/kernel/kernel-4.9/arch/arm64/include/**",
+                "${workspaceFolder}/build/Linux_for_Tegra/source/public/kernel/nvidia/include/**",
+                "${workspaceFolder}/build/Linux_for_Tegra/source/public/build/include/**",
+                "${workspaceFolder}/build/Linux_for_Tegra/source/public/build/arch/arm64/include/generated/**"
+            ],
+            "defines": [],
+            "compilerPath": "${workspaceFolder}/build/toolchain/gcc-linaro-7.3.1-2018.05-x86_64_aarch64-linux-gnu/bin/aarch64-linux-gnu-gcc",
+            "cStandard": "c99",
+            "cppStandard": "c++17",
+            "intelliSenseMode": "linux-gcc-x64"
+        }
+    ],
+    "version": 4
+}
