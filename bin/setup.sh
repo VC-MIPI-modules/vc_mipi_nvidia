@@ -19,7 +19,7 @@ configure() {
 }
 
 reconfigure() {
-    . config/configure.sh new
+    . config/configure.sh driver
 }
 
 install_system_tools() {
