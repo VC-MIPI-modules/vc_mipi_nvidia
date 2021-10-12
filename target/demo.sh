@@ -1,4 +1,3 @@
-
 #!/bin/bash
 
 usage() {
@@ -15,11 +14,15 @@ usage() {
         echo "-s, --shutter             Set the shutter time in µs"
         echo "-t, --trigger             Set the trigger mode (Options: 0-7)"
 	echo "-a, --flash               Set the flash mode (Options: 0-1)"
+	echo "-v, --value               Set value fot testing"
+	echo "-w, --whitebalance        Activate white balance"
 }
 
 format=
 trigger=
 flash=
+value=
+whitebalance=
 device=0
 option2=x
 shutter=10000
@@ -62,6 +65,14 @@ while [ $# != 0 ] ; do
 		trigger="$1"
 		shift
 		;;
+	-v|--value)
+		value="$1"
+		shift
+		;;
+	-w|--whitebalance)
+		whitebalance="-w '128 180 128'"
+		shift
+		;;
 	*)
 		echo "Unknown option ${option}"
 		exit 1
@@ -81,5 +92,9 @@ if [[ -n ${flash} ]]; then
         echo "Set flash mode: ${flash}"
         v4l2-ctl -d /dev/video${device} -c flash_mode=${flash}
 fi
+if [[ -n ${value} ]]; then
+        echo "Set Value: ${value}"
+        v4l2-ctl -d /dev/video${device} -c value=${value}
+fi
 
-./test/vcmipidemo -d${device} -a${option2} -s${shutter} -g${gain} -w '128 180 128'
+./test/vcmipidemo -d${device} -an${option2} -s${shutter} -g${gain} -w '128 180 128'
