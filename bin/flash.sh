@@ -13,32 +13,32 @@ usage() {
 }
 
 configure() {
-    . config/configure.sh
+	. config/configure.sh
 }
 
 check_recovery_mode() {
-    if [[ -z $(lsusb | grep -i "NVIDIA Corp.") ]]; then
-       echo "Recovery Mode not started!"
-       exit 1
-    fi
+    	if [[ -z $(lsusb | grep -i "NVIDIA Corp.") || -n $(lsusb | grep -i "NVIDIA Corp. L4T") ]]; then
+       		echo "Recovery Mode not started!"
+       		exit 1
+    	fi
 }
 
 flash_all() {
-    cd $BUILD_DIR/Linux_for_Tegra/
-    sudo ./flash.sh $TARGET_BOARD mmcblk0p1
+    	cd $BUILD_DIR/Linux_for_Tegra/
+    	sudo ./flash.sh $FLASH_BOARD $FLASH_MEDIUM
 }
 
 flash_kernel() {
-    scp $KERNEL_OUT/arch/arm64/boot/Image $TARGET_USER@$TARGET_IP:/tmp
+    	scp $KERNEL_OUT/arch/arm64/boot/Image $TARGET_USER@$TARGET_IP:/tmp
 }
 
 flash_device_tree() {
-    cd $BUILD_DIR/Linux_for_Tegra/
-    sudo ./flash.sh -r -k DTB $TARGET_BOARD mmcblk0p1
+    	cd $BUILD_DIR/Linux_for_Tegra/
+    	sudo ./flash.sh -r -k $FLASH_DT $FLASH_BOARD $FLASH_MEDIUM
 }
 
 reboot_target() {
-    $TARGET_SHELL sudo /sbin/reboot
+    	$TARGET_SHELL sudo /sbin/reboot
 }
 
 while [ $# != 0 ] ; do
@@ -48,15 +48,15 @@ while [ $# != 0 ] ; do
 	case "${option}" in
 	-a|--all)
 		configure
-        check_recovery_mode
-        flash_all
-        exit 0
+        	check_recovery_mode
+        	flash_all
+        	exit 0
 		;;
-    -d|--dt)
-        configure
-        check_recovery_mode
-        flash_device_tree
-        exit 0
+    	-d|--dt)
+        	configure
+        	check_recovery_mode
+        	flash_device_tree
+        	exit 0
 		;;
 	-h|--help)
 		usage
@@ -65,7 +65,7 @@ while [ $# != 0 ] ; do
 	-k|--kernel)
 		configure
 		flash_kernel
-        exit 0
+        	exit 0
 		;;
 	*)
 		echo "Unknown option ${option}"

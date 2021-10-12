@@ -18,9 +18,9 @@ configure() {
 }
 
 patch_kernel() {
-    echo "Patching driver sources into kernel sources ..."
-    cp -Ruv $WORKING_DIR/src/core/* $KERNEL_SOURCE
-    cp -Ruv $SRC_DIR/* $KERNEL_SOURCE
+    echo "Copying driver sources into kernel sources ..."
+    cp -Ruv $DRIVER_DIR/* $DRIVER_DST_DIR
+    cp -Ruv $DT_CAM_FILE $DT_CAM_FILE_DST_DIR
 }
 
 configure_kernel() {

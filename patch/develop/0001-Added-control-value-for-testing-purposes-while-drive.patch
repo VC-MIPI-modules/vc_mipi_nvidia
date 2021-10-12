@@ -1,0 +1,99 @@
+From fc19d4f0f2ae1146f93d5a05f939257557a1b3fc Mon Sep 17 00:00:00 2001
+From: Peter Martienssen <peter.martienssen@liquify-consulting.de>
+Date: Tue, 28 Sep 2021 18:30:26 +0200
+Subject: [PATCH] Added control 'value' for testing purposes while driver
+ development only.
+
+---
+ .../platform/tegra/camera/tegracam_ctrls.c    | 28 +++++++++++++++++++
+ kernel/nvidia/include/media/camera_common.h   |  1 +
+ .../nvidia/include/media/tegra-v4l2-camera.h  |  1 +
+ 3 files changed, 30 insertions(+)
+
+diff --git a/kernel/nvidia/drivers/media/platform/tegra/camera/tegracam_ctrls.c b/kernel/nvidia/drivers/media/platform/tegra/camera/tegracam_ctrls.c
+index 36eabc185..7b005f6a0 100644
+--- a/kernel/nvidia/drivers/media/platform/tegra/camera/tegracam_ctrls.c
++++ b/kernel/nvidia/drivers/media/platform/tegra/camera/tegracam_ctrls.c
+@@ -194,6 +194,16 @@ static struct v4l2_ctrl_config ctrl_cfg_list[] = {
+ 		.max = 1,
+ 		.step = 1,
+ 	},
++	{
++		.ops = &tegracam_ctrl_ops,
++		.id = TEGRA_CAMERA_CID_VALUE,
++		.name = "Value",
++		.type = V4L2_CTRL_TYPE_INTEGER64,
++		.flags = V4L2_CTRL_FLAG_SLIDER,
++		.min = CTRL_U32_MIN,
++		.max = CTRL_U32_MAX,
++		.step = 1,
++	},
+ };
+ 
+ static int tegracam_get_ctrl_index(u32 cid)
+@@ -333,6 +343,9 @@ static int tegracam_set_ctrls(struct tegracam_ctrl_handler *handler,
+ 	case TEGRA_CAMERA_CID_FLASH_MODE:
+ 		err = ops->set_flash_mode(tc_dev, *ctrl->p_new.p_s64);
+ 		break;
++	case TEGRA_CAMERA_CID_VALUE:
++		err = ops->set_value(tc_dev, *ctrl->p_new.p_s64);
++		break;
+ 	case TEGRA_CAMERA_CID_GAIN:
+ 		err = ops->set_gain(tc_dev, *ctrl->p_new.p_s64);
+ 		break;
+@@ -736,6 +749,13 @@ static int tegracam_check_ctrl_ops(
+ 			if (ops->set_flash_mode != NULL)
+ 				sensor_ops++;
+ 			break;
++		case TEGRA_CAMERA_CID_VALUE:
++			if (ops->set_value == NULL)
++				dev_err(dev,
++					"Missing TEGRA_CAMERA_CID_VALUE implementation\n");
++			if (ops->set_value != NULL)
++				sensor_ops++;
++			break;
+ 		case TEGRA_CAMERA_CID_FUSE_ID:
+ 			if (tegracam_get_string_ctrl_size(
+ 					TEGRA_CAMERA_CID_FUSE_ID, ops) == 0)
+@@ -911,6 +931,14 @@ static int tegracam_check_ctrl_cids(struct tegracam_ctrl_handler *handler)
+ 			errors_found++;
+ 		}
+ 	}
++	if (ops->set_value != NULL) {
++		if (!find_matching_cid(ops->ctrl_cid_list,
++			ops->numctrls,
++			TEGRA_CAMERA_CID_VALUE)) {
++			dev_err(dev, "Missing TEGRA_CAMERA_CID_VALUE registration\n");
++			errors_found++;
++		}
++	}
+ 
+ 	/* Find missing string control IDs */
+ 	if (ops->fill_string_ctrl != NULL) {
+diff --git a/kernel/nvidia/include/media/camera_common.h b/kernel/nvidia/include/media/camera_common.h
+index 6b92aa2ac..fc8f5cba7 100644
+--- a/kernel/nvidia/include/media/camera_common.h
++++ b/kernel/nvidia/include/media/camera_common.h
+@@ -193,6 +193,7 @@ struct tegracam_ctrl_ops {
+ 	bool is_blob_supported;
+ 	int (*set_trigger_mode)(struct tegracam_device *tc_dev, s64 val);
+ 	int (*set_flash_mode)(struct tegracam_device *tc_dev, s64 val);
++	int (*set_value)(struct tegracam_device *tc_dev, s64 val);
+ 	int (*set_gain)(struct tegracam_device *tc_dev, s64 val);
+ 	int (*set_exposure)(struct tegracam_device *tc_dev, s64 val);
+ 	int (*set_exposure_short)(struct tegracam_device *tc_dev, s64 val);
+diff --git a/kernel/nvidia/include/media/tegra-v4l2-camera.h b/kernel/nvidia/include/media/tegra-v4l2-camera.h
+index 13958e34b..9a47f0d8d 100644
+--- a/kernel/nvidia/include/media/tegra-v4l2-camera.h
++++ b/kernel/nvidia/include/media/tegra-v4l2-camera.h
+@@ -40,6 +40,7 @@
+ #define TEGRA_CAMERA_CID_STEREO_EEPROM		(TEGRA_CAMERA_CID_BASE+13)
+ #define TEGRA_CAMERA_CID_TRIGGER_MODE		(TEGRA_CAMERA_CID_BASE+14)
+ #define TEGRA_CAMERA_CID_FLASH_MODE		(TEGRA_CAMERA_CID_BASE+15)
++#define TEGRA_CAMERA_CID_VALUE			(TEGRA_CAMERA_CID_BASE+16)
+ 
+ #define TEGRA_CAMERA_CID_SENSOR_CONFIG		(TEGRA_CAMERA_CID_BASE+50)
+ #define TEGRA_CAMERA_CID_SENSOR_MODE_BLOB	(TEGRA_CAMERA_CID_BASE+51)
+-- 
+2.25.1
+
