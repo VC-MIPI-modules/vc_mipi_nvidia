@@ -34,12 +34,13 @@ print_intro() {
                 echo "  Following steps are processed:"
                 echo "    1. Check if your system is in recovery mode."
                 echo "    2. Configure the driver to your hardware setup."
-                echo "    3. Configure camera specific settings in device tree file."
-                echo "    4. Download and install toolchain, board support package"
-                echo "       and kernel source code."
-                echo "       Patching kernel source code with camera driver sources."
-                echo "       Build kernel, modules and device tree."
-                echo "       Flash everything to your target."
+                echo "    3. Configure camera-specific settings in the device"
+                echo "       tree file."
+                echo "    4. Download and install the toolchain, board support"
+                echo "       package and kernel source code. Patching the kernel"
+                echo "       source code with camera driver sources. Build kernel,"
+                echo "       modules and device tree. Flash everything to your"
+                echo "       target."
                 echo ""
                 echo "------------------------------------------------------------"
                 echo "  press enter to continue or ctrl+c to abort"
@@ -61,7 +62,7 @@ check_recovery_mode() {
                         clear
                         echo "-- Step 1 of 4 ---------------------------------------------"
                         echo ""
-                        echo "  Great your target is in Recovery Mode! You can proceed."
+                        echo "  Great, your target is in recovery mode! You can go on."
                         echo ""
                         echo "------------------------------------------------------------"
                         echo "  press enter to continue or ctrl+c to abort"
@@ -79,10 +80,13 @@ print_setup_nano_note() {
                 clear
                 echo "-- Step 3 of 4 ---------------------------------------------"
                 echo ""
-                echo "  If you proceed nano editor will be installed"
-                echo "  to configure the camera device tree file"
-                echo "    sudo apt install -y nano"
-                echo "  You have to enter you password."
+                echo "  If you proceed the nano editor will be installed"
+                echo "  to configure the camera device tree file:"
+                echo ""
+                echo "    $ sudo apt update"
+                echo "    $ sudo apt install -y nano"
+                echo ""
+                echo "  You have to enter your password."
                 echo ""
                 echo "------------------------------------------------------------"
                 echo "  press enter to continue or ctrl+c to abort"
@@ -91,8 +95,11 @@ print_setup_nano_note() {
 }
 
 setup_nano() {
-        sudo apt update
-        sudo apt install -y nano
+        if [[ -z $(which nano) ]]; then
+                print_setup_nano_note
+                sudo apt update
+                sudo apt install -y nano
+        fi
 }
 
 print_configure_camera_note() {
@@ -100,8 +107,8 @@ print_configure_camera_note() {
                 clear
                 echo "-- Step 3 of 4 ---------------------------------------------"
                 echo ""
-                echo "  Please adjust camera settings in the camera device tree "
-                echo "  file to your specific camera setup."
+                echo "  Please adapt the camera settings in the device tree file"
+                echo "  to your specific camera setup."
                 echo ""
                 echo "    1. Choose which MIPI CSI-2 port to enable"
                 echo "    2. Choose the number of lanes your camera supports"
@@ -118,6 +125,8 @@ print_configure_camera_note() {
 }
 
 configure_camera() {
+        setup_nano
+        print_configure_camera_note
         nano -l +23 $DT_CAM_FILE
 }
 
@@ -163,9 +172,6 @@ DIR=$PWD
 print_intro
 check_recovery_mode
 configure
-print_setup_nano_note
-setup_nano
-print_configure_camera_note
 configure_camera
 print_note_before_start
 
