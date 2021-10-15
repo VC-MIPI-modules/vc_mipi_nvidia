@@ -53,6 +53,7 @@ device=0
 option2=x
 shutter=10000
 gain=10
+optionY=
 
 while [ $# != 0 ] ; do
 	option="$1"
@@ -103,6 +104,10 @@ while [ $# != 0 ] ; do
 		whitebalance="-w '128 180 128'"
 		shift
 		;;
+	-y)
+		optionY="-y$1"
+		shift
+		;;
 	*)
 		echo "Unknown option ${option}"
 		exit 1
@@ -129,4 +134,5 @@ if [[ -n ${value} ]]; then
         v4l2-ctl -d /dev/video${device} -c value=${value}
 fi
 
-./test/vcmipidemo -d${device} -an${option2} -s${shutter} -g${gain} -w '128 180 128'
+	cd ${script_dir}
+	./vcmipidemo -d${device} -an${option2} ${optionY} -s${shutter} -g${gain} -w '128 180 128'
