@@ -1,9 +1,9 @@
 # Version History
 
-## v0.5.1 (Little improvments)
+## v0.6.0 (Support IMX264 and easier testing)
   * New Features
     * Added this version description
-    * Easier installation of demo.sh and its dependencies.
+    * Easier installation of demo.sh and its dependencies
     * Supported VC MIPI Camera Modules
       * IMX264
 
@@ -20,11 +20,11 @@
       * NVIDIA L4T 32.6.1 (only NVIDIA Jetson Nano (production))
     * Supported VC MIPI Camera Modules
       * IMX412
+    * Quickstart script for an easier installation process
   * Removed Features
     * Supported board support packages
       * NVIDIA L4T 32.3.1
       * NVIDIA L4T 32.4.4
-  * Quickstart script for an easier installation process
 
 ## v0.4.1 (L4T 32.5.1 on Nano DevKit)
   * New Features
@@ -54,7 +54,8 @@
 
 ## v0.1.0 (Support Jetson Nano)
   * New Features
-    * NVIDIA Jetson Nano (production)
+    * Supported system on modules
+      * NVIDIA Jetson Nano (production)
     * Supported board support packages
       * NVIDIA L4T 32.3.1
       * NVIDIA L4T 32.4.4

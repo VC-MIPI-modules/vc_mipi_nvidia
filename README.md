@@ -1,7 +1,7 @@
 # Vision Components MIPI CSI-2 driver for NVIDIA Jetson Nano and Xavier NX
 ![VC MIPI camera](https://www.vision-components.com/fileadmin/external/documentation/hardware/VC_MIPI_Camera_Module/VC_MIPI_Camera_Module_Hardware_Operating_Manual-Dateien/mipi_sensor_front_back.png)
 
-## Version 0.5.1 ([History](VERSION.md))
+## Version 0.6.0 ([History](VERSION.md))
 * Supported system on modules
   * [NVIDIA Jetson Nano (production + devkit)](https://developer.nvidia.com/embedded/jetson-nano)
   * [NVIDIA Jetson Xavier NX](https://developer.nvidia.com/embedded/jetson-xavier-nx)
