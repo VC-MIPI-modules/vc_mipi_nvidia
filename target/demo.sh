@@ -10,6 +10,7 @@ usage() {
         echo "-f, --format              Pixelformat (Options: GREY, 'Y10 ', 'Y12 ', RGGB, RG10, RG12)"
         echo "-g, --gain                Set the gain"
         echo "-h, --help                Show this help text"
+	echo "-i, --info                Get system information"
         echo "-o, --option              Set the options"
         echo "-s, --shutter             Set the shutter time in µs"
         echo "-t, --trigger             Set the trigger mode (Options: 0-7)"
@@ -18,6 +19,21 @@ usage() {
 	echo "-w, --whitebalance        Activate white balance"
 }
 
+get_system_info() 
+{
+	if [[ -z $(which git) ]]; then
+		sudo apt update
+		sudo apt install -y git
+	fi
+	cd ${script_dir}
+	if [[ ! -d jetsonUtilities ]]; then
+		git clone https://github.com/jetsonhacks/jetsonUtilities
+	fi
+	cd jetsonUtilities
+	./jetsonInfo.py
+}
+
+script_dir=$(dirname $0)
 format=
 trigger=
 flash=
@@ -51,6 +67,10 @@ while [ $# != 0 ] ; do
 		;;
 	-h|--help)
 		usage
+		exit 0
+		;;
+	-i|--info)
+		get_system_info
 		exit 0
 		;;
         -o|--option)
