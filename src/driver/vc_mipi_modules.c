@@ -52,7 +52,7 @@ static void vc_init_ctrl_imx178(struct vc_ctrl *ctrl, struct vc_desc* desc)
 	vc_notice(dev, "%s(): Initialising module control for IMX178\n", __FUNCTION__);
 
 	ctrl->csr.sen.vmax              = (vc_csr4) { .l = 0x7004, .m = 0x7005, .h = 0x7006, .u = 0x0000 };
-	ctrl->csr.sen.hmax              = (vc_csr4) { .l = 0x7007, .m = 0x7008, .h = 0x0000, .u = 0x0000 };
+	ctrl->csr.sen.hmax              = (vc_csr4) { .l = 0x7002, .m = 0x7003, .h = 0x0000, .u = 0x0000 };
 
 	ctrl->expo_period_1H 		= 327680;	// 20.000 µs * 16384
 	ctrl->expo_toffset 		= 47563;	//  2.903 µs * 16384
@@ -73,7 +73,7 @@ static void vc_init_ctrl_imx183(struct vc_ctrl *ctrl, struct vc_desc* desc)
 	vc_notice(dev, "%s(): Initialising module control for IMX183\n", __FUNCTION__);
 
 	ctrl->csr.sen.vmax              = (vc_csr4) { .l = 0x7004, .m = 0x7005, .h = 0x7006, .u = 0x0000 };
-	ctrl->csr.sen.hmax              = (vc_csr4) { .l = 0x7007, .m = 0x7008, .h = 0x0000, .u = 0x0000 };
+	ctrl->csr.sen.hmax              = (vc_csr4) { .l = 0x7002, .m = 0x7003, .h = 0x0000, .u = 0x0000 };
 
 	ctrl->expo_period_1H 		= 163840;	// 10.000 µs * 16384
 	ctrl->expo_toffset 		= 47563;	//  2.903 µs * 16384
@@ -96,7 +96,7 @@ static void vc_init_ctrl_imx226(struct vc_ctrl *ctrl, struct vc_desc* desc)
 	vc_notice(dev, "%s(): Initialising module control for IMX226\n", __FUNCTION__);
 
 	ctrl->csr.sen.vmax              = (vc_csr4) { .l = 0x7004, .m = 0x7005, .h = 0x7006, .u = 0x0000 };
-	ctrl->csr.sen.hmax              = (vc_csr4) { .l = 0x7007, .m = 0x7008, .h = 0x0000, .u = 0x0000 };
+	ctrl->csr.sen.hmax              = (vc_csr4) { .l = 0x7002, .m = 0x7003, .h = 0x0000, .u = 0x0000 };
 
 	ctrl->expo_period_1H 		= 327680;	// 20.000 µs * 16384
 	ctrl->expo_toffset 		= 47563;	//  2.903 µs * 16384
@@ -107,6 +107,28 @@ static void vc_init_ctrl_imx226(struct vc_ctrl *ctrl, struct vc_desc* desc)
 	ctrl->flags			|= FLAG_TRIGGER_EXTERNAL | FLAG_TRIGGER_SELF |
 				           FLAG_TRIGGER_SINGLE | FLAG_TRIGGER_SYNC | 
 					   FLAG_TRIGGER_STREAM_EDGE | FLAG_TRIGGER_STREAM_LEVEL;
+}
+
+// ------------------------------------------------------------------------------------------------
+//  Settings for IMX264/IMX264C
+
+static void vc_init_ctrl_imx264(struct vc_ctrl *ctrl, struct vc_desc* desc)
+{
+	struct device *dev = &ctrl->client_mod->dev;
+
+	vc_notice(dev, "%s(): Initialising module control for IMX264\n", __FUNCTION__);
+
+	ctrl->csr.sen.vmax              = (vc_csr4) { .l = 0x7004, .m = 0x7005, .h = 0x7006, .u = 0x0000 };
+	ctrl->csr.sen.hmax              = (vc_csr4) { .l = 0x7002, .m = 0x7003, .h = 0x0000, .u = 0x0000 };
+
+	ctrl->expo_period_1H 		= 327680;	// 20.000 µs * 16384
+	ctrl->expo_toffset 		= 47563;	//  2.903 µs * 16384
+	ctrl->expo_shs_min		= 5;
+
+	ctrl->flags			 = FLAG_EXPOSURE_READ_VMAX;
+	ctrl->flags			|= FLAG_IO_FLASH_ENABLED | FLAG_IO_XTRIG_ENABLED;
+	ctrl->flags			|= FLAG_TRIGGER_EXTERNAL | FLAG_TRIGGER_PULSEWIDTH |
+					   FLAG_TRIGGER_SELF | FLAG_TRIGGER_SINGLE;
 }
 
 // ------------------------------------------------------------------------------------------------
@@ -122,7 +144,7 @@ static void vc_init_ctrl_imx252(struct vc_ctrl *ctrl, struct vc_desc* desc)
 	ctrl->gain			= (vc_control) { .min =   0, .max =    100000, .def =      0 };
 
 	ctrl->csr.sen.vmax              = (vc_csr4) { .l = 0x7004, .m = 0x7005, .h = 0x7006, .u = 0x0000 };
-	ctrl->csr.sen.hmax              = (vc_csr4) { .l = 0x7007, .m = 0x7008, .h = 0x0000, .u = 0x0000 };
+	ctrl->csr.sen.hmax              = (vc_csr4) { .l = 0x7002, .m = 0x7003, .h = 0x0000, .u = 0x0000 };
 
 	ctrl->expo_period_1H 		= 327680;	// 20.000 µs * 16384 (Zeit die eine Zeile benötigt)
 	ctrl->expo_toffset 		= 47563;	//  2.903 µs * 16384
@@ -253,22 +275,20 @@ int vc_mod_ctrl_init(struct vc_ctrl* ctrl, struct vc_desc* desc)
 
 	vc_init_ctrl(ctrl, desc);
 
-	// TODO: Running unknown modules with standard settings.
 	switch(desc->mod_id) {
 	case MOD_ID_IMX178: vc_init_ctrl_imx178(ctrl, desc); break;
 	case MOD_ID_IMX183: vc_init_ctrl_imx183(ctrl, desc); break;
 	case MOD_ID_IMX226: vc_init_ctrl_imx226(ctrl, desc); break;
+	case MOD_ID_IMX264: vc_init_ctrl_imx264(ctrl, desc); break;
 	case MOD_ID_IMX252: vc_init_ctrl_imx252(ctrl, desc); break;
 	case MOD_ID_IMX296: vc_init_ctrl_imx296(ctrl, desc); break;
 	case MOD_ID_IMX327: vc_init_ctrl_imx327(ctrl, desc); break;
 	case MOD_ID_IMX412: vc_init_ctrl_imx412(ctrl, desc); break;
 	case MOD_ID_OV9281: vc_init_ctrl_ov9281(ctrl, desc); break;
 	default:
-		vc_err(dev, "%s(): Detected Module not supported!\n", __FUNCTION__);
+		vc_err(dev, "%s(): Detected module not supported!\n", __FUNCTION__);
 		return 1;
 	}
-
-	vc_notice(dev, "%s(): flags: 0x%04x\n", __FUNCTION__, ctrl->flags);
 
 	return 0;
 }
