@@ -65,9 +65,12 @@ setup_kernel() {
 
     cd $BUILD_DIR/Linux_for_Tegra/source/public
     tar xvf kernel_src.tbz2
- 
+
     git init
     git config gc.auto 0
+    git config --local user.name "$0"
+    git config --local user.email "support@vision-components.com"
+
     git add hardware
     git add kernel
     git commit -m "Initial commit"
