@@ -81,8 +81,6 @@ case $VC_MIPI_SOM in
         NanoDK) FLASH_BOARD='jetson-nano-qspi-sd' ;;
         esac
         FLASH_MEDIUM='mmcblk0p1'
-        # FLASH_BOARD=jetson-nano-devkit
-        CREATE_IMAGE_PARAM="-s 8G -b jetson-nano -r 300"
 
         case $VC_MIPI_BSP in
             32.5.0|32.5.1|32.5.2)
