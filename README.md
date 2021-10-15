@@ -1,7 +1,7 @@
 # Vision Components MIPI CSI-2 driver for NVIDIA Jetson Nano and Xavier NX
 ![VC MIPI camera](https://www.vision-components.com/fileadmin/external/documentation/hardware/VC_MIPI_Camera_Module/VC_MIPI_Camera_Module_Hardware_Operating_Manual-Dateien/mipi_sensor_front_back.png)
 
-## Version 0.5.0
+## Version 0.5.1 ([History](VERSION.md))
 * Supported system on modules
   * [NVIDIA Jetson Nano (production + devkit)](https://developer.nvidia.com/embedded/jetson-nano)
   * [NVIDIA Jetson Xavier NX](https://developer.nvidia.com/embedded/jetson-xavier-nx)
@@ -15,8 +15,10 @@
   * [NVIDIA L4T 32.5.2](https://developer.nvidia.com/embedded/linux-tegra-r3251)
   * [NVIDIA L4T 32.6.1](https://developer.nvidia.com/embedded/linux-tegra-r3261) (only NVIDIA Jetson Nano (production))
 * Supported [VC MIPI Camera Modules](https://www.vision-components.com/fileadmin/external/documentation/hardware/VC_MIPI_Camera_Module/index.html) 
-  * IMX178, IMX183, IMX226, IMX252, IMX296, IMX327, OV9281
+  * IMX178, IMX183, IMX226, IMX252, IMX264, IMX296, IMX327, IMX412, OV9281
 * Features
+  * Quickstart script for an easier installation process
+  * Camera module auto detect
   * Image Streaming in GREY, Y10, Y12, SRGGB8, SRGGB10, SRGGB12 format.
   * Exposure and Gain can be set via V4L2 library.
   * Trigger modes '0: disabled', '1: external', '2: pulsewidth', '3: self', '4: single', '5: sync', '6: stream_edge', '7: stream_level' can be set via device tree or V4L2 control 'trigger_mode'.
