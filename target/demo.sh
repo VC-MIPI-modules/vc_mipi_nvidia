@@ -6,6 +6,7 @@ usage() {
         echo "Build kernel image, modules and device tree."
         echo ""
         echo "Supported options:"
+	echo "    --argus               Uses nvarguscamerasrc gstreamer pipeline"
         echo "-d, --device              Select the device (default: /dev/video0)"
         echo "-f, --format              Pixelformat (Options: GREY, 'Y10 ', 'Y12 ', RGGB, RG10, RG12)"
         echo "-g, --gain                Set the gain"
@@ -43,7 +44,17 @@ get_system_info()
 	./jetsonInfo.py
 }
 
+get_image_size() {
+	values=()
+	for value in $(v4l2-ctl --get-fmt-video | grep -i 'Width/Height' | grep -oe '\([0-9.]*\)'); do
+		values+=(${value})
+	done
+	width=${values[0]}
+	height=${values[1]}
+}
+
 script_dir=$(dirname $0)
+argus=
 format=
 trigger=
 flash=
@@ -54,12 +65,18 @@ option2=x
 shutter=10000
 gain=10
 optionY=
+width=
+height=
 
 while [ $# != 0 ] ; do
 	option="$1"
 	shift
 
 	case "${option}" in
+	--argus)
+		argus=1
+		shift
+		;;
         -a|--flash)
 		flash="$1"
 		shift
@@ -134,5 +151,14 @@ if [[ -n ${value} ]]; then
         v4l2-ctl -d /dev/video${device} -c value=${value}
 fi
 
+if [[ -n ${argus} ]]; then
+	get_image_size
+
+	gst-launch-1.0 \
+        	nvarguscamerasrc sensor-id=${device}  aelock=true awblock=true ! \
+        	"video/x-raw(memory:NVMM),width=${width}, height=${height}, framerate=20/1, format=NV12" ! \
+        	nvegltransform ! nveglglessink -e
+else 
 	cd ${script_dir}
 	./vcmipidemo -d${device} -an${option2} ${optionY} -s${shutter} -g${gain} -w '128 180 128'
+fi
