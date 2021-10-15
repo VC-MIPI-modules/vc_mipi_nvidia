@@ -158,7 +158,7 @@ while [ $# != 0 ] ; do
 		;;
 	-o|--host)
 		configure
-        # install_system_tools
+        install_system_tools
         setup_toolchain
 		setup_bsp
         setup_kernel
