@@ -19,6 +19,16 @@ usage() {
 	echo "-w, --whitebalance        Activate white balance"
 }
 
+install_dependencies() {
+	if [[ -z $(which v4l2-ctl) ]]; then
+		sudo apt update
+  		sudo apt install -y v4l-utils
+	fi
+	if [[ -e vcmipidemo ]]; then
+		chmod +x vcmipidemo
+	fi
+}
+
 get_system_info() 
 {
 	if [[ -z $(which git) ]]; then
@@ -99,6 +109,8 @@ while [ $# != 0 ] ; do
 		;;
 	esac
 done
+
+install_dependencies
 
 if [[ -n ${format} ]]; then
         echo "Set format: ${format}"
