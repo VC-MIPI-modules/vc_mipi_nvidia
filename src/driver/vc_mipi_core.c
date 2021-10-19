@@ -1135,7 +1135,7 @@ static void vc_calculate_exposure_vmax(struct vc_cam *cam, __u32 exposure)
 
 	// Exposure time [s] = (1 H period) × (Number of lines per frame - SHS) 
 	//                     + Exposure time error (t OFFSET ) [µs]
-	exposure_period = (__u64)(exposure)*16384;
+	exposure_period = (__u64)(exposure)*1000;
 	if (exposure_period > toffset) {
 		exposure_1H = (exposure_period - toffset) / period_1H;
 

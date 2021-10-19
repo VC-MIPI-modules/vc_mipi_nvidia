@@ -54,8 +54,8 @@ static void vc_init_ctrl_imx178(struct vc_ctrl *ctrl, struct vc_desc* desc)
 	ctrl->csr.sen.vmax              = (vc_csr4) { .l = 0x7004, .m = 0x7005, .h = 0x7006, .u = 0x0000 };
 	ctrl->csr.sen.hmax              = (vc_csr4) { .l = 0x7002, .m = 0x7003, .h = 0x0000, .u = 0x0000 };
 
-	ctrl->expo_period_1H 		= 327680;	// 20.000 µs * 16384
-	ctrl->expo_toffset 		= 47563;	//  2.903 µs * 16384
+	ctrl->expo_period_1H 		= 10000; 	// ns
+	ctrl->expo_toffset 		= 2903;  	// ns
 	ctrl->expo_shs_min		= 5;
 
 	ctrl->flags			 = FLAG_EXPOSURE_READ_VMAX;
@@ -75,8 +75,8 @@ static void vc_init_ctrl_imx183(struct vc_ctrl *ctrl, struct vc_desc* desc)
 	ctrl->csr.sen.vmax              = (vc_csr4) { .l = 0x7004, .m = 0x7005, .h = 0x7006, .u = 0x0000 };
 	ctrl->csr.sen.hmax              = (vc_csr4) { .l = 0x7002, .m = 0x7003, .h = 0x0000, .u = 0x0000 };
 
-	ctrl->expo_period_1H 		= 163840;	// 10.000 µs * 16384
-	ctrl->expo_toffset 		= 47563;	//  2.903 µs * 16384
+	ctrl->expo_period_1H 		= 10000; 	// ns
+	ctrl->expo_toffset 		= 2903;  	// ns
 	ctrl->expo_shs_min		= 5;
 	ctrl->expo_vmax			= 3728;
 
@@ -98,8 +98,8 @@ static void vc_init_ctrl_imx226(struct vc_ctrl *ctrl, struct vc_desc* desc)
 	ctrl->csr.sen.vmax              = (vc_csr4) { .l = 0x7004, .m = 0x7005, .h = 0x7006, .u = 0x0000 };
 	ctrl->csr.sen.hmax              = (vc_csr4) { .l = 0x7002, .m = 0x7003, .h = 0x0000, .u = 0x0000 };
 
-	ctrl->expo_period_1H 		= 327680;	// 20.000 µs * 16384
-	ctrl->expo_toffset 		= 47563;	//  2.903 µs * 16384
+	ctrl->expo_period_1H 		= 10000; 	// ns
+	ctrl->expo_toffset 		= 2903;  	// ns
 	ctrl->expo_shs_min		= 5;
 
 	ctrl->flags			 = FLAG_EXPOSURE_READ_VMAX;
@@ -121,8 +121,8 @@ static void vc_init_ctrl_imx264(struct vc_ctrl *ctrl, struct vc_desc* desc)
 	ctrl->csr.sen.vmax              = (vc_csr4) { .l = 0x7004, .m = 0x7005, .h = 0x7006, .u = 0x0000 };
 	ctrl->csr.sen.hmax              = (vc_csr4) { .l = 0x7002, .m = 0x7003, .h = 0x0000, .u = 0x0000 };
 
-	ctrl->expo_period_1H 		= 327680;	// 20.000 µs * 16384
-	ctrl->expo_toffset 		= 47563;	//  2.903 µs * 16384
+	ctrl->expo_period_1H 		= 10000; 	// ns
+	ctrl->expo_toffset 		= 2903;  	// ns
 	ctrl->expo_shs_min		= 5;
 
 	ctrl->flags			 = FLAG_EXPOSURE_READ_VMAX;
@@ -146,8 +146,8 @@ static void vc_init_ctrl_imx252(struct vc_ctrl *ctrl, struct vc_desc* desc)
 	ctrl->csr.sen.vmax              = (vc_csr4) { .l = 0x7004, .m = 0x7005, .h = 0x7006, .u = 0x0000 };
 	ctrl->csr.sen.hmax              = (vc_csr4) { .l = 0x7002, .m = 0x7003, .h = 0x0000, .u = 0x0000 };
 
-	ctrl->expo_period_1H 		= 327680;	// 20.000 µs * 16384 (Zeit die eine Zeile benötigt)
-	ctrl->expo_toffset 		= 47563;	//  2.903 µs * 16384
+	ctrl->expo_period_1H 		= 10000; 	// ns
+	ctrl->expo_toffset 		= 2903;  	// ns
 	ctrl->expo_shs_min		= 40;
 
 	ctrl->flags			 = FLAG_EXPOSURE_READ_VMAX;
@@ -173,8 +173,8 @@ static void vc_init_ctrl_imx296(struct vc_ctrl *ctrl, struct vc_desc* desc)
 	ctrl->csr.sen.mode_operating	= 0x00;
 
 	ctrl->sen_clk			= 54000000;	// Hz
-	ctrl->expo_period_1H 		= 242726;	// 14.815 µs * 16384
-	ctrl->expo_toffset 		= 233636;	// 14.260 µs * 16384
+	ctrl->expo_period_1H 		= 14815;	// ns
+	ctrl->expo_toffset 		= 14260;	// ns
 	ctrl->expo_shs_min              = 5;
 	ctrl->expo_vmax 		= 1118;
 
@@ -203,8 +203,8 @@ static void vc_init_ctrl_imx327(struct vc_ctrl *ctrl, struct vc_desc* desc)
 	ctrl->csr.sen.mode_standby	= 0x01;
 	ctrl->csr.sen.mode_operating	= 0x00;
 	
-	ctrl->expo_period_1H 		= 327680;
-	ctrl->expo_toffset 		= 47563;
+	ctrl->expo_period_1H 		= 10000; 	// ns
+	ctrl->expo_toffset 		= 2903;  	// ns
 	ctrl->expo_shs_min              = 1;
 	ctrl->expo_vmax 		= 1125;
 
