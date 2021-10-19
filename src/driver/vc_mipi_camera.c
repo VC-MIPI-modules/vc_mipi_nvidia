@@ -332,6 +332,16 @@ static int vc_set_value(struct tegracam_device *tc_dev, __s64 val)
 		vc_sen_set_gain(cam, gain);
 		vc_notice(dev, "%s(): Set testing gain = %u", __FUNCTION__, gain);
 	}
+	if (50000 <= val && val < 60000) {
+		__u32 width = val - 50000;
+		vc_sen_set_roi(cam, width, cam->state.framesize.height);
+		vc_notice(dev, "%s(): Set testing roi width = %u", __FUNCTION__, width);
+	}
+	if (60000 <= val && val < 70000) {
+		__u32 height = val - 60000;
+		vc_sen_set_roi(cam, cam->state.framesize.width, height);
+		vc_notice(dev, "%s(): Set testing roi height = %u", __FUNCTION__, height);
+	}
 
 	return 0;
 }
