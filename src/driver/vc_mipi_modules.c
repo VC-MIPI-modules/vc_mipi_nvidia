@@ -73,6 +73,8 @@ static void vc_init_ctrl_imx183(struct vc_ctrl *ctrl, struct vc_desc* desc)
 
 	vc_notice(dev, "%s(): Initialising module control for IMX183\n", __FUNCTION__);
 
+	ctrl->gain			= (vc_control) { .min =   0, .max =      2047, .def =      0 };
+
 	ctrl->csr.sen.vmax              = (vc_csr4) { .l = 0x7004, .m = 0x7005, .h = 0x7006, .u = 0x0000 };
 	ctrl->csr.sen.hmax              = (vc_csr4) { .l = 0x7002, .m = 0x7003, .h = 0x0000, .u = 0x0000 };
 
