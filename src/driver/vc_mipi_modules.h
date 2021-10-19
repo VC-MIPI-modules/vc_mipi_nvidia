@@ -8,6 +8,7 @@
 #define MOD_ID_IMX183           0x0183
 #define MOD_ID_IMX226           0x0226
 #define MOD_ID_IMX264           0x0264
+#define MOD_ID_IMX265           0x0265
 #define MOD_ID_IMX250           0x0250
 #define MOD_ID_IMX252           0x0252
 #define MOD_ID_IMX273           0x0273
@@ -15,6 +16,7 @@
 #define MOD_ID_IMX296           0x0296
 #define MOD_ID_IMX297           0x0297
 #define MOD_ID_IMX327           0x0327
+#define MOD_ID_IMX392           0x0392
 #define MOD_ID_IMX412           0x0412
 #define MOD_ID_IMX415           0x0415
 

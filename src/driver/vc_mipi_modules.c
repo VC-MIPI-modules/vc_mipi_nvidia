@@ -41,15 +41,9 @@ static void vc_init_ctrl(struct vc_ctrl *ctrl, struct vc_desc* desc)
 	ctrl->sen_clk			= desc->clk_ext_trigger;
 }
 
-
-// ------------------------------------------------------------------------------------------------
-//  Settings for IMX178/IMX178C
-
-static void vc_init_ctrl_imx178(struct vc_ctrl *ctrl, struct vc_desc* desc)
+static void vc_init_ctrl_imx183_base(struct vc_ctrl *ctrl, struct vc_desc* desc)
 {
-	struct device *dev = &ctrl->client_mod->dev;
-
-	vc_notice(dev, "%s(): Initialising module control for IMX178\n", __FUNCTION__);
+	ctrl->gain			= (vc_control) { .min =   0, .max =      2047, .def =      0 };
 
 	ctrl->csr.sen.vmax              = (vc_csr4) { .l = 0x7004, .m = 0x7005, .h = 0x7006, .u = 0x0000 };
 	ctrl->csr.sen.hmax              = (vc_csr4) { .l = 0x7002, .m = 0x7003, .h = 0x0000, .u = 0x0000 };
@@ -62,6 +56,36 @@ static void vc_init_ctrl_imx178(struct vc_ctrl *ctrl, struct vc_desc* desc)
 	ctrl->flags			|= FLAG_IO_FLASH_ENABLED;
 	ctrl->flags			|= FLAG_TRIGGER_EXTERNAL | FLAG_TRIGGER_SELF |
 				           FLAG_TRIGGER_SINGLE | FLAG_TRIGGER_SYNC;
+}
+
+static void vc_init_ctrl_imx252_base(struct vc_ctrl *ctrl, struct vc_desc* desc)
+{
+	ctrl->gain			= (vc_control) { .min =   0, .max =       511, .def =      0 };
+
+	ctrl->csr.sen.vmax              = (vc_csr4) { .l = 0x0210, .m = 0x0211, .h = 0x0212, .u = 0x0000 };
+	ctrl->csr.sen.hmax              = (vc_csr4) { .l = 0x0214, .m = 0x0215, .h = 0x0000, .u = 0x0000 };
+
+	ctrl->expo_period_1H 		= 10000; 	// ns
+	ctrl->expo_toffset 		= 2903;  	// ns
+	ctrl->expo_shs_min		= 40;
+
+	ctrl->flags			 = FLAG_EXPOSURE_READ_VMAX;
+	ctrl->flags			|= FLAG_IO_FLASH_ENABLED | FLAG_IO_XTRIG_ENABLED;
+	ctrl->flags			|= FLAG_TRIGGER_EXTERNAL | FLAG_TRIGGER_PULSEWIDTH |
+					   FLAG_TRIGGER_SELF | FLAG_TRIGGER_SINGLE;
+}
+
+
+// ------------------------------------------------------------------------------------------------
+//  Settings for IMX178/IMX178C
+
+static void vc_init_ctrl_imx178(struct vc_ctrl *ctrl, struct vc_desc* desc)
+{
+	struct device *dev = &ctrl->client_mod->dev;
+
+	vc_notice(dev, "%s(): Initialising module control for IMX178\n", __FUNCTION__);
+
+	vc_init_ctrl_imx183_base(ctrl, desc);
 }
 
 // ------------------------------------------------------------------------------------------------
@@ -73,20 +97,7 @@ static void vc_init_ctrl_imx183(struct vc_ctrl *ctrl, struct vc_desc* desc)
 
 	vc_notice(dev, "%s(): Initialising module control for IMX183\n", __FUNCTION__);
 
-	ctrl->gain			= (vc_control) { .min =   0, .max =      2047, .def =      0 };
-
-	ctrl->csr.sen.vmax              = (vc_csr4) { .l = 0x7004, .m = 0x7005, .h = 0x7006, .u = 0x0000 };
-	ctrl->csr.sen.hmax              = (vc_csr4) { .l = 0x7002, .m = 0x7003, .h = 0x0000, .u = 0x0000 };
-
-	ctrl->expo_period_1H 		= 10000; 	// ns
-	ctrl->expo_toffset 		= 2903;  	// ns
-	ctrl->expo_shs_min		= 5;
-	ctrl->expo_vmax			= 3728;
-
-	ctrl->flags			 = FLAG_EXPOSURE_READ_VMAX;
-	ctrl->flags			|= FLAG_IO_FLASH_ENABLED;
-	ctrl->flags			|= FLAG_TRIGGER_EXTERNAL | FLAG_TRIGGER_SELF |
-				           FLAG_TRIGGER_SINGLE | FLAG_TRIGGER_SYNC;
+	vc_init_ctrl_imx183_base(ctrl, desc);
 }
 
 // ------------------------------------------------------------------------------------------------
@@ -98,18 +109,21 @@ static void vc_init_ctrl_imx226(struct vc_ctrl *ctrl, struct vc_desc* desc)
 
 	vc_notice(dev, "%s(): Initialising module control for IMX226\n", __FUNCTION__);
 
-	ctrl->csr.sen.vmax              = (vc_csr4) { .l = 0x7004, .m = 0x7005, .h = 0x7006, .u = 0x0000 };
-	ctrl->csr.sen.hmax              = (vc_csr4) { .l = 0x7002, .m = 0x7003, .h = 0x0000, .u = 0x0000 };
+	vc_init_ctrl_imx183_base(ctrl, desc);
 
-	ctrl->expo_period_1H 		= 10000; 	// ns
-	ctrl->expo_toffset 		= 2903;  	// ns
-	ctrl->expo_shs_min		= 5;
+	ctrl->flags			|= FLAG_TRIGGER_STREAM_EDGE | FLAG_TRIGGER_STREAM_LEVEL;
+}
 
-	ctrl->flags			 = FLAG_EXPOSURE_READ_VMAX;
-	ctrl->flags			|= FLAG_IO_FLASH_ENABLED | FLAG_IO_XTRIG_ENABLED;
-	ctrl->flags			|= FLAG_TRIGGER_EXTERNAL | FLAG_TRIGGER_SELF |
-				           FLAG_TRIGGER_SINGLE | FLAG_TRIGGER_SYNC | 
-					   FLAG_TRIGGER_STREAM_EDGE | FLAG_TRIGGER_STREAM_LEVEL;
+// ------------------------------------------------------------------------------------------------
+//  Settings for IMX250/IMX250C
+
+static void vc_init_ctrl_imx250(struct vc_ctrl *ctrl, struct vc_desc* desc)
+{
+	struct device *dev = &ctrl->client_mod->dev;
+
+	vc_notice(dev, "%s(): Initialising module control for IMX250\n", __FUNCTION__);
+
+	vc_init_ctrl_imx252_base(ctrl, desc);
 }
 
 // ------------------------------------------------------------------------------------------------
@@ -121,20 +135,7 @@ static void vc_init_ctrl_imx252(struct vc_ctrl *ctrl, struct vc_desc* desc)
 
 	vc_notice(dev, "%s(): Initialising module control for IMX252\n", __FUNCTION__);
 
-	ctrl->exposure			= (vc_control) { .min =   1, .max = 100000000, .def =  10000 };
-	ctrl->gain			= (vc_control) { .min =   0, .max =    100000, .def =      0 };
-
-	ctrl->csr.sen.vmax              = (vc_csr4) { .l = 0x7004, .m = 0x7005, .h = 0x7006, .u = 0x0000 };
-	ctrl->csr.sen.hmax              = (vc_csr4) { .l = 0x7002, .m = 0x7003, .h = 0x0000, .u = 0x0000 };
-
-	ctrl->expo_period_1H 		= 10000; 	// ns
-	ctrl->expo_toffset 		= 2903;  	// ns
-	ctrl->expo_shs_min		= 40;
-
-	ctrl->flags			 = FLAG_EXPOSURE_READ_VMAX;
-	ctrl->flags			|= FLAG_IO_FLASH_ENABLED | FLAG_IO_XTRIG_ENABLED;
-	ctrl->flags			|= FLAG_TRIGGER_EXTERNAL | FLAG_TRIGGER_PULSEWIDTH | FLAG_TRIGGER_SELF |
-				           FLAG_TRIGGER_SINGLE;
+	vc_init_ctrl_imx252_base(ctrl, desc);
 }
 
 // ------------------------------------------------------------------------------------------------
@@ -146,17 +147,19 @@ static void vc_init_ctrl_imx264(struct vc_ctrl *ctrl, struct vc_desc* desc)
 
 	vc_notice(dev, "%s(): Initialising module control for IMX264\n", __FUNCTION__);
 
-	ctrl->csr.sen.vmax              = (vc_csr4) { .l = 0x7004, .m = 0x7005, .h = 0x7006, .u = 0x0000 };
-	ctrl->csr.sen.hmax              = (vc_csr4) { .l = 0x7002, .m = 0x7003, .h = 0x0000, .u = 0x0000 };
+	vc_init_ctrl_imx252_base(ctrl, desc);
+}
 
-	ctrl->expo_period_1H 		= 10000; 	// ns
-	ctrl->expo_toffset 		= 2903;  	// ns
-	ctrl->expo_shs_min		= 5;
+// ------------------------------------------------------------------------------------------------
+//  Settings for IMX265/IMX265C
 
-	ctrl->flags			 = FLAG_EXPOSURE_READ_VMAX;
-	ctrl->flags			|= FLAG_IO_FLASH_ENABLED | FLAG_IO_XTRIG_ENABLED;
-	ctrl->flags			|= FLAG_TRIGGER_EXTERNAL | FLAG_TRIGGER_PULSEWIDTH |
-					   FLAG_TRIGGER_SELF | FLAG_TRIGGER_SINGLE;
+static void vc_init_ctrl_imx265(struct vc_ctrl *ctrl, struct vc_desc* desc)
+{
+	struct device *dev = &ctrl->client_mod->dev;
+
+	vc_notice(dev, "%s(): Initialising module control for IMX265\n", __FUNCTION__);
+
+	vc_init_ctrl_imx252_base(ctrl, desc);
 }
 
 // ------------------------------------------------------------------------------------------------
@@ -212,6 +215,18 @@ static void vc_init_ctrl_imx327(struct vc_ctrl *ctrl, struct vc_desc* desc)
 	ctrl->expo_vmax 		= 1125;
 
 	ctrl->flags			= FLAG_EXPOSURE_WRITE_VMAX;
+}
+
+// ------------------------------------------------------------------------------------------------
+//  Settings for IMX392/IMX392C
+
+static void vc_init_ctrl_imx392(struct vc_ctrl *ctrl, struct vc_desc* desc)
+{
+	struct device *dev = &ctrl->client_mod->dev;
+
+	vc_notice(dev, "%s(): Initialising module control for IMX392\n", __FUNCTION__);
+
+	vc_init_ctrl_imx252_base(ctrl, desc);
 }
 
 // ------------------------------------------------------------------------------------------------
@@ -282,10 +297,13 @@ int vc_mod_ctrl_init(struct vc_ctrl* ctrl, struct vc_desc* desc)
 	case MOD_ID_IMX178: vc_init_ctrl_imx178(ctrl, desc); break;
 	case MOD_ID_IMX183: vc_init_ctrl_imx183(ctrl, desc); break;
 	case MOD_ID_IMX226: vc_init_ctrl_imx226(ctrl, desc); break;
+	case MOD_ID_IMX250: vc_init_ctrl_imx250(ctrl, desc); break;
 	case MOD_ID_IMX252: vc_init_ctrl_imx252(ctrl, desc); break;
 	case MOD_ID_IMX264: vc_init_ctrl_imx264(ctrl, desc); break;
+	case MOD_ID_IMX265: vc_init_ctrl_imx265(ctrl, desc); break;
 	case MOD_ID_IMX296: vc_init_ctrl_imx296(ctrl, desc); break;
 	case MOD_ID_IMX327: vc_init_ctrl_imx327(ctrl, desc); break;
+	case MOD_ID_IMX392: vc_init_ctrl_imx392(ctrl, desc); break;
 	case MOD_ID_IMX412: vc_init_ctrl_imx412(ctrl, desc); break;
 	case MOD_ID_OV9281: vc_init_ctrl_ov9281(ctrl, desc); break;
 	default:
