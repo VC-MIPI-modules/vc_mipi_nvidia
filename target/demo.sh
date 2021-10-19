@@ -3,7 +3,7 @@
 usage() {
         echo "Usage: $0 [options]"
         echo ""
-        echo "Build kernel image, modules and device tree."
+        echo "Script to test and demonstrate camera features."
         echo ""
         echo "Supported options:"
 	echo "    --argus               Uses nvarguscamerasrc gstreamer pipeline"
