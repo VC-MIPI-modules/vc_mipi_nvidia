@@ -1,6 +1,6 @@
-From fc19d4f0f2ae1146f93d5a05f939257557a1b3fc Mon Sep 17 00:00:00 2001
-From: Peter Martienssen <peter.martienssen@liquify-consulting.de>
-Date: Tue, 28 Sep 2021 18:30:26 +0200
+From fb8bdb7202474592d00928d607d3f0a59dd54f6f Mon Sep 17 00:00:00 2001
+From: "/setup.sh" <support@vision-components.com>
+Date: Mon, 18 Oct 2021 15:31:08 +0200
 Subject: [PATCH] Added control 'value' for testing purposes while driver
  development only.
 
@@ -11,11 +11,11 @@ Subject: [PATCH] Added control 'value' for testing purposes while driver
  3 files changed, 30 insertions(+)
 
 diff --git a/kernel/nvidia/drivers/media/platform/tegra/camera/tegracam_ctrls.c b/kernel/nvidia/drivers/media/platform/tegra/camera/tegracam_ctrls.c
-index 36eabc185..7b005f6a0 100644
+index ccd9137..c0b1475 100644
 --- a/kernel/nvidia/drivers/media/platform/tegra/camera/tegracam_ctrls.c
 +++ b/kernel/nvidia/drivers/media/platform/tegra/camera/tegracam_ctrls.c
 @@ -194,6 +194,16 @@ static struct v4l2_ctrl_config ctrl_cfg_list[] = {
- 		.max = 1,
+ 		.max = 2,
  		.step = 1,
  	},
 +	{
@@ -71,7 +71,7 @@ index 36eabc185..7b005f6a0 100644
  	/* Find missing string control IDs */
  	if (ops->fill_string_ctrl != NULL) {
 diff --git a/kernel/nvidia/include/media/camera_common.h b/kernel/nvidia/include/media/camera_common.h
-index 6b92aa2ac..fc8f5cba7 100644
+index 6b92aa2..fc8f5cb 100644
 --- a/kernel/nvidia/include/media/camera_common.h
 +++ b/kernel/nvidia/include/media/camera_common.h
 @@ -193,6 +193,7 @@ struct tegracam_ctrl_ops {
@@ -83,7 +83,7 @@ index 6b92aa2ac..fc8f5cba7 100644
  	int (*set_exposure)(struct tegracam_device *tc_dev, s64 val);
  	int (*set_exposure_short)(struct tegracam_device *tc_dev, s64 val);
 diff --git a/kernel/nvidia/include/media/tegra-v4l2-camera.h b/kernel/nvidia/include/media/tegra-v4l2-camera.h
-index 13958e34b..9a47f0d8d 100644
+index 13958e3..9a47f0d 100644
 --- a/kernel/nvidia/include/media/tegra-v4l2-camera.h
 +++ b/kernel/nvidia/include/media/tegra-v4l2-camera.h
 @@ -40,6 +40,7 @@
