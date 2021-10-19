@@ -59,8 +59,9 @@ static void vc_init_ctrl_imx178(struct vc_ctrl *ctrl, struct vc_desc* desc)
 	ctrl->expo_shs_min		= 5;
 
 	ctrl->flags			 = FLAG_EXPOSURE_READ_VMAX;
-	ctrl->flags			|= FLAG_IO_FLASH_ENABLED | FLAG_IO_XTRIG_ENABLED;
-	ctrl->flags			|= FLAG_TRIGGER_EXTERNAL; // Not complete!
+	ctrl->flags			|= FLAG_IO_FLASH_ENABLED;
+	ctrl->flags			|= FLAG_TRIGGER_EXTERNAL | FLAG_TRIGGER_SELF |
+				           FLAG_TRIGGER_SINGLE | FLAG_TRIGGER_SYNC;
 }
 
 // ------------------------------------------------------------------------------------------------
@@ -81,7 +82,7 @@ static void vc_init_ctrl_imx183(struct vc_ctrl *ctrl, struct vc_desc* desc)
 	ctrl->expo_vmax			= 3728;
 
 	ctrl->flags			 = FLAG_EXPOSURE_READ_VMAX;
-	ctrl->flags			|= FLAG_IO_FLASH_ENABLED | FLAG_IO_XTRIG_ENABLED;
+	ctrl->flags			|= FLAG_IO_FLASH_ENABLED;
 	ctrl->flags			|= FLAG_TRIGGER_EXTERNAL | FLAG_TRIGGER_SELF |
 				           FLAG_TRIGGER_SINGLE | FLAG_TRIGGER_SYNC;
 }
