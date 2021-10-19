@@ -154,7 +154,7 @@ setup_driver() {
                 ;;
         XavierNX) 
                 choose_board_xavier_nx
-                choose_bsp 3
+                choose_bsp 4
                 ;;
         esac
         check_configuration $1 $2

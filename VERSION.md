@@ -4,6 +4,8 @@
   * New Features
     * Added this version description
     * Easier installation of demo.sh and its dependencies
+    * Supported board support packages
+      * NVIDIA L4T 32.6.1 (for NVIDIA Jetson Xavier NX on Developer Kit)
     * Supported VC MIPI Camera Modules
       * IMX250, IMX264, IMX265, IMX392
 
@@ -34,7 +36,7 @@
 ## v0.4.0 (Trigger and flash modes)
   * New Features
     * Supported VC MIPI Camera Modules
-      * IMX178, IMX226, IM296, OV9281
+      * IMX178, IMX226, IMX296, OV9281
     * Trigger modes '0: disabled', '1: external', '2: pulsewidth', '3: self', '4: single', '5: sync', '6: stream_edge', '7: stream_level' can be set via device tree or V4L2 control 'trigger_mode'.
     * Flash mode '0: disabled', '1: enabled' can be set via device tree or V4L2 control 'flash_mode'.
 

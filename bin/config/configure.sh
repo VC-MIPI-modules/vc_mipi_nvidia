@@ -42,7 +42,7 @@ PATCHES=()
 
 case $VC_MIPI_SOM in
     Nano|NanoDK)
-        # From carrier board dependant settings
+        # Carrier board dependant settings
         case $VC_MIPI_BOARD in
             NV_DevKit_Nano_B01)
                 DT_CAM_FILE=$DT_CAM_DIR/NV_DevKit_Nano_B01/tegra210-camera-vc-mipi-cam.dtsi
@@ -60,7 +60,7 @@ case $VC_MIPI_SOM in
                 ;;
         esac
 
-        # From carrier board independant settings
+        # Carrier board independant settings
         PATCHES+=('kernel_Nano_32.5.0+')
         DT_CAM_FILE_DST_DIR=$KERNEL_SOURCE/hardware/nvidia/platform/t210/porg/kernel-dts/porg-platforms
         FLASH_DT='DTB'
@@ -81,7 +81,7 @@ case $VC_MIPI_SOM in
         ;;
 
     XavierNX)
-        # From carrier board dependant settings
+        # Carrier board dependant settings
         case $VC_MIPI_BOARD in
             NV_DevKit_XavierNX)
                 DT_CAM_FILE=$DT_CAM_DIR/NV_DevKit_XavierNX/tegra194-camera-vc-mipi-cam.dtsi
@@ -99,8 +99,15 @@ case $VC_MIPI_SOM in
                 ;;
         esac
 
-        # From carrier board independant settings
-        PATCHES+=('kernel_XavierNX_32.5.0+')
+        # Carrier board independant settings
+        case $VC_MIPI_BSP in
+            32.5.0|32.5.1|32.5.2)
+                PATCHES+=('kernel_XavierNX_32.5.0+')
+                ;;
+            32.6.1)
+                PATCHES+=('kernel_XavierNX_32.6.1+')
+                ;;
+        esac
         DT_CAM_FILE_DST_DIR=$KERNEL_SOURCE/hardware/nvidia/platform/t19x/jakku/kernel-dts/common/
         FLASH_DT='kernel-dtb'
         FLASH_BOARD='jetson-xavier-nx-devkit'
