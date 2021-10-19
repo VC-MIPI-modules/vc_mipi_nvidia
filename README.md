@@ -15,7 +15,7 @@
   * [NVIDIA L4T 32.5.2](https://developer.nvidia.com/embedded/linux-tegra-r3251)
   * [NVIDIA L4T 32.6.1](https://developer.nvidia.com/embedded/linux-tegra-r3261) (only NVIDIA Jetson Nano (production))
 * Supported [VC MIPI Camera Modules](https://www.vision-components.com/fileadmin/external/documentation/hardware/VC_MIPI_Camera_Module/index.html) 
-  * IMX178, IMX183, IMX226, IMX252, IMX264, IMX296, IMX327, IMX412, OV9281
+  * IMX178, IMX183, IMX226, IMX250, IMX252, IMX264, IMX265, IMX296, IMX327, IMX392, IMX412, OV9281
 * Features
   * Quickstart script for an easier installation process
   * Camera module auto detect

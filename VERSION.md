@@ -1,11 +1,11 @@
 # Version History
 
-## v0.6.0 (Support IMX264 and easier testing)
+## v0.6.0 (Support IMX250, IMX264, IMX265, IMX392)
   * New Features
     * Added this version description
     * Easier installation of demo.sh and its dependencies
     * Supported VC MIPI Camera Modules
-      * IMX264
+      * IMX250, IMX264, IMX265, IMX392
 
 ## v0.5.0 (Support Jetson Xavier NX)
   * New Features
