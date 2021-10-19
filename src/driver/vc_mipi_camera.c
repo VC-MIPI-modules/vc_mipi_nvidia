@@ -55,6 +55,13 @@ void vc_adjust_cam_ctrls(struct vc_cam *cam, __u32 *width, __u32 *height)
 	// TEGRA_VI_CSI_ERROR_STATUS=0x00000004 (Bits 3-0: h>,<, w>,<) => height is to high
 	// TEGRA_VI_CSI_ERROR_STATUS=0x00000008 (Bits 3-0: h>,<, w>,<) => height is to low
 	switch (cam->desc.mod_id) {
+	case MOD_ID_IMX178: // ... (FPGA)
+		*height = 2047;
+		if (trigger_enabled) {
+			*height = 2048;
+		}
+		break;
+
 	case MOD_ID_IMX183: // Active pixels   5440 x 3648 (FPGA)	
 		// Fazit:
 		//          Die Helligkeiten zwischen Freerun und Triggermodus 
@@ -134,13 +141,6 @@ void vc_adjust_cam_ctrls(struct vc_cam *cam, __u32 *width, __u32 *height)
 		//          sind extrem unterschiedlich.
 		if (num_lanes == 4) {
 			(*height)--;
-		}
-		break;
-
-	case MOD_ID_IMX178: // ... (FPGA)
-		*height = 2047;
-		if (trigger_enabled) {
-			*height = 2048;
 		}
 		break;
 

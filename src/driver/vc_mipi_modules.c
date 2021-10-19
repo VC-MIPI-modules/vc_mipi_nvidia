@@ -110,28 +110,6 @@ static void vc_init_ctrl_imx226(struct vc_ctrl *ctrl, struct vc_desc* desc)
 }
 
 // ------------------------------------------------------------------------------------------------
-//  Settings for IMX264/IMX264C
-
-static void vc_init_ctrl_imx264(struct vc_ctrl *ctrl, struct vc_desc* desc)
-{
-	struct device *dev = &ctrl->client_mod->dev;
-
-	vc_notice(dev, "%s(): Initialising module control for IMX264\n", __FUNCTION__);
-
-	ctrl->csr.sen.vmax              = (vc_csr4) { .l = 0x7004, .m = 0x7005, .h = 0x7006, .u = 0x0000 };
-	ctrl->csr.sen.hmax              = (vc_csr4) { .l = 0x7002, .m = 0x7003, .h = 0x0000, .u = 0x0000 };
-
-	ctrl->expo_period_1H 		= 10000; 	// ns
-	ctrl->expo_toffset 		= 2903;  	// ns
-	ctrl->expo_shs_min		= 5;
-
-	ctrl->flags			 = FLAG_EXPOSURE_READ_VMAX;
-	ctrl->flags			|= FLAG_IO_FLASH_ENABLED | FLAG_IO_XTRIG_ENABLED;
-	ctrl->flags			|= FLAG_TRIGGER_EXTERNAL | FLAG_TRIGGER_PULSEWIDTH |
-					   FLAG_TRIGGER_SELF | FLAG_TRIGGER_SINGLE;
-}
-
-// ------------------------------------------------------------------------------------------------
 //  Settings for IMX252/IMX252C
 
 static void vc_init_ctrl_imx252(struct vc_ctrl *ctrl, struct vc_desc* desc)
@@ -154,6 +132,28 @@ static void vc_init_ctrl_imx252(struct vc_ctrl *ctrl, struct vc_desc* desc)
 	ctrl->flags			|= FLAG_IO_FLASH_ENABLED | FLAG_IO_XTRIG_ENABLED;
 	ctrl->flags			|= FLAG_TRIGGER_EXTERNAL | FLAG_TRIGGER_PULSEWIDTH | FLAG_TRIGGER_SELF |
 				           FLAG_TRIGGER_SINGLE;
+}
+
+// ------------------------------------------------------------------------------------------------
+//  Settings for IMX264/IMX264C
+
+static void vc_init_ctrl_imx264(struct vc_ctrl *ctrl, struct vc_desc* desc)
+{
+	struct device *dev = &ctrl->client_mod->dev;
+
+	vc_notice(dev, "%s(): Initialising module control for IMX264\n", __FUNCTION__);
+
+	ctrl->csr.sen.vmax              = (vc_csr4) { .l = 0x7004, .m = 0x7005, .h = 0x7006, .u = 0x0000 };
+	ctrl->csr.sen.hmax              = (vc_csr4) { .l = 0x7002, .m = 0x7003, .h = 0x0000, .u = 0x0000 };
+
+	ctrl->expo_period_1H 		= 10000; 	// ns
+	ctrl->expo_toffset 		= 2903;  	// ns
+	ctrl->expo_shs_min		= 5;
+
+	ctrl->flags			 = FLAG_EXPOSURE_READ_VMAX;
+	ctrl->flags			|= FLAG_IO_FLASH_ENABLED | FLAG_IO_XTRIG_ENABLED;
+	ctrl->flags			|= FLAG_TRIGGER_EXTERNAL | FLAG_TRIGGER_PULSEWIDTH |
+					   FLAG_TRIGGER_SELF | FLAG_TRIGGER_SINGLE;
 }
 
 // ------------------------------------------------------------------------------------------------
@@ -279,8 +279,8 @@ int vc_mod_ctrl_init(struct vc_ctrl* ctrl, struct vc_desc* desc)
 	case MOD_ID_IMX178: vc_init_ctrl_imx178(ctrl, desc); break;
 	case MOD_ID_IMX183: vc_init_ctrl_imx183(ctrl, desc); break;
 	case MOD_ID_IMX226: vc_init_ctrl_imx226(ctrl, desc); break;
-	case MOD_ID_IMX264: vc_init_ctrl_imx264(ctrl, desc); break;
 	case MOD_ID_IMX252: vc_init_ctrl_imx252(ctrl, desc); break;
+	case MOD_ID_IMX264: vc_init_ctrl_imx264(ctrl, desc); break;
 	case MOD_ID_IMX296: vc_init_ctrl_imx296(ctrl, desc); break;
 	case MOD_ID_IMX327: vc_init_ctrl_imx327(ctrl, desc); break;
 	case MOD_ID_IMX412: vc_init_ctrl_imx412(ctrl, desc); break;
