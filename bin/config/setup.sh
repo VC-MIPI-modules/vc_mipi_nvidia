@@ -171,18 +171,19 @@ setup_target() {
         echo -n "  USER ($TARGET_USER): "
         read user
         if [[ -n ${user} ]]; then
-                export TARGET_USER=${user}
+                TARGET_USER=${user}
         fi
         echo -n "  IP ($TARGET_IP): "
         read ip
         if [[ -n ${ip} ]]; then
-                export TARGET_IP=${ip}
+                TARGET_IP=${ip}
         fi
 
         mkdir -p $BUILD_DIR
         cd $BUILD_DIR
         echo "export TARGET_USER=$TARGET_USER" >  $TARGET_FILE
         echo "export TARGET_IP=$TARGET_IP"     >> $TARGET_FILE
+        TARGET_SHELL="ssh $TARGET_USER@$TARGET_IP"
 }
 
 while [ $# != 0 ] ; do
