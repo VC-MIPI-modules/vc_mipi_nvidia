@@ -8,17 +8,22 @@
 * Supported carrier boards
   * [NVIDIA Jetson Nano Developer Kit B01](https://developer.nvidia.com/embedded/jetson-nano-developer-kit)
   * [NVIDIA Jetson Xavier NX Developer Kit](https://developer.nvidia.com/embedded/jetson-xavier-nx-devkit)
-  * [Auvidea JNX30-LC-PD](https://auvidea.eu/product/70804) (only NVIDIA Jetson Nano)
+  * [Auvidea JNX30-LC-PD](https://auvidea.eu/product/70804) (only NVIDIA Jetson Nano (production + devkit))
 * Supported board support packages
   * [NVIDIA L4T 32.5.0](https://developer.nvidia.com/embedded/linux-tegra-r325)
   * [NVIDIA L4T 32.5.1](https://developer.nvidia.com/embedded/linux-tegra-r3251)
   * [NVIDIA L4T 32.5.2](https://developer.nvidia.com/embedded/linux-tegra-r3251)
-  * [NVIDIA L4T 32.6.1](https://developer.nvidia.com/embedded/linux-tegra-r3261) (not for NVIDIA Jetson Nano (devkit))
+  * [NVIDIA L4T 32.6.1](https://developer.nvidia.com/embedded/linux-tegra-r3261)
 * Supported [VC MIPI Camera Modules](https://www.vision-components.com/fileadmin/external/documentation/hardware/VC_MIPI_Camera_Module/index.html) 
-  * IMX178, IMX183, IMX226, IMX250, IMX252, IMX264, IMX265, IMX296, IMX327, IMX392, IMX412, OV9281
+  * IMX226, IMX183, IMX178
+  * IMX252, IMX250, IMX392, IMX264, IMX265
+  * IMX296
+  * IMX327
+  * IMX412
+  * OV9281
 * Features
   * Quickstart script for an easier installation process
-  * Camera module auto detect
+  * Auto detection of VC MIPI camera module
   * Image Streaming in GREY, Y10, Y12, SRGGB8, SRGGB10, SRGGB12 format.
   * Exposure and Gain can be set via V4L2 library.
   * Trigger modes '0: disabled', '1: external', '2: pulsewidth', '3: self', '4: single', '5: sync', '6: stream_edge', '7: stream_level' can be set via device tree or V4L2 control 'trigger_mode'.

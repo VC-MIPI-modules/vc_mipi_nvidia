@@ -144,13 +144,9 @@ setup_driver() {
         print_title $1 $2
         choose_som
         case ${som} in
-        Nano)
+        Nano|NanoDK)
                 choose_board_nano
                 choose_bsp 4
-                ;;
-        NanoDK)
-                choose_board_nano
-                choose_bsp 3
                 ;;
         XavierNX) 
                 choose_board_xavier_nx

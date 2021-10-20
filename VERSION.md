@@ -1,15 +1,15 @@
 # Version History
 
-## v0.6.0 (Support IMX250, IMX264, IMX265, IMX392)
+## v0.6.0 (Support IMX250, IMX264, IMX265, IMX392 and L4T 32.6.1)
   * New Features
     * Added this version description
     * Easier installation of demo.sh and its dependencies
     * Supported board support packages
-      * NVIDIA L4T 32.6.1 (for NVIDIA Jetson Xavier NX on Developer Kit)
+      * NVIDIA L4T 32.6.1 (all SoMs)
     * Supported VC MIPI Camera Modules
       * IMX250, IMX264, IMX265, IMX392
 
-## v0.5.0 (Support Jetson Xavier NX)
+## v0.5.0 (Support IMX412 and Jetson Xavier NX)
   * New Features
     * Supported system on modules
       * NVIDIA Jetson Nano (devkit)

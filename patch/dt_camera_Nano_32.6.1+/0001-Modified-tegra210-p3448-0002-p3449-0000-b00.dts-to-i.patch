@@ -1,8 +1,8 @@
-From 339940e7dc081adfb7e3995e5c9c5a63c02514ae Mon Sep 17 00:00:00 2001
-From: Peter Martienssen <peter.martienssen@liquify-consulting.de>
-Date: Mon, 27 Sep 2021 19:06:07 +0200
-Subject: [PATCH] Modified tegra210-p3448-0002-p3449-0000.dts to integrate VC
- MIPI Driver and deactivate IMX219 and IM477 driver.
+From 75c2f9a9df1f1c4d264b50bc84ab6b3bf1ff0ba5 Mon Sep 17 00:00:00 2001
+From: "/setup.sh" <support@vision-components.com>
+Date: Wed, 20 Oct 2021 09:19:22 +0200
+Subject: [PATCH] Modified tegra210-p3448-0002-p3449-0000-b00.dts to integrate
+ VC MIPI Driver and deactivate IMX219 and IM477 driver.
 
 ---
  .../kernel-dts/tegra210-p3448-0002-p3449-0000-b00.dts  | 10 ++++++++--
