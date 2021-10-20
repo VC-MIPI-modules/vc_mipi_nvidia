@@ -53,6 +53,23 @@ get_image_size() {
 	height=${values[1]}
 }
 
+adjust_pixel_format() {
+	pixelformat=$(v4l2-ctl --get-fmt-video | grep -i 'Pixel Format' | grep -oe "'.*'")
+	pixelformat=${pixelformat:1:-1}
+
+	newformat=
+	case ${pixelformat} in
+	'GREY') newformat='RGGB' ;;
+	'Y10 ') newformat='RG10' ;;
+	'Y12 ') newformat='RG12' ;;
+	esac
+
+	if [[ -n ${newformat} ]]; then
+		echo "Adjust pixeformat to ${newformat}, because nvarguscamerasrc needs a color format."
+		v4l2-ctl -d /dev/video${device} --set-fmt-video=pixelformat=${newformat}
+	fi
+}
+
 script_dir=$(dirname $0)
 argus=
 format=
@@ -153,9 +170,10 @@ fi
 
 if [[ -n ${argus} ]]; then
 	get_image_size
+	adjust_pixel_format
 
 	gst-launch-1.0 \
-        	nvarguscamerasrc sensor-id=${device}  aelock=true awblock=true ! \
+        	nvarguscamerasrc sensor-id=${device} aelock=true awblock=true tnr-mode=0 ! \
         	"video/x-raw(memory:NVMM),width=${width}, height=${height}, framerate=20/1, format=NV12" ! \
         	nvegltransform ! nveglglessink -e
 else 
