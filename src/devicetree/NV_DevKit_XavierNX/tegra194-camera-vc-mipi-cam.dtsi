@@ -167,7 +167,7 @@
 
                     discontinuous_clk        = "no";
                     mclk_khz                 = "24000";
-                    pix_clk_hz               = "800000000"; // 801907200
+                    pix_clk_hz               = "800000000";
                     cil_settletime           = "0";
 
                     dpcm_enable              = "false";
@@ -178,9 +178,9 @@
                     max_hdr_ratio            = "1";
                     readout_orientation      = "0";
 
-                    active_w                 = "1000"; // 4032
-                    active_h                 = "1000"; // 3040
-                    line_length              = "1000"; // 4184
+                    active_w                 = "1000";
+                    active_h                 = "1000";
+                    line_length              = "1000";
                     pixel_t                  = "bayer_rggb";
 
                     gain_factor              = "1";
@@ -201,7 +201,7 @@
                     step_framerate           = "1";
                     default_framerate        = "1000";
 
-                    embedded_metadata_height = "0"; // 2
+                    embedded_metadata_height = "0";
                 };
 
                 ports {
@@ -248,8 +248,8 @@
                     pix_clk_hz               = "800000000";
                     cil_settletime           = "0";
 
-                    mclk_multiplier          = "9.33";
                     dpcm_enable              = "false";
+                    mclk_multiplier          = "9.33";
 
                     inherent_gain            = "1";
                     min_hdr_ratio            = "1";
@@ -303,7 +303,7 @@
     lens_vc_mipi@RBPCV2 {
         min_focus_distance  = "0.0";
         hyper_focal         = "0.0";
-        focal_length        = "1.0";
+        focal_length        = "6.0";
         f_number            = "2.0";
         aperture            = "0.0";
     };
