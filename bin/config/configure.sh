@@ -41,7 +41,7 @@ fi
 PATCHES=()
 
 case $VC_MIPI_SOM in
-    Nano|NanoDK)
+    Nano|NanoSD)
         # Carrier board dependant settings
         case $VC_MIPI_BOARD in
             NV_DevKit_Nano_B01)
@@ -63,12 +63,13 @@ case $VC_MIPI_SOM in
         # Carrier board independant settings
         PATCHES+=('kernel_Nano_32.5.0+')
         DT_CAM_FILE_DST_DIR=$KERNEL_SOURCE/hardware/nvidia/platform/t210/porg/kernel-dts/porg-platforms
+        
         FLASH_DT='DTB'
         case $VC_MIPI_SOM in
         Nano)   FLASH_BOARD='jetson-nano-emmc' ;;
-        NanoDK) FLASH_BOARD='jetson-nano-qspi-sd' ;;
+        NanoSD) FLASH_BOARD='jetson-nano-qspi-sd' ;;
         esac
-        FLASH_MEDIUM='mmcblk0p1'
+        FLASH_PARTITION='mmcblk0p1'
 
         case $VC_MIPI_BSP in
             32.5.0|32.5.1|32.5.2)
@@ -80,7 +81,7 @@ case $VC_MIPI_SOM in
         esac
         ;;
 
-    XavierNX)
+    XavierNX|XavierNXSD)
         # Carrier board dependant settings
         case $VC_MIPI_BOARD in
             NV_DevKit_XavierNX)
@@ -109,9 +110,14 @@ case $VC_MIPI_SOM in
                 ;;
         esac
         DT_CAM_FILE_DST_DIR=$KERNEL_SOURCE/hardware/nvidia/platform/t19x/jakku/kernel-dts/common/
+
         FLASH_DT='kernel-dtb'
-        FLASH_BOARD='jetson-xavier-nx-devkit'
-        FLASH_MEDIUM='mmcblk0p1'
+        case $VC_MIPI_SOM in
+        XavierNX)   FLASH_BOARD='jetson-xavier-nx-devkit-emmc' ;;
+        XavierNXSD) FLASH_BOARD='jetson-xavier-nx-devkit' ;;
+        esac
+        FLASH_PARTITION='mmcblk0p1'
+
         case $VC_MIPI_BSP in
             32.5.0|32.5.1|32.5.2)
                 PATCHES+=('dt_camera_XavierNX_32.5.0+')
@@ -136,7 +142,7 @@ echo "  Using L4T Driver Package (BSP) Sources URL:  $SRC_URL"
 echo "  Using L4T Driver Package (BSP) Sources FILE: $SRC_FILE"
 echo "  Using patches:                               ${PATCHES[@]}"
 echo "  Using devicetree camera file:                $DT_CAM_FILE"
-echo "  Using flash parameters:                      $FLASH_DT $FLASH_BOARD $FLASH_MEDIUM"
+echo "  Using flash parameters:                      $FLASH_DT $FLASH_BOARD $FLASH_PARTITION"
 echo "  Using target user and ip address:            $TARGET_USER@$TARGET_IP"
 echo "------------------------------------------------------------"
 

@@ -49,13 +49,15 @@ choose_som() {
                 echo "  Choose your system on module"
                 echo "    1: NVIDIA Jetson Nano (production) (https://developer.nvidia.com/embedded/jetson-nano)"
                 echo "    2: NVIDIA Jetson Nano (devkit) (https://developer.nvidia.com/embedded/jetson-nano)"
-                echo "    3: NVIDIA Jetson Xavier NX (https://developer.nvidia.com/embedded/jetson-xavier-nx)"
-                read_selection 1 3
+                echo "    3: NVIDIA Jetson Xavier NX (production) (https://developer.nvidia.com/embedded/jetson-xavier-nx)"
+                echo "    4: NVIDIA Jetson Xavier NX (devkit) (https://developer.nvidia.com/embedded/jetson-xavier-nx)"
+                read_selection 1 4
         fi
         case ${selection} in
         1) som=Nano ;;
-        2) som=NanoDK ;;
+        2) som=NanoSD ;;
         3) som=XavierNX ;;
+        4) som=XavierNXSD ;;
         esac
 }
 
@@ -98,10 +100,8 @@ choose_bsp() {
                 echo "    1: NVIDIA L4T 32.5.0 (https://developer.nvidia.com/embedded/linux-tegra-r325)"
                 echo "    2: NVIDIA L4T 32.5.1 (https://developer.nvidia.com/embedded/linux-tegra-r3251)"
                 echo "    3: NVIDIA L4T 32.5.2 (https://developer.nvidia.com/embedded/linux-tegra-r3251)"
-                if [[ $1 == "4" ]]; then
-                        echo "    4: NVIDIA L4T 32.6.1 (https://developer.nvidia.com/embedded/linux-tegra-r3261)"
-                fi
-                read_selection 1 $1
+                echo "    4: NVIDIA L4T 32.6.1 (https://developer.nvidia.com/embedded/linux-tegra-r3261)"
+                read_selection 1 4
         fi
         case ${selection} in
         1) bsp=32.5.0 ;;
@@ -144,13 +144,13 @@ setup_driver() {
         print_title $1 $2
         choose_som
         case ${som} in
-        Nano|NanoDK)
+        Nano|NanoSD)
                 choose_board_nano
-                choose_bsp 4
+                choose_bsp
                 ;;
-        XavierNX) 
+        XavierNX|XavierNXSD) 
                 choose_board_xavier_nx
-                choose_bsp 4
+                choose_bsp
                 ;;
         esac
         check_configuration $1 $2

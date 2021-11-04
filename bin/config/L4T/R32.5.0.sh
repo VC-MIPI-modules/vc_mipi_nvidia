@@ -3,10 +3,10 @@
 DEV_URL=https://developer.nvidia.com/embedded/L4T/r32_Release_v5.0
 
 case $VC_MIPI_SOM in
-        Nano|NanoDK|TX1)
+        Nano|NanoSD|TX1)
                 BSP_FILE=Tegra210_Linux_R32.5.0_aarch64.tbz2
                 ;;
-        AGXXavier|XavierNX|TX2)
+        AGXXavier|XavierNX|XavierNXSD|TX2)
                 BSP_FILE=Tegra186_Linux_R32.5.0_aarch64.tbz2
                 ;;
 esac

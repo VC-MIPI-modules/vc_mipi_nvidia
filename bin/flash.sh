@@ -25,7 +25,7 @@ check_recovery_mode() {
 
 flash_all() {
     	cd $BUILD_DIR/Linux_for_Tegra/
-    	sudo ./flash.sh $FLASH_BOARD $FLASH_MEDIUM
+    	sudo ./flash.sh $FLASH_BOARD $FLASH_PARTITION
 }
 
 flash_kernel() {
@@ -34,7 +34,7 @@ flash_kernel() {
 
 flash_device_tree() {
     	cd $BUILD_DIR/Linux_for_Tegra/
-    	sudo ./flash.sh -r -k $FLASH_DT $FLASH_BOARD $FLASH_MEDIUM
+    	sudo ./flash.sh -r -k $FLASH_DT $FLASH_BOARD $FLASH_PARTITION
 }
 
 reboot_target() {
