@@ -28,6 +28,7 @@ install_system_tools() {
     sudo apt install -y build-essential
     sudo apt install -y python2.7
     sudo apt install -y qemu-user-static
+    sudo apt install -y libxml2-utils
     sudo apt install -y git
 }
 
