@@ -14,4 +14,4 @@ esac
 RFS_FILE=Tegra_Linux_Sample-Root-Filesystem_R32.5.0_aarch64.tbz2
 SRC_FILE=public_sources.tbz2
 
-. $BIN_DIR/config/L4T/urls.sh
+. $BIN_DIR/config/L4T/urls_32.4.4+.sh

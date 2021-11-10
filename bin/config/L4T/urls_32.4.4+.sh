@@ -1,7 +1,7 @@
 #!/bin/bash
 
 case $VC_MIPI_BSP in
-        32.4.4|32.5.0|32.5.1|32.5.2|32.6.1)
+32.4.4|32.5.0|32.5.1|32.5.2|32.6.1)
         case $VC_MIPI_SOM in
         Nano|NanoSD|TX1)
                 BSP_URL=$DEV_URL/t210
