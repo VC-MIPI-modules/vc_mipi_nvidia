@@ -84,10 +84,12 @@ choose_board_xavier_nx() {
                 echo "------------------------------------------------------------"
                 echo "  Choose your carrier board"
                 echo "    1: NVIDIA Jetson Xavier NX Developer Kit (https://developer.nvidia.com/embedded/jetson-xavier-nx-devkit)"
-                read_selection 1 1
+                echo "    2: Auvidea JNX30-LC-PD (https://auvidea.eu/product/70804)"
+                read_selection 1 2
         fi
         case ${selection} in
         1) board=NV_DevKit_XavierNX ;;
+        2) board=Auvidea_JNX30 ;;
         esac
 }
 

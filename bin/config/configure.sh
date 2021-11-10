@@ -88,12 +88,12 @@ case $VC_MIPI_SOM in
                 DT_CAM_FILE=$DT_CAM_DIR/NV_DevKit_XavierNX/tegra194-camera-vc-mipi-cam.dtsi
                 ;;
             Auvidea_JNX30)
-                # DT_CAM_FILE=Auvidea_JNX30
-                # case $VC_MIPI_BSP in
-                # 32.5.0|32.5.1|32.5.2|32.6.1)
-                #     PATCHES=('dt_auvidea_JNX30_XavierNX_32.5.0+')
-                #     ;;
-                # esac
+                DT_CAM_FILE=$DT_CAM_DIR/Auvidea_JNX30_XavierNX/tegra194-camera-vc-mipi-cam.dtsi
+                case $VC_MIPI_BSP in
+                32.5.0|32.5.1|32.5.2|32.6.1)
+                    PATCHES=('dt_Auvidea_JNX30_XavierNX_32.5.0+')
+                    ;;
+                esac
                 ;;
             *)
                 echo "Carrier board $VC_MIPI_BOARD not supported!"
