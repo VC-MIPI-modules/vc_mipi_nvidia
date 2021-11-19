@@ -25,7 +25,7 @@ patch_kernel() {
 
 configure_kernel() {
     cd $KERNEL_SOURCE
-    make -C kernel/kernel-4.9/ O=$KERNEL_OUT tegra_defconfig
+    make -C kernel/kernel-4.9/ O=$KERNEL_OUT -j$(nproc) tegra_defconfig
 }
 
 build_kernel() {
@@ -46,7 +46,7 @@ build_modules() {
 build_device_tree() {
     echo "Build device tree ..."
     cd $KERNEL_SOURCE
-    make -C kernel/kernel-4.9/ O=$KERNEL_OUT --output-sync=target dtbs
+    make -C kernel/kernel-4.9/ O=$KERNEL_OUT -j$(nproc) --output-sync=target dtbs
     cp -rfv $KERNEL_OUT/arch/arm64/boot/dts/*.dtb $BUILD_DIR/Linux_for_Tegra/kernel/dtb/
 }
 
