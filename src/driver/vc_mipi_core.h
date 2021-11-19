@@ -10,6 +10,7 @@
 #define vc_dbg(dev, fmt, ...) dev_dbg(dev, fmt, ##__VA_ARGS__)
 #define vc_info(dev, fmt, ...) dev_info(dev, fmt, ##__VA_ARGS__)
 #define vc_notice(dev, fmt, ...) dev_err(dev, fmt, ##__VA_ARGS__)
+#define vc_warn(dev, fmt, ...) dev_warn(dev, fmt, ##__VA_ARGS__)
 #define vc_err(dev, fmt, ...) dev_err(dev, fmt, ##__VA_ARGS__)
 
 #define FLAG_EXPOSURE_SIMPLE		0x0001
