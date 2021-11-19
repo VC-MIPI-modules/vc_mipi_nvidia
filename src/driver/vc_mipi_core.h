@@ -30,6 +30,12 @@
 #define FLAG_TRIGGER_STREAM_EDGE  	0x4000
 #define FLAG_TRIGGER_STREAM_LEVEL 	0x8000
 
+#define FORMAT_RAW08			0x2a
+#define FORMAT_RAW10			0x2b
+#define FORMAT_RAW12			0x2c
+#define FORMAT_RAW14			0x2d
+
+
 struct vc_desc_mode {
 	__u8 data_rate[4];
 	__u8 num_lanes;

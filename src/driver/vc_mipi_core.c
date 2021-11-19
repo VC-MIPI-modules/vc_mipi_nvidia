@@ -226,10 +226,10 @@ static void vc_core_print_modes(struct device *dev, struct vc_desc *desc)
 		mode = &desc->modes[index];
 		data_rate = (*(__u32*)mode->data_rate)/1000000;
 		switch (mode->format) {
-		case 0x2a: strcpy(format, "RAW08"); break;
-		case 0x2b: strcpy(format, "RAW10"); break;
-		case 0x2c: strcpy(format, "RAW12"); break;
-		case 0x2d: strcpy(format, "RAW14"); break;
+		case FORMAT_RAW08: strcpy(format, "RAW08"); break;
+		case FORMAT_RAW10: strcpy(format, "RAW10"); break;
+		case FORMAT_RAW12: strcpy(format, "RAW12"); break;
+		case FORMAT_RAW14: strcpy(format, "RAW14"); break;
 		default: sprintf(format, "0x%02x ", mode->format); break;
 		}
 		switch (mode->type) {
@@ -277,16 +277,16 @@ static __u8 vc_core_v4l2_code_to_format(__u32 code)
 	switch (code) {
 	case MEDIA_BUS_FMT_Y8_1X8:
 	case MEDIA_BUS_FMT_SRGGB8_1X8:
-		return 0x2a;
+		return FORMAT_RAW08;
 	case MEDIA_BUS_FMT_Y10_1X10:
 	case MEDIA_BUS_FMT_SRGGB10_1X10:
-		return 0x2b;
+		return FORMAT_RAW10;
 	case MEDIA_BUS_FMT_Y12_1X12:
 	case MEDIA_BUS_FMT_SRGGB12_1X12:
-		return 0x2c;
+		return FORMAT_RAW12;
 	// case MEDIA_BUS_FMT_Y14_1X14:
 	case MEDIA_BUS_FMT_SRGGB14_1X14:
-		return 0x2d;
+		return FORMAT_RAW14;
 	}
 	return 0;
 }
@@ -294,10 +294,10 @@ static __u8 vc_core_v4l2_code_to_format(__u32 code)
 static __u32 vc_core_format_to_v4l2_code(__u8 format, int is_color)
 {
 	switch (format) {
-	case 0x2a: return is_color ? MEDIA_BUS_FMT_SRGGB8_1X8   : MEDIA_BUS_FMT_Y8_1X8;
-	case 0x2b: return is_color ? MEDIA_BUS_FMT_SRGGB10_1X10 : MEDIA_BUS_FMT_Y10_1X10;
-	case 0x2c: return is_color ? MEDIA_BUS_FMT_SRGGB12_1X12 : MEDIA_BUS_FMT_Y12_1X12;
-	case 0x2d: return MEDIA_BUS_FMT_SRGGB14_1X14; // MEDIA_BUS_FMT_Y14_1X14
+	case FORMAT_RAW08: return is_color ? MEDIA_BUS_FMT_SRGGB8_1X8   : MEDIA_BUS_FMT_Y8_1X8;
+	case FORMAT_RAW10: return is_color ? MEDIA_BUS_FMT_SRGGB10_1X10 : MEDIA_BUS_FMT_Y10_1X10;
+	case FORMAT_RAW12: return is_color ? MEDIA_BUS_FMT_SRGGB12_1X12 : MEDIA_BUS_FMT_Y12_1X12;
+	case FORMAT_RAW14: return MEDIA_BUS_FMT_SRGGB14_1X14; // MEDIA_BUS_FMT_Y14_1X14
 	}
 	return 0;
 }
