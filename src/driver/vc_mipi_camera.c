@@ -369,16 +369,13 @@ static int vc_stop_streaming(struct tegracam_device *tc_dev)
 	return ret;
 }
 
-// Don't remove this function. It is needed by the Tegra Framework. 
-static int vc_set_group_hold(struct tegracam_device *tc_dev, bool val)
-{
-	return 0;
-}
+// NOTE: Don't remove this function. It is needed by the Tegra Framework. 
+static int vc_set_group_hold(struct tegracam_device *tc_dev, bool val) {return 0;}
 
-// Don't remove this function. It is needed by the Tegra Framework. 
+// NOTE: Don't remove this function. It is needed by the Tegra Framework. 
 static int vc_power_get(struct tegracam_device *tc_dev) {return 0;}
 
-// Don't remove this function. It is needed by the Tegra Framework. 
+// NOTE: Don't remove this function. It is needed by the Tegra Framework. 
 // (called by tegracam_device_register)
 static struct camera_common_pdata *vc_parse_dt(struct tegracam_device *tc_dev)
 {
