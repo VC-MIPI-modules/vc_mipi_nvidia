@@ -365,37 +365,50 @@ __u32 vc_core_get_format(struct vc_cam *cam)
 	return code;
 }
 
-int vc_core_set_frame(struct vc_cam *cam, __u32 width, __u32 height)
+int vc_core_set_frame(struct vc_cam *cam, __u32 x, __u32 y, __u32 width, __u32 height)
 {
 	struct vc_ctrl *ctrl = &cam->ctrl;
 	struct vc_state *state = &cam->state;
-	struct vc_size *frame = &state->framesize;
+	struct vc_frame *frame = &state->frame;
 	struct device *dev = vc_core_get_sen_device(cam);
 
-	vc_info(dev, "%s(): Set frame (width: %u, height: %u)\n", __FUNCTION__, width, height);
+	vc_info(dev, "%s(): Set frame (x: %u, y: %u, width: %u, height: %u)\n", __FUNCTION__, x, y, width, height);
 
-	if (width > ctrl->framesize.width) {
-		frame->width = ctrl->framesize.width;
-	} else if (width < 0) {
-		frame->width = 0;
+	if (width > ctrl->frame.width) {
+		frame->width = ctrl->frame.width;
 	} else {
 		frame->width = width;
 	}
 
-	if (height > ctrl->framesize.height) {
-		frame->height = ctrl->framesize.height;
-	} else if (height < 0) {
-		frame->height = 0;
+	if (x > ctrl->frame.width - frame->width) {
+		frame->x = ctrl->frame.width - frame->width;
+	} else {
+		frame->x = x;
+	}
+
+	if (height > ctrl->frame.height) {
+		frame->height = ctrl->frame.height;
 	} else {
 		frame->height = height;
+	}
+
+	if (y > ctrl->frame.height - frame->height) {
+		frame->y = ctrl->frame.height - frame->height;
+	} else {
+		frame->y = y;
+	}
+
+	if (frame->x != x || frame->y != y || frame->width != width || frame->height != height) {
+		vc_warn(dev, "%s(): Adjusted frame (x: %u, y: %u, width: %u, height: %u)\n", __FUNCTION__, 
+		frame->x, frame->y, frame->width, frame->height);
 	}
 
 	return 0;
 }
 
-struct vc_size *vc_core_get_frame(struct vc_cam *cam)
+struct vc_frame *vc_core_get_frame(struct vc_cam *cam)
 {
-	struct vc_size* frame = &cam->state.framesize;
+	struct vc_frame* frame = &cam->state.frame;
 	struct device *dev = vc_core_get_sen_device(cam);
 
 	vc_info(dev, "%s(): Get frame (width: %u, height: %u)\n", __FUNCTION__, frame->width, frame->height);
@@ -640,13 +653,15 @@ static void vc_core_state_init(struct vc_cam *cam)
 	state->retrigger_cnt = 0;
 	state->framerate = ctrl->framerate.def;
 	state->format_code = vc_core_get_default_format(desc);
-	state->framesize.width = ctrl->framesize.width;
-	state->framesize.height = ctrl->framesize.height;	
+	state->frame.x = 0;
+	state->frame.y = 0;
+	state->frame.width = ctrl->frame.width;
+	state->frame.height = ctrl->frame.height;	
 	state->streaming = 0;
 	state->flags = 0x00;
 }
 
-static int vc_sen_read_image_size(struct vc_ctrl *ctrl, struct vc_size *size);
+static int vc_sen_read_image_size(struct vc_ctrl *ctrl, struct vc_frame *size);
 
 int vc_core_init(struct vc_cam *cam, struct i2c_client *client) 
 {
@@ -663,7 +678,7 @@ int vc_core_init(struct vc_cam *cam, struct i2c_client *client)
 	if (ret) {
 		return -EIO;
 	}
-	vc_sen_read_image_size(ctrl, &ctrl->framesize);
+	vc_sen_read_image_size(ctrl, &ctrl->frame);
 	vc_core_state_init(cam);
 
 	vc_notice(&ctrl->client_mod->dev, "VC MIPI Core succesfully initialized");
@@ -935,7 +950,7 @@ static int vc_sen_write_mode(struct vc_ctrl *ctrl, int mode)
 	return ret;
 }
 
-static int vc_sen_read_image_size(struct vc_ctrl *ctrl, struct vc_size *size)
+static int vc_sen_read_image_size(struct vc_ctrl *ctrl, struct vc_frame *size)
 {
 	struct i2c_client *client = ctrl->client_sen;
 	struct device *dev = &client->dev;
@@ -948,23 +963,32 @@ static int vc_sen_read_image_size(struct vc_ctrl *ctrl, struct vc_size *size)
 	return 0;
 }
 
-int vc_sen_set_roi(struct vc_cam *cam, int width, int height)
+int vc_sen_set_roi(struct vc_cam *cam, int x, int y, int width, int height)
 {
 	struct vc_ctrl *ctrl = &cam->ctrl;
 	struct i2c_client *client = ctrl->client_sen;
 	struct device *dev = &client->dev;
-	int ret;
+	int ret = 0;
 
-	vc_info(dev, "%s(): Set sensor roi: (width: %u, height: %u)\n", __FUNCTION__, width, height);
+	vc_info(dev, "%s(): Set sensor roi: (x: %u, y: %u, width: %u, height: %u)\n", __FUNCTION__, x, y, width, height);
 
 	ret  = vc_sen_write_mode(ctrl, ctrl->csr.sen.mode_standby);
+	ret |= i2c_write_reg2(dev, client, &ctrl->csr.sen.h_start, x, __FUNCTION__);
+	ret |= i2c_write_reg2(dev, client, &ctrl->csr.sen.v_start, y, __FUNCTION__);
 	ret |= i2c_write_reg2(dev, client, &ctrl->csr.sen.o_width, width, __FUNCTION__);
 	ret |= i2c_write_reg2(dev, client, &ctrl->csr.sen.o_height, height, __FUNCTION__);
 	ret |= vc_sen_write_mode(ctrl, ctrl->csr.sen.mode_operating);
-	if (ret) 
-		vc_err(dev, "%s(): Couldn't set sensor roi: (width: %u, height: %u) (error: %d)\n", __FUNCTION__, width, height, ret);
-
+	if (ret) {
+		vc_err(dev, "%s(): Couldn't set sensor roi: (x: %u, y: %u, width: %u, height: %u) (error: %d)\n", __FUNCTION__, 
+			x, y, width, height, ret);
 	return ret;
+	}
+
+	cam->state.frame.x = x;
+	cam->state.frame.y = y;
+	cam->state.frame.width = width;
+	cam->state.frame.height = height;
+	return 0;
 }
 
 static __u32 vc_sen_read_vmax(struct vc_ctrl *ctrl)

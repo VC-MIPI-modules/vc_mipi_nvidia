@@ -94,10 +94,12 @@ typedef struct vc_control {
 	__u32 def;
 } vc_control;
 
-typedef struct vc_size {
+typedef struct vc_frame {
+	__u32 x;
+	__u32 y;
 	__u32 width;
 	__u32 height;
-} vc_size;
+} vc_frame;
 
 typedef struct vc_csr2 {
 	__u32 l;
@@ -119,6 +121,8 @@ struct vc_sen_csr {
 	struct vc_csr4 hmax;
 	struct vc_csr4 shs;
 	struct vc_csr2 gain;
+	struct vc_csr2 h_start;
+	struct vc_csr2 v_start;
 	struct vc_csr2 o_width;
 	struct vc_csr2 o_height;
 	struct vc_csr4 flash_duration;
@@ -139,7 +143,7 @@ struct vc_ctrl {
 	struct vc_control gain;
 	struct vc_control framerate;
 	// Modes & Frame Formats
-	struct vc_size framesize;	// Pixel
+	struct vc_frame frame;		// Pixel
 	// Control and status registers
 	struct vc_csr csr;
 	// Exposure
@@ -166,7 +170,7 @@ struct vc_state {
 	__u32 retrigger_cnt;
 	__u32 framerate;
 	__u32 format_code;
-	struct vc_size framesize;
+	struct vc_frame frame;		// Pixel
 	__u8 num_lanes;
 	__u8 io_mode;
 	__u8 trigger_mode;
@@ -191,8 +195,8 @@ struct device *vc_core_get_mod_device(struct vc_cam *cam);
 int vc_core_try_format(struct vc_cam *cam, __u32 code);
 int vc_core_set_format(struct vc_cam *cam, __u32 code);
 __u32 vc_core_get_format(struct vc_cam *cam);
-int vc_core_set_frame(struct vc_cam *cam, __u32 width, __u32 height);
-struct vc_size *vc_core_get_frame(struct vc_cam *cam);
+int vc_core_set_frame(struct vc_cam *cam, __u32 x, __u32 y, __u32 width, __u32 height);
+struct vc_frame *vc_core_get_frame(struct vc_cam *cam);
 int vc_core_set_num_lanes(struct vc_cam *cam, __u32 number);
 __u32 vc_core_get_num_lanes(struct vc_cam *cam);
 int vc_core_set_framerate(struct vc_cam *cam, __u32 framerate);
@@ -212,7 +216,7 @@ int vc_mod_set_io_mode(struct vc_cam *cam, int mode);
 int vc_mod_get_io_mode(struct vc_cam *cam);
 
 // --- Functions for the VC MIPI Sensors --------------------------------------
-int vc_sen_set_roi(struct vc_cam *cam, int width, int height);
+int vc_sen_set_roi(struct vc_cam *cam, int x, int y, int width, int height);
 int vc_sen_set_gain(struct vc_cam *cam, int gain);
 int vc_sen_set_exposure(struct vc_cam *cam, int exposure);
 int vc_sen_start_stream(struct vc_cam *cam);

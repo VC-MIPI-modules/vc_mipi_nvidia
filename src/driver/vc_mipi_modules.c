@@ -33,6 +33,10 @@ static void vc_init_ctrl(struct vc_ctrl *ctrl, struct vc_desc* desc)
 	ctrl->csr.sen.gain.l 		= desc->csr_gain_l;
 	ctrl->csr.sen.gain.m 		= desc->csr_gain_h;
 
+	ctrl->csr.sen.h_start.l 	= desc->csr_h_start_l;
+	ctrl->csr.sen.h_start.m 	= desc->csr_h_start_h;
+	ctrl->csr.sen.v_start.l 	= desc->csr_v_start_l;
+	ctrl->csr.sen.v_start.m 	= desc->csr_v_start_h;
 	ctrl->csr.sen.o_width.l		= desc->csr_o_width_l;
 	ctrl->csr.sen.o_width.m		= desc->csr_o_width_h;
 	ctrl->csr.sen.o_height.l	= desc->csr_o_height_l;

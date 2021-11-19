@@ -167,9 +167,9 @@ void vc_adjust_tegracam(struct tegracam_device *tc_dev)
 	struct camera_common_frmfmt *frmfmt1 = (struct camera_common_frmfmt *)tc_dev->sensor_ops->frmfmt_table;
 	struct camera_common_frmfmt *frmfmt2 = (struct camera_common_frmfmt *)tc_dev->s_data->frmfmt;
 	struct sensor_mode_properties *mode = tegracam_to_mode0(tc_dev);
-	__u32 width = cam->ctrl.framesize.width;
-	__u32 height = cam->ctrl.framesize.height;
-	__u32 line_length = cam->ctrl.framesize.width;
+	__u32 width = cam->ctrl.frame.width;
+	__u32 height = cam->ctrl.frame.height;
+	__u32 line_length = cam->ctrl.frame.width;
 
 	vc_adjust_cam_ctrls(cam, &width, &height);
 
@@ -183,14 +183,13 @@ void vc_adjust_tegracam(struct tegracam_device *tc_dev)
 		line_length = g_line_length;
 	}
 
-	if (width != cam->ctrl.framesize.width || height != cam->ctrl.framesize.height)
+	if (width != cam->ctrl.frame.width || height != cam->ctrl.frame.height)
 		vc_notice(dev, "%s(): Adjust tegracam framework settings (w: %u h: %u l: %u)\n", __FUNCTION__, 
 			width, height, line_length);
 
 	switch (cam->desc.mod_id) {
 	case MOD_ID_IMX412: 
-		cam->state.framesize.width = width;
-		cam->state.framesize.height = height;
+		cam->state.frame.width = width;
 	}
 
 	// TODO: Problem! When the format is changed set_mode is called to late in s_stream 
@@ -326,12 +325,12 @@ static int vc_set_value(struct tegracam_device *tc_dev, __s64 val)
 	}
 	if (50000 <= val && val < 60000) {
 		__u32 width = val - 50000;
-		vc_sen_set_roi(cam, width, cam->state.framesize.height);
+		vc_sen_set_roi(cam, 0, 0, width, cam->state.frame.height);
 		vc_notice(dev, "%s(): Set testing roi width = %u", __FUNCTION__, width);
 	}
 	if (60000 <= val && val < 70000) {
 		__u32 height = val - 60000;
-		vc_sen_set_roi(cam, cam->state.framesize.width, height);
+		vc_sen_set_roi(cam, 0, 0, cam->state.frame.width, height);
 		vc_notice(dev, "%s(): Set testing roi height = %u", __FUNCTION__, height);
 	}
 
@@ -342,6 +341,7 @@ static int vc_set_value(struct tegracam_device *tc_dev, __s64 val)
 static int vc_start_streaming(struct tegracam_device *tc_dev)
 {
 	struct vc_cam *cam = tegracam_to_cam(tc_dev);
+	struct vc_state *state = &cam->state;
 	int ret = 0;
 
 	ret  = vc_mod_set_mode(cam);
@@ -352,7 +352,7 @@ static int vc_start_streaming(struct tegracam_device *tc_dev)
 	if (g_sleep > 0) {
 		usleep_range(g_sleep, g_sleep + 1000);
 	}
-	
+	ret |= vc_sen_set_roi(cam, state->frame.x, state->frame.y, state->frame.width, state->frame.height);
 	ret |= vc_sen_start_stream(cam);
 
 	return ret;
@@ -422,8 +422,8 @@ int vc_init_frmfmt(struct device *dev, struct vc_cam *cam)
 	if (frmfmt != NULL && fps != NULL) {
 		fps[0] = cam->ctrl.framerate.def;
 		
-		frmfmt->size.width = cam->ctrl.framesize.width;
-		frmfmt->size.height = cam->ctrl.framesize.height;
+		frmfmt->size.width = cam->ctrl.frame.width;
+		frmfmt->size.height = cam->ctrl.frame.height;
 		frmfmt->hdr_en = 0;
 		frmfmt->mode = 0;
 
@@ -445,9 +445,9 @@ void vc_init_image(struct tegracam_device *tc_dev)
 
 	if (mode != NULL) {
 		image = &mode->image_properties;
-		image->width = cam->ctrl.framesize.width;
-		image->height = cam->ctrl.framesize.height;
-		image->line_length = cam->ctrl.framesize.width;
+		image->width = cam->ctrl.frame.width;
+		image->height = cam->ctrl.frame.height;
+		image->line_length = cam->ctrl.frame.width;
 
 		code = vc_core_get_format(cam);
 		switch(code) {
