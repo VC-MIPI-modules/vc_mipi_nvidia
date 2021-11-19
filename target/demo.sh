@@ -46,7 +46,7 @@ get_system_info()
 
 get_image_size() {
 	values=()
-	for value in $(v4l2-ctl --get-fmt-video | grep -i 'Width/Height' | grep -oe '\([0-9.]*\)'); do
+	for value in $(v4l2-ctl -d /dev/video${device} --get-fmt-video | grep -i 'Width/Height' | grep -oe '\([0-9.]*\)'); do
 		values+=(${value})
 	done
 	width=${values[0]}
@@ -54,7 +54,7 @@ get_image_size() {
 }
 
 adjust_pixel_format() {
-	pixelformat=$(v4l2-ctl --get-fmt-video | grep -i 'Pixel Format' | grep -oe "'.*'")
+	pixelformat=$(v4l2-ctl -d /dev/video${device} --get-fmt-video | grep -i 'Pixel Format' | grep -oe "'.*'")
 	pixelformat=${pixelformat:1:-1}
 
 	newformat=
