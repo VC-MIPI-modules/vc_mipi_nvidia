@@ -153,7 +153,7 @@ install_dependencies
 
 if [[ -n ${format} ]]; then
         echo "Set format: ${format}"
-        v4l2-ctl -d /dev/video${device} --set-fmt-video=pixelformat=${format}
+        v4l2-ctl -d /dev/video${device} --set-fmt-video=pixelformat="${format}"
 fi
 if [[ -n ${trigger} ]]; then
         echo "Set trigger mode: ${trigger}"
