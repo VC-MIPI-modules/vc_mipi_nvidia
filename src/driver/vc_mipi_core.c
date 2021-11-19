@@ -1206,11 +1206,8 @@ int vc_sen_set_exposure(struct vc_cam *cam, int exposure)
 	case REG_TRIGGER_SINGLE:
 		state->exposure_cnt = ((__u64)exposure * cam->ctrl.sen_clk) / 1000000;
 		ret  = vc_mod_write_exposure(client_mod, state->exposure_cnt);
-		// ret |= vc_mod_write_retrigger(client_mod, 0);
 		break;
 	case REG_TRIGGER_PULSEWIDTH:
-		// ret  = vc_mod_write_exposure(client_mod, 0);
-		// ret |= vc_mod_write_retrigger(client_mod, 0);
 		break;
 	case REG_TRIGGER_SELF:
 		frametime = 1000000 / state->framerate;
