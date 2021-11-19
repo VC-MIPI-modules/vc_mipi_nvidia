@@ -33,12 +33,12 @@ void vc_adjust_cam_ctrls(struct vc_cam *cam, __u32 *width, __u32 *height)
 	// Triggermodi
 	// 0: FLAG_TRIGGER_DISABLE
 	// 1: FLAG_TRIGGER_EXTERNAL
-	// 2: FLAG_TRIGGER_PULSEWIDTH	Pulsdauer
-	// 3: FLAG_TRIGGER_SELF		Framerate
-	// 4: FLAG_TRIGGER_SINGLE	Softwaretrigger
-	// 5: FLAG_TRIGGER_SYNC		Master-Slave
-	// 6: FLAG_TRIGGER_STREAM_EDGE	In den Freerun stream triggern
-	// 7: FLAG_TRIGGER_STREAM_LEVEL	In den Freerun stream triggern
+	// 2: FLAG_TRIGGER_PULSEWIDTH
+	// 3: FLAG_TRIGGER_SELF
+	// 4: FLAG_TRIGGER_SINGLE
+	// 5: FLAG_TRIGGER_SYNC
+	// 6: FLAG_TRIGGER_STREAM_EDGE
+	// 7: FLAG_TRIGGER_STREAM_LEVEL
 
 	switch (trigger_mode) {
 		case 0: case 5: case 6: case 7: default:
@@ -49,23 +49,20 @@ void vc_adjust_cam_ctrls(struct vc_cam *cam, __u32 *width, __u32 *height)
 			break;
 	}
 
-	// This error is dependent on VMAX, SHS and framesize.height
+	// This error is dependent on VMAX, SHS and frame.height
 	// TEGRA_VI_CSI_ERROR_STATUS=0x00000001 (Bits 3-0: h>,<, w>,<) => width is to high
 	// TEGRA_VI_CSI_ERROR_STATUS=0x00000002 (Bits 3-0: h>,<, w>,<) => width is to low
 	// TEGRA_VI_CSI_ERROR_STATUS=0x00000004 (Bits 3-0: h>,<, w>,<) => height is to high
 	// TEGRA_VI_CSI_ERROR_STATUS=0x00000008 (Bits 3-0: h>,<, w>,<) => height is to low
 	switch (cam->desc.mod_id) {
-	case MOD_ID_IMX178: // ... (FPGA)
+	case MOD_ID_IMX178: // Active pixels 3072 x 2076
 		*height = 2047;
 		if (trigger_enabled) {
 			*height = 2048;
 		}
 		break;
 
-	case MOD_ID_IMX183: // Active pixels   5440 x 3648 (FPGA)	
-		// Fazit:
-		//          Die Helligkeiten zwischen Freerun und Triggermodus 
-		//          sind leicht unterschiedlich.
+	case MOD_ID_IMX183: // Active pixels 5440 x 3648
 		if (trigger_enabled) {
 			switch (code) {
 			case MEDIA_BUS_FMT_Y8_1X8: 	case MEDIA_BUS_FMT_SRGGB8_1X8:
@@ -122,8 +119,6 @@ void vc_adjust_cam_ctrls(struct vc_cam *cam, __u32 *width, __u32 *height)
 				case MEDIA_BUS_FMT_Y12_1X12: 	case MEDIA_BUS_FMT_SRGGB12_1X12:
 					// 3045 sometimes height to short
 					// 3046 sometimes height to long
-					// => DT investigate 
-					//       mclk_khz, pix_clk_hz, discontinuous_clk, cil_settletime
 					*height = 3046; 
 					break;
 				}
@@ -135,10 +130,7 @@ void vc_adjust_cam_ctrls(struct vc_cam *cam, __u32 *width, __u32 *height)
 		}
 		break;
 
-	case MOD_ID_IMX252: // Active pixels 2048 x 1536 (FPGA)
-		// Fazit:
-		//          Die Helligkeiten zwischen Freerun und Triggermodus 
-		//          sind extrem unterschiedlich.
+	case MOD_ID_IMX252: // Active pixels 2048 x 1536
 		if (num_lanes == 4) {
 			(*height)--;
 		}
@@ -202,7 +194,7 @@ void vc_adjust_tegracam(struct tegracam_device *tc_dev)
 	}
 
 	// TODO: Problem! When the format is changed set_mode is called to late in s_stream 
-	//       to make the change active.  Currently it is necessary to start streaming twice!
+	//       to make the change active. Currently it is necessary to start streaming twice!
 	tc_dev->s_data->def_width = width;
 	tc_dev->s_data->def_height = height;
 	tc_dev->s_data->fmt_width = width;
@@ -573,7 +565,7 @@ void vc_init_controls(struct tegracam_device *tc_dev)
 		control->step_framerate = 1;
 	}
 
-	// Workaround: Set this state to enable controls in tegracam_ctrls.c -> tegracam_set_ctrls
+	// NOTE: Set this state to enable controls in tegracam_ctrls.c -> tegracam_set_ctrls
 	tc_dev->s_data->power->state = SWITCH_ON;
 }
 
@@ -613,7 +605,7 @@ static struct tegracam_ctrl_ops vc_ctrl_ops = {
 static int vc_probe(struct i2c_client *client, const struct i2c_device_id *id)
 {
 	// --------------------------------------------------------------------
-	// Don't modify this lines of code. It will cause a kernel crash.
+	// NOTE: Don't modify this lines of code. It will cause a kernel crash.
 	// "Unable to handle kernel paging request at virtual address 7dabb7951ec6f65c"
 	struct device *dev = &client->dev;
 	struct vc_cam *cam;
