@@ -230,6 +230,30 @@ static void vc_init_ctrl_imx265(struct vc_ctrl *ctrl, struct vc_desc* desc)
 	ctrl->frame.height		= 1536;
 }
 
+// ------------------------------------------------------------------------------------------------
+//  Settings for IMX273/IMX273C
+
+static void vc_init_ctrl_imx273(struct vc_ctrl *ctrl, struct vc_desc* desc)
+{
+	struct device *dev = &ctrl->client_mod->dev;
+
+	vc_notice(dev, "%s(): Initialising module control for IMX273\n", __FUNCTION__);
+
+	vc_init_ctrl_imx252_base(ctrl, desc);
+
+	ctrl->frame.width		= 1440;
+	ctrl->frame.height		= 1080;
+
+	ctrl->expo_timing[0] 		= (vc_timing) { 2, FORMAT_RAW08, .clk =  336 };
+	ctrl->expo_timing[1] 		= (vc_timing) { 2, FORMAT_RAW10, .clk =  420 };
+	ctrl->expo_timing[2] 		= (vc_timing) { 2, FORMAT_RAW12, .clk =  480 };
+	ctrl->expo_timing[3] 		= (vc_timing) { 4, FORMAT_RAW08, .clk =  238 };
+	ctrl->expo_timing[4] 		= (vc_timing) { 4, FORMAT_RAW10, .clk =  290 };
+	ctrl->expo_timing[5] 		= (vc_timing) { 4, FORMAT_RAW12, .clk =  396 };
+
+	ctrl->expo_shs_min		= 15;
+	ctrl->expo_vmax			= 1130;
+}
 
 // ------------------------------------------------------------------------------------------------
 //  Settings for IMX290
@@ -383,6 +407,7 @@ int vc_mod_ctrl_init(struct vc_ctrl* ctrl, struct vc_desc* desc)
 	case MOD_ID_IMX252: vc_init_ctrl_imx252(ctrl, desc); break;
 	case MOD_ID_IMX264: vc_init_ctrl_imx264(ctrl, desc); break;
 	case MOD_ID_IMX265: vc_init_ctrl_imx265(ctrl, desc); break;
+	case MOD_ID_IMX273: vc_init_ctrl_imx273(ctrl, desc); break;
 	case MOD_ID_IMX290: vc_init_ctrl_imx290(ctrl, desc); break;
 	case MOD_ID_IMX296: vc_init_ctrl_imx296(ctrl, desc); break;
 	case MOD_ID_IMX327: vc_init_ctrl_imx327(ctrl, desc); break;

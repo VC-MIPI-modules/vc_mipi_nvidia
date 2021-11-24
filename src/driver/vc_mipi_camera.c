@@ -136,6 +136,17 @@ void vc_adjust_cam_ctrls(struct vc_cam *cam, __u32 *width, __u32 *height)
 		}
 		break;
 
+	case MOD_ID_IMX273: // Active pixels 1440 x 1080
+		if (num_lanes == 4) {
+			switch (code) {
+			case MEDIA_BUS_FMT_Y8_1X8: 	case MEDIA_BUS_FMT_SRGGB8_1X8:
+				*width = 1472;
+				break;
+			}
+			(*height)--;
+		}
+		break;
+
 	case MOD_ID_IMX296: // Active pixels 1440 x 1080
 		if (trigger_enabled) {
 			*height = 1081;
@@ -188,6 +199,7 @@ void vc_adjust_tegracam(struct tegracam_device *tc_dev)
 			width, height, line_length);
 
 	switch (cam->desc.mod_id) {
+	case MOD_ID_IMX273:
 	case MOD_ID_IMX412: 
 		cam->state.frame.width = width;
 	}
