@@ -42,6 +42,9 @@ static void vc_init_ctrl(struct vc_ctrl *ctrl, struct vc_desc* desc)
 	ctrl->csr.sen.o_height.l	= desc->csr_o_height_l;
 	ctrl->csr.sen.o_height.m	= desc->csr_o_height_h;
 
+	ctrl->frame.x			= 0;
+	ctrl->frame.y			= 0;
+
 	ctrl->sen_clk			= desc->clk_ext_trigger;
 }
 
@@ -108,6 +111,9 @@ static void vc_init_ctrl_imx178(struct vc_ctrl *ctrl, struct vc_desc* desc)
 
 	vc_init_ctrl_imx183_base(ctrl, desc);
 
+	ctrl->frame.width		= 3072;
+	ctrl->frame.height		= 2076;
+
 	ctrl->expo_timing[0] 		= (vc_timing) { 2, FORMAT_RAW08, .clk =  680 };
 	ctrl->expo_timing[1] 		= (vc_timing) { 2, FORMAT_RAW10, .clk =  840 };
 	ctrl->expo_timing[2] 		= (vc_timing) { 2, FORMAT_RAW12, .clk =  984 };
@@ -132,6 +138,9 @@ static void vc_init_ctrl_imx183(struct vc_ctrl *ctrl, struct vc_desc* desc)
 
 	vc_init_ctrl_imx183_base(ctrl, desc);
 
+	ctrl->frame.width		= 5440;
+	ctrl->frame.height		= 3648;
+
 	ctrl->expo_timing[0] 		= (vc_timing) { 2, FORMAT_RAW08, .clk = 1440 };
 	ctrl->expo_timing[1] 		= (vc_timing) { 2, FORMAT_RAW10, .clk = 1440 };
 	ctrl->expo_timing[2] 		= (vc_timing) { 2, FORMAT_RAW12, .clk = 1724 };
@@ -153,6 +162,8 @@ static void vc_init_ctrl_imx226(struct vc_ctrl *ctrl, struct vc_desc* desc)
 
 	vc_init_ctrl_imx183_base(ctrl, desc);
 
+	ctrl->frame.width		= 3840;
+	ctrl->frame.height		= 3046;
 
 	ctrl->expo_vmax 		= 3079;
 
@@ -169,6 +180,9 @@ static void vc_init_ctrl_imx250(struct vc_ctrl *ctrl, struct vc_desc* desc)
 	vc_notice(dev, "%s(): Initialising module control for IMX250\n", __FUNCTION__);
 
 	vc_init_ctrl_imx252_base(ctrl, desc);
+
+	ctrl->frame.width		= 2448;
+	ctrl->frame.height		= 2048;
 }
 
 // ------------------------------------------------------------------------------------------------
@@ -181,6 +195,9 @@ static void vc_init_ctrl_imx252(struct vc_ctrl *ctrl, struct vc_desc* desc)
 	vc_notice(dev, "%s(): Initialising module control for IMX252\n", __FUNCTION__);
 
 	vc_init_ctrl_imx252_base(ctrl, desc);
+
+	ctrl->frame.width		= 2048;
+	ctrl->frame.height		= 1536;
 }
 
 // ------------------------------------------------------------------------------------------------
@@ -193,6 +210,9 @@ static void vc_init_ctrl_imx264(struct vc_ctrl *ctrl, struct vc_desc* desc)
 	vc_notice(dev, "%s(): Initialising module control for IMX264\n", __FUNCTION__);
 
 	vc_init_ctrl_imx252_base(ctrl, desc);
+
+	ctrl->frame.width		= 2432;
+	ctrl->frame.height		= 2048;
 }
 
 // ------------------------------------------------------------------------------------------------
@@ -206,6 +226,8 @@ static void vc_init_ctrl_imx265(struct vc_ctrl *ctrl, struct vc_desc* desc)
 
 	vc_init_ctrl_imx252_base(ctrl, desc);
 
+	ctrl->frame.width		= 2048;
+	ctrl->frame.height		= 1536;
 }
 
 
@@ -240,6 +262,9 @@ static void vc_init_ctrl_imx296(struct vc_ctrl *ctrl, struct vc_desc* desc)
 	ctrl->csr.sen.mode_standby	= 0x01;
 	ctrl->csr.sen.mode_operating	= 0x00;
 
+	ctrl->frame.width		= 1440;
+	ctrl->frame.height		= 1080;
+
 	ctrl->sen_clk			= 54000000;	// Hz
 	ctrl->expo_period_1H 		= 14815;	// ns
 	ctrl->expo_shs_min              = 5;
@@ -261,7 +286,8 @@ static void vc_init_ctrl_imx327(struct vc_ctrl *ctrl, struct vc_desc* desc)
 
 	vc_init_ctrl_imx290_base(ctrl, desc);
 
-	ctrl->flags			= FLAG_EXPOSURE_WRITE_VMAX;
+	ctrl->frame.width		= 1920;
+	ctrl->frame.height		= 1080;
 }
 
 // ------------------------------------------------------------------------------------------------
@@ -274,6 +300,9 @@ static void vc_init_ctrl_imx392(struct vc_ctrl *ctrl, struct vc_desc* desc)
 	vc_notice(dev, "%s(): Initialising module control for IMX392\n", __FUNCTION__);
 
 	vc_init_ctrl_imx252_base(ctrl, desc);
+
+	ctrl->frame.width		= 1920;
+	ctrl->frame.height		= 1200;
 }
 
 // ------------------------------------------------------------------------------------------------
@@ -288,6 +317,9 @@ static void vc_init_ctrl_imx412(struct vc_ctrl *ctrl, struct vc_desc* desc)
 	ctrl->exposure			= (vc_control) { .min = 190, .max =    405947, .def =  10000 };
 	ctrl->gain			= (vc_control) { .min =   0, .max =      1023, .def =      0 };
 	ctrl->framerate 		= (vc_control) { .min =   0, .max =        41, .def =     41 };
+
+	ctrl->frame.width		= 4056;
+	ctrl->frame.height		= 3040;
 
 	ctrl->expo_factor               = 31755000;
 	ctrl->expo_toffset 		= 5975;
@@ -321,6 +353,9 @@ static void vc_init_ctrl_ov9281(struct vc_ctrl *ctrl, struct vc_desc* desc)
 	// NOTE: Modules rom table contains swapped address assigment.
 	ctrl->csr.sen.gain 		= (vc_csr2) { .l = 0x3509, .m = 0x0000 };
 	
+	ctrl->frame.width		= 1280;
+	ctrl->frame.height		= 800;
+
 	ctrl->sen_clk			= 25000000;
 	ctrl->expo_factor               = 1758241; 	// (1000 << 4)/9100
 	ctrl->expo_toffset 		= 0;
