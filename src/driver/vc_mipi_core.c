@@ -97,7 +97,6 @@ static int i2c_write_reg(struct device *dev, struct i2c_client *client, const __
 	tx[1] = addr & 0xff;
 	tx[2] = value;
 	ret = i2c_transfer(adap, &msg, 1);
-	mdelay(2);
 
 	return ret == 1 ? 0 : -EIO;
 }
@@ -577,7 +576,7 @@ static int vc_mod_wait_until_module_is_ready(struct i2c_client *client)
 	status = REG_STATUS_NO_COM;
 	try = 0;
 	while (status == REG_STATUS_NO_COM && try < 10) {
-		mdelay(100);
+		usleep_range(200000, 200000);
 		status = vc_mod_read_status(client);
 		try++;
 	}
