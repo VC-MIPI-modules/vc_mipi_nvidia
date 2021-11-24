@@ -1067,11 +1067,13 @@ int vc_sen_set_gain(struct vc_cam *cam, int gain)
 	vc_notice(dev, "%s(): Set sensor gain: %u\n", __FUNCTION__, gain);
 
 	ret |= i2c_write_reg2(dev, client, &ctrl->csr.sen.gain, gain, __FUNCTION__);
-	if (ret)
+	if (ret) {
 		vc_err(dev, "%s(): Couldn't set 'Gain' (error: %d)\n", __FUNCTION__, ret);
+		return ret;
+	}
 
 	cam->state.gain = gain;
-	return ret;
+	return 0;
 }
 
 int vc_sen_start_stream(struct vc_cam *cam)
