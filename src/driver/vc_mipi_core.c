@@ -678,7 +678,7 @@ int vc_core_init(struct vc_cam *cam, struct i2c_client *client)
 		return -EIO;
 	}
 	if (ctrl->frame.width == 0 || ctrl->frame.height == 0) {
-	vc_sen_read_image_size(ctrl, &ctrl->frame);
+		vc_sen_read_image_size(ctrl, &ctrl->frame);
 	}
 	vc_core_state_init(cam);
 
@@ -995,7 +995,7 @@ int vc_sen_set_roi(struct vc_cam *cam, int x, int y, int width, int height)
 	if (ret) {
 		vc_err(dev, "%s(): Couldn't set sensor roi: (x: %u, y: %u, width: %u, height: %u) (error: %d)\n", __FUNCTION__, 
 			x, y, width, height, ret);
-	return ret;
+		return ret;
 	}
 
 	cam->state.frame.x = x;
@@ -1177,7 +1177,7 @@ static void vc_calculate_exposure_vmax(struct vc_cam *cam, __u32 exposure)
 	__u64 exposure_ns;
 	__u64 exposure_1H;
 	// __u64 hmax;
-	
+
 	vc_core_get_timing(cam, &period_1H);
 	
 	vc_dbg(dev, "%s(): flags: 0x%04x, period_1H: %u\n", __FUNCTION__, ctrl->flags, period_1H);
@@ -1191,7 +1191,7 @@ static void vc_calculate_exposure_vmax(struct vc_cam *cam, __u32 exposure)
 	} else {
 		state->vmax = ctrl->expo_vmax;	
 	}
-	
+
 	// hmax = vc_sen_read_hmax(&cam->ctrl);
 	// h1period = (hmax*1000000)/ctrl->sen_clk;
 
@@ -1207,7 +1207,7 @@ static void vc_calculate_exposure_vmax(struct vc_cam *cam, __u32 exposure)
 	exposure_ns = (__u64)(exposure)*1000;
 	// Calculate number of lines equivalent to the exposure time without shs_min.
 	exposure_1H = exposure_ns / period_1H - shs_min;
-	
+
 	// Is exposure time less than frame time?
 	if (exposure_1H + shs_min <= state->vmax) {
 		// Yes then calculate exposure delay (shs) in between frame time.
@@ -1217,6 +1217,11 @@ static void vc_calculate_exposure_vmax(struct vc_cam *cam, __u32 exposure)
 		// No, then increase frame time and set exposure delay to the minimal value.
 		state->vmax = shs_min + exposure_1H;
 		state->shs = shs_min;
+	}
+
+	// Special case: Framerate of slave module has to be a little bit faster (Tested with IMX183)
+	if (state->trigger_mode == REG_TRIGGER_SYNC) {
+		state->vmax--;
 	}
 }
 
