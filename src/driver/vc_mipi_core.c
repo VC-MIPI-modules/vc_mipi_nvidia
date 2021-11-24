@@ -677,7 +677,9 @@ int vc_core_init(struct vc_cam *cam, struct i2c_client *client)
 	if (ret) {
 		return -EIO;
 	}
+	if (ctrl->frame.width == 0 || ctrl->frame.height == 0) {
 	vc_sen_read_image_size(ctrl, &ctrl->frame);
+	}
 	vc_core_state_init(cam);
 
 	vc_notice(&ctrl->client_mod->dev, "VC MIPI Core succesfully initialized");
