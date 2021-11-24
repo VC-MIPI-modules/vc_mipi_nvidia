@@ -53,10 +53,10 @@ static void vc_init_ctrl_imx183_base(struct vc_ctrl *ctrl, struct vc_desc* desc)
 	ctrl->csr.sen.hmax              = (vc_csr4) { .l = 0x7002, .m = 0x7003, .h = 0x0000, .u = 0x0000 };
 
 	ctrl->expo_period_1H 		= 10000; 	// ns
-	ctrl->expo_toffset 		= 2903;  	// ns
 	ctrl->expo_shs_min		= 5;
+	ctrl->expo_vmax			= 3728;
 
-	ctrl->flags			 = FLAG_EXPOSURE_READ_VMAX;
+	ctrl->flags			 = FLAG_EXPOSURE_WRITE_VMAX;
 	ctrl->flags			|= FLAG_IO_FLASH_ENABLED;
 	ctrl->flags			|= FLAG_TRIGGER_EXTERNAL | FLAG_TRIGGER_SELF |
 				           FLAG_TRIGGER_SINGLE | FLAG_TRIGGER_SYNC;
@@ -69,16 +69,33 @@ static void vc_init_ctrl_imx252_base(struct vc_ctrl *ctrl, struct vc_desc* desc)
 	ctrl->csr.sen.vmax              = (vc_csr4) { .l = 0x0210, .m = 0x0211, .h = 0x0212, .u = 0x0000 };
 	ctrl->csr.sen.hmax              = (vc_csr4) { .l = 0x0214, .m = 0x0215, .h = 0x0000, .u = 0x0000 };
 
-	ctrl->expo_period_1H 		= 10000; 	// ns
-	ctrl->expo_toffset 		= 2903;  	// ns
-	ctrl->expo_shs_min		= 40;
+	ctrl->expo_period_1H 		= 5000; 	// ns
+	ctrl->expo_shs_min		= 10;
+	ctrl->expo_vmax			= 2094;
 
-	ctrl->flags			 = FLAG_EXPOSURE_READ_VMAX;
+	ctrl->flags			 = FLAG_EXPOSURE_WRITE_VMAX;
 	ctrl->flags			|= FLAG_IO_FLASH_ENABLED | FLAG_IO_XTRIG_ENABLED;
 	ctrl->flags			|= FLAG_TRIGGER_EXTERNAL | FLAG_TRIGGER_PULSEWIDTH |
 					   FLAG_TRIGGER_SELF | FLAG_TRIGGER_SINGLE;
 }
 
+static void vc_init_ctrl_imx290_base(struct vc_ctrl *ctrl, struct vc_desc* desc)
+{
+	// ctrl->exposure			= (vc_control) { .min =   29, .max = 7602176, .def =  10000 };
+	ctrl->exposure			= (vc_control) { .min =   1, .max = 100000000, .def =  10000 };
+	ctrl->gain			= (vc_control) { .min =   0, .max =       255, .def =      0 };
+	
+	ctrl->csr.sen.vmax              = (vc_csr4) { .l = 0x3018, .m = 0x3019, .h = 0x301A, .u = 0x0000 };
+	ctrl->csr.sen.mode_standby	= 0x01;
+	ctrl->csr.sen.mode_operating	= 0x00;
+	
+	//  TODO: Exposure time and framerate don't go together. Check this!
+	ctrl->expo_period_1H 		= 10000; 	// ns
+	ctrl->expo_shs_min              = 1;
+	ctrl->expo_vmax 		= 1125;
+
+	ctrl->flags			= FLAG_EXPOSURE_WRITE_VMAX;
+}
 
 // ------------------------------------------------------------------------------------------------
 //  Settings for IMX178/IMX178C
@@ -90,6 +107,18 @@ static void vc_init_ctrl_imx178(struct vc_ctrl *ctrl, struct vc_desc* desc)
 	vc_notice(dev, "%s(): Initialising module control for IMX178\n", __FUNCTION__);
 
 	vc_init_ctrl_imx183_base(ctrl, desc);
+
+	ctrl->expo_timing[0] 		= (vc_timing) { 2, FORMAT_RAW08, .clk =  680 };
+	ctrl->expo_timing[1] 		= (vc_timing) { 2, FORMAT_RAW10, .clk =  840 };
+	ctrl->expo_timing[2] 		= (vc_timing) { 2, FORMAT_RAW12, .clk =  984 };
+	ctrl->expo_timing[3] 		= (vc_timing) { 2, FORMAT_RAW14, .clk = 1156 };
+	ctrl->expo_timing[4] 		= (vc_timing) { 4, FORMAT_RAW08, .clk =  600 };
+	ctrl->expo_timing[5] 		= (vc_timing) { 4, FORMAT_RAW10, .clk =  600 };
+	ctrl->expo_timing[6] 		= (vc_timing) { 4, FORMAT_RAW12, .clk =  680 };
+	ctrl->expo_timing[7] 		= (vc_timing) { 4, FORMAT_RAW14, .clk = 1156 };
+
+	ctrl->expo_shs_min		= 9;
+	ctrl->expo_vmax 		= 2145;
 }
 
 // ------------------------------------------------------------------------------------------------
@@ -102,6 +131,15 @@ static void vc_init_ctrl_imx183(struct vc_ctrl *ctrl, struct vc_desc* desc)
 	vc_notice(dev, "%s(): Initialising module control for IMX183\n", __FUNCTION__);
 
 	vc_init_ctrl_imx183_base(ctrl, desc);
+
+	ctrl->expo_timing[0] 		= (vc_timing) { 2, FORMAT_RAW08, .clk = 1440 };
+	ctrl->expo_timing[1] 		= (vc_timing) { 2, FORMAT_RAW10, .clk = 1440 };
+	ctrl->expo_timing[2] 		= (vc_timing) { 2, FORMAT_RAW12, .clk = 1724 };
+	ctrl->expo_timing[3] 		= (vc_timing) { 4, FORMAT_RAW08, .clk =  720 };
+	ctrl->expo_timing[4] 		= (vc_timing) { 4, FORMAT_RAW10, .clk =  720 };
+	ctrl->expo_timing[5] 		= (vc_timing) { 4, FORMAT_RAW12, .clk =  862 };
+
+	ctrl->expo_vmax			= 3728;
 }
 
 // ------------------------------------------------------------------------------------------------
@@ -114,6 +152,9 @@ static void vc_init_ctrl_imx226(struct vc_ctrl *ctrl, struct vc_desc* desc)
 	vc_notice(dev, "%s(): Initialising module control for IMX226\n", __FUNCTION__);
 
 	vc_init_ctrl_imx183_base(ctrl, desc);
+
+
+	ctrl->expo_vmax 		= 3079;
 
 	ctrl->flags			|= FLAG_TRIGGER_STREAM_EDGE | FLAG_TRIGGER_STREAM_LEVEL;
 }
@@ -164,6 +205,23 @@ static void vc_init_ctrl_imx265(struct vc_ctrl *ctrl, struct vc_desc* desc)
 	vc_notice(dev, "%s(): Initialising module control for IMX265\n", __FUNCTION__);
 
 	vc_init_ctrl_imx252_base(ctrl, desc);
+
+}
+
+
+// ------------------------------------------------------------------------------------------------
+//  Settings for IMX290
+
+static void vc_init_ctrl_imx290(struct vc_ctrl *ctrl, struct vc_desc* desc)
+{
+	struct device *dev = &ctrl->client_mod->dev;
+
+	vc_notice(dev, "%s(): Initialising module control for IMX290\n", __FUNCTION__);
+
+	vc_init_ctrl_imx290_base(ctrl, desc);
+
+	ctrl->frame.width		= 1920;
+	ctrl->frame.height		= 1080;
 }
 
 // ------------------------------------------------------------------------------------------------
@@ -184,7 +242,6 @@ static void vc_init_ctrl_imx296(struct vc_ctrl *ctrl, struct vc_desc* desc)
 
 	ctrl->sen_clk			= 54000000;	// Hz
 	ctrl->expo_period_1H 		= 14815;	// ns
-	ctrl->expo_toffset 		= 14260;	// ns
 	ctrl->expo_shs_min              = 5;
 	ctrl->expo_vmax 		= 1118;
 
@@ -195,9 +252,6 @@ static void vc_init_ctrl_imx296(struct vc_ctrl *ctrl, struct vc_desc* desc)
 
 // ------------------------------------------------------------------------------------------------
 //  Settings for IMX327C
-//
-//  TODO
-//  - Exposure time and framerate don't go together. Check this!
 
 static void vc_init_ctrl_imx327(struct vc_ctrl *ctrl, struct vc_desc* desc)
 {
@@ -205,18 +259,7 @@ static void vc_init_ctrl_imx327(struct vc_ctrl *ctrl, struct vc_desc* desc)
 
 	vc_notice(dev, "%s(): Initialising module control for IMX327\n", __FUNCTION__);
 
-	// ctrl->exposure			= (vc_control) { .min =   29, .max = 7602176, .def =  10000 };
-	ctrl->exposure			= (vc_control) { .min =   1, .max = 100000000, .def =  10000 };
-	ctrl->gain			= (vc_control) { .min =   0, .max =       255, .def =      0 };
-	
-	ctrl->csr.sen.vmax              = (vc_csr4) { .l = 0x3018, .m = 0x3019, .h = 0x301A, .u = 0x0000 };
-	ctrl->csr.sen.mode_standby	= 0x01;
-	ctrl->csr.sen.mode_operating	= 0x00;
-	
-	ctrl->expo_period_1H 		= 10000; 	// ns
-	ctrl->expo_toffset 		= 2903;  	// ns
-	ctrl->expo_shs_min              = 1;
-	ctrl->expo_vmax 		= 1125;
+	vc_init_ctrl_imx290_base(ctrl, desc);
 
 	ctrl->flags			= FLAG_EXPOSURE_WRITE_VMAX;
 }
@@ -305,6 +348,7 @@ int vc_mod_ctrl_init(struct vc_ctrl* ctrl, struct vc_desc* desc)
 	case MOD_ID_IMX252: vc_init_ctrl_imx252(ctrl, desc); break;
 	case MOD_ID_IMX264: vc_init_ctrl_imx264(ctrl, desc); break;
 	case MOD_ID_IMX265: vc_init_ctrl_imx265(ctrl, desc); break;
+	case MOD_ID_IMX290: vc_init_ctrl_imx290(ctrl, desc); break;
 	case MOD_ID_IMX296: vc_init_ctrl_imx296(ctrl, desc); break;
 	case MOD_ID_IMX327: vc_init_ctrl_imx327(ctrl, desc); break;
 	case MOD_ID_IMX392: vc_init_ctrl_imx392(ctrl, desc); break;
