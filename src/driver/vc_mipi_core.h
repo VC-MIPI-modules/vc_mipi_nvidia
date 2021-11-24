@@ -133,6 +133,12 @@ struct vc_csr {
 	struct vc_sen_csr sen;
 };
 
+typedef struct vc_timing {
+	__u8 num_lanes;
+	__u8 format;
+	__u32 clk;
+} vc_timing;
+
 struct vc_ctrl {
 	// Communication
 	int mod_i2c_addr;
@@ -147,6 +153,8 @@ struct vc_ctrl {
 	// Control and status registers
 	struct vc_csr csr;
 	// Exposure
+	struct vc_timing expo_timing[8];
+	
 	__u32 sen_clk;			// Hz
 	__u32 expo_factor;
 	__s32 expo_toffset;

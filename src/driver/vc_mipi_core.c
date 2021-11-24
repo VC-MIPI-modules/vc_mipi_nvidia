@@ -1147,19 +1147,40 @@ static void vc_calculate_exposure_simple(struct vc_cam *cam, __u32 exposure)
 	state->shs = (((__u64)exposure)*factor)/1000000 - toffset;
 }
 
+static void vc_core_get_timing(struct vc_cam *cam, __u32 *period_1H)
+{
+	struct vc_desc *desc = &cam->desc;
+	struct vc_ctrl *ctrl = &cam->ctrl;
+	struct vc_state *state = &cam->state;
+	__u8 num_lanes = state->num_lanes;
+	__u8 format = vc_core_v4l2_code_to_format(state->format_code);
+	__u8 index = 0;
+
+	for (index = 0; index < 6; index++) {
+		struct vc_timing *timing = &ctrl->expo_timing[index];
+		if (timing->num_lanes == num_lanes && timing->format == format) {
+			*period_1H = ((__u64)timing->clk * 1000000000) / desc->clk_pixel;
+			return;
+		}
+	}
+
+	*period_1H = ctrl->expo_period_1H;
+}
+
 static void vc_calculate_exposure_vmax(struct vc_cam *cam, __u32 exposure)
 {
 	struct vc_ctrl *ctrl = &cam->ctrl;
 	struct vc_state *state = &cam->state;
 	struct device *dev = &ctrl->client_sen->dev;
-	__u32 toffset = ctrl->expo_toffset;
-	__u32 period_1H = ctrl->expo_period_1H;
+	__u32 period_1H = 0;
 	__u32 shs_min = ctrl->expo_shs_min;
-	__u64 exposure_period;
+	__u64 exposure_ns;
 	__u64 exposure_1H;
 	// __u64 hmax;
 	
-	vc_dbg(dev, "%s(): flags: 0x%04x, toffset: %u period_1H: %u\n", __FUNCTION__, ctrl->flags, toffset, period_1H);
+	vc_core_get_timing(cam, &period_1H);
+	
+	vc_dbg(dev, "%s(): flags: 0x%04x, period_1H: %u\n", __FUNCTION__, ctrl->flags, period_1H);
 
 	if (ctrl->flags & FLAG_EXPOSURE_READ_VMAX) {	
 		state->vmax = vc_sen_read_vmax(&cam->ctrl);
@@ -1176,19 +1197,24 @@ static void vc_calculate_exposure_vmax(struct vc_cam *cam, __u32 exposure)
 
 	// Exposure time [s] = (1 H period) × (Number of lines per frame - SHS) 
 	//                     + Exposure time error (t OFFSET ) [µs]
-	exposure_period = (__u64)(exposure)*1000;
-	if (exposure_period > toffset) {
-		exposure_1H = (exposure_period - toffset) / period_1H;
+	// 
+	// | <---               VMAX (frame time)               ---> |
+	// +---------+----------------------------+------------------+
+	// | SHS_MIN | SHS (exposure delay) --->  | exposure time    | 
+	//
 
-	} else {
-		state->shs = state->vmax - shs_min;
-		return;
-	}
+	// Convert exposure time from µs to ns.
+	exposure_ns = (__u64)(exposure)*1000;
+	// Calculate number of lines equivalent to the exposure time without shs_min.
+	exposure_1H = exposure_ns / period_1H - shs_min;
 	
-	if (exposure_1H <= state->vmax - shs_min) {
+	// Is exposure time less than frame time?
+	if (exposure_1H + shs_min <= state->vmax) {
+		// Yes then calculate exposure delay (shs) in between frame time.
 		state->shs = state->vmax - exposure_1H;
 	
 	} else {
+		// No, then increase frame time and set exposure delay to the minimal value.
 		state->vmax = shs_min + exposure_1H;
 		state->shs = shs_min;
 	}
