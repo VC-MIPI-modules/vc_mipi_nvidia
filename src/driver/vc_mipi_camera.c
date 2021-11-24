@@ -306,7 +306,7 @@ static int vc_set_flash_mode(struct tegracam_device *tc_dev, __s64 val)
 	return vc_mod_set_io_mode(cam, val);
 }
 
-__u32 g_sleep = 0;
+__u32 g_sleep = 50;
 
 #ifdef VC_CTRL_VALUE
 static int vc_set_value(struct tegracam_device *tc_dev, __s64 val)
@@ -353,19 +353,18 @@ static int vc_set_value(struct tegracam_device *tc_dev, __s64 val)
 static int vc_start_streaming(struct tegracam_device *tc_dev)
 {
 	struct vc_cam *cam = tegracam_to_cam(tc_dev);
-	struct vc_state *state = &cam->state;
+	int reset;
 	int ret = 0;
 
-	ret  = vc_mod_set_mode(cam);
-	ret |= vc_sen_set_roi(cam, cam->state.framesize.width, cam->state.framesize.height);
+	ret  = vc_mod_set_mode(cam, &reset);
+	ret |= vc_sen_set_roi(cam, 0, 0, cam->state.frame.width, cam->state.frame.height);
+	if (!ret && reset) {
 	ret |= vc_sen_set_gain(cam, cam->state.gain);
 	ret |= vc_sen_set_exposure(cam, cam->state.exposure);
-	
-	if (g_sleep > 0) {
-		usleep_range(g_sleep, g_sleep + 1000);
 	}
-	ret |= vc_sen_set_roi(cam, state->frame.x, state->frame.y, state->frame.width, state->frame.height);
+	
 	ret |= vc_sen_start_stream(cam);
+	usleep_range(1000*g_sleep, 1000*g_sleep);
 
 	return ret;
 }
@@ -376,7 +375,6 @@ static int vc_stop_streaming(struct tegracam_device *tc_dev)
 	int ret = 0;
 	
 	ret = vc_sen_stop_stream(cam);
-	usleep_range(50000, 51000);
 
 	return ret;
 }
