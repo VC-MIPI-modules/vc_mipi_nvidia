@@ -643,7 +643,7 @@ static void vc_core_state_init(struct vc_cam *cam)
 	struct vc_ctrl *ctrl = &cam->ctrl;
 	struct vc_state *state = &cam->state;
 
-	state->mode = 0;
+	state->mode = 0xff;
 	state->exposure = ctrl->exposure.def;
 	state->gain = ctrl->gain.def;
 	state->shs = 0;
@@ -764,14 +764,17 @@ static int vc_mod_reset_module(struct vc_cam *cam, __u8 mode)
 	return ret;
 }
 
-int vc_mod_set_mode(struct vc_cam *cam)
+int vc_mod_set_mode(struct vc_cam *cam, int *reset)
 {
 	struct vc_state *state = &cam->state;
 	struct device *dev = vc_core_get_mod_device(cam);
 	__u8 num_lanes = state->num_lanes;
 	__u8 format = vc_core_v4l2_code_to_format(state->format_code);
+	char fourcc[5];
+	char *stype;
 	__u8 type = 0;
 	__u8 binning = 0; // TODO: Not implemented yet
+	__u8 mode = 0;
 	int ret = 0;
 
 	switch (cam->state.trigger_mode) {
@@ -781,25 +784,37 @@ int vc_mod_set_mode(struct vc_cam *cam)
 	case REG_TRIGGER_STREAM_LEVEL:
 	default:
 		type = 0x01;
+		stype = "STREAM";
 		break;
 	case REG_TRIGGER_EXTERNAL:
 	case REG_TRIGGER_PULSEWIDTH:
 	case REG_TRIGGER_SELF:
 	case REG_TRIGGER_SINGLE:
 		type = 0x02;
+		stype = "EXT.TRG";
 		break;
 	}
 	
-	vc_info(dev, "%s(): Set module mode: (lanes: %u, format: 0x%02x, type: 0x%02x)\n", __FUNCTION__, num_lanes, format, type);
+	mode = vc_mod_find_mode(cam, num_lanes, format, type, binning);
+	if (mode == state->mode) {
+		vc_dbg(dev, "%s(): Module mode %u already set!\n", __FUNCTION__, mode);
+		*reset = 0;
+		return 0;
+	}
 
-	state->mode = vc_mod_find_mode(cam, num_lanes, format, type, binning);
+	vc_core_get_v4l2_fmt(state->format_code, fourcc);
+	vc_info(dev, "%s(): Set module mode: %u (lanes: %u, format: %s, type: %s)\n", __FUNCTION__, 
+		mode, num_lanes, fourcc, stype);
 
-	ret  = vc_mod_reset_module(cam, state->mode);
+	ret = vc_mod_reset_module(cam, mode);
 	if (ret) {
-		vc_err(dev, "%s(): Unable to set module mode: (lanes: %u, format: 0x%02x, type: 0x%02x) (error: %d)\n", __func__, 
-			num_lanes, format, type, ret);
+		vc_err(dev, "%s(): Unable to set module mode: %u (lanes: %u, format: %s, type: %s) (error: %d)\n", __func__, 
+			mode, num_lanes, fourcc, stype, ret);
 		return ret;
 	}
+
+	state->mode = mode;
+	*reset = 1;
 
 	return ret;
 }
