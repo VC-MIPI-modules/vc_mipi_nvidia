@@ -1085,12 +1085,11 @@ int vc_sen_start_stream(struct vc_cam *cam)
 	int ret = 0;
 	
 	vc_info(dev, "%s(): Start streaming\n", __FUNCTION__);
+	vc_dbg(dev, "%s(): MM: 0x%02x, TM: 0x%02x, IO: 0x%02x\n",
+		__FUNCTION__, state->mode, state->trigger_mode, state->io_mode);
 
 	ret  = vc_mod_write_trigger_mode(client_mod, state->trigger_mode);
 	ret |= vc_mod_write_io_mode(client_mod, state->io_mode);
-
-	vc_dbg(dev, "%s(): MM: 0x%02x, TM: 0x%02x, IO: 0x%02x\n",
-		__FUNCTION__, state->mode, state->trigger_mode, state->io_mode);
 
 	ret |= vc_sen_write_mode(ctrl, ctrl->csr.sen.mode_operating);
 	if (ret)
@@ -1114,6 +1113,8 @@ int vc_sen_stop_stream(struct vc_cam *cam)
 	ret |= vc_sen_write_mode(ctrl, ctrl->csr.sen.mode_standby);
 	if (ret)
 		vc_err(dev, "%s(): Unable to stop streaming (error: %d)\n", __FUNCTION__, ret);
+
+	vc_dbg(dev, "%s(): ----------------------------------------------------------\n", __FUNCTION__);
 
 	return ret;
 }
