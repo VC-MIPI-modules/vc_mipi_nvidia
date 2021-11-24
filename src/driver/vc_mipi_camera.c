@@ -71,14 +71,6 @@ void vc_adjust_cam_ctrls(struct vc_cam *cam, __u32 *width, __u32 *height)
 				break;
 			}
 		}
-		if (num_lanes == 4) {
-			(*height)--;
-		}
-
-		cam->ctrl.expo_vmax = 3727;
-		cam->ctrl.flags |= FLAG_EXPOSURE_WRITE_VMAX;
-		cam->ctrl.flags &= ~FLAG_EXPOSURE_READ_VMAX;
-
 		break;
 
 	case MOD_ID_IMX226: // Active pixels 3840 x 3046 (FPGA)
