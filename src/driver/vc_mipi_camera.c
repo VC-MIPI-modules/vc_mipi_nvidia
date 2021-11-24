@@ -337,6 +337,11 @@ static int vc_set_value(struct tegracam_device *tc_dev, __s64 val)
 		vc_sen_set_roi(cam, 0, 0, cam->state.frame.width, height);
 		vc_notice(dev, "%s(): Set testing roi height = %u", __FUNCTION__, height);
 	}
+	if (70000 <= val && val < 80000) {
+		__u32 vmax = val - 70000;
+		cam->ctrl.expo_vmax = vmax;
+		vc_notice(dev, "%s(): Set testing vmax = %u", __FUNCTION__, vmax);
+	}
 
 	return 0;
 }
