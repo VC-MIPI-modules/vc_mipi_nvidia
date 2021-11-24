@@ -973,12 +973,10 @@ int vc_sen_set_roi(struct vc_cam *cam, int x, int y, int width, int height)
 
 	vc_info(dev, "%s(): Set sensor roi: (x: %u, y: %u, width: %u, height: %u)\n", __FUNCTION__, x, y, width, height);
 
-	ret  = vc_sen_write_mode(ctrl, ctrl->csr.sen.mode_standby);
 	ret |= i2c_write_reg2(dev, client, &ctrl->csr.sen.h_start, x, __FUNCTION__);
 	ret |= i2c_write_reg2(dev, client, &ctrl->csr.sen.v_start, y, __FUNCTION__);
 	ret |= i2c_write_reg2(dev, client, &ctrl->csr.sen.o_width, width, __FUNCTION__);
 	ret |= i2c_write_reg2(dev, client, &ctrl->csr.sen.o_height, height, __FUNCTION__);
-	ret |= vc_sen_write_mode(ctrl, ctrl->csr.sen.mode_operating);
 	if (ret) {
 		vc_err(dev, "%s(): Couldn't set sensor roi: (x: %u, y: %u, width: %u, height: %u) (error: %d)\n", __FUNCTION__, 
 			x, y, width, height, ret);
