@@ -5,7 +5,7 @@
 #include "vc_mipi_core.h"
 #include "vc_mipi_modules.h"
 
-// #define VC_CTRL_VALUE
+#define VC_CTRL_VALUE
 
 
 static struct vc_cam *tegracam_to_cam(struct tegracam_device *tc_dev)
