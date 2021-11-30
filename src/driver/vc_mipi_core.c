@@ -1148,7 +1148,7 @@ static void vc_calculate_exposure_simple(struct vc_cam *cam, __u32 exposure)
 	state->shs = (((__u64)exposure)*factor)/1000000 - toffset;
 }
 
-static void vc_core_get_timing(struct vc_cam *cam, __u32 *period_1H)
+static void vc_core_get_timing(struct vc_cam *cam, __u32 *period_1H_ns)
 {
 	struct vc_desc *desc = &cam->desc;
 	struct vc_ctrl *ctrl = &cam->ctrl;
@@ -1160,12 +1160,12 @@ static void vc_core_get_timing(struct vc_cam *cam, __u32 *period_1H)
 	for (index = 0; index < 6; index++) {
 		struct vc_timing *timing = &ctrl->expo_timing[index];
 		if (timing->num_lanes == num_lanes && timing->format == format) {
-			*period_1H = ((__u64)timing->clk * 1000000000) / desc->clk_pixel;
+			*period_1H_ns = ((__u64)timing->clk * 1000000000) / desc->clk_pixel;
 			return;
 		}
 	}
 
-	*period_1H = ctrl->expo_period_1H;
+	*period_1H_ns = ctrl->expo_period_1H;
 }
 
 static void vc_calculate_exposure_vmax(struct vc_cam *cam, __u32 exposure)
@@ -1173,15 +1173,16 @@ static void vc_calculate_exposure_vmax(struct vc_cam *cam, __u32 exposure)
 	struct vc_ctrl *ctrl = &cam->ctrl;
 	struct vc_state *state = &cam->state;
 	struct device *dev = &ctrl->client_sen->dev;
-	__u32 period_1H = 0;
+	__u32 period_1H_ns = 0;
 	__u32 shs_min = ctrl->expo_shs_min;
 	__u64 exposure_ns;
 	__u64 exposure_1H;
 	// __u64 hmax;
 
-	vc_core_get_timing(cam, &period_1H);
+	vc_core_get_timing(cam, &period_1H_ns);
 	
-	vc_dbg(dev, "%s(): flags: 0x%04x, period_1H: %u\n", __FUNCTION__, ctrl->flags, period_1H);
+	vc_dbg(dev, "%s(): flags: 0x%04x, period_1H_ns: %u, shs_min: %u, vmax: %u\n", __FUNCTION__, 
+		ctrl->flags, period_1H_ns, shs_min, ctrl->expo_vmax);
 
 	if (ctrl->flags & FLAG_EXPOSURE_READ_VMAX) {	
 		state->vmax = vc_sen_read_vmax(&cam->ctrl);
@@ -1207,7 +1208,7 @@ static void vc_calculate_exposure_vmax(struct vc_cam *cam, __u32 exposure)
 	// Convert exposure time from µs to ns.
 	exposure_ns = (__u64)(exposure)*1000;
 	// Calculate number of lines equivalent to the exposure time without shs_min.
-	exposure_1H = exposure_ns / period_1H - shs_min;
+	exposure_1H = exposure_ns / period_1H_ns - shs_min;
 
 	// Is exposure time less than frame time?
 	if (exposure_1H + shs_min <= state->vmax) {
