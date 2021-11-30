@@ -766,6 +766,7 @@ static int vc_mod_reset_module(struct vc_cam *cam, __u8 mode)
 
 int vc_mod_set_mode(struct vc_cam *cam, int *reset)
 {
+	struct vc_ctrl *ctrl = &cam->ctrl;
 	struct vc_state *state = &cam->state;
 	struct device *dev = vc_core_get_mod_device(cam);
 	__u8 num_lanes = state->num_lanes;
@@ -796,7 +797,7 @@ int vc_mod_set_mode(struct vc_cam *cam, int *reset)
 	}
 	
 	mode = vc_mod_find_mode(cam, num_lanes, format, type, binning);
-	if (mode == state->mode) {
+	if (mode == state->mode && !(ctrl->flags & FLAG_RESET_ALWAYS)) {
 		vc_dbg(dev, "%s(): Module mode %u already set!\n", __FUNCTION__, mode);
 		*reset = 0;
 		return 0;

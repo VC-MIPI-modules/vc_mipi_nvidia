@@ -349,7 +349,8 @@ static void vc_init_ctrl_imx412(struct vc_ctrl *ctrl, struct vc_desc* desc)
 	ctrl->expo_toffset 		= 5975;
 
 	// No VMAX value present. No TRIGGER and FLASH capability.
-	ctrl->flags			= FLAG_EXPOSURE_SIMPLE;
+	ctrl->flags			= FLAG_RESET_ALWAYS;
+	ctrl->flags		       |= FLAG_EXPOSURE_SIMPLE;
 	ctrl->flags		       |= FLAG_IO_FLASH_ENABLED;
 }
 
