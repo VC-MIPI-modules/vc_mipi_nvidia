@@ -81,6 +81,7 @@ device=0
 option2=x
 shutter=10000
 gain=10
+exposure=100000000
 optionY=
 width=
 height=
@@ -100,6 +101,10 @@ while [ $# != 0 ] ; do
 		;;
         -d|--device)
 		device="$1"
+		shift
+		;;
+        -e|--exposure)
+		exposure="$1"
 		shift
 		;;
 	-f|--format)
@@ -172,10 +177,14 @@ if [[ -n ${argus} ]]; then
 	get_image_size
 	adjust_pixel_format
 
-	gst-launch-1.0 \
-        	nvarguscamerasrc sensor-id=${device} aelock=true awblock=true tnr-mode=0 ! \
-        	"video/x-raw(memory:NVMM),width=${width}, height=${height}, framerate=20/1, format=NV12" ! \
-        	nvegltransform ! nveglglessink -e
+	v4l2-ctl -d /dev/video${device} -c exposure=${shutter} -c gain=${gain}
+
+	gst-launch-1.0 -t \
+		nvarguscamerasrc sensor-id=${device} \
+		awblock=false aelock=false aeantibanding=0 saturation="1.0" ispdigitalgainrange="1 1" \
+		exposuretimerange="${exposure} ${exposure}" gainrange="1 1" ! \
+		"video/x-raw(memory:NVMM), width=${width}, height=${height}, format=NV12" ! \
+		nvegltransform ! nveglglessink -e
 else 
 	cd ${script_dir}
 	./vcmipidemo -d${device} -an${option2} ${optionY} -s${shutter} -g${gain} -w '128 180 128'
