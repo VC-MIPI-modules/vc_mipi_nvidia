@@ -162,6 +162,11 @@ static void vc_init_ctrl_imx226(struct vc_ctrl *ctrl, struct vc_desc* desc)
 
 	vc_init_ctrl_imx183_base(ctrl, desc);
 
+	ctrl->expo_timing[0] 		= (vc_timing) { 2, FORMAT_RAW10, .clk = 1072 };
+	ctrl->expo_timing[1] 		= (vc_timing) { 2, FORMAT_RAW12, .clk = 1288 };
+	ctrl->expo_timing[2] 		= (vc_timing) { 4, FORMAT_RAW10, .clk =  536 };
+	ctrl->expo_timing[3] 		= (vc_timing) { 4, FORMAT_RAW12, .clk =  644 };
+
 	ctrl->frame.width		= 3840;
 	ctrl->frame.height		= 3046;
 
@@ -181,6 +186,13 @@ static void vc_init_ctrl_imx250(struct vc_ctrl *ctrl, struct vc_desc* desc)
 
 	vc_init_ctrl_imx252_base(ctrl, desc);
 
+	ctrl->expo_timing[0] 		= (vc_timing) { 2, FORMAT_RAW08, .clk =  540 };
+	ctrl->expo_timing[1] 		= (vc_timing) { 2, FORMAT_RAW10, .clk =  660 };
+	ctrl->expo_timing[2] 		= (vc_timing) { 2, FORMAT_RAW12, .clk =  780 };
+	ctrl->expo_timing[3] 		= (vc_timing) { 4, FORMAT_RAW08, .clk =  350 };
+	ctrl->expo_timing[4] 		= (vc_timing) { 4, FORMAT_RAW10, .clk =  430 };
+	ctrl->expo_timing[5] 		= (vc_timing) { 4, FORMAT_RAW12, .clk =  510 };
+
 	ctrl->frame.width		= 2448;
 	ctrl->frame.height		= 2048;
 }
@@ -195,6 +207,13 @@ static void vc_init_ctrl_imx252(struct vc_ctrl *ctrl, struct vc_desc* desc)
 	vc_notice(dev, "%s(): Initialising module control for IMX252\n", __FUNCTION__);
 
 	vc_init_ctrl_imx252_base(ctrl, desc);
+
+	ctrl->expo_timing[0] 		= (vc_timing) { 2, FORMAT_RAW08, .clk =  460 };
+	ctrl->expo_timing[1] 		= (vc_timing) { 2, FORMAT_RAW10, .clk =  560 };
+	ctrl->expo_timing[2] 		= (vc_timing) { 2, FORMAT_RAW12, .clk =  672 };
+	ctrl->expo_timing[3] 		= (vc_timing) { 4, FORMAT_RAW08, .clk =  310 };
+	ctrl->expo_timing[4] 		= (vc_timing) { 4, FORMAT_RAW10, .clk =  380 };
+	ctrl->expo_timing[5] 		= (vc_timing) { 4, FORMAT_RAW12, .clk =  444 };
 
 	ctrl->frame.width		= 2048;
 	ctrl->frame.height		= 1536;
@@ -211,6 +230,10 @@ static void vc_init_ctrl_imx264(struct vc_ctrl *ctrl, struct vc_desc* desc)
 
 	vc_init_ctrl_imx252_base(ctrl, desc);
 
+	ctrl->expo_timing[0] 		= (vc_timing) { 2, FORMAT_RAW08, .clk =  996 };
+	ctrl->expo_timing[1] 		= (vc_timing) { 2, FORMAT_RAW10, .clk =  996 };
+	ctrl->expo_timing[2] 		= (vc_timing) { 2, FORMAT_RAW12, .clk =  996 };
+
 	ctrl->frame.width		= 2432;
 	ctrl->frame.height		= 2048;
 }
@@ -225,6 +248,10 @@ static void vc_init_ctrl_imx265(struct vc_ctrl *ctrl, struct vc_desc* desc)
 	vc_notice(dev, "%s(): Initialising module control for IMX265\n", __FUNCTION__);
 
 	vc_init_ctrl_imx252_base(ctrl, desc);
+
+	ctrl->expo_timing[0] 		= (vc_timing) { 2, FORMAT_RAW08, .clk =  846 };
+	ctrl->expo_timing[1] 		= (vc_timing) { 2, FORMAT_RAW10, .clk =  846 };
+	ctrl->expo_timing[2] 		= (vc_timing) { 2, FORMAT_RAW12, .clk =  846 };
 
 	ctrl->frame.width		= 2048;
 	ctrl->frame.height		= 1536;
@@ -325,6 +352,13 @@ static void vc_init_ctrl_imx392(struct vc_ctrl *ctrl, struct vc_desc* desc)
 
 	vc_init_ctrl_imx252_base(ctrl, desc);
 
+	ctrl->expo_timing[0] 		= (vc_timing) { 2, FORMAT_RAW08, .clk =  448 };
+	ctrl->expo_timing[1] 		= (vc_timing) { 2, FORMAT_RAW10, .clk =  530 };
+	ctrl->expo_timing[2] 		= (vc_timing) { 2, FORMAT_RAW12, .clk =  624 };
+	ctrl->expo_timing[3] 		= (vc_timing) { 4, FORMAT_RAW08, .clk =  294 };
+	ctrl->expo_timing[4] 		= (vc_timing) { 4, FORMAT_RAW10, .clk =  355 };
+	ctrl->expo_timing[5] 		= (vc_timing) { 4, FORMAT_RAW12, .clk =  441 };
+
 	ctrl->frame.width		= 1920;
 	ctrl->frame.height		= 1200;
 }
@@ -361,7 +395,7 @@ static void vc_init_ctrl_imx412(struct vc_ctrl *ctrl, struct vc_desc* desc)
 //  - Set frame length to increase exposure time. 
 //    Maximum exposure time is frame length -25 row periods, where frame length is set by registers
 //    {0x380E, 0x380F}
-//  - Trigger mode could not be activated. Wenn 0x0108 = 0x01 exposure time has no effect.
+//  - Trigger mode could not be activated. When 0x0108 = 0x01 exposure time has no effect.
 
 static void vc_init_ctrl_ov9281(struct vc_ctrl *ctrl, struct vc_desc* desc)
 {
