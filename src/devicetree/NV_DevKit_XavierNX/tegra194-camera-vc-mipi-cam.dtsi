@@ -20,8 +20,8 @@
 // ------------------------------------------------------------------------------------------------
 //  Driver Configuration for NVIDIA Jetson Xavier NX on NVIDIA Jetson Xavier NX Developer Kit
 // ------------------------------------------------------------------------------------------------
-#define VC_MIPI_CAM_0       1   // 1: Enabled, 0: Disabled
-#define VC_MIPI_CAM_1       1   // 1: Enabled, 0: Disabled
+#define VC_MIPI_CAM_0       1   // 1: Enabled, 0: Disabled  (serial_a => CSI Port 0 => VI Stream 0)
+#define VC_MIPI_CAM_1       1   // 1: Enabled, 0: Disabled  (serial_c => CSI Port 2 => VI Stream 2)
 // ------------------------------------------------------------------------------------------------
 //  Supported number of lanes
 // -----+------------------------------------------------------------------------------------------
@@ -47,6 +47,7 @@
 //   | Camera | physical_w  | physical_h  | active_w    | active_h    | <pixelformat>     |
 //   |        |             |             | line_length |             | see next table    |
 //   +--------+-------------+-------------+-------------+-------------+----+----+----+----+
+//   | V4LAPI |       1.000 |       1.000 |        1024 |         768 |    | 10 |    |    |
 //   | IMX178 |       7.430 |       4.992 |        3072 |        2076 | 08 | 10 | 12 | 14 |
 //   | IMX183 |      13.305 |       8.865 |        5440 |        3648 |    | 10 | 12 |    |
 //   | IMX226 |       7.533 |       5.635 |        3840 |        3046 |    | 10 | 12 |    |
@@ -59,12 +60,12 @@
 //   | IMX296 |       4.968 |       3.726 |        1440 |        1080 |    | 10 |    |    |
 //   | IMX327 |       5.617 |       3.181 |        1920 |        1080 |    | 10 | 12 |    |
 //   | IMX392 |       6.679 |       4.195 |        1920 |        1200 | 08 | 10 | 12 |    |
-//   | IMX412 |       6.287 |       4.712 |        4056 |        3040 |    | 10 | 12 |    |
+//   | IMX412 |       6.287 |       4.712 |        4032 |        3040 |    | 10 | 12 |    |
 //   | OV9281 |       3.840 |       2.400 |        1280 |         800 | 08 | 10 |    |    |
 //   +--------+-------------+-------------+-------------+-------------+-------------------+
 //
 //   +---------------+--------------+-----------+-------------+---------------------+
-//   | <pixelformat> | pixel_t      | mode_type | pixel_phase | vc_csi_pixel_bit_depth |
+//   | <pixelformat> | pixel_t      | mode_type | pixel_phase | csi_pixel_bit_depth |
 //   +---------------+--------------+-----------+-------------+---------------------+
 //   |            08 | bayer_rggb8  | bayer     | rggb        | 8                   |
 //   |            10 | bayer_rggb   | bayer     | rggb        | 10                  |
@@ -244,7 +245,7 @@
                     phy_mode                 = "DPHY";
                     discontinuous_clk        = "no";
                     mclk_khz                 = "24000";
-                    pix_clk_hz               = "600000000";
+                    pix_clk_hz               = "800000000";
                     mclk_multiplier          = "9.33";
                     cil_settletime           = "0";
                     dpcm_enable              = "false";
@@ -336,7 +337,7 @@
                     phy_mode                 = "DPHY";
                     discontinuous_clk        = "no";
                     mclk_khz                 = "24000";
-                    pix_clk_hz               = "600000000";
+                    pix_clk_hz               = "800000000";
                     mclk_multiplier          = "9.33";
                     cil_settletime           = "0";
                     dpcm_enable              = "false";
@@ -455,9 +456,9 @@
             #address-cells = <1>;
             #size-cells = <0>;
 #if VC_MIPI_MANUFACTURER == 1
-            vc_mipi@60 {
-#else
             vc_mipi@1a {
+#else
+            vc_mipi@60 {
 #endif
                 status = "okay";
                 reset-gpios = <&tegra_main_gpio CAM0_PWDN GPIO_ACTIVE_HIGH>;
@@ -471,9 +472,9 @@
             #address-cells = <1>;
             #size-cells = <0>;
 #if VC_MIPI_MANUFACTURER == 1
-            vc_mipi@60 {
-#else
             vc_mipi@1a {
+#else
+            vc_mipi@60 {
 #endif
                 status = "okay";
                 reset-gpios = <&tegra_main_gpio CAM1_PWDN GPIO_ACTIVE_HIGH>;

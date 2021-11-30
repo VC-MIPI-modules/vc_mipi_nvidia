@@ -21,9 +21,9 @@
 //  Driver Configuration for NVIDIA Jetson Xavier NX on Auvidea JNX30-LC-PD
 // ------------------------------------------------------------------------------------------------
 #define VC_MIPI_CAM_AB      1   // 1: Enabled, 0: Disabled  (serial_a => CSI Port 0 => VI Stream 0)
-#define VC_MIPI_CAM_CD      1   // 1: Enabled, 0: Disabled  (serial_c => CSI Port 2 => VI Stream 2)
-#define VC_MIPI_CAM_E       0   // 1: Enabled, 0: Disabled  (serial_e => CSI Port 4 => VI Stream 4)
-#define VC_MIPI_CAM_F       0   // 1: Enabled, 0: Disabled  (serial_f => CSI Port 5 => VI Stream 5)
+#define VC_MIPI_CAM_CD      1   // 1: Enabled, 0: Disabled  (serial_e => CSI Port 4 => VI Stream 4)
+#define VC_MIPI_CAM_E       0   // 1: Enabled, 0: Disabled  (serial_c => CSI Port 2 => VI Stream 2)
+#define VC_MIPI_CAM_F       0   // 1: Enabled, 0: Disabled  (serial_d => CSI Port 3 => VI Stream 3)
 // ------------------------------------------------------------------------------------------------
 //  Supported number of lanes
 // -----+------------------------------------------------------------------------------------------
@@ -49,6 +49,7 @@
 //   | Camera | physical_w  | physical_h  | active_w    | active_h    | <pixelformat>     |
 //   |        |             |             | line_length |             | see next table    |
 //   +--------+-------------+-------------+-------------+-------------+----+----+----+----+
+//   | V4LAPI |       1.000 |       1.000 |        1024 |         768 |    | 10 |    |    |
 //   | IMX178 |       7.430 |       4.992 |        3072 |        2076 | 08 | 10 | 12 | 14 |
 //   | IMX183 |      13.305 |       8.865 |        5440 |        3648 |    | 10 | 12 |    |
 //   | IMX226 |       7.533 |       5.635 |        3840 |        3046 |    | 10 | 12 |    |
@@ -61,12 +62,12 @@
 //   | IMX296 |       4.968 |       3.726 |        1440 |        1080 |    | 10 |    |    |
 //   | IMX327 |       5.617 |       3.181 |        1920 |        1080 |    | 10 | 12 |    |
 //   | IMX392 |       6.679 |       4.195 |        1920 |        1200 | 08 | 10 | 12 |    |
-//   | IMX412 |       6.287 |       4.712 |        4056 |        3040 |    | 10 | 12 |    |
+//   | IMX412 |       6.287 |       4.712 |        4032 |        3040 |    | 10 | 12 |    |
 //   | OV9281 |       3.840 |       2.400 |        1280 |         800 | 08 | 10 |    |    |
 //   +--------+-------------+-------------+-------------+-------------+-------------------+
 //
 //   +---------------+--------------+-----------+-------------+---------------------+
-//   | <pixelformat> | pixel_t      | mode_type | pixel_phase | vc_csi_pixel_bit_depth |
+//   | <pixelformat> | pixel_t      | mode_type | pixel_phase | csi_pixel_bit_depth |
 //   +---------------+--------------+-----------+-------------+---------------------+
 //   |            08 | bayer_rggb8  | bayer     | rggb        | 8                   |
 //   |            10 | bayer_rggb   | bayer     | rggb        | 10                  |
@@ -291,6 +292,10 @@
 				vc_csi_pixel_bit_depth   = "10";
 				// ----------------------------------------------------
 
+				// ----------------------------------------------------
+				// If you want to use GStreamer with nvarguscamerasrc
+				// auto exposure and white balancing you have to adjust 
+				// this settings. 
 				gain_factor              = "1";
 				min_gain_val             = "0";
 				max_gain_val             = "100000";
@@ -298,17 +303,18 @@
 				default_gain             = "0";
 				inherent_gain            = "1";
 
-				exposure_factor          = "1";
+				exposure_factor          = "1000"; // 1: default, 1000: for autoexposure
 				min_exp_time             = "1";
 				max_exp_time             = "100000000";
 				step_exp_time            = "1";
-				default_exp_time         = "10000";
+				default_exp_time         = "10000000";
 
 				framerate_factor         = "1";
 				min_framerate            = "1";
 				max_framerate            = "1000";
 				step_framerate           = "1";
 				default_framerate        = "1000";
+				// ----------------------------------------------------
 
 				min_hdr_ratio            = "1";
 				max_hdr_ratio            = "1";
@@ -316,7 +322,7 @@
 				phy_mode                 = "DPHY";
 				discontinuous_clk        = "no";
 				mclk_khz                 = "24000";
-				pix_clk_hz               = "600000000";
+				pix_clk_hz               = "800000000";
 				mclk_multiplier          = "9.33";
 				cil_settletime           = "0";
 				dpcm_enable              = "false";
@@ -390,11 +396,11 @@
 				default_gain             = "0";
 				inherent_gain            = "1";
 
-				exposure_factor          = "1";
+				exposure_factor          = "1000"; // 1: default, 1000: for autoexposure
 				min_exp_time             = "1";
 				max_exp_time             = "100000000";
 				step_exp_time            = "1";
-				default_exp_time         = "10000";
+				default_exp_time         = "10000000";
 
 				framerate_factor         = "1";
 				min_framerate            = "1";
@@ -408,7 +414,7 @@
 				phy_mode                 = "DPHY";
 				discontinuous_clk        = "no";
 				mclk_khz                 = "24000";
-				pix_clk_hz               = "600000000";
+				pix_clk_hz               = "800000000";
 				mclk_multiplier          = "9.33";
 				cil_settletime           = "0";
 				dpcm_enable              = "false";
@@ -466,9 +472,9 @@
 				// ----------------------------------------------------
 				// If you want to use GStreamer with nvarguscamerasrc
 				// you have to adjust this settings. 
-				active_w                 = "1000";
-				active_h                 = "1000";
-				line_length              = "1000";
+				active_w                 = "1024";
+				active_h                 = "768";
+				line_length              = "1024";
 				pixel_t                  = "bayer_rggb";
 				mode_type                = "bayer";
 				pixel_phase              = "rggb";
@@ -486,7 +492,7 @@
 				min_exp_time             = "1";
 				max_exp_time             = "100000000";
 				step_exp_time            = "1";
-				default_exp_time         = "10000";
+				default_exp_time         = "10000000";
 
 				framerate_factor         = "1";
 				min_framerate            = "1";
@@ -500,7 +506,7 @@
 				phy_mode                 = "DPHY";
 				discontinuous_clk        = "no";
 				mclk_khz                 = "24000";
-				pix_clk_hz               = "600000000";
+				pix_clk_hz               = "800000000";
 				mclk_multiplier          = "9.33";
 				cil_settletime           = "0";
 				dpcm_enable              = "false";
@@ -526,11 +532,11 @@
 #if VC_MIPI_CAM_F == 1
 	i2c@c250000 {
 #if VC_MIPI_MANUFACTURER == 1
-	vc_mipi_cam3: vc_mipi@60 {
-                	reg                     = <0x60>;
-#else
 	vc_mipi_cam3: vc_mipi@1a {
                 	reg                     = <0x1a>;
+#else
+	vc_mipi_cam3: vc_mipi@60 {
+                	reg                     = <0x60>;
 #endif
 			compatible              = "nvidia,vc_mipi";
 			devnode                 = "video3";
@@ -558,9 +564,9 @@
 				// ----------------------------------------------------
 				// If you want to use GStreamer with nvarguscamerasrc
 				// you have to adjust this settings. 
-				active_w                 = "1000";
-				active_h                 = "1000";
-				line_length              = "1000";
+				active_w                 = "1024";
+				active_h                 = "768";
+				line_length              = "1024";
 				pixel_t                  = "bayer_rggb";
 				mode_type                = "bayer";
 				pixel_phase              = "rggb";
@@ -578,7 +584,7 @@
 				min_exp_time             = "1";
 				max_exp_time             = "100000000";
 				step_exp_time            = "1";
-				default_exp_time         = "10000";
+				default_exp_time         = "10000000";
 
 				framerate_factor         = "1";
 				min_framerate            = "1";
@@ -592,7 +598,7 @@
 				phy_mode                 = "DPHY";
 				discontinuous_clk        = "no";
 				mclk_khz                 = "24000";
-				pix_clk_hz               = "600000000";
+				pix_clk_hz               = "800000000";
 				mclk_multiplier          = "9.33";
 				cil_settletime           = "0";
 				dpcm_enable              = "false";
@@ -752,9 +758,9 @@
 	i2c@3180000 {
 		status = "okay";
 #if VC_MIPI_MANUFACTURER == 1
-            vc_mipi@60 {
-#else
             vc_mipi@1a {
+#else
+            vc_mipi@60 {
 #endif
 			status = "okay";
 			reset-gpios = <&tegra_main_gpio CAM0_PWDN GPIO_ACTIVE_HIGH>;
@@ -765,9 +771,9 @@
 	i2c@c240000 {
 		status = "okay";
 #if VC_MIPI_MANUFACTURER == 1
-            vc_mipi@60 {
-#else
             vc_mipi@1a {
+#else
+            vc_mipi@60 {
 #endif
 			status = "okay";
 			reset-gpios = <&tegra_main_gpio CAM1_PWDN GPIO_ACTIVE_HIGH>;
@@ -778,9 +784,9 @@
 	i2c@31e0000 {
 		status = "okay";
 #if VC_MIPI_MANUFACTURER == 1
-            vc_mipi@60 {
-#else
             vc_mipi@1a {
+#else
+            vc_mipi@60 {
 #endif
 			status = "okay";
 			reset-gpios = <&tegra_main_gpio CAM3_PWDN GPIO_ACTIVE_HIGH>;
@@ -791,9 +797,9 @@
 	i2c@c250000 {
 		status = "okay";
 #if VC_MIPI_MANUFACTURER == 1
-            vc_mipi@60 {
-#else
             vc_mipi@1a {
+#else
+            vc_mipi@60 {
 #endif
 			status = "okay";
 			reset-gpios = <&tegra_main_gpio CAM2_PWDN GPIO_ACTIVE_HIGH>;

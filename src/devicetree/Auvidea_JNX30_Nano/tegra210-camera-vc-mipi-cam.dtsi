@@ -50,6 +50,7 @@
 //   | Camera | physical_w  | physical_h  | active_w    | active_h    | <pixelformat>     |
 //   |        |             |             | line_length |             | see next table    |
 //   +--------+-------------+-------------+-------------+-------------+----+----+----+----+
+//   | V4LAPI |       1.000 |       1.000 |        1024 |         768 |    | 10 |    |    |
 //   | IMX178 |       7.430 |       4.992 |        3072 |        2076 | 08 | 10 | 12 | 14 |
 //   | IMX183 |      13.305 |       8.865 |        5440 |        3648 |    | 10 | 12 |    |
 //   | IMX226 |       7.533 |       5.635 |        3840 |        3046 |    | 10 | 12 |    |
@@ -62,7 +63,7 @@
 //   | IMX296 |       4.968 |       3.726 |        1440 |        1080 |    | 10 |    |    |
 //   | IMX327 |       5.617 |       3.181 |        1920 |        1080 |    | 10 | 12 |    |
 //   | IMX392 |       6.679 |       4.195 |        1920 |        1200 | 08 | 10 | 12 |    |
-//   | IMX412 |       6.287 |       4.712 |        4056 |        3040 |    | 10 | 12 |    |
+//   | IMX412 |       6.287 |       4.712 |        4032 |        3040 |    | 10 | 12 |    |
 //   | OV9281 |       3.840 |       2.400 |        1280 |         800 | 08 | 10 |    |    |
 //   +--------+-------------+-------------+-------------+-------------+-------------------+
 //
@@ -316,7 +317,7 @@
                     phy_mode                 = "DPHY";
                     discontinuous_clk        = "no";
                     mclk_khz                 = "24000";
-                    pix_clk_hz               = "600000000";
+                    pix_clk_hz               = "800000000";
                     mclk_multiplier          = "9.33";
                     cil_settletime           = "0";
                     dpcm_enable              = "false";
@@ -408,7 +409,7 @@
                     phy_mode                 = "DPHY";
                     discontinuous_clk        = "no";
                     mclk_khz                 = "24000";
-                    pix_clk_hz               = "600000000";
+                    pix_clk_hz               = "800000000";
                     mclk_multiplier          = "9.33";
                     cil_settletime           = "0";
                     dpcm_enable              = "false";
@@ -502,7 +503,7 @@
                 phy_mode                 = "DPHY";
                 discontinuous_clk        = "no";
                 mclk_khz                 = "24000";
-                pix_clk_hz               = "600000000";
+                pix_clk_hz               = "800000000";
                 mclk_multiplier          = "9.33";
                 cil_settletime           = "0";
                 dpcm_enable              = "false";
@@ -594,7 +595,7 @@
                 phy_mode                 = "DPHY";
                 discontinuous_clk        = "no";
                 mclk_khz                 = "24000";
-                pix_clk_hz               = "600000000";
+                pix_clk_hz               = "800000000";
                 mclk_multiplier          = "9.33";
                 cil_settletime           = "0";
                 dpcm_enable              = "false";
