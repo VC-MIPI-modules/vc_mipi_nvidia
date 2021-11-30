@@ -795,7 +795,7 @@ int vc_mod_set_mode(struct vc_cam *cam, int *reset)
 		stype = "EXT.TRG";
 		break;
 	}
-	
+
 	mode = vc_mod_find_mode(cam, num_lanes, format, type, binning);
 	if (mode == state->mode && !(ctrl->flags & FLAG_RESET_ALWAYS)) {
 		vc_dbg(dev, "%s(): Module mode %u already set!\n", __FUNCTION__, mode);
@@ -1248,8 +1248,6 @@ int vc_sen_set_exposure(struct vc_cam *cam, int exposure)
 	state->shs = 0;
 	state->exposure_cnt = 0;
 	state->retrigger_cnt = 0;
-
-	// TODO: For testing read shs and vmax when using vc_mod_write_exposure.
 
 	switch (state->trigger_mode) {
 	case REG_TRIGGER_EXTERNAL:
