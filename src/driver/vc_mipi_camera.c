@@ -295,7 +295,9 @@ static int vc_set_flash_mode(struct tegracam_device *tc_dev, __s64 val)
 	return vc_mod_set_io_mode(cam, val);
 }
 
-__u32 g_sleep = 50;
+__u32 g_sleepR = 0;
+__u32 g_sleepS = 0;
+__u32 g_sleepP = 50;
 
 #ifdef VC_CTRL_VALUE
 static int vc_set_value(struct tegracam_device *tc_dev, __s64 val)
@@ -316,28 +318,41 @@ static int vc_set_value(struct tegracam_device *tc_dev, __s64 val)
 		vc_notice(dev, "%s(): Set testing line_length = %u", __FUNCTION__, g_line_length);
 	}
 	if (30000 <= val && val < 40000) {
-		g_sleep = val - 30000;
-		vc_notice(dev, "%s(): Set testing sleep = %u", __FUNCTION__, g_sleep);
-	}
-	if (40000 <= val && val < 50000) {
-		__u32 gain = val - 40000;
-		vc_sen_set_gain(cam, gain);
-		vc_notice(dev, "%s(): Set testing gain = %u", __FUNCTION__, gain);
-	}
-	if (50000 <= val && val < 60000) {
-		__u32 width = val - 50000;
+		__u32 width = val - 30000;
 		vc_sen_set_roi(cam, 0, 0, width, cam->state.frame.height);
 		vc_notice(dev, "%s(): Set testing roi width = %u", __FUNCTION__, width);
 	}
-	if (60000 <= val && val < 70000) {
-		__u32 height = val - 60000;
+	if (40000 <= val && val < 50000) {
+		__u32 height = val - 40000;
 		vc_sen_set_roi(cam, 0, 0, cam->state.frame.width, height);
 		vc_notice(dev, "%s(): Set testing roi height = %u", __FUNCTION__, height);
+	}
+	if (50000 <= val && val < 60000) {
+		__u32 gain = val - 50000;
+		vc_sen_set_gain(cam, gain);
+		vc_notice(dev, "%s(): Set testing gain = %u", __FUNCTION__, gain);
+	}
+	if (60000 <= val && val < 70000) {
+		__u32 shs_min = val - 60000;
+		cam->ctrl.expo_shs_min = shs_min;
+		vc_notice(dev, "%s(): Set testing shs_min = %u", __FUNCTION__, shs_min);
 	}
 	if (70000 <= val && val < 80000) {
 		__u32 vmax = val - 70000;
 		cam->ctrl.expo_vmax = vmax;
 		vc_notice(dev, "%s(): Set testing vmax = %u", __FUNCTION__, vmax);
+	}
+	if (80000 <= val && val < 90000) {
+		g_sleepS = val - 80000;
+		vc_notice(dev, "%s(): Set testing sleepS = %u", __FUNCTION__, g_sleepS);
+	}
+	if (90000 <= val && val < 100000) {
+		g_sleepR = val - 90000;
+		vc_notice(dev, "%s(): Set testing sleepR = %u", __FUNCTION__, g_sleepR);
+	}
+	if (100000 <= val && val < 110000) {
+		g_sleepP = val - 100000;
+		vc_notice(dev, "%s(): Set testing sleepP = %u", __FUNCTION__, g_sleepP);
 	}
 
 	return 0;
@@ -348,17 +363,46 @@ static int vc_start_streaming(struct tegracam_device *tc_dev)
 {
 	struct vc_cam *cam = tegracam_to_cam(tc_dev);
 	int reset;
+	int sleepR = 0;
+	int sleepS = 0; 
 	int ret = 0;
 
+	// Only Jetson Nano
+	// switch (cam->desc.mod_id) {
+	// case MOD_ID_IMX183: sleepR = 100; sleepS =  50; break;
+	// case MOD_ID_IMX273: sleepR = 100; sleepS =  10; break;
+	// case MOD_ID_IMX296: sleepR = 200; sleepS =  10; break;
+	// case MOD_ID_IMX412: sleepR =   0; sleepS =   0; break;
+	// default: sleepR = 100; sleepS = 50; break;
+	// }
+
+	// Only Jetson Xavier NX
+	switch (cam->desc.mod_id) {
+	// case MOD_ID_IMX183: sleepR =   0; sleepS = 150; break;
+	// case MOD_ID_IMX412: sleepR =   0; sleepS = 150; break;
+	default: sleepR = 200; sleepS = 300; break;
+	}
+
+	if (g_sleepR != 0) {
+		sleepR = g_sleepR;
+	}
+	if (g_sleepS != 0) {
+		sleepS = g_sleepS;
+	}
 	ret  = vc_mod_set_mode(cam, &reset);
+	if (!ret && reset) {
+		usleep_range(1000*sleepR, 1000*sleepR);
+	}
 	ret |= vc_sen_set_roi(cam, 0, 0, cam->state.frame.width, cam->state.frame.height);
 	if (!ret && reset) {
 	ret |= vc_sen_set_gain(cam, cam->state.gain);
 	ret |= vc_sen_set_exposure(cam, cam->state.exposure);
 	}
-	
 	ret |= vc_sen_start_stream(cam);
-	usleep_range(1000*g_sleep, 1000*g_sleep);
+	// ****************************************************************************************
+	// NOTE: On some camera modules (e.g. IMX183, IMX273) the second and/or third image is black if 
+	//       here isn't a sleep.
+	usleep_range(1000*sleepS, 1000*sleepS);
 
 	return ret;
 }
@@ -369,6 +413,7 @@ static int vc_stop_streaming(struct tegracam_device *tc_dev)
 	int ret = 0;
 	
 	ret = vc_sen_stop_stream(cam);
+	usleep_range(1000*g_sleepP, 1000*g_sleepP);
 
 	return ret;
 }
