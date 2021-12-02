@@ -55,6 +55,7 @@ void vc_adjust_cam_ctrls(struct vc_cam *cam, __u32 *width, __u32 *height)
 	// TEGRA_VI_CSI_ERROR_STATUS=0x00000004 (Bits 3-0: h>,<, w>,<) => height is to high
 	// TEGRA_VI_CSI_ERROR_STATUS=0x00000008 (Bits 3-0: h>,<, w>,<) => height is to low
 	switch (cam->desc.mod_id) {
+#ifdef VC_MIPI_JETSON_NANO
 	case MOD_ID_IMX178: // Active pixels 3072 x 2076
 		*height = 2047;
 		if (trigger_enabled) {
@@ -74,27 +75,6 @@ void vc_adjust_cam_ctrls(struct vc_cam *cam, __u32 *width, __u32 *height)
 		break;
 
 	case MOD_ID_IMX226: // Active pixels 3840 x 3046 (FPGA)
-		switch (cam->desc.mod_rev) {
-		case 0x0b:
-			// Rev: 0x0b 
-			// 2 Lanes, Freerun und Trigger 1, 6 und 7
-			//          RGGB, RG10, RG12 => 3045 
-			// 4 Lanes, Freerun und Trigger 1, 6 und 7
-			//          RGGB, RG10 => 3044
-			//          RG12 => Multi-bit transmission error
-			// Fazit:
-			//          Im Trigger Mode 1 ist die Frequenz instabil.
-			//          Im Trigger Mode 6, 7 hat der flash out immer 100 ns + die Dauer der Belichtungzeit.
-			// Rev: 0x08
-			// Fazit:
-			//          Im Triggermodus ist die Farbdarstellung nicht mehr richtig. (Magenta)
-			*height = 3045;
-			if (num_lanes == 4) {
-				(*height)--;
-			}
-			break;
-		default:
-		case 0x08:
 			if (!trigger_enabled) {
 				switch (code) {
 				case MEDIA_BUS_FMT_Y8_1X8: 	case MEDIA_BUS_FMT_SRGGB8_1X8:
@@ -119,14 +99,13 @@ void vc_adjust_cam_ctrls(struct vc_cam *cam, __u32 *width, __u32 *height)
 				(*height)--;
 			}
 			break;
-		}
-		break;
 
 	case MOD_ID_IMX252: // Active pixels 2048 x 1536
 		if (num_lanes == 4) {
 			(*height)--;
 		}
 		break;
+#endif
 
 	case MOD_ID_IMX273: // Active pixels 1440 x 1080
 		if (num_lanes == 4) {
@@ -135,24 +114,14 @@ void vc_adjust_cam_ctrls(struct vc_cam *cam, __u32 *width, __u32 *height)
 				*width = 1472;
 				break;
 			}
+#ifdef VC_MIPI_JETSON_NANO
 			(*height)--;
-		}
-		break;
-
-	case MOD_ID_IMX296: // Active pixels 1440 x 1080
-		if (trigger_enabled) {
-			*height = 1081;
+#endif
 		}
 		break;
 
 	case MOD_ID_IMX412: // Active pixels 4056 x 3040
 		*width = 4032;
-		break;
-
-	case MOD_ID_IMX327: // Active pixels 1920 x 1080
-	case MOD_ID_OV9281: // Active pixels 1280 x 800
-		// Test Ok
-		break;
 	}
 }
 
@@ -363,26 +332,19 @@ static int vc_start_streaming(struct tegracam_device *tc_dev)
 {
 	struct vc_cam *cam = tegracam_to_cam(tc_dev);
 	int reset;
-	int sleepR = 0;
-	int sleepS = 0; 
+	int sleepR = 200;
+	int sleepS = 200; 
 	int ret = 0;
 
-	// Only Jetson Nano
-	// switch (cam->desc.mod_id) {
-	// case MOD_ID_IMX183: sleepR = 100; sleepS =  50; break;
-	// case MOD_ID_IMX273: sleepR = 100; sleepS =  10; break;
-	// case MOD_ID_IMX296: sleepR = 200; sleepS =  10; break;
-	// case MOD_ID_IMX412: sleepR =   0; sleepS =   0; break;
-	// default: sleepR = 100; sleepS = 50; break;
-	// }
-
-	// Only Jetson Xavier NX
+#ifdef VC_MIPI_JETSON_NANO
 	switch (cam->desc.mod_id) {
-	// case MOD_ID_IMX183: sleepR =   0; sleepS = 150; break;
-	// case MOD_ID_IMX412: sleepR =   0; sleepS = 150; break;
-	default: sleepR = 200; sleepS = 300; break;
+	case MOD_ID_IMX183: sleepR = 100; sleepS =  50; break;
+	case MOD_ID_IMX273: sleepR = 100; sleepS =  10; break;
+	case MOD_ID_IMX296: sleepR = 200; sleepS =  10; break;
+	case MOD_ID_IMX412: sleepR =   0; sleepS =   0; break;
+	default: sleepR = 100; sleepS = 50; break;
 	}
-
+#endif
 	if (g_sleepR != 0) {
 		sleepR = g_sleepR;
 	}
