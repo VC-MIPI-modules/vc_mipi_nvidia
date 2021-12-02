@@ -1,16 +1,16 @@
 #ifndef _VC_MIPI_CORE_H
 #define _VC_MIPI_CORE_H
 
-#define DEBUG
+// #define DEBUG
 
 #include <linux/types.h>
 #include <linux/i2c.h>
 #include <linux/videodev2.h>
 
 #define vc_dbg(dev, fmt, ...) dev_dbg(dev, fmt, ##__VA_ARGS__)
-#define vc_info(dev, fmt, ...) dev_err(dev, fmt, ##__VA_ARGS__)
-#define vc_notice(dev, fmt, ...) dev_err(dev, fmt, ##__VA_ARGS__)
-#define vc_warn(dev, fmt, ...) dev_err(dev, fmt, ##__VA_ARGS__)
+#define vc_info(dev, fmt, ...) dev_info(dev, fmt, ##__VA_ARGS__)
+#define vc_notice(dev, fmt, ...) dev_notice(dev, fmt, ##__VA_ARGS__)
+#define vc_warn(dev, fmt, ...) dev_warn(dev, fmt, ##__VA_ARGS__)
 #define vc_err(dev, fmt, ...) dev_err(dev, fmt, ##__VA_ARGS__)
 
 #define FLAG_RESET_ALWAYS		0x0001

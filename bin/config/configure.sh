@@ -132,7 +132,7 @@ case $VC_MIPI_SOM in
         ;;
 esac
 
-PATCHES+=('develop')
+# PATCHES+=('develop')
 
 echo "  Using L4T Driver Package (BSP) URL:          $BSP_URL"
 echo "  Using L4T Driver Package (BSP) FILE:         $BSP_FILE"

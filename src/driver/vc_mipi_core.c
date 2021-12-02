@@ -338,7 +338,7 @@ int vc_core_set_format(struct vc_cam *cam, __u32 code)
 	char fourcc[5];
 
 	vc_core_get_v4l2_fmt(code, fourcc);
-	vc_info(dev, "%s(): Set format 0x%04x (%s)\n", __FUNCTION__, code, fourcc);
+	vc_notice(dev, "%s(): Set format 0x%04x (%s)\n", __FUNCTION__, code, fourcc);
 
 	if (vc_core_try_format(cam, code)) {
 		state->format_code = vc_core_get_default_format(desc);
@@ -371,7 +371,7 @@ int vc_core_set_frame(struct vc_cam *cam, __u32 x, __u32 y, __u32 width, __u32 h
 	struct vc_frame *frame = &state->frame;
 	struct device *dev = vc_core_get_sen_device(cam);
 
-	vc_info(dev, "%s(): Set frame (x: %u, y: %u, width: %u, height: %u)\n", __FUNCTION__, x, y, width, height);
+	vc_notice(dev, "%s(): Set frame (x: %u, y: %u, width: %u, height: %u)\n", __FUNCTION__, x, y, width, height);
 
 	if (width > ctrl->frame.width) {
 		frame->width = ctrl->frame.width;
@@ -450,7 +450,7 @@ int vc_core_set_framerate(struct vc_cam *cam, __u32 framerate)
 	struct vc_state *state = &cam->state;
 	struct device *dev = vc_core_get_sen_device(cam);
 
-	vc_info(dev, "%s(): Set framerate %u Hz\n", __FUNCTION__, framerate);
+	vc_notice(dev, "%s(): Set framerate %u Hz\n", __FUNCTION__, framerate);
 
 	if (framerate < ctrl->framerate.min) {
 		framerate = ctrl->framerate.min;
@@ -804,7 +804,7 @@ int vc_mod_set_mode(struct vc_cam *cam, int *reset)
 	}
 
 	vc_core_get_v4l2_fmt(state->format_code, fourcc);
-	vc_info(dev, "%s(): Set module mode: %u (lanes: %u, format: %s, type: %s)\n", __FUNCTION__, 
+	vc_notice(dev, "%s(): Set module mode: %u (lanes: %u, format: %s, type: %s)\n", __FUNCTION__, 
 		mode, num_lanes, fourcc, stype);
 
 	ret = vc_mod_reset_module(cam, mode);
@@ -989,7 +989,7 @@ int vc_sen_set_roi(struct vc_cam *cam, int x, int y, int width, int height)
 	int w_height = height;
 	int ret = 0;
 
-	vc_info(dev, "%s(): Set sensor roi: (x: %u, y: %u, width: %u, height: %u)\n", __FUNCTION__, x, y, width, height);
+	vc_notice(dev, "%s(): Set sensor roi: (x: %u, y: %u, width: %u, height: %u)\n", __FUNCTION__, x, y, width, height);
 
 	if (ctrl->flags & FLAG_DOUBLE_HEIGHT) {
 		w_y = 2*y;
@@ -1107,7 +1107,7 @@ int vc_sen_start_stream(struct vc_cam *cam)
 	struct device *dev = &ctrl->client_sen->dev;
 	int ret = 0;
 	
-	vc_info(dev, "%s(): Start streaming\n", __FUNCTION__);
+	vc_notice(dev, "%s(): Start streaming\n", __FUNCTION__);
 	vc_dbg(dev, "%s(): MM: 0x%02x, TM: 0x%02x, IO: 0x%02x\n",
 		__FUNCTION__, state->mode, state->trigger_mode, state->io_mode);
 
@@ -1128,7 +1128,7 @@ int vc_sen_stop_stream(struct vc_cam *cam)
 	struct device *dev = &ctrl->client_sen->dev;
 	int ret = 0;
 
-	vc_info(dev, "%s(): Stop streaming\n", __FUNCTION__);
+	vc_notice(dev, "%s(): Stop streaming\n", __FUNCTION__);
 
 	ret |= vc_mod_write_trigger_mode(client_mod, REG_TRIGGER_DISABLE);
 	ret |= vc_mod_write_io_mode(client_mod, REG_IO_DISABLE);
