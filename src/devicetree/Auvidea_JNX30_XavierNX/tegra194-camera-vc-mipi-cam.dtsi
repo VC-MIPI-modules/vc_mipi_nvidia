@@ -292,10 +292,6 @@
 				vc_csi_pixel_bit_depth   = "10";
 				// ----------------------------------------------------
 
-				// ----------------------------------------------------
-				// If you want to use GStreamer with nvarguscamerasrc
-				// auto exposure and white balancing you have to adjust 
-				// this settings. 
 				gain_factor              = "1";
 				min_gain_val             = "0";
 				max_gain_val             = "100000";
@@ -303,7 +299,7 @@
 				default_gain             = "0";
 				inherent_gain            = "1";
 
-				exposure_factor          = "1000"; // 1: default, 1000: for autoexposure
+				exposure_factor          = "1";
 				min_exp_time             = "1";
 				max_exp_time             = "100000000";
 				step_exp_time            = "1";
@@ -314,7 +310,6 @@
 				max_framerate            = "1000";
 				step_framerate           = "1";
 				default_framerate        = "1000";
-				// ----------------------------------------------------
 
 				min_hdr_ratio            = "1";
 				max_hdr_ratio            = "1";
@@ -366,8 +361,8 @@
 			// ----------------------------------------------------
 			// If you want to use GStreamer with nvarguscamerasrc
 			// you have to adjust this settings
-			physical_w              = "6.287";
-			physical_h              = "4.712";
+			physical_w              = "1.000";
+			physical_h              = "1.000";
 			// ----------------------------------------------------
 
 			// This node is needed by the Tegra framework.
@@ -380,9 +375,9 @@
 				// ----------------------------------------------------
 				// If you want to use GStreamer with nvarguscamerasrc
 				// you have to adjust this settings. 
-				active_w                 = "4032";
-				active_h                 = "3040";
-				line_length              = "4032";
+				active_w                 = "1024";
+				active_h                 = "768";
+				line_length              = "1024";
 				pixel_t                  = "bayer_rggb";
 				mode_type                = "bayer";
 				pixel_phase              = "rggb";
@@ -396,7 +391,7 @@
 				default_gain             = "0";
 				inherent_gain            = "1";
 
-				exposure_factor          = "1000"; // 1: default, 1000: for autoexposure
+				exposure_factor          = "1";
 				min_exp_time             = "1";
 				max_exp_time             = "100000000";
 				step_exp_time            = "1";

@@ -232,7 +232,7 @@
                     min_exp_time             = "1";
                     max_exp_time             = "100000000";
                     step_exp_time            = "1";
-                    default_exp_time         = "10000";
+                    default_exp_time         = "10000000";
 
                     framerate_factor         = "1";
                     min_framerate            = "1";
@@ -324,7 +324,7 @@
                     min_exp_time             = "1";
                     max_exp_time             = "100000000";
                     step_exp_time            = "1";
-                    default_exp_time         = "10000";
+                    default_exp_time         = "10000000";
 
                     framerate_factor         = "1";
                     min_framerate            = "1";
