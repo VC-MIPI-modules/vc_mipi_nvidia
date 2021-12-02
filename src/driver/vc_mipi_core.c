@@ -985,14 +985,21 @@ int vc_sen_set_roi(struct vc_cam *cam, int x, int y, int width, int height)
 	struct vc_ctrl *ctrl = &cam->ctrl;
 	struct i2c_client *client = ctrl->client_sen;
 	struct device *dev = &client->dev;
+	int w_y = y;
+	int w_height = height;
 	int ret = 0;
 
 	vc_info(dev, "%s(): Set sensor roi: (x: %u, y: %u, width: %u, height: %u)\n", __FUNCTION__, x, y, width, height);
 
+	if (ctrl->flags & FLAG_DOUBLE_HEIGHT) {
+		w_y = 2*y;
+		w_height = 2*height;
+	}
+
 	ret |= i2c_write_reg2(dev, client, &ctrl->csr.sen.h_start, x, __FUNCTION__);
-	ret |= i2c_write_reg2(dev, client, &ctrl->csr.sen.v_start, y, __FUNCTION__);
+	ret |= i2c_write_reg2(dev, client, &ctrl->csr.sen.v_start, w_y, __FUNCTION__);
 	ret |= i2c_write_reg2(dev, client, &ctrl->csr.sen.o_width, width, __FUNCTION__);
-	ret |= i2c_write_reg2(dev, client, &ctrl->csr.sen.o_height, height, __FUNCTION__);
+	ret |= i2c_write_reg2(dev, client, &ctrl->csr.sen.o_height, w_height, __FUNCTION__);
 	if (ret) {
 		vc_err(dev, "%s(): Couldn't set sensor roi: (x: %u, y: %u, width: %u, height: %u) (error: %d)\n", __FUNCTION__, 
 			x, y, width, height, ret);

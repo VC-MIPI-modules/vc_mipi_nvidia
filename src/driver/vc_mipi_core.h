@@ -14,14 +14,14 @@
 #define vc_err(dev, fmt, ...) dev_err(dev, fmt, ##__VA_ARGS__)
 
 #define FLAG_RESET_ALWAYS		0x0001
-
 #define FLAG_EXPOSURE_SIMPLE		0x0002
 #define FLAG_EXPOSURE_WRITE_VMAX	0x0004
 #define FLAG_EXPOSURE_READ_VMAX		0x0008
 
-#define FLAG_IO_FLASH_ENABLED        	0x0010
-#define FLAG_IO_XTRIG_ENABLED        	0x0020
-#define FLAG_IO_FLASH_DURATION        	0x0040
+#define FLAG_DOUBLE_HEIGHT        	0x0010
+#define FLAG_IO_FLASH_ENABLED        	0x0020
+#define FLAG_IO_XTRIG_ENABLED        	0x0040
+#define FLAG_IO_FLASH_DURATION        	0x0080
 
 #define FLAG_TRIGGER_DISABLE      	0x0100
 #define FLAG_TRIGGER_EXTERNAL     	0x0200
