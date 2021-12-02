@@ -84,8 +84,6 @@ static void vc_init_ctrl_imx252_base(struct vc_ctrl *ctrl, struct vc_desc* desc)
 
 static void vc_init_ctrl_imx290_base(struct vc_ctrl *ctrl, struct vc_desc* desc)
 {
-	// ctrl->exposure			= (vc_control) { .min =   29, .max = 7602176, .def =  10000 };
-	ctrl->exposure			= (vc_control) { .min =   1, .max = 100000000, .def =  10000 };
 	ctrl->gain			= (vc_control) { .min =   0, .max =       255, .def =      0 };
 	
 	ctrl->csr.sen.vmax              = (vc_csr4) { .l = 0x3018, .m = 0x3019, .h = 0x301A, .u = 0x0000 };
@@ -389,6 +387,37 @@ static void vc_init_ctrl_imx412(struct vc_ctrl *ctrl, struct vc_desc* desc)
 }
 
 // ------------------------------------------------------------------------------------------------
+//  Settings for IMX415C
+
+static void vc_init_ctrl_imx415(struct vc_ctrl *ctrl, struct vc_desc* desc)
+{
+	struct device *dev = &ctrl->client_mod->dev;
+
+	vc_notice(dev, "%s(): Initialising module control for IMX415\n", __FUNCTION__);
+	
+	ctrl->exposure			= (vc_control) { .min =   1, .max =   5000000, .def =  10000 };
+	ctrl->gain			= (vc_control) { .min =   0, .max =       240, .def =      0 };
+
+	ctrl->csr.sen.vmax              = (vc_csr4) { .l = 0x3024, .m = 0x3025, .h = 0x3026, .u = 0x0000 };
+	ctrl->csr.sen.mode_standby	= 0x01;
+	ctrl->csr.sen.mode_operating	= 0x00;
+
+	ctrl->frame.width		= 3840;
+	ctrl->frame.height		= 2160;
+
+	ctrl->expo_timing[0] 		= (vc_timing) { 2, FORMAT_RAW10, .clk = 1042 };
+	ctrl->expo_timing[1] 		= (vc_timing) { 4, FORMAT_RAW10, .clk =  551 };
+
+	ctrl->expo_shs_min              = 8;
+	ctrl->expo_vmax 		= 2250;
+
+	// No VMAX value present. No TRIGGER and FLASH capability.
+	ctrl->flags                     = FLAG_EXPOSURE_WRITE_VMAX;
+	ctrl->flags		       |= FLAG_DOUBLE_HEIGHT;
+	ctrl->flags		       |= FLAG_IO_FLASH_ENABLED;
+}
+
+// ------------------------------------------------------------------------------------------------
 //  Settings for OV9281
 //
 //  TODO: 
@@ -448,6 +477,7 @@ int vc_mod_ctrl_init(struct vc_ctrl* ctrl, struct vc_desc* desc)
 	case MOD_ID_IMX327: vc_init_ctrl_imx327(ctrl, desc); break;
 	case MOD_ID_IMX392: vc_init_ctrl_imx392(ctrl, desc); break;
 	case MOD_ID_IMX412: vc_init_ctrl_imx412(ctrl, desc); break;
+	case MOD_ID_IMX415: vc_init_ctrl_imx415(ctrl, desc); break;
 	case MOD_ID_OV9281: vc_init_ctrl_ov9281(ctrl, desc); break;
 	default:
 		vc_err(dev, "%s(): Detected module not supported!\n", __FUNCTION__);
