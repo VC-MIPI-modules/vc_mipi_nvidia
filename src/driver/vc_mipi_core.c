@@ -1199,24 +1199,26 @@ static void vc_calculate_exposure_vmax(struct vc_cam *cam, __u32 exposure)
 
 	// Exposure time [s] = (1 H period) × (Number of lines per frame - SHS) 
 	//                     + Exposure time error (t OFFSET ) [µs]
-	// 
-	// | <---               VMAX (frame time)               ---> |
-	// +---------+----------------------------+------------------+
-	// | SHS_MIN | SHS (exposure delay) --->  | exposure time    | 
-	//
 
 	// Convert exposure time from µs to ns.
 	exposure_ns = (__u64)(exposure)*1000;
 	// Calculate number of lines equivalent to the exposure time without shs_min.
-	exposure_1H = exposure_ns / period_1H_ns - shs_min;
+	exposure_1H = exposure_ns / period_1H_ns;
 
 	// Is exposure time less than frame time?
-	if (exposure_1H + shs_min <= state->vmax) {
+	if (exposure_1H < state->vmax - shs_min) {
 		// Yes then calculate exposure delay (shs) in between frame time.
+		// |                 VMAX (frame time)             ---> |
+		// | SHS_MIN |                                          |
+		// +----------------------------+-----------------------+
+		// | SHS (exposure delay) --->  |    exposure time ---> | 
 		state->shs = state->vmax - exposure_1H;
 	
 	} else {
 		// No, then increase frame time and set exposure delay to the minimal value.
+		// |                 VMAX (frame time)                   ---> |
+		// +---------+------------------------------------------------+
+		// | SHS     |                             exposure time ---> | 
 		state->vmax = shs_min + exposure_1H;
 		state->shs = shs_min;
 	}
