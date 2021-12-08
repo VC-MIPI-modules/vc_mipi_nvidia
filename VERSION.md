@@ -1,5 +1,12 @@
 # Version History
 
+## v0.7.1 (Improvements)
+  * Improvements
+    * Added documentation for the correct setup of embedded_metadata_height in the device tree
+    * Optimized default settings of gain and exposure in the device tree for better auto exposure control
+    * Added support of GBRG pixel format for IMX415
+    * Optimized exposure time calculation for IMX290 and IMX327
+
 ## v0.7.0 (Support IMX273, IMX415 and Xavier NX on JNX30)
   * New Features
     * Added support for carrier boards
