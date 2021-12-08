@@ -55,7 +55,6 @@ static void vc_init_ctrl_imx183_base(struct vc_ctrl *ctrl, struct vc_desc* desc)
 	ctrl->csr.sen.vmax              = (vc_csr4) { .l = 0x7004, .m = 0x7005, .h = 0x7006, .u = 0x0000 };
 	ctrl->csr.sen.hmax              = (vc_csr4) { .l = 0x7002, .m = 0x7003, .h = 0x0000, .u = 0x0000 };
 
-	ctrl->expo_period_1H 		= 10000; 	// ns
 	ctrl->expo_shs_min		= 5;
 	ctrl->expo_vmax			= 3728;
 
@@ -72,12 +71,11 @@ static void vc_init_ctrl_imx252_base(struct vc_ctrl *ctrl, struct vc_desc* desc)
 	ctrl->csr.sen.vmax              = (vc_csr4) { .l = 0x0210, .m = 0x0211, .h = 0x0212, .u = 0x0000 };
 	ctrl->csr.sen.hmax              = (vc_csr4) { .l = 0x0214, .m = 0x0215, .h = 0x0000, .u = 0x0000 };
 
-	ctrl->expo_period_1H 		= 5000; 	// ns
 	ctrl->expo_shs_min		= 10;
 	ctrl->expo_vmax			= 2094;
 
 	ctrl->flags			 = FLAG_EXPOSURE_WRITE_VMAX;
-	ctrl->flags			|= FLAG_IO_FLASH_ENABLED | FLAG_IO_XTRIG_ENABLED;
+	ctrl->flags			|= FLAG_IO_FLASH_ENABLED;
 	ctrl->flags			|= FLAG_TRIGGER_EXTERNAL | FLAG_TRIGGER_PULSEWIDTH |
 					   FLAG_TRIGGER_SELF | FLAG_TRIGGER_SINGLE;
 }
@@ -160,13 +158,13 @@ static void vc_init_ctrl_imx226(struct vc_ctrl *ctrl, struct vc_desc* desc)
 
 	vc_init_ctrl_imx183_base(ctrl, desc);
 
+	ctrl->frame.width		= 3840;
+	ctrl->frame.height		= 3046;
+
 	ctrl->expo_timing[0] 		= (vc_timing) { 2, FORMAT_RAW10, .clk = 1072 };
 	ctrl->expo_timing[1] 		= (vc_timing) { 2, FORMAT_RAW12, .clk = 1288 };
 	ctrl->expo_timing[2] 		= (vc_timing) { 4, FORMAT_RAW10, .clk =  536 };
 	ctrl->expo_timing[3] 		= (vc_timing) { 4, FORMAT_RAW12, .clk =  644 };
-
-	ctrl->frame.width		= 3840;
-	ctrl->frame.height		= 3046;
 
 	ctrl->expo_vmax 		= 3079;
 
@@ -184,15 +182,15 @@ static void vc_init_ctrl_imx250(struct vc_ctrl *ctrl, struct vc_desc* desc)
 
 	vc_init_ctrl_imx252_base(ctrl, desc);
 
+	ctrl->frame.width		= 2448;
+	ctrl->frame.height		= 2048;
+
 	ctrl->expo_timing[0] 		= (vc_timing) { 2, FORMAT_RAW08, .clk =  540 };
 	ctrl->expo_timing[1] 		= (vc_timing) { 2, FORMAT_RAW10, .clk =  660 };
 	ctrl->expo_timing[2] 		= (vc_timing) { 2, FORMAT_RAW12, .clk =  780 };
 	ctrl->expo_timing[3] 		= (vc_timing) { 4, FORMAT_RAW08, .clk =  350 };
 	ctrl->expo_timing[4] 		= (vc_timing) { 4, FORMAT_RAW10, .clk =  430 };
 	ctrl->expo_timing[5] 		= (vc_timing) { 4, FORMAT_RAW12, .clk =  510 };
-
-	ctrl->frame.width		= 2448;
-	ctrl->frame.height		= 2048;
 }
 
 // ------------------------------------------------------------------------------------------------
@@ -206,15 +204,15 @@ static void vc_init_ctrl_imx252(struct vc_ctrl *ctrl, struct vc_desc* desc)
 
 	vc_init_ctrl_imx252_base(ctrl, desc);
 
+	ctrl->frame.width		= 2048;
+	ctrl->frame.height		= 1536;
+
 	ctrl->expo_timing[0] 		= (vc_timing) { 2, FORMAT_RAW08, .clk =  460 };
 	ctrl->expo_timing[1] 		= (vc_timing) { 2, FORMAT_RAW10, .clk =  560 };
 	ctrl->expo_timing[2] 		= (vc_timing) { 2, FORMAT_RAW12, .clk =  672 };
 	ctrl->expo_timing[3] 		= (vc_timing) { 4, FORMAT_RAW08, .clk =  310 };
 	ctrl->expo_timing[4] 		= (vc_timing) { 4, FORMAT_RAW10, .clk =  380 };
 	ctrl->expo_timing[5] 		= (vc_timing) { 4, FORMAT_RAW12, .clk =  444 };
-
-	ctrl->frame.width		= 2048;
-	ctrl->frame.height		= 1536;
 }
 
 // ------------------------------------------------------------------------------------------------
@@ -228,12 +226,12 @@ static void vc_init_ctrl_imx264(struct vc_ctrl *ctrl, struct vc_desc* desc)
 
 	vc_init_ctrl_imx252_base(ctrl, desc);
 
+	ctrl->frame.width		= 2432;
+	ctrl->frame.height		= 2048;
+
 	ctrl->expo_timing[0] 		= (vc_timing) { 2, FORMAT_RAW08, .clk =  996 };
 	ctrl->expo_timing[1] 		= (vc_timing) { 2, FORMAT_RAW10, .clk =  996 };
 	ctrl->expo_timing[2] 		= (vc_timing) { 2, FORMAT_RAW12, .clk =  996 };
-
-	ctrl->frame.width		= 2432;
-	ctrl->frame.height		= 2048;
 }
 
 // ------------------------------------------------------------------------------------------------
@@ -247,12 +245,12 @@ static void vc_init_ctrl_imx265(struct vc_ctrl *ctrl, struct vc_desc* desc)
 
 	vc_init_ctrl_imx252_base(ctrl, desc);
 
+	ctrl->frame.width		= 2048;
+	ctrl->frame.height		= 1536;
+
 	ctrl->expo_timing[0] 		= (vc_timing) { 2, FORMAT_RAW08, .clk =  846 };
 	ctrl->expo_timing[1] 		= (vc_timing) { 2, FORMAT_RAW10, .clk =  846 };
 	ctrl->expo_timing[2] 		= (vc_timing) { 2, FORMAT_RAW12, .clk =  846 };
-
-	ctrl->frame.width		= 2048;
-	ctrl->frame.height		= 1536;
 }
 
 // ------------------------------------------------------------------------------------------------
@@ -320,7 +318,7 @@ static void vc_init_ctrl_imx296(struct vc_ctrl *ctrl, struct vc_desc* desc)
 	ctrl->expo_vmax 		= 1118;
 
 	ctrl->flags			 = FLAG_EXPOSURE_WRITE_VMAX;
-	ctrl->flags			|= FLAG_IO_FLASH_ENABLED | FLAG_IO_XTRIG_ENABLED;
+	ctrl->flags			|= FLAG_IO_FLASH_ENABLED;
 	ctrl->flags			|= FLAG_TRIGGER_EXTERNAL | FLAG_TRIGGER_PULSEWIDTH | FLAG_TRIGGER_SELF;
 }
 
@@ -350,15 +348,15 @@ static void vc_init_ctrl_imx392(struct vc_ctrl *ctrl, struct vc_desc* desc)
 
 	vc_init_ctrl_imx252_base(ctrl, desc);
 
+	ctrl->frame.width		= 1920;
+	ctrl->frame.height		= 1200;
+
 	ctrl->expo_timing[0] 		= (vc_timing) { 2, FORMAT_RAW08, .clk =  448 };
 	ctrl->expo_timing[1] 		= (vc_timing) { 2, FORMAT_RAW10, .clk =  530 };
 	ctrl->expo_timing[2] 		= (vc_timing) { 2, FORMAT_RAW12, .clk =  624 };
 	ctrl->expo_timing[3] 		= (vc_timing) { 4, FORMAT_RAW08, .clk =  294 };
 	ctrl->expo_timing[4] 		= (vc_timing) { 4, FORMAT_RAW10, .clk =  355 };
 	ctrl->expo_timing[5] 		= (vc_timing) { 4, FORMAT_RAW12, .clk =  441 };
-
-	ctrl->frame.width		= 1920;
-	ctrl->frame.height		= 1200;
 }
 
 // ------------------------------------------------------------------------------------------------
@@ -411,9 +409,9 @@ static void vc_init_ctrl_imx415(struct vc_ctrl *ctrl, struct vc_desc* desc)
 	ctrl->expo_shs_min              = 8;
 	ctrl->expo_vmax 		= 2250;
 
-	// No VMAX value present. No TRIGGER and FLASH capability.
 	ctrl->flags                     = FLAG_EXPOSURE_WRITE_VMAX;
 	ctrl->flags		       |= FLAG_DOUBLE_HEIGHT;
+	ctrl->flags		       |= FLAG_FORMAT_GBRG;
 	ctrl->flags		       |= FLAG_IO_FLASH_ENABLED;
 }
 
@@ -452,7 +450,7 @@ static void vc_init_ctrl_ov9281(struct vc_ctrl *ctrl, struct vc_desc* desc)
 
 	ctrl->flags		 	= FLAG_EXPOSURE_SIMPLE;
 	ctrl->flags		       |= FLAG_IO_FLASH_DURATION;
-	ctrl->flags		       |= FLAG_IO_FLASH_ENABLED | FLAG_IO_XTRIG_ENABLED;
+	ctrl->flags		       |= FLAG_IO_FLASH_ENABLED;
 	ctrl->flags		       |= FLAG_TRIGGER_EXTERNAL;
 }
 
