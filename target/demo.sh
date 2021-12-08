@@ -80,7 +80,7 @@ whitebalance=
 device=0
 option2=x
 shutter=10000
-gain=10
+gain=0
 exposure=100000000
 optionY=
 width=
@@ -180,9 +180,10 @@ if [[ -n ${argus} ]]; then
 	v4l2-ctl -d /dev/video${device} -c exposure=${shutter} -c gain=${gain}
 
 	gst-launch-1.0 -t \
-		nvarguscamerasrc sensor-id=${device} \
-		awblock=false aelock=false aeantibanding=0 saturation="1.0" ispdigitalgainrange="1 1" \
-		exposuretimerange="${exposure} ${exposure}" gainrange="1 1" ! \
+		nvarguscamerasrc sensor-id=${device} awblock=false aelock=false aeantibanding=0 \
+		tnr-mode=1 wbmode=1 ispdigitalgainrange="1 1" \
+		exposurecompensation="0.0" saturation="1.0" \
+		exposuretimerange="${exposure} ${exposure}" gainrange="1 8" ! \
 		"video/x-raw(memory:NVMM), width=${width}, height=${height}, format=NV12" ! \
 		nvegltransform ! nveglglessink -e
 else 
