@@ -32,7 +32,6 @@
 
 #define REG_IO_DISABLE     	 0x00
 #define REG_IO_FLASH_ENABLE      0x01
-#define REG_IO_XTRIG_ENABLE    	 0x09
 
 #define REG_TRIGGER_DISABLE      0x00
 #define REG_TRIGGER_EXTERNAL     0x01
@@ -266,6 +265,10 @@ static int vc_core_get_v4l2_fmt(__u32 code, char *buf)
 	case MEDIA_BUS_FMT_SRGGB10_1X10: sprintf(buf, "RG10"); break;
 	case MEDIA_BUS_FMT_SRGGB12_1X12: sprintf(buf, "RG12"); break;
 	case MEDIA_BUS_FMT_SRGGB14_1X14: sprintf(buf, "RG14"); break;
+	case MEDIA_BUS_FMT_SGBRG8_1X8:   sprintf(buf, "GBRG"); break;
+	case MEDIA_BUS_FMT_SGBRG10_1X10: sprintf(buf, "GB10"); break;
+	case MEDIA_BUS_FMT_SGBRG12_1X12: sprintf(buf, "GB12"); break;
+	case MEDIA_BUS_FMT_SGBRG14_1X14: sprintf(buf, "GB14"); break;
 	default: return -EINVAL;
 	}
 	return 0;
@@ -276,36 +279,47 @@ static __u8 vc_core_v4l2_code_to_format(__u32 code)
 	switch (code) {
 	case MEDIA_BUS_FMT_Y8_1X8:
 	case MEDIA_BUS_FMT_SRGGB8_1X8:
+	case MEDIA_BUS_FMT_SGBRG8_1X8:
 		return FORMAT_RAW08;
 	case MEDIA_BUS_FMT_Y10_1X10:
 	case MEDIA_BUS_FMT_SRGGB10_1X10:
+	case MEDIA_BUS_FMT_SGBRG10_1X10:
 		return FORMAT_RAW10;
 	case MEDIA_BUS_FMT_Y12_1X12:
 	case MEDIA_BUS_FMT_SRGGB12_1X12:
+	case MEDIA_BUS_FMT_SGBRG12_1X12:
 		return FORMAT_RAW12;
 	// case MEDIA_BUS_FMT_Y14_1X14:
 	case MEDIA_BUS_FMT_SRGGB14_1X14:
+	case MEDIA_BUS_FMT_SGBRG14_1X14:
 		return FORMAT_RAW14;
 	}
 	return 0;
 }
 
-static __u32 vc_core_format_to_v4l2_code(__u8 format, int is_color)
+static __u32 vc_core_format_to_v4l2_code(__u8 format, int is_color, int is_gbrg)
 {
 	switch (format) {
-	case FORMAT_RAW08: return is_color ? MEDIA_BUS_FMT_SRGGB8_1X8   : MEDIA_BUS_FMT_Y8_1X8;
-	case FORMAT_RAW10: return is_color ? MEDIA_BUS_FMT_SRGGB10_1X10 : MEDIA_BUS_FMT_Y10_1X10;
-	case FORMAT_RAW12: return is_color ? MEDIA_BUS_FMT_SRGGB12_1X12 : MEDIA_BUS_FMT_Y12_1X12;
-	case FORMAT_RAW14: return MEDIA_BUS_FMT_SRGGB14_1X14; // MEDIA_BUS_FMT_Y14_1X14
+	case FORMAT_RAW08: 
+		return is_color ? (is_gbrg ? MEDIA_BUS_FMT_SGBRG8_1X8 : MEDIA_BUS_FMT_SRGGB8_1X8) : MEDIA_BUS_FMT_Y8_1X8;
+	case FORMAT_RAW10: 
+		return is_color ? (is_gbrg ? MEDIA_BUS_FMT_SGBRG10_1X10 : MEDIA_BUS_FMT_SRGGB10_1X10) : MEDIA_BUS_FMT_Y10_1X10;
+	case FORMAT_RAW12: 
+		return is_color ? (is_gbrg ? MEDIA_BUS_FMT_SGBRG12_1X12 : MEDIA_BUS_FMT_SRGGB12_1X12) : MEDIA_BUS_FMT_Y12_1X12;
+	case FORMAT_RAW14: 
+		return is_color ? (is_gbrg ? MEDIA_BUS_FMT_SGBRG14_1X14 : MEDIA_BUS_FMT_SRGGB14_1X14) : 0; // MEDIA_BUS_FMT_Y14_1X14
 	}
 	return 0;
 }
 
-static __u32 vc_core_get_default_format(struct vc_desc *desc)
+static __u32 vc_core_get_default_format(struct vc_cam *cam)
 {
+	struct vc_desc *desc = &cam->desc;
+	struct vc_ctrl *ctrl = &cam->ctrl;
 	__u8 format = desc->modes[0].format;
 	int is_color = vc_mod_is_color_sensor(desc);
-	return vc_core_format_to_v4l2_code(format, is_color);
+	int is_bgrg = ctrl->flags & FLAG_FORMAT_GBRG;
+	return vc_core_format_to_v4l2_code(format, is_color, is_bgrg);
 }
 
 int vc_core_try_format(struct vc_cam *cam, __u32 code)
@@ -332,7 +346,6 @@ int vc_core_try_format(struct vc_cam *cam, __u32 code)
 
 int vc_core_set_format(struct vc_cam *cam, __u32 code)
 {
-	struct vc_desc *desc = &cam->desc;
 	struct vc_state *state = &cam->state;
 	struct device *dev = vc_core_get_sen_device(cam);
 	char fourcc[5];
@@ -341,7 +354,7 @@ int vc_core_set_format(struct vc_cam *cam, __u32 code)
 	vc_notice(dev, "%s(): Set format 0x%04x (%s)\n", __FUNCTION__, code, fourcc);
 
 	if (vc_core_try_format(cam, code)) {
-		state->format_code = vc_core_get_default_format(desc);
+		state->format_code = vc_core_get_default_format(cam);
 		vc_err(dev, "%s(): Format 0x%04x not supported! (Set default format: 0x%04x)\n", __FUNCTION__, code, state->format_code);
 	 	return -EINVAL;
 	}
@@ -639,7 +652,6 @@ static int vc_mod_setup(struct vc_ctrl *ctrl, int mod_i2c_addr, struct vc_desc *
 
 static void vc_core_state_init(struct vc_cam *cam)
 {
-	struct vc_desc *desc = &cam->desc;
 	struct vc_ctrl *ctrl = &cam->ctrl;
 	struct vc_state *state = &cam->state;
 
@@ -651,7 +663,7 @@ static void vc_core_state_init(struct vc_cam *cam)
 	state->exposure_cnt = 0;
 	state->retrigger_cnt = 0;
 	state->framerate = ctrl->framerate.def;
-	state->format_code = vc_core_get_default_format(desc);
+	state->format_code = vc_core_get_default_format(cam);
 	state->frame.x = 0;
 	state->frame.y = 0;
 	state->frame.width = ctrl->frame.width;
@@ -907,9 +919,6 @@ int vc_mod_set_io_mode(struct vc_cam *cam, int mode)
 	} else if (mode == 1 && ctrl->flags & FLAG_IO_FLASH_ENABLED) {
 		mode_desc = "FLASH";
 		state->io_mode = REG_IO_FLASH_ENABLE;
-	} else if (mode == 2 && ctrl->flags & FLAG_IO_XTRIG_ENABLED) {
-		mode_desc = "XTRIG";
-		state->io_mode = REG_IO_XTRIG_ENABLE;
 	} else {
 		vc_err(dev, "%s(): IO mode %d not supported!\n", __FUNCTION__, mode);
 		return -EINVAL;
@@ -925,7 +934,6 @@ int vc_mod_get_io_mode(struct vc_cam *cam)
 	switch (cam->state.io_mode)  {
 	case REG_IO_DISABLE: 		return 0;
 	case REG_IO_FLASH_ENABLE: 	return 1;
-	case REG_IO_XTRIG_ENABLE: 	return 2;
 	}
 	return 0;
 }
