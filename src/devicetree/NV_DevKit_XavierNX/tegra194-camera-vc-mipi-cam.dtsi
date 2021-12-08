@@ -27,9 +27,17 @@
 // -----+------------------------------------------------------------------------------------------
 //  1   | IMX296
 //  2   | OV9281, IMX264, IMX265
-//  2,4 | IMX178, IMX183, IMX226, IMX250, IMX252, IMX273, IMX290, IMX327, IMX392, IMX412
+//  2,4 | IMX178, IMX183, IMX226, IMX250, IMX252, IMX273, IMX290, IMX327, IMX392, IMX412, IMX415
 // -----+------------------------------------------------------------------------------------------
 #define VC_MIPI_LANES       2   // 1, 2 Lanes
+// ------------------------------------------------------------------------------------------------
+//  Embedded Metadata Height
+// -----+------------------------------------------------------------------------------------------
+//  0   | IMX178, IMX183, IMX226, IMX250, IMX252, IMX264, IMX265, IMX273, IMX392, OV9281
+//  1   | IMX290, IMX327, IMX415
+//  2   | IMX296, IMX412
+// -----+------------------------------------------------------------------------------------------
+#define VC_MIPI_METADATA_H  "0" // "0", "1", "2" Lines of meta data
 // ------------------------------------------------------------------------------------------------
 //   Sensor Manufacturer
 // -----+------------------------------------------------------------------------------------------
@@ -43,27 +51,27 @@
 //  If you want to use GStreamer with nvarguscamerasrc you have to adjust this settings in the 
 //  device tree below.
 //
-//   +--------+-------------+-------------+-------------+-------------+-------------------+
-//   | Camera | physical_w  | physical_h  | active_w    | active_h    | <pixelformat>     |
-//   |        |             |             | line_length |             | see next table    |
-//   +--------+-------------+-------------+-------------+-------------+----+----+----+----+
-//   | V4LAPI |       1.000 |       1.000 |        1024 |         768 |    | 10 |    |    |
-//   | IMX178 |       7.430 |       4.992 |        3072 |        2076 | 08 | 10 | 12 | 14 |
-//   | IMX183 |      13.305 |       8.865 |        5440 |        3648 |    | 10 | 12 |    |
-//   | IMX226 |       7.533 |       5.635 |        3840 |        3046 |    | 10 | 12 |    |
-//   | IMX250 |       8.446 |       7.066 |        2448 |        2048 | 08 | 10 | 12 |    |
-//   | IMX252 |       7.066 |       5.299 |        2048 |        1536 | 08 | 10 | 12 |    |
-//   | IMX264 |       8.390 |       7.066 |        2432 |        2048 | 08 | 10 | 12 |    |
-//   | IMX265 |       7.065 |       5.299 |        2048 |        1536 | 08 | 10 | 12 |    |
-//   | IMX273 |       4.970 |       3.726 |        1440 |        1080 | 08 | 10 | 12 |    |
-//   | IMX290 |       5.617 |       3.181 |        1920 |        1080 |    | 10 | 12 |    |
-//   | IMX296 |       4.968 |       3.726 |        1440 |        1080 |    | 10 |    |    |
-//   | IMX327 |       5.617 |       3.181 |        1920 |        1080 |    | 10 | 12 |    |
-//   | IMX392 |       6.679 |       4.195 |        1920 |        1200 | 08 | 10 | 12 |    |
-//   | IMX412 |       6.287 |       4.712 |        4032 |        3040 |    | 10 |    |    |
-//   | IMX415 |       5.602 |       3.155 |        3840 |        2160 |    | 10 |    |    |
-//   | OV9281 |       3.840 |       2.400 |        1280 |         800 | 08 | 10 |    |    |
-//   +--------+-------------+-------------+-------------+-------------+-------------------+
+//   +--------+------------+------------+-------------+-------------+-------------------+
+//   | Camera | physical_w | physical_h | active_w    | active_h    | <pixelformat>     |
+//   |        |            |            | line_length |             | see next table    |
+//   +--------+------------+------------+-------------+-------------+----+----+----+----+
+//   | V4LAPI |      1.000 |      1.000 |        1024 |         768 |    | 10 |    |    |
+//   | IMX178 |      7.430 |      4.992 |        3072 |        2076 | 08 | 10 | 12 | 14 |
+//   | IMX183 |     13.305 |      8.865 |        5440 |        3648 |    | 10 | 12 |    |
+//   | IMX226 |      7.533 |      5.635 |        3840 |        3046 |    | 10 | 12 |    |
+//   | IMX250 |      8.446 |      7.066 |        2448 |        2048 | 08 | 10 | 12 |    |
+//   | IMX252 |      7.066 |      5.299 |        2048 |        1536 | 08 | 10 | 12 |    |
+//   | IMX264 |      8.390 |      7.066 |        2432 |        2048 | 08 | 10 | 12 |    |
+//   | IMX265 |      7.065 |      5.299 |        2048 |        1536 | 08 | 10 | 12 |    |
+//   | IMX273 |      4.970 |      3.726 |        1440 |        1080 | 08 | 10 | 12 |    |
+//   | IMX290 |      5.617 |      3.181 |        1920 |        1080 |    | 10 | 12 |    |
+//   | IMX296 |      4.968 |      3.726 |        1440 |        1080 |    | 10 |    |    |
+//   | IMX327 |      5.617 |      3.181 |        1920 |        1080 |    | 10 | 12 |    |
+//   | IMX392 |      6.679 |      4.195 |        1920 |        1200 | 08 | 10 | 12 |    |
+//   | IMX412 |      6.287 |      4.712 |        4032 |        3040 |    | 10 |    |    |
+//   | IMX415 |      5.602 |      3.155 |        3840 |        2160 |    | 10 |    |    |
+//   | OV9281 |      3.840 |      2.400 |        1280 |         800 | 08 | 10 |    |    |
+//   +--------+------------+------------+-------------+-------------+-------------------+
 //
 //   +---------------+--------------+-----------+-------------+---------------------+
 //   | <pixelformat> | pixel_t      | mode_type | pixel_phase | csi_pixel_bit_depth |
@@ -207,6 +215,7 @@
                 mode0 {
                     num_lanes                = NUM_LANES;
                     tegra_sinterface         = "serial_a";
+                    embedded_metadata_height = VC_MIPI_METADATA_H;
                     readout_orientation      = "0";
 
                     // ----------------------------------------------------
@@ -218,20 +227,20 @@
                     pixel_t                  = "bayer_rggb";
                     mode_type                = "bayer";
                     pixel_phase              = "rggb";
-                    vc_csi_pixel_bit_depth   = "10";
+                    csi_pixel_bit_depth      = "10";
                     // ----------------------------------------------------
 
                     gain_factor              = "1";
-                    min_gain_val             = "0";
-                    max_gain_val             = "100000";
+                    min_gain_val             = "1";
+                    max_gain_val             = "32";
                     step_gain_val            = "1";
-                    default_gain             = "0";
+                    default_gain             = "1";
                     inherent_gain            = "1";
 
-                    exposure_factor          = "1";
-                    min_exp_time             = "1";
-                    max_exp_time             = "100000000";
-                    step_exp_time            = "1";
+                    exposure_factor          = "1000";
+                    min_exp_time             = "1000000";
+                    max_exp_time             = "150000000";
+                    step_exp_time            = "1000000";
                     default_exp_time         = "10000000";
 
                     framerate_factor         = "1";
@@ -250,8 +259,6 @@
                     mclk_multiplier          = "9.33";
                     cil_settletime           = "0";
                     dpcm_enable              = "false";
-
-                    embedded_metadata_height = "0";
                 };
 
                 ports {
@@ -299,6 +306,7 @@
                 mode0 {
                     num_lanes                = NUM_LANES;
                     tegra_sinterface         = "serial_c";
+                    embedded_metadata_height = VC_MIPI_METADATA_H;
                     readout_orientation      = "0";
 
                     // ----------------------------------------------------
@@ -310,20 +318,20 @@
                     pixel_t                  = "bayer_rggb";
                     mode_type                = "bayer";
                     pixel_phase              = "rggb";
-                    vc_csi_pixel_bit_depth   = "10";
+                    csi_pixel_bit_depth      = "10";
                     // ----------------------------------------------------
 
                     gain_factor              = "1";
-                    min_gain_val             = "0";
-                    max_gain_val             = "100000";
+                    min_gain_val             = "1";
+                    max_gain_val             = "32";
                     step_gain_val            = "1";
-                    default_gain             = "0";
+                    default_gain             = "1";
                     inherent_gain            = "1";
 
-                    exposure_factor          = "1";
-                    min_exp_time             = "1";
-                    max_exp_time             = "100000000";
-                    step_exp_time            = "1";
+                    exposure_factor          = "1000";
+                    min_exp_time             = "1000000";
+                    max_exp_time             = "150000000";
+                    step_exp_time            = "1000000";
                     default_exp_time         = "10000000";
 
                     framerate_factor         = "1";
@@ -342,8 +350,6 @@
                     mclk_multiplier          = "9.33";
                     cil_settletime           = "0";
                     dpcm_enable              = "false";
-
-                    embedded_metadata_height = "0";
                 };
 
                 ports {
@@ -376,11 +382,11 @@
     tcp: tegra-camera-platform {
         compatible = "nvidia, tegra-camera-platform";
 
-        num_vc_csi_lanes = <NUM_CSI_LANES>;
+        num_csi_lanes = <NUM_CSI_LANES>;
         max_lane_speed = <1500000>;
         min_bits_per_pixel = <10>;
-        vc_vi_peak_byte_per_pixel = <2>;
-        vc_vi_bw_margin_pct = <25>;
+        vi_peak_byte_per_pixel = <2>;
+        vi_bw_margin_pct = <25>;
         max_pixel_rate = <240000>;
         isp_peak_byte_per_pixel = <5>;
         isp_bw_margin_pct = <25>;

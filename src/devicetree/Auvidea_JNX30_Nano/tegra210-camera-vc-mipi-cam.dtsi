@@ -30,9 +30,17 @@
 // -----+------------------------------------------------------------------------------------------
 //  1   | IMX296
 //  2   | OV9281, IMX264, IMX265
-//  2,4 | IMX178, IMX183, IMX226, IMX250, IMX252, IMX273, IMX290, IMX327, IMX392, IMX412
+//  2,4 | IMX178, IMX183, IMX226, IMX250, IMX252, IMX273, IMX290, IMX327, IMX392, IMX412, IMX415
 // -----+------------------------------------------------------------------------------------------
 #define VC_MIPI_LANES       4   // 1, 2, 4 Lanes
+// ------------------------------------------------------------------------------------------------
+//  Embedded Metadata Height
+// -----+------------------------------------------------------------------------------------------
+//  0   | IMX178, IMX183, IMX226, IMX250, IMX252, IMX264, IMX265, IMX273, IMX392, OV9281
+//  1   | IMX290, IMX327, IMX415
+//  2   | IMX296, IMX412
+// -----+------------------------------------------------------------------------------------------
+#define VC_MIPI_METADATA_H  "0" // "0", "1", "2" Lines of meta data
 // ------------------------------------------------------------------------------------------------
 //   Sensor Manufacturer
 // -----+------------------------------------------------------------------------------------------
@@ -279,6 +287,7 @@
                 mode0 {
                     num_lanes                = NUM_LANES;
                     tegra_sinterface         = "serial_a";
+                    embedded_metadata_height = VC_MIPI_METADATA_H;
                     readout_orientation      = "0";
 
                     // ----------------------------------------------------
@@ -290,20 +299,20 @@
                     pixel_t                  = "bayer_rggb";
                     mode_type                = "bayer";
                     pixel_phase              = "rggb";
-                    vc_csi_pixel_bit_depth   = "10";
+                    csi_pixel_bit_depth      = "10";
                     // ----------------------------------------------------
 
                     gain_factor              = "1";
-                    min_gain_val             = "0";
-                    max_gain_val             = "100000";
+                    min_gain_val             = "1";
+                    max_gain_val             = "32";
                     step_gain_val            = "1";
-                    default_gain             = "0";
+                    default_gain             = "1";
                     inherent_gain            = "1";
 
-                    exposure_factor          = "1";
-                    min_exp_time             = "1";
-                    max_exp_time             = "100000000";
-                    step_exp_time            = "1";
+                    exposure_factor          = "1000";
+                    min_exp_time             = "1000000";
+                    max_exp_time             = "150000000";
+                    step_exp_time            = "1000000";
                     default_exp_time         = "10000000";
 
                     framerate_factor         = "1";
@@ -322,8 +331,6 @@
                     mclk_multiplier          = "9.33";
                     cil_settletime           = "0";
                     dpcm_enable              = "false";
-
-                    embedded_metadata_height = "0";
                 };
 
                 ports {
@@ -371,6 +378,7 @@
                 mode0 {
                     num_lanes                = NUM_LANES;
                     tegra_sinterface         = "serial_c";
+                    embedded_metadata_height = VC_MIPI_METADATA_H;
                     readout_orientation      = "0";
 
                     // ----------------------------------------------------
@@ -382,20 +390,20 @@
                     pixel_t                  = "bayer_rggb";
                     mode_type                = "bayer";
                     pixel_phase              = "rggb";
-                    vc_csi_pixel_bit_depth   = "10";
+                    csi_pixel_bit_depth      = "10";
                     // ----------------------------------------------------
 
                     gain_factor              = "1";
-                    min_gain_val             = "0";
-                    max_gain_val             = "100000";
+                    min_gain_val             = "1";
+                    max_gain_val             = "32";
                     step_gain_val            = "1";
-                    default_gain             = "0";
+                    default_gain             = "1";
                     inherent_gain            = "1";
 
-                    exposure_factor          = "1";
-                    min_exp_time             = "1";
-                    max_exp_time             = "100000000";
-                    step_exp_time            = "1";
+                    exposure_factor          = "1000";
+                    min_exp_time             = "1000000";
+                    max_exp_time             = "150000000";
+                    step_exp_time            = "1000000";
                     default_exp_time         = "10000000";
 
                     framerate_factor         = "1";
@@ -414,8 +422,6 @@
                     mclk_multiplier          = "9.33";
                     cil_settletime           = "0";
                     dpcm_enable              = "false";
-
-                    embedded_metadata_height = "0";
                 };
 
                 ports {
@@ -465,6 +471,7 @@
             mode0 {
                 num_lanes                = NUM_LANES;
                 tegra_sinterface         = "serial_e";
+                embedded_metadata_height = VC_MIPI_METADATA_H;
                 readout_orientation      = "0";
 
                 // ----------------------------------------------------
@@ -476,21 +483,21 @@
                 pixel_t                  = "bayer_rggb";
                 mode_type                = "bayer";
                 pixel_phase              = "rggb";
-                vc_csi_pixel_bit_depth   = "10";
+                csi_pixel_bit_depth      = "10";
                 // ----------------------------------------------------
 
                 gain_factor              = "1";
-                min_gain_val             = "0";
-                max_gain_val             = "100000";
+                min_gain_val             = "1";
+                max_gain_val             = "32";
                 step_gain_val            = "1";
-                default_gain             = "0";
+                default_gain             = "1";
                 inherent_gain            = "1";
 
-                exposure_factor          = "1";
-                min_exp_time             = "1";
-                max_exp_time             = "100000000";
-                step_exp_time            = "1";
-                default_exp_time         = "10000000";
+				exposure_factor          = "1000";
+				min_exp_time             = "1000000";
+				max_exp_time             = "150000000";
+				step_exp_time            = "1000000";
+				default_exp_time         = "10000000";
 
                 framerate_factor         = "1";
                 min_framerate            = "1";
@@ -508,8 +515,6 @@
                 mclk_multiplier          = "9.33";
                 cil_settletime           = "0";
                 dpcm_enable              = "false";
-
-                embedded_metadata_height = "0";
             };
 
             ports {
@@ -557,6 +562,7 @@
             mode0 {
                 num_lanes                = NUM_LANES;
                 tegra_sinterface         = "serial_f";
+                embedded_metadata_height = VC_MIPI_METADATA_H;
                 readout_orientation      = "0";
 
                 // ----------------------------------------------------
@@ -568,21 +574,21 @@
                 pixel_t                  = "bayer_rggb";
                 mode_type                = "bayer";
                 pixel_phase              = "rggb";
-                vc_csi_pixel_bit_depth   = "10";
+                csi_pixel_bit_depth      = "10";
                 // ----------------------------------------------------
 
                 gain_factor              = "1";
-                min_gain_val             = "0";
-                max_gain_val             = "100000";
+                min_gain_val             = "1";
+                max_gain_val             = "32";
                 step_gain_val            = "1";
-                default_gain             = "0";
+                default_gain             = "1";
                 inherent_gain            = "1";
 
-                exposure_factor          = "1";
-                min_exp_time             = "1";
-                max_exp_time             = "100000000";
-                step_exp_time            = "1";
-                default_exp_time         = "10000000";
+				exposure_factor          = "1000";
+				min_exp_time             = "1000000";
+				max_exp_time             = "150000000";
+				step_exp_time            = "1000000";
+				default_exp_time         = "10000000";
 
                 framerate_factor         = "1";
                 min_framerate            = "1";
@@ -600,8 +606,6 @@
                 mclk_multiplier          = "9.33";
                 cil_settletime           = "0";
                 dpcm_enable              = "false";
-
-                embedded_metadata_height = "0";
             };
 
             ports {
@@ -633,11 +637,11 @@
     tcp: tegra-camera-platform {
         compatible = "nvidia, tegra-camera-platform";
 
-        num_vc_csi_lanes = <NUM_CSI_LANES>;
+        num_csi_lanes = <NUM_CSI_LANES>;
         max_lane_speed = <1500000>;
         min_bits_per_pixel = <10>;
-        vc_vi_peak_byte_per_pixel = <2>;
-        vc_vi_bw_margin_pct = <25>;
+        vi_peak_byte_per_pixel = <2>;
+        vi_bw_margin_pct = <25>;
         max_pixel_rate = <240000>;
         isp_peak_byte_per_pixel = <5>;
         isp_bw_margin_pct = <25>;
