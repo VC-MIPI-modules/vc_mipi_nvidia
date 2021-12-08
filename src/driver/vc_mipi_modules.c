@@ -82,14 +82,23 @@ static void vc_init_ctrl_imx252_base(struct vc_ctrl *ctrl, struct vc_desc* desc)
 
 static void vc_init_ctrl_imx290_base(struct vc_ctrl *ctrl, struct vc_desc* desc)
 {
+	ctrl->frame.width		= 1920;
+	ctrl->frame.height		= 1080;
+
+	ctrl->exposure			= (vc_control) { .min =   1, .max =  15000000, .def =  10000 };
 	ctrl->gain			= (vc_control) { .min =   0, .max =       255, .def =      0 };
+	ctrl->framerate 		= (vc_control) { .min =   0, .max =        60, .def =     60 };
 	
 	ctrl->csr.sen.vmax              = (vc_csr4) { .l = 0x3018, .m = 0x3019, .h = 0x301A, .u = 0x0000 };
 	ctrl->csr.sen.mode_standby	= 0x01;
 	ctrl->csr.sen.mode_operating	= 0x00;
 	
-	//  TODO: Exposure time and framerate don't go together. Check this!
-	ctrl->expo_period_1H 		= 10000; 	// ns
+	ctrl->expo_timing[0] 		= (vc_timing) { 2, FORMAT_RAW10, .clk =  1100 };
+	ctrl->expo_timing[1] 		= (vc_timing) { 2, FORMAT_RAW12, .clk =  1100 }; // TODO: Has to be tested!
+	
+	desc->clk_ext_trigger		= 74250000;
+	desc->clk_pixel			= desc->clk_ext_trigger;
+	ctrl->sen_clk                   = desc->clk_ext_trigger;
 	ctrl->expo_shs_min              = 1;
 	ctrl->expo_vmax 		= 1125;
 
@@ -288,9 +297,6 @@ static void vc_init_ctrl_imx290(struct vc_ctrl *ctrl, struct vc_desc* desc)
 	vc_notice(dev, "%s(): Initialising module control for IMX290\n", __FUNCTION__);
 
 	vc_init_ctrl_imx290_base(ctrl, desc);
-
-	ctrl->frame.width		= 1920;
-	ctrl->frame.height		= 1080;
 }
 
 // ------------------------------------------------------------------------------------------------
@@ -332,9 +338,6 @@ static void vc_init_ctrl_imx327(struct vc_ctrl *ctrl, struct vc_desc* desc)
 	vc_notice(dev, "%s(): Initialising module control for IMX327\n", __FUNCTION__);
 
 	vc_init_ctrl_imx290_base(ctrl, desc);
-
-	ctrl->frame.width		= 1920;
-	ctrl->frame.height		= 1080;
 }
 
 // ------------------------------------------------------------------------------------------------
