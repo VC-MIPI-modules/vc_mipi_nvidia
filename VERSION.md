@@ -1,5 +1,19 @@
 # Version History
 
+## v0.8.0 (Support Jetson AGX Xavier, TX2)
+  * New Features
+    * Added support for board support packages
+      * NVIDIA L4T 32.3.1 *(only NVIDIA Jetson AGX Xavier)*
+    * Added support for system on modules
+      * NVIDIA Jetson AGX Xavier
+      * NVIDIA Jetson TX2
+    * Added support for carrier boards
+      * Auvidea J20 on Devkits from NVIDIA Jetson AGX Xavier and TX2 *(only connector 2+3)*
+    * Frame rate can be set via V4L2 control 'frame_rate' *(except IMX412 and OV9281)*
+    * Black level can be set via V4L2 control 'black_level' *(only IMX183 and IMX296)*
+  * Bugfixes
+    * Removed a problem in self trigger mode while changing the exposure time
+
 ## v0.7.1 (Improvements)
   * Improvements
     * Added documentation for the correct setup of embedded_metadata_height in the device tree
