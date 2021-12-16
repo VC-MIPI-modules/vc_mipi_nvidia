@@ -362,8 +362,8 @@ static int vc_start_streaming(struct tegracam_device *tc_dev)
 	}
 	ret |= vc_sen_start_stream(cam);
 	// ****************************************************************************************
-	// NOTE: On some camera modules (e.g. IMX183, IMX273) the second and/or third image is black if 
-	//       here isn't a sleep.
+	// NOTE: On some camera modules (e.g. IMX183, IMX273) the second and/or third image is 
+	//       black if here isn't a sleep.
 	usleep_range(1000*sleepS, 1000*sleepS);
 
 	return ret;

@@ -13,6 +13,7 @@ usage() {
         echo "-h, --help                Show this help text"
 	echo "-i, --info                Get system information"
         echo "-o, --option              Set the options"
+	echo "-r, --framerate           Set the frame rate in Hz"
         echo "-s, --shutter             Set the shutter time in µs"
         echo "-t, --trigger             Set the trigger mode (Options: 0-7)"
 	echo "-a, --flash               Set the flash mode (Options: 0-1)"
@@ -82,6 +83,7 @@ option2=x
 shutter=10000
 gain=0
 exposure=100000000
+framerate=
 optionY=
 width=
 height=
@@ -127,6 +129,10 @@ while [ $# != 0 ] ; do
 		option2="$1"
 		shift
 		;;
+	-r|--framerate)
+		framerate="$1"
+		shift
+		;;
 	-s|--shutter)
 		shutter="$1"
 		shift
@@ -159,6 +165,10 @@ install_dependencies
 if [[ -n ${format} ]]; then
         echo "Set format: ${format}"
         v4l2-ctl -d /dev/video${device} --set-fmt-video=pixelformat="${format}"
+fi
+if [[ -n ${framerate} ]]; then
+        echo "Set frame rate: ${framerate}"
+        v4l2-ctl -d /dev/video${device} -c frame_rate=${framerate}
 fi
 if [[ -n ${trigger} ]]; then
         echo "Set trigger mode: ${trigger}"

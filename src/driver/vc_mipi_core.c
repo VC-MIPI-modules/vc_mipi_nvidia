@@ -1099,7 +1099,7 @@ int vc_sen_set_gain(struct vc_cam *cam, int gain)
 
 	ret |= i2c_write_reg2(dev, client, &ctrl->csr.sen.gain, gain, __FUNCTION__);
 	if (ret) {
-		vc_err(dev, "%s(): Couldn't set 'Gain' (error: %d)\n", __FUNCTION__, ret);
+		vc_err(dev, "%s(): Couldn't set gain (error: %d)\n", __FUNCTION__, ret);
 		return ret;
 	}
 
@@ -1119,12 +1119,39 @@ int vc_sen_start_stream(struct vc_cam *cam)
 	vc_dbg(dev, "%s(): MM: 0x%02x, TM: 0x%02x, IO: 0x%02x\n",
 		__FUNCTION__, state->mode, state->trigger_mode, state->io_mode);
 
-	ret  = vc_mod_write_trigger_mode(client_mod, state->trigger_mode);
+	if (state->streaming) {
+		vc_sen_stop_stream(cam);
+	}
+
+	state->retrigger_cnt = 0;
+	if (state->trigger_mode == REG_TRIGGER_SELF) {
+		if (state->framerate > 0) {
+			__u32 frametime;
+			__u32 retrigger = 0;
+
+			frametime = 1000000 / state->framerate;
+			if (frametime >= state->exposure) {
+				retrigger = frametime - state->exposure;
+			} 
+			state->retrigger_cnt = ((__u64)retrigger * cam->ctrl.sen_clk) / 1000000;
+			if (state->retrigger_cnt < ctrl->retrigger_def) {
+				state->retrigger_cnt = ctrl->retrigger_def;
+			}
+			
+		} else {
+			state->retrigger_cnt = ctrl->retrigger_def;
+		}
+		ret |= vc_mod_write_retrigger(client_mod, state->retrigger_cnt);
+	}
+
+	ret |= vc_mod_write_trigger_mode(client_mod, state->trigger_mode);
 	ret |= vc_mod_write_io_mode(client_mod, state->io_mode);
 
 	ret |= vc_sen_write_mode(ctrl, ctrl->csr.sen.mode_operating);
 	if (ret)
 		vc_err(dev, "%s(): Unable to start streaming (error: %d)\n", __FUNCTION__, ret);
+
+	state->streaming = 1;
 
 	return ret;
 }
@@ -1132,6 +1159,7 @@ int vc_sen_start_stream(struct vc_cam *cam)
 int vc_sen_stop_stream(struct vc_cam *cam)
 {
 	struct vc_ctrl *ctrl = &cam->ctrl;
+	struct vc_state *state = &cam->state;
 	struct i2c_client *client_mod = ctrl->client_mod;
 	struct device *dev = &ctrl->client_sen->dev;
 	int ret = 0;
@@ -1144,6 +1172,8 @@ int vc_sen_stop_stream(struct vc_cam *cam)
 	ret |= vc_sen_write_mode(ctrl, ctrl->csr.sen.mode_standby);
 	if (ret)
 		vc_err(dev, "%s(): Unable to stop streaming (error: %d)\n", __FUNCTION__, ret);
+
+	state->streaming = 0;
 
 	vc_dbg(dev, "%s(): ----------------------------------------------------------\n", __FUNCTION__);
 
@@ -1190,6 +1220,8 @@ static void vc_calculate_exposure_vmax(struct vc_cam *cam, __u32 exposure)
 	struct device *dev = &ctrl->client_sen->dev;
 	__u32 period_1H_ns = 0;
 	__u32 shs_min = ctrl->expo_shs_min;
+	__u64 frametime_ns;
+	__u64 frametime_1H;
 	__u64 exposure_ns;
 	__u64 exposure_1H;
 	// __u64 hmax;
@@ -1208,6 +1240,17 @@ static void vc_calculate_exposure_vmax(struct vc_cam *cam, __u32 exposure)
 	} else {
 		state->vmax = ctrl->expo_vmax;	
 	}
+
+	if (state->framerate > 0) {
+		frametime_ns = 1000000000 / state->framerate;
+		frametime_1H = frametime_ns / period_1H_ns;
+		if (frametime_1H > state->vmax) {
+			state->vmax = frametime_1H;
+		}
+
+		vc_dbg(dev, "%s(): framerate: %u, frametime: %llu ns, %llu 1H", __FUNCTION__, 
+			state->framerate, frametime_ns, frametime_1H);
+	}	
 
 	// hmax = vc_sen_read_hmax(&cam->ctrl);
 	// h1period = (hmax*1000000)/ctrl->sen_clk;
@@ -1250,8 +1293,6 @@ int vc_sen_set_exposure(struct vc_cam *cam, int exposure)
 	struct vc_state *state = &cam->state;
 	struct device *dev = vc_core_get_sen_device(cam);
 	struct i2c_client *client_mod = ctrl->client_mod;
-	__u32 frametime;
-	__u32 retrigger;
 	int ret = 0;
 
 	vc_notice(dev, "%s(): Set sensor exposure: %u us\n", __FUNCTION__, exposure);
@@ -1264,7 +1305,6 @@ int vc_sen_set_exposure(struct vc_cam *cam, int exposure)
 	state->vmax = 0;
 	state->shs = 0;
 	state->exposure_cnt = 0;
-	state->retrigger_cnt = 0;
 
 	switch (state->trigger_mode) {
 	case REG_TRIGGER_EXTERNAL:
@@ -1275,16 +1315,22 @@ int vc_sen_set_exposure(struct vc_cam *cam, int exposure)
 	case REG_TRIGGER_PULSEWIDTH:
 		break;
 	case REG_TRIGGER_SELF:
-		frametime = 1000000 / state->framerate;
-		if (frametime >= exposure) {
-			retrigger = frametime - exposure;
-		} else {
-			retrigger = 0;
-		}
 		state->exposure_cnt = ((__u64)exposure * cam->ctrl.sen_clk) / 1000000;
-		state->retrigger_cnt = ((__u64)retrigger * cam->ctrl.sen_clk) / 1000000;
-		ret  = vc_mod_write_exposure(client_mod, state->exposure_cnt);
-		ret |= vc_mod_write_retrigger(client_mod, state->retrigger_cnt);
+		if (state->streaming && state->framerate > 0) {
+			vc_notice(dev, "%s(): Need to restart streaming!\n", __FUNCTION__);
+			// Workaround to be able to change exposure time and keep framerate.
+			ret |= vc_sen_stop_stream(cam);
+			usleep_range(100000, 100000);
+			ret |= vc_mod_write_exposure(client_mod, state->exposure_cnt);
+			if (ret == 0) {
+				// It is necessary to update state.exposure so that the retrigger counter
+				// can be calculated correctly.
+				cam->state.exposure = exposure;
+				ret |= vc_sen_start_stream(cam);
+			}
+		} else {
+			ret |= vc_mod_write_exposure(client_mod, state->exposure_cnt);
+		}
 		break;
 	case REG_TRIGGER_DISABLE:
 	case REG_TRIGGER_SYNC:

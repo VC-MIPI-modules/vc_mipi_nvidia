@@ -17,7 +17,7 @@ static void vc_init_ctrl(struct vc_ctrl *ctrl, struct vc_desc* desc)
 {
 	ctrl->exposure			= (vc_control) { .min =   1, .max = 100000000, .def =  10000 };
 	ctrl->gain			= (vc_control) { .min =   0, .max =       255, .def =      0 };
-	ctrl->framerate 		= (vc_control) { .min =   0, .max =      1000, .def =   1000 };
+	ctrl->framerate 		= (vc_control) { .min =   0, .max =      1000, .def =      0 };
 
 	ctrl->csr.sen.mode.l 		= desc->csr_mode;
 	ctrl->csr.sen.mode.m 		= 0;
@@ -87,7 +87,7 @@ static void vc_init_ctrl_imx290_base(struct vc_ctrl *ctrl, struct vc_desc* desc)
 
 	ctrl->exposure			= (vc_control) { .min =   1, .max =  15000000, .def =  10000 };
 	ctrl->gain			= (vc_control) { .min =   0, .max =       255, .def =      0 };
-	ctrl->framerate 		= (vc_control) { .min =   0, .max =        60, .def =     60 };
+	ctrl->framerate 		= (vc_control) { .min =   0, .max =        60, .def =      0 };
 	
 	ctrl->csr.sen.vmax              = (vc_csr4) { .l = 0x3018, .m = 0x3019, .h = 0x301A, .u = 0x0000 };
 	ctrl->csr.sen.mode_standby	= 0x01;
@@ -132,6 +132,7 @@ static void vc_init_ctrl_imx178(struct vc_ctrl *ctrl, struct vc_desc* desc)
 
 	ctrl->expo_shs_min		= 9;
 	ctrl->expo_vmax 		= 2145;
+	ctrl->retrigger_def		= 0x00292d40;
 }
 
 // ------------------------------------------------------------------------------------------------
@@ -156,6 +157,7 @@ static void vc_init_ctrl_imx183(struct vc_ctrl *ctrl, struct vc_desc* desc)
 	ctrl->expo_timing[5] 		= (vc_timing) { 4, FORMAT_RAW12, .clk =  862 };
 
 	ctrl->expo_vmax			= 3728;
+	ctrl->retrigger_def		= 0x0036ee7d;
 }
 
 // ------------------------------------------------------------------------------------------------
@@ -178,6 +180,7 @@ static void vc_init_ctrl_imx226(struct vc_ctrl *ctrl, struct vc_desc* desc)
 	ctrl->expo_timing[3] 		= (vc_timing) { 4, FORMAT_RAW12, .clk =  644 };
 
 	ctrl->expo_vmax 		= 3079;
+	ctrl->retrigger_def		= 0x00292d40;
 
 	ctrl->flags			|= FLAG_TRIGGER_STREAM_EDGE | FLAG_TRIGGER_STREAM_LEVEL;
 }
@@ -202,6 +205,8 @@ static void vc_init_ctrl_imx250(struct vc_ctrl *ctrl, struct vc_desc* desc)
 	ctrl->expo_timing[3] 		= (vc_timing) { 4, FORMAT_RAW08, .clk =  350 };
 	ctrl->expo_timing[4] 		= (vc_timing) { 4, FORMAT_RAW10, .clk =  430 };
 	ctrl->expo_timing[5] 		= (vc_timing) { 4, FORMAT_RAW12, .clk =  510 };
+
+	ctrl->retrigger_def		= 0x00181c08;
 }
 
 // ------------------------------------------------------------------------------------------------
@@ -224,6 +229,8 @@ static void vc_init_ctrl_imx252(struct vc_ctrl *ctrl, struct vc_desc* desc)
 	ctrl->expo_timing[3] 		= (vc_timing) { 4, FORMAT_RAW08, .clk =  310 };
 	ctrl->expo_timing[4] 		= (vc_timing) { 4, FORMAT_RAW10, .clk =  380 };
 	ctrl->expo_timing[5] 		= (vc_timing) { 4, FORMAT_RAW12, .clk =  444 };
+
+	ctrl->retrigger_def		= 0x00103b4a;
 }
 
 // ------------------------------------------------------------------------------------------------
@@ -243,6 +250,8 @@ static void vc_init_ctrl_imx264(struct vc_ctrl *ctrl, struct vc_desc* desc)
 	ctrl->expo_timing[0] 		= (vc_timing) { 2, FORMAT_RAW08, .clk =  996 };
 	ctrl->expo_timing[1] 		= (vc_timing) { 2, FORMAT_RAW10, .clk =  996 };
 	ctrl->expo_timing[2] 		= (vc_timing) { 2, FORMAT_RAW12, .clk =  996 };
+
+	ctrl->retrigger_def		= 0x00181c08;
 }
 
 // ------------------------------------------------------------------------------------------------
@@ -262,6 +271,8 @@ static void vc_init_ctrl_imx265(struct vc_ctrl *ctrl, struct vc_desc* desc)
 	ctrl->expo_timing[0] 		= (vc_timing) { 2, FORMAT_RAW08, .clk =  846 };
 	ctrl->expo_timing[1] 		= (vc_timing) { 2, FORMAT_RAW10, .clk =  846 };
 	ctrl->expo_timing[2] 		= (vc_timing) { 2, FORMAT_RAW12, .clk =  846 };
+
+	ctrl->retrigger_def		= 0x00181c08;
 }
 
 // ------------------------------------------------------------------------------------------------
@@ -287,6 +298,7 @@ static void vc_init_ctrl_imx273(struct vc_ctrl *ctrl, struct vc_desc* desc)
 
 	ctrl->expo_shs_min		= 15;
 	ctrl->expo_vmax			= 1130;
+	ctrl->retrigger_def		= 0x0007ec3e;
 }
 
 // ------------------------------------------------------------------------------------------------
@@ -324,6 +336,7 @@ static void vc_init_ctrl_imx296(struct vc_ctrl *ctrl, struct vc_desc* desc)
 	ctrl->expo_period_1H 		= 14815;	// ns
 	ctrl->expo_shs_min              = 5;
 	ctrl->expo_vmax 		= 1118;
+	ctrl->retrigger_def		= 0x000d7940;
 
 	ctrl->flags			 = FLAG_EXPOSURE_WRITE_VMAX;
 	ctrl->flags			|= FLAG_IO_FLASH_ENABLED;
@@ -362,6 +375,8 @@ static void vc_init_ctrl_imx392(struct vc_ctrl *ctrl, struct vc_desc* desc)
 	ctrl->expo_timing[3] 		= (vc_timing) { 4, FORMAT_RAW08, .clk =  294 };
 	ctrl->expo_timing[4] 		= (vc_timing) { 4, FORMAT_RAW10, .clk =  355 };
 	ctrl->expo_timing[5] 		= (vc_timing) { 4, FORMAT_RAW12, .clk =  441 };
+
+	ctrl->retrigger_def		= 0x00103b4a;
 }
 
 // ------------------------------------------------------------------------------------------------
@@ -375,7 +390,7 @@ static void vc_init_ctrl_imx412(struct vc_ctrl *ctrl, struct vc_desc* desc)
 	
 	ctrl->exposure			= (vc_control) { .min = 190, .max =    405947, .def =  10000 };
 	ctrl->gain			= (vc_control) { .min =   0, .max =      1023, .def =      0 };
-	ctrl->framerate 		= (vc_control) { .min =   0, .max =        41, .def =     41 };
+	ctrl->framerate 		= (vc_control) { .min =   0, .max =        41, .def =      0 };
 
 	ctrl->frame.width		= 4056;
 	ctrl->frame.height		= 3040;

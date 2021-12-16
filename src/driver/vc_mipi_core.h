@@ -156,13 +156,14 @@ struct vc_ctrl {
 	struct vc_csr csr;
 	// Exposure
 	struct vc_timing expo_timing[8];
-	
 	__u32 sen_clk;			// Hz
 	__u32 expo_factor;
 	__s32 expo_toffset;
 	__u32 expo_period_1H;
 	__u32 expo_shs_min;
 	__u32 expo_vmax;
+	// Framerate
+	__u32 retrigger_def;
 	// Flash
 	__u32 flash_factor;
 	__s32 flash_toffset;
@@ -172,6 +173,8 @@ struct vc_ctrl {
 
 struct vc_state {
 	__u8 mode;
+	__u32 vmax;
+	__u32 shs;
 	__u32 exposure;			// µs
 	__u32 gain;
 	__u32 shs;
