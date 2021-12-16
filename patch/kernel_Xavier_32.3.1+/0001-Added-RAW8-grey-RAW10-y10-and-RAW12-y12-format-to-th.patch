@@ -1,0 +1,98 @@
+From 56442c694b99f3e33158f5c4f4385ed3f8fa1e66 Mon Sep 17 00:00:00 2001
+From: Peter Martienssen <peter.martienssen@liquify-consulting.de>
+Date: Tue, 28 Sep 2021 14:59:26 +0200
+Subject: [PATCH 1/4] Added RAW8 (grey), RAW10 (y10) and RAW12 (y12) format to
+ the tegra framework.
+
+---
+ .../media/platform/tegra/camera/camera_common.c   | 15 +++++++++++++++
+ .../media/platform/tegra/camera/sensor_common.c   |  8 ++++++++
+ .../media/platform/tegra/camera/vi/vi5_formats.h  | 14 ++++++++++----
+ 3 files changed, 33 insertions(+), 4 deletions(-)
+
+diff --git a/kernel/nvidia/drivers/media/platform/tegra/camera/camera_common.c b/kernel/nvidia/drivers/media/platform/tegra/camera/camera_common.c
+index 7feee1634..3f52edb17 100644
+--- a/kernel/nvidia/drivers/media/platform/tegra/camera/camera_common.c
++++ b/kernel/nvidia/drivers/media/platform/tegra/camera/camera_common.c
+@@ -121,6 +121,21 @@ static const struct camera_common_colorfmt camera_common_color_fmts[] = {
+ 		V4L2_COLORSPACE_SRGB,
+ 		V4L2_PIX_FMT_VYUY,
+ 	},
++	{
++		MEDIA_BUS_FMT_Y8_1X8,
++		V4L2_COLORSPACE_RAW,
++		V4L2_PIX_FMT_GREY,
++	},
++	{
++		MEDIA_BUS_FMT_Y10_1X10,
++		V4L2_COLORSPACE_RAW,
++		V4L2_PIX_FMT_Y10,
++	},
++	{
++		MEDIA_BUS_FMT_Y12_1X12,
++		V4L2_COLORSPACE_RAW,
++		V4L2_PIX_FMT_Y12,
++	},
+ 	/*
+ 	 * The below two formats are not supported by VI4,
+ 	 * keep them at the last to ensure they get discarded
+diff --git a/kernel/nvidia/drivers/media/platform/tegra/camera/sensor_common.c b/kernel/nvidia/drivers/media/platform/tegra/camera/sensor_common.c
+index 32f7c417a..f5a5bfa6b 100644
+--- a/kernel/nvidia/drivers/media/platform/tegra/camera/sensor_common.c
++++ b/kernel/nvidia/drivers/media/platform/tegra/camera/sensor_common.c
+@@ -227,6 +227,14 @@ static int extract_pixel_format(
+ 		*format = V4L2_PIX_FMT_UYVY;
+ 	else if (strncmp(pixel_t, "yuv_vyuy16", size) == 0)
+ 		*format = V4L2_PIX_FMT_VYUY;
++	else if (strncmp(pixel_t, "gray", size) == 0)
++		*format = V4L2_PIX_FMT_GREY;
++	else if (strncmp(pixel_t, "y10", size) == 0)
++		*format = V4L2_PIX_FMT_Y10;
++	else if (strncmp(pixel_t, "y12", size) == 0)
++		*format = V4L2_PIX_FMT_Y12;
++	else if (strncmp(pixel_t, "bayer_rggb8", size) == 0)
++		*format = V4L2_PIX_FMT_SRGGB8;
+ 	else {
+ 		pr_err("%s: Need to extend format%s\n", __func__, pixel_t);
+ 		return -EINVAL;
+diff --git a/kernel/nvidia/drivers/media/platform/tegra/camera/vi/vi5_formats.h b/kernel/nvidia/drivers/media/platform/tegra/camera/vi/vi5_formats.h
+index 51cbbad5b..cfa85dff6 100644
+--- a/kernel/nvidia/drivers/media/platform/tegra/camera/vi/vi5_formats.h
++++ b/kernel/nvidia/drivers/media/platform/tegra/camera/vi/vi5_formats.h
+@@ -95,16 +95,20 @@ static const struct tegra_video_format vi5_video_formats[] = {
+ 				RAW8, SGBRG8, "GBGB.. RGRG.."),
+ 	TEGRA_VIDEO_FORMAT(RAW8, 8, SBGGR8_1X8, 1, 1, T_R8,
+ 				RAW8, SBGGR8, "BGBG.. GRGR.."),
++	TEGRA_VIDEO_FORMAT(RAW8, 8, Y8_1X8, 1, 1, T_R8,
++				RAW8, GREY, "GRAY8"),
+ 
+ 	/* RAW 10 */
+-	TEGRA_VIDEO_FORMAT(RAW10, 10, SRGGB10_1X10, 2, 1, T_R16,
++	TEGRA_VIDEO_FORMAT(RAW10, 10, SRGGB10_1X10, 2, 1, T_R16_I,
+ 				RAW10, SRGGB10, "RGRG.. GBGB.."),
+-	TEGRA_VIDEO_FORMAT(RAW10, 10, SGRBG10_1X10, 2, 1, T_R16,
++	TEGRA_VIDEO_FORMAT(RAW10, 10, SGRBG10_1X10, 2, 1, T_R16_I,
+ 				RAW10, SGRBG10, "GRGR.. BGBG.."),
+-	TEGRA_VIDEO_FORMAT(RAW10, 10, SGBRG10_1X10, 2, 1, T_R16,
++	TEGRA_VIDEO_FORMAT(RAW10, 10, SGBRG10_1X10, 2, 1, T_R16_I,
+ 				RAW10, SGBRG10, "GBGB.. RGRG.."),
+-	TEGRA_VIDEO_FORMAT(RAW10, 10, SBGGR10_1X10, 2, 1, T_R16,
++	TEGRA_VIDEO_FORMAT(RAW10, 10, SBGGR10_1X10, 2, 1, T_R16_I,
+ 				RAW10, SBGGR10, "BGBG.. GRGR.."),
++	TEGRA_VIDEO_FORMAT(RAW10, 10, Y10_1X10, 2, 1, T_R16_I,
++				RAW10, Y10, "GRAY10"),
+ 
+ 	/* RAW 12 */
+ 	TEGRA_VIDEO_FORMAT(RAW12, 12, SRGGB12_1X12, 2, 1, T_R16,
+@@ -115,6 +119,8 @@ static const struct tegra_video_format vi5_video_formats[] = {
+ 				RAW12, SGBRG12, "GBGB.. RGRG.."),
+ 	TEGRA_VIDEO_FORMAT(RAW12, 12, SBGGR12_1X12, 2, 1, T_R16,
+ 				RAW12, SBGGR12, "BGBG.. GRGR.."),
++	TEGRA_VIDEO_FORMAT(RAW12, 12, Y12_1X12, 2, 1, T_R16_I,
++				RAW12, Y12, "GRAY12"),
+ 
+ 	/* RGB888 */
+ 	TEGRA_VIDEO_FORMAT(RGB888, 24, RGB888_1X24, 4, 1, T_A8R8G8B8,
+-- 
+2.25.1
+

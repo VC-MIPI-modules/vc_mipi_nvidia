@@ -1,0 +1,52 @@
+From 30419d3f9a8f01f2482a28145447691c0159ddd4 Mon Sep 17 00:00:00 2001
+From: "/setup.sh" <support@vision-components.com>
+Date: Fri, 3 Dec 2021 12:33:23 +0100
+Subject: [PATCH] Changed some message to err message in camera_common.c
+
+---
+ .../drivers/media/platform/tegra/camera/camera_common.c   | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
+
+diff --git a/kernel/nvidia/drivers/media/platform/tegra/camera/camera_common.c b/kernel/nvidia/drivers/media/platform/tegra/camera/camera_common.c
+index abc99604e..289fc0aeb 100644
+--- a/kernel/nvidia/drivers/media/platform/tegra/camera/camera_common.c
++++ b/kernel/nvidia/drivers/media/platform/tegra/camera/camera_common.c
+@@ -633,7 +633,7 @@ int camera_common_try_fmt(struct v4l2_subdev *sd, struct v4l2_mbus_framefmt *mf)
+ 		} else {
+ 			mf->width = s_data->fmt_width;
+ 			mf->height = s_data->fmt_height;
+-			dev_dbg(sd->dev,
++			dev_err(sd->dev,
+ 				"%s: invalid resolution %d x %d\n",
+ 				__func__, mf->width, mf->height);
+ 			goto verify_code;
+@@ -655,7 +655,7 @@ int camera_common_try_fmt(struct v4l2_subdev *sd, struct v4l2_mbus_framefmt *mf)
+ 		if (i == s_data->numfmts) {
+ 			mf->width = s_data->fmt_width;
+ 			mf->height = s_data->fmt_height;
+-			dev_dbg(sd->dev,
++			dev_err(sd->dev,
+ 				"%s: invalid resolution supplied to set mode %d %d\n",
+ 				__func__, mf->width, mf->height);
+ 			goto verify_code;
+@@ -741,7 +741,7 @@ static int camera_common_evaluate_color_format(struct v4l2_subdev *sd,
+ 	}
+ 
+ 	if (i == common_fmts_size) {
+-		dev_dbg(s_data->dev,
++		dev_err(s_data->dev,
+ 			"%s: unsupported color format(%08x) for vi\n"
+ 			, __func__, code);
+ 		return -EINVAL;
+@@ -757,7 +757,7 @@ static int camera_common_evaluate_color_format(struct v4l2_subdev *sd,
+ 	speculation_barrier(); /* break_spec_p#5_1 */
+ 
+ 	if (i == sensor_num_modes) {
+-		dev_dbg(s_data->dev,
++		dev_err(s_data->dev,
+ 			"%s: unsupported color format(%08x) for sensor\n"
+ 			, __func__, code);
+ 		return -EINVAL;
+-- 
+2.25.1
+

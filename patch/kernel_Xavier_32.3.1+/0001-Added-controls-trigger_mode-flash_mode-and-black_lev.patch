@@ -1,0 +1,101 @@
+From b2271779bd8f65725506ea15dcba334ea8b3a6c1 Mon Sep 17 00:00:00 2001
+From: "/setup.sh" <support@vision-components.com>
+Date: Wed, 15 Dec 2021 19:15:23 +0100
+Subject: [PATCH] Added controls 'trigger_mode', 'flash_mode' and 'black_level'
+ to the tegra framework.
+
+---
+ .../platform/tegra/camera/tegracam_ctrls.c    | 40 +++++++++++++++++++
+ kernel/nvidia/include/media/camera_common.h   |  3 ++
+ .../nvidia/include/media/tegra-v4l2-camera.h  |  3 ++
+ 3 files changed, 46 insertions(+)
+
+diff --git a/kernel/nvidia/drivers/media/platform/tegra/camera/tegracam_ctrls.c b/kernel/nvidia/drivers/media/platform/tegra/camera/tegracam_ctrls.c
+index c775f06..6369ace 100644
+--- a/kernel/nvidia/drivers/media/platform/tegra/camera/tegracam_ctrls.c
++++ b/kernel/nvidia/drivers/media/platform/tegra/camera/tegracam_ctrls.c
+@@ -163,6 +163,37 @@ static struct v4l2_ctrl_config ctrl_cfg_list[] = {
+ 		.max = CTRL_MAX_STR_SIZE,
+ 		.step = 2,
+ 	},
++	{
++		.ops = &tegracam_ctrl_ops,
++		.id = TEGRA_CAMERA_CID_TRIGGER_MODE,
++		.name = "Trigger Mode",
++		.type = V4L2_CTRL_TYPE_INTEGER64,
++		.flags = V4L2_CTRL_FLAG_SLIDER,
++		.min = 0,
++		.max = 7,
++		.step = 1,
++	},
++	{
++		.ops = &tegracam_ctrl_ops,
++		.id = TEGRA_CAMERA_CID_FLASH_MODE,
++		.name = "Flash Mode",
++		.type = V4L2_CTRL_TYPE_INTEGER64,
++		.flags = V4L2_CTRL_FLAG_SLIDER,
++		.min = 0,
++		.max = 2,
++		.step = 1,
++	},
++	{
++		.ops = &tegracam_ctrl_ops,
++		.id = TEGRA_CAMERA_CID_BLACK_LEVEL,
++		.name = "Black Level",
++		.type = V4L2_CTRL_TYPE_INTEGER64,
++		.flags = V4L2_CTRL_FLAG_SLIDER,
++		.min = CTRL_U32_MIN,
++		.max = CTRL_U32_MAX,
++		.def = CTRL_U32_MIN,
++		.step = 1,
++	},
+ };
+ 
+ static int tegracam_get_ctrl_index(u32 cid)
+@@ -251,6 +282,15 @@ static int tegracam_set_ctrls(struct tegracam_ctrl_handler *handler,
+ 
+ 	/* For controls that require sensor to be on */
+ 	switch (ctrl->id) {
++	case TEGRA_CAMERA_CID_TRIGGER_MODE:
++		err = ops->set_trigger_mode(tc_dev, *ctrl->p_new.p_s64);
++		break;
++	case TEGRA_CAMERA_CID_FLASH_MODE:
++		err = ops->set_flash_mode(tc_dev, *ctrl->p_new.p_s64);
++		break;
++	case TEGRA_CAMERA_CID_BLACK_LEVEL:
++		err = ops->set_black_level(tc_dev, *ctrl->p_new.p_s64);
++		break;
+ 	case TEGRA_CAMERA_CID_GAIN:
+ 		err = ops->set_gain(tc_dev, *ctrl->p_new.p_s64);
+ 		break;
+diff --git a/kernel/nvidia/include/media/camera_common.h b/kernel/nvidia/include/media/camera_common.h
+index e317d27..750ef94 100644
+--- a/kernel/nvidia/include/media/camera_common.h
++++ b/kernel/nvidia/include/media/camera_common.h
+@@ -190,6 +190,9 @@ struct tegracam_ctrl_ops {
+ 	u32 string_ctrl_size[TEGRA_CAM_MAX_STRING_CONTROLS];
+ 	const u32 *ctrl_cid_list;
+ 	bool is_blob_supported;
++	int (*set_trigger_mode)(struct tegracam_device *tc_dev, s64 val);
++	int (*set_flash_mode)(struct tegracam_device *tc_dev, s64 val);
++	int (*set_black_level)(struct tegracam_device *tc_dev, s64 val);
+ 	int (*set_gain)(struct tegracam_device *tc_dev, s64 val);
+ 	int (*set_exposure)(struct tegracam_device *tc_dev, s64 val);
+ 	int (*set_exposure_short)(struct tegracam_device *tc_dev, s64 val);
+diff --git a/kernel/nvidia/include/media/tegra-v4l2-camera.h b/kernel/nvidia/include/media/tegra-v4l2-camera.h
+index cb63198..8af1a90 100644
+--- a/kernel/nvidia/include/media/tegra-v4l2-camera.h
++++ b/kernel/nvidia/include/media/tegra-v4l2-camera.h
+@@ -37,6 +37,9 @@
+ #define TEGRA_CAMERA_CID_EXPOSURE		(TEGRA_CAMERA_CID_BASE+10)
+ #define TEGRA_CAMERA_CID_FRAME_RATE		(TEGRA_CAMERA_CID_BASE+11)
+ #define TEGRA_CAMERA_CID_EXPOSURE_SHORT		(TEGRA_CAMERA_CID_BASE+12)
++#define TEGRA_CAMERA_CID_TRIGGER_MODE		(TEGRA_CAMERA_CID_BASE+13)
++#define TEGRA_CAMERA_CID_FLASH_MODE		(TEGRA_CAMERA_CID_BASE+14)
++#define TEGRA_CAMERA_CID_BLACK_LEVEL		(TEGRA_CAMERA_CID_BASE+15)
+ 
+ #define TEGRA_CAMERA_CID_SENSOR_CONFIG		(TEGRA_CAMERA_CID_BASE+50)
+ #define TEGRA_CAMERA_CID_SENSOR_MODE_BLOB	(TEGRA_CAMERA_CID_BASE+51)
+-- 
+2.25.1
+

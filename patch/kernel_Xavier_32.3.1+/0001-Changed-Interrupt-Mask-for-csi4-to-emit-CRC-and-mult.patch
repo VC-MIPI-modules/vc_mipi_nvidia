@@ -1,0 +1,34 @@
+From 9ebd662ead3b6bfd85781edd0342bf95ac388836 Mon Sep 17 00:00:00 2001
+From: "/setup.sh" <support@vision-components.com>
+Date: Fri, 3 Dec 2021 12:31:01 +0100
+Subject: [PATCH] Changed Interrupt Mask for csi4 to emit CRC and multi-bit
+ errors.
+
+---
+ .../media/platform/tegra/camera/csi/csi4_fops.c        | 10 ++++++++--
+ 1 file changed, 8 insertions(+), 2 deletions(-)
+
+diff --git a/kernel/nvidia/drivers/media/platform/tegra/camera/csi/csi4_fops.c b/kernel/nvidia/drivers/media/platform/tegra/camera/csi/csi4_fops.c
+index 66557f1..4187026 100644
+--- a/kernel/nvidia/drivers/media/platform/tegra/camera/csi/csi4_fops.c
++++ b/kernel/nvidia/drivers/media/platform/tegra/camera/csi/csi4_fops.c
+@@ -89,8 +89,14 @@ static void csi4_stream_init(struct tegra_csi_channel *chan, int csi_port)
+ 	csi4_stream_write(chan, csi_port, INTR_STATUS, 0x3ffff);
+ 	csi4_stream_write(chan, csi_port, ERR_INTR_STATUS, 0x7ffff);
+ 	csi4_stream_write(chan, csi_port, ERROR_STATUS2VI_MASK, 0x0);
+-	csi4_stream_write(chan, csi_port, INTR_MASK, 0x0);
+-	csi4_stream_write(chan, csi_port, ERR_INTR_MASK, 0x0);
++
++	csi4_stream_write(chan, csi_port, INTR_MASK, PH_ECC_MULTI_BIT_ERR | 
++		PD_CRC_ERR_VC0 | PH_ECC_SINGLE_BIT_ERR_VC0);
++    	csi4_stream_write(chan, csi_port, ERR_INTR_MASK, PH_ECC_MULTI_BIT_ERR |
++	    	PD_CRC_ERR_VC0 | PH_ECC_SINGLE_BIT_ERR_VC0);
++    	csi4_stream_write(chan, csi_port, ERROR_STATUS2VI_MASK,
++		CFG_ERR_STATUS2VI_MASK_VC0 | CFG_ERR_STATUS2VI_MASK_VC1 |
++		CFG_ERR_STATUS2VI_MASK_VC2 | CFG_ERR_STATUS2VI_MASK_VC3);
+ }
+ 
+ static void csi4_stream_config(struct tegra_csi_channel *chan, int port_idx)
+-- 
+2.25.1
+
