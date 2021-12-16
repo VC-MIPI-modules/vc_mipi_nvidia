@@ -91,7 +91,7 @@ case $VC_MIPI_SOM in
                 DT_CAM_FILE=$DT_CAM_DIR/Auvidea_JNX30_XavierNX/tegra194-camera-vc-mipi-cam.dtsi
                 case $VC_MIPI_BSP in
                 32.5.0|32.5.1|32.5.2|32.6.1)
-                    PATCHES=('dt_Auvidea_JNX30_XavierNX_32.5.0+')
+                    PATCHES+=('dt_Auvidea_JNX30_XavierNX_32.5.0+')
                     ;;
                 esac
                 ;;
@@ -103,10 +103,10 @@ case $VC_MIPI_SOM in
         # Carrier board independant settings
         case $VC_MIPI_BSP in
             32.5.0|32.5.1|32.5.2)
-                PATCHES+=('kernel_XavierNX_32.5.0+')
+                PATCHES+=('kernel_Xavier_32.5.0+')
                 ;;
             32.6.1)
-                PATCHES+=('kernel_XavierNX_32.6.1+')
+                PATCHES+=('kernel_Xavier_32.6.1+')
                 ;;
         esac
         DT_CAM_FILE_DST_DIR=$KERNEL_SOURCE/hardware/nvidia/platform/t19x/jakku/kernel-dts/common/
