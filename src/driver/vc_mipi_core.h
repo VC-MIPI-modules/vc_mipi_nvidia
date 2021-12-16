@@ -123,6 +123,7 @@ struct vc_sen_csr {
 	struct vc_csr4 hmax;
 	struct vc_csr4 shs;
 	struct vc_csr2 gain;
+	struct vc_csr2 blacklevel;
 	struct vc_csr2 h_start;
 	struct vc_csr2 v_start;
 	struct vc_csr2 o_width;
@@ -150,6 +151,7 @@ struct vc_ctrl {
 	struct vc_control exposure;
 	struct vc_control gain;
 	struct vc_control framerate;
+	struct vc_control blacklevel;
 	// Modes & Frame Formats
 	struct vc_frame frame;		// Pixel
 	// Control and status registers
@@ -177,8 +179,7 @@ struct vc_state {
 	__u32 shs;
 	__u32 exposure;			// µs
 	__u32 gain;
-	__u32 shs;
-	__u32 vmax;
+	__u32 blacklevel;
 	__u32 exposure_cnt;
 	__u32 retrigger_cnt;
 	__u32 framerate;
@@ -230,8 +231,9 @@ int vc_mod_get_io_mode(struct vc_cam *cam);
 
 // --- Functions for the VC MIPI Sensors --------------------------------------
 int vc_sen_set_roi(struct vc_cam *cam, int x, int y, int width, int height);
-int vc_sen_set_gain(struct vc_cam *cam, int gain);
 int vc_sen_set_exposure(struct vc_cam *cam, int exposure);
+int vc_sen_set_gain(struct vc_cam *cam, int gain);
+int vc_sen_set_blacklevel(struct vc_cam *cam, int blacklevel);
 int vc_sen_start_stream(struct vc_cam *cam);
 int vc_sen_stop_stream(struct vc_cam *cam);
 

@@ -17,6 +17,7 @@ static void vc_init_ctrl(struct vc_ctrl *ctrl, struct vc_desc* desc)
 {
 	ctrl->exposure			= (vc_control) { .min =   1, .max = 100000000, .def =  10000 };
 	ctrl->gain			= (vc_control) { .min =   0, .max =       255, .def =      0 };
+	ctrl->blacklevel 		= (vc_control) { .min =   0, .max =       255, .def =      0 };
 	ctrl->framerate 		= (vc_control) { .min =   0, .max =      1000, .def =      0 };
 
 	ctrl->csr.sen.mode.l 		= desc->csr_mode;
@@ -145,6 +146,10 @@ static void vc_init_ctrl_imx183(struct vc_ctrl *ctrl, struct vc_desc* desc)
 	vc_notice(dev, "%s(): Initialising module control for IMX183\n", __FUNCTION__);
 
 	vc_init_ctrl_imx183_base(ctrl, desc);
+
+	ctrl->blacklevel 		= (vc_control) { .min =   0, .max =       255, .def =     50 };
+	
+	ctrl->csr.sen.blacklevel        = (vc_csr2) { .l = 0x0045, .m = 0x0000 };
 
 	ctrl->frame.width		= 5440;
 	ctrl->frame.height		= 3648;
@@ -323,11 +328,13 @@ static void vc_init_ctrl_imx296(struct vc_ctrl *ctrl, struct vc_desc* desc)
 	vc_notice(dev, "%s(): Initialising module control for IMX296\n", __FUNCTION__);
 
 	ctrl->gain			= (vc_control) { .min =   0, .max =       512, .def =      0 };
+	ctrl->blacklevel 		= (vc_control) { .min =   0, .max =       255, .def =     60 };
 	
 	ctrl->csr.sen.vmax              = (vc_csr4) { .l = 0x3010, .m = 0x3011, .h = 0x3012, .u = 0x0000 };
 	ctrl->csr.sen.mode              = (vc_csr2) { .l = 0x3000, .m = 0x300A };
 	ctrl->csr.sen.mode_standby	= 0x01;
 	ctrl->csr.sen.mode_operating	= 0x00;
+	ctrl->csr.sen.blacklevel        = (vc_csr2) { .l = 0x3254, .m = 0x3255 };
 
 	ctrl->frame.width		= 1440;
 	ctrl->frame.height		= 1080;

@@ -658,6 +658,7 @@ static void vc_core_state_init(struct vc_cam *cam)
 	state->mode = 0xff;
 	state->exposure = ctrl->exposure.def;
 	state->gain = ctrl->gain.def;
+	state->blacklevel = ctrl->blacklevel.def;
 	state->shs = 0;
 	state->vmax = 0;
 	state->exposure_cnt = 0;
@@ -1104,6 +1105,30 @@ int vc_sen_set_gain(struct vc_cam *cam, int gain)
 	}
 
 	cam->state.gain = gain;
+	return 0;
+}
+
+int vc_sen_set_blacklevel(struct vc_cam *cam, int blacklevel)
+{
+	struct vc_ctrl *ctrl = &cam->ctrl;
+	struct i2c_client *client = ctrl->client_sen;
+	struct device *dev = &client->dev;
+	int ret = 0;
+
+	if (blacklevel < ctrl->blacklevel.min) 
+		blacklevel = ctrl->blacklevel.min;
+	if (blacklevel > ctrl->blacklevel.max)
+		blacklevel = ctrl->blacklevel.max;
+
+	vc_notice(dev, "%s(): Set sensor black level: %u\n", __FUNCTION__, blacklevel);
+
+	ret |= i2c_write_reg2(dev, client, &ctrl->csr.sen.blacklevel, blacklevel, __FUNCTION__);
+	if (ret) {
+		vc_err(dev, "%s(): Couldn't set black level (error: %d)\n", __FUNCTION__, ret);
+		return ret;
+	}
+
+	cam->state.blacklevel = blacklevel;
 	return 0;
 }
 

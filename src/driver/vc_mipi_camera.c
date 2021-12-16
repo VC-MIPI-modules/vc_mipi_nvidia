@@ -240,6 +240,12 @@ static int vc_set_exposure(struct tegracam_device *tc_dev, __s64 val)
 	return vc_sen_set_exposure(cam, val);
 }
 
+static int vc_set_black_level(struct tegracam_device *tc_dev, __s64 val)
+{
+	struct vc_cam *cam = tegracam_to_cam(tc_dev);
+	return vc_sen_set_blacklevel(cam, val);
+}
+
 static int vc_set_frame_rate(struct tegracam_device *tc_dev, __s64 val)
 {
 	struct vc_cam *cam = tegracam_to_cam(tc_dev);
@@ -357,8 +363,9 @@ static int vc_start_streaming(struct tegracam_device *tc_dev)
 	}
 	ret |= vc_sen_set_roi(cam, 0, 0, cam->state.frame.width, cam->state.frame.height);
 	if (!ret && reset) {
-	ret |= vc_sen_set_gain(cam, cam->state.gain);
-	ret |= vc_sen_set_exposure(cam, cam->state.exposure);
+		ret |= vc_sen_set_exposure(cam, cam->state.exposure);
+		ret |= vc_sen_set_gain(cam, cam->state.gain);
+		ret |= vc_sen_set_blacklevel(cam, cam->state.blacklevel);
 	}
 	ret |= vc_sen_start_stream(cam);
 	// ****************************************************************************************
