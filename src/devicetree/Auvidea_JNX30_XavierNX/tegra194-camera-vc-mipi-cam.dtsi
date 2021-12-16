@@ -71,10 +71,11 @@
 //   | IMX327 |      5.617 |      3.181 |        1920 |        1080 |    | 10 | 12 |    |
 //   | IMX392 |      6.679 |      4.195 |        1920 |        1200 | 08 | 10 | 12 |    |
 //   | IMX412 |      6.287 |      4.712 |        4032 |        3040 |    | 10 |    |    |
-//   | IMX415 |      5.602 |      3.155 |        3840 |        2160 |    | 10 |    |    |
+//   | IMX415 |      5.602 |      3.155 |        3840 |        2160 |    | 10!|    |    |
 //   | OV9281 |      3.840 |      2.400 |        1280 |         800 | 08 | 10 |    |    |
 //   +--------+------------+------------+-------------+-------------+-------------------+
 //
+//   NOTE: 10! substitute rggb with gbrg for the IMX415
 //   +---------------+--------------+-----------+-------------+---------------------+
 //   | <pixelformat> | pixel_t      | mode_type | pixel_phase | csi_pixel_bit_depth |
 //   +---------------+--------------+-----------+-------------+---------------------+
@@ -304,7 +305,7 @@
 
 				gain_factor              = "1";
 				min_gain_val             = "1";
-				max_gain_val             = "32";
+				max_gain_val             = "64";
 				step_gain_val            = "1";
 				default_gain             = "1";
 				inherent_gain            = "1";
@@ -395,7 +396,7 @@
 
 				gain_factor              = "1";
 				min_gain_val             = "1";
-				max_gain_val             = "32";
+				max_gain_val             = "64";
 				step_gain_val            = "1";
 				default_gain             = "1";
 				inherent_gain            = "1";
@@ -486,7 +487,7 @@
 
 				gain_factor              = "1";
 				min_gain_val             = "1";
-				max_gain_val             = "32";
+				max_gain_val             = "64";
 				step_gain_val            = "1";
 				default_gain             = "1";
 				inherent_gain            = "1";
@@ -577,7 +578,7 @@
 
 				gain_factor              = "1";
 				min_gain_val             = "1";
-				max_gain_val             = "32";
+				max_gain_val             = "64";
 				step_gain_val            = "1";
 				default_gain             = "1";
 				inherent_gain            = "1";
