@@ -1,5 +1,10 @@
 # Version History
 
+## v0.8.1 (Bugfix)
+  * Bugfixes
+    * Fixed the version number of the driver module
+    * Fixed the trigger mode description from trigger mode STREAM_LEVEL
+
 ## v0.8.0 (Support Jetson AGX Xavier, TX2)
   * New Features
     * Added support for board support packages
