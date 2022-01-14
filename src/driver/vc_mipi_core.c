@@ -874,7 +874,7 @@ int vc_mod_set_trigger_mode(struct vc_cam *cam, int mode)
 		state->trigger_mode = REG_TRIGGER_STREAM_EDGE;
 		
 	} else if (mode == 7 && ctrl->flags & FLAG_TRIGGER_STREAM_LEVEL) {
-		mode_desc = "STREAM_EDGE";
+		mode_desc = "STREAM_LEVEL";
 		state->trigger_mode = REG_TRIGGER_STREAM_LEVEL;
 		
 	} else {
