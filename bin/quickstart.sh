@@ -3,11 +3,11 @@
 set -e
 
 usage() {
-	echo "Usage: $0 [options]"
-	echo ""
-	echo "Combines all necessary steps to install the Vision Components"
+        echo "Usage: $0 [options]"
+        echo ""
+        echo "Combines all necessary steps to install the Vision Components"
         echo "MIPI CSI-2 camera driver."
-	echo ""
+        echo ""
         echo "Supported options:"
         echo "-a, --automatic           Surpress explanation texts"
         echo "-h, --help                Show this help text"
@@ -151,22 +151,22 @@ print_note_before_start() {
 verbose='yes'
 
 while [ $# != 0 ] ; do
-	option="$1"
-	shift
+        option="$1"
+        shift
 
-	case "${option}" in
+        case "${option}" in
         -a|--automatic)
-		verbose='no'
-		;;
-	-h|--help)
-		usage
-		exit 0
-		;;
-	*)
-		echo "Unknown option ${option}"
-		exit 1
-		;;
-	esac
+                verbose='no'
+                ;;
+        -h|--help)
+                usage
+                exit 0
+                ;;
+        *)
+                echo "Unknown option ${option}"
+                exit 1
+                ;;
+        esac
 done
 
 DIR=$PWD

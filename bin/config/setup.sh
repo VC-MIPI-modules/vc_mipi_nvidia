@@ -1,11 +1,11 @@
 #!/bin/bash
 
 usage() {
-	echo "Usage: $0 [options]"
-	echo ""
-	echo "Setup configuration files"
-	echo ""
-	echo "Supported options:"
+        echo "Usage: $0 [options]"
+        echo ""
+        echo "Setup configuration files"
+        echo ""
+        echo "Supported options:"
         echo ".b, --board               Preselect carrier board"
         echo "-d, --driver              Setup driver configuration"
         echo "-h, --help                Show this help text"
@@ -15,7 +15,7 @@ usage() {
 }
 
 configure() {
-    . config/base.sh
+        . config/base.sh
 }
 
 print_title() {
@@ -237,22 +237,22 @@ setup_target() {
 }
 
 while [ $# != 0 ] ; do
-	option="$1"
-	shift
+        option="$1"
+        shift
 
-	case "${option}" in
+        case "${option}" in
         -b|--board)
                 selected_board=$1
                 shift
                 ;;
-	-d|--driver)
+        -d|--driver)
                 configure
-		setup_driver $1 $2
-		;;
-	-h|--help)
-		usage
-		exit 0
-		;;
+                setup_driver $1 $2
+                ;;
+        -h|--help)
+                usage
+                exit 0
+                ;;
         -p|--bsp)
                 selected_bsp=$1
                 shift
@@ -261,9 +261,9 @@ while [ $# != 0 ] ; do
                 selected_som=$1
                 shift
                 ;;
-	-t|--target)
+        -t|--target)
                 configure
-		setup_target
-		;;
-	esac
+                setup_target
+                ;;
+        esac
 done
