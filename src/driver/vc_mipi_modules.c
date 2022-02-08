@@ -363,6 +363,42 @@ static void vc_init_ctrl_imx327(struct vc_ctrl *ctrl, struct vc_desc* desc)
 }
 
 // ------------------------------------------------------------------------------------------------
+//  Settings for IMX335 (Rev 0)
+
+static void vc_init_ctrl_imx335(struct vc_ctrl *ctrl, struct vc_desc* desc)
+{
+        struct device *dev = &ctrl->client_mod->dev;
+
+        vc_notice(dev, "%s(): Initialising module control for IMX335\n", __FUNCTION__);
+
+        ctrl->exposure			= (vc_control) { .min =   1, .max =  15000000, .def =  10000 };
+        ctrl->gain			= (vc_control) { .min =   0, .max =       255, .def =      0 };
+        ctrl->blacklevel 		= (vc_control) { .min =   0, .max =      1023, .def =     50 };
+        ctrl->framerate 		= (vc_control) { .min =   0, .max =        60, .def =      0 };
+
+        ctrl->csr.sen.blacklevel        = (vc_csr2) { .l = 0x3302, .m = 0x3303 };
+        ctrl->csr.sen.vmax              = (vc_csr4) { .l = 0x3030, .m = 0x3031, .h = 0x3032, .u = 0x0000 };
+        ctrl->csr.sen.mode_standby	= 0x01;
+        ctrl->csr.sen.mode_operating	= 0x00;
+
+       
+        ctrl->frame.width		= 2560;
+        ctrl->frame.height		= 1964;
+
+        ctrl->expo_timing[0] 		= (vc_timing) { 2, FORMAT_RAW10, .clk =  1260 };
+        ctrl->expo_timing[1] 		= (vc_timing) { 2, FORMAT_RAW12, .clk =  1260 };
+        ctrl->expo_timing[2] 		= (vc_timing) { 4, FORMAT_RAW10, .clk =   845 };
+        ctrl->expo_timing[3] 		= (vc_timing) { 4, FORMAT_RAW12, .clk =   845 };
+
+        ctrl->expo_shs_min              = 9;
+        ctrl->expo_vmax 		= 4500;
+
+        ctrl->flags		       |= FLAG_EXPOSURE_WRITE_VMAX;
+        ctrl->flags		       |= FLAG_DOUBLE_HEIGHT;
+        ctrl->flags		       |= FLAG_IO_FLASH_ENABLED;
+}
+
+// ------------------------------------------------------------------------------------------------
 //  Settings for IMX392/IMX392C
 
 static void vc_init_ctrl_imx392(struct vc_ctrl *ctrl, struct vc_desc* desc)
@@ -500,6 +536,7 @@ int vc_mod_ctrl_init(struct vc_ctrl* ctrl, struct vc_desc* desc)
 	case MOD_ID_IMX290: vc_init_ctrl_imx290(ctrl, desc); break;
 	case MOD_ID_IMX296: vc_init_ctrl_imx296(ctrl, desc); break;
 	case MOD_ID_IMX327: vc_init_ctrl_imx327(ctrl, desc); break;
+        case MOD_ID_IMX335: vc_init_ctrl_imx335(ctrl, desc); break;
 	case MOD_ID_IMX392: vc_init_ctrl_imx392(ctrl, desc); break;
 	case MOD_ID_IMX412: vc_init_ctrl_imx412(ctrl, desc); break;
 	case MOD_ID_IMX415: vc_init_ctrl_imx415(ctrl, desc); break;

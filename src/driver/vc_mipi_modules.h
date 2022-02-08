@@ -16,6 +16,7 @@
 #define MOD_ID_IMX296           0x0296
 #define MOD_ID_IMX297           0x0297
 #define MOD_ID_IMX327           0x0327
+#define MOD_ID_IMX335           0x0335
 #define MOD_ID_IMX392           0x0392
 #define MOD_ID_IMX412           0x0412
 #define MOD_ID_IMX415           0x0415
