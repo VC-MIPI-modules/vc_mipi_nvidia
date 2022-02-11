@@ -517,6 +517,43 @@ static void vc_init_ctrl_ov9281(struct vc_ctrl *ctrl, struct vc_desc* desc)
 	ctrl->flags		       |= FLAG_TRIGGER_EXTERNAL;
 }
 
+// ------------------------------------------------------------------------------------------------
+//  Settings for OV7251
+
+//  TODO: 
+//  - Check calculation of exposure time, frame length
+//  - Check flash out functionality
+
+static void vc_init_ctrl_ov7251(struct vc_ctrl *ctrl, struct vc_desc* desc)
+{
+	struct device *dev = &ctrl->client_mod->dev;
+
+	vc_notice(dev, "%s(): Initialising module control for OV7251\n", __FUNCTION__);
+
+	ctrl->exposure			= (vc_control) { .min =   1, .max = 100000000, .def =   1000 };
+	ctrl->gain			= (vc_control) { .min =   1, .max =       255, .def =      0 };
+
+	// ctrl->csr.sen.flash_duration	= (vc_csr4) { .l = 0x3928, .m = 0x3927, .h = 0x3926, .u = 0x3925 };
+	// ctrl->csr.sen.flash_offset	= (vc_csr4) { .l = 0x3924, .m = 0x3923, .h = 0x3922, .u = 0x0000 };
+	
+        ctrl->csr.sen.vmax              = (vc_csr4) { .l = 0x380e, .m = 0x380F, .h = 0x0000, .u = 0x0000 };
+        // NOTE: Modules rom table contains swapped address assigment.
+	ctrl->csr.sen.gain 		= (vc_csr2) { .l = 0x350b, .m = 0x0000 };
+	
+	ctrl->frame.width		= 640;
+	ctrl->frame.height		= 480;
+
+	ctrl->sen_clk			= 48000000;
+	ctrl->expo_factor               = 1758241; 	// (1000 << 4)/9100
+	ctrl->expo_toffset 		= 0;
+	ctrl->flash_factor		= ctrl->expo_factor >> 4;
+	ctrl->flash_toffset		= 4;
+
+	ctrl->flags		 	= FLAG_EXPOSURE_SIMPLE;
+	ctrl->flags		       |= FLAG_IO_FLASH_DURATION;
+	ctrl->flags		       |= FLAG_IO_FLASH_ENABLED;
+}
+
 
 int vc_mod_ctrl_init(struct vc_ctrl* ctrl, struct vc_desc* desc)
 {
@@ -541,6 +578,7 @@ int vc_mod_ctrl_init(struct vc_ctrl* ctrl, struct vc_desc* desc)
 	case MOD_ID_IMX412: vc_init_ctrl_imx412(ctrl, desc); break;
 	case MOD_ID_IMX415: vc_init_ctrl_imx415(ctrl, desc); break;
 	case MOD_ID_OV9281: vc_init_ctrl_ov9281(ctrl, desc); break;
+        case MOD_ID_OV7251: vc_init_ctrl_ov7251(ctrl, desc); break;
 	default:
 		vc_err(dev, "%s(): Detected module not supported!\n", __FUNCTION__);
 		return 1;
