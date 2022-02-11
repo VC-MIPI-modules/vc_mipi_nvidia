@@ -902,6 +902,16 @@ int vc_mod_get_trigger_mode(struct vc_cam *cam)
 	return 0;
 }
 
+int vc_mod_set_single_trigger(struct vc_cam *cam)
+{
+	struct i2c_client *client = cam->ctrl.client_mod;
+	struct device *dev = &client->dev;
+
+	vc_notice(dev, "%s(): Set single trigger\n", __FUNCTION__);
+
+	return i2c_write_reg(dev, client, MOD_REG_EXTTRIG, REG_TRIGGER_SINGLE, __FUNCTION__);
+}
+
 int vc_mod_is_io_enabled(struct vc_cam *cam)
 {
 	return cam->state.io_mode != REG_IO_DISABLE;

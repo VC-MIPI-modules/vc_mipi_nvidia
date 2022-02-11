@@ -220,11 +220,11 @@ __u32 vc_core_get_framerate(struct vc_cam *cam);
 int vc_core_init(struct vc_cam *cam, struct i2c_client *client);
 
 // --- Functions for the VC MIPI Controller Module ----------------------------
-int vc_mod_set_power(struct vc_cam *cam, int on);
 int vc_mod_set_mode(struct vc_cam *cam, int *reset);
 int vc_mod_is_trigger_enabled(struct vc_cam *cam);
 int vc_mod_set_trigger_mode(struct vc_cam *cam, int mode);
 int vc_mod_get_trigger_mode(struct vc_cam *cam);
+int vc_mod_set_single_trigger(struct vc_cam *cam);
 int vc_mod_is_io_enabled(struct vc_cam *cam);
 int vc_mod_set_io_mode(struct vc_cam *cam, int mode);
 int vc_mod_get_io_mode(struct vc_cam *cam);
