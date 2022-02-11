@@ -41,11 +41,11 @@ fi
 PATCHES=()
 
 case $VC_MIPI_SOM in
-        Nano|NanoSD)
+        Nano|NanoSD|Nano2GB)
         # Carrier board dependant settings
         case $VC_MIPI_BOARD in
-                NV_DevKit_Nano_B01)
-                DT_CAM_FILE=$DT_CAM_DIR/NV_DevKit_Nano_B01/tegra210-camera-vc-mipi-cam.dtsi
+                NV_DevKit_Nano)
+                DT_CAM_FILE=$DT_CAM_DIR/NV_DevKit_Nano/tegra210-camera-vc-mipi-cam.dtsi
                 ;;
                 Auvidea_JNX30)
                 DT_CAM_FILE=$DT_CAM_DIR/Auvidea_JNX30_Nano/tegra210-camera-vc-mipi-cam.dtsi
@@ -67,7 +67,7 @@ case $VC_MIPI_SOM in
         FLASH_DT='DTB'
         case $VC_MIPI_SOM in
         Nano)   FLASH_BOARD='jetson-nano-emmc' ;;
-        NanoSD) FLASH_BOARD='jetson-nano-qspi-sd' ;;
+        NanoSD|Nano2GB) FLASH_BOARD='jetson-nano-qspi-sd' ;;
         esac
         FLASH_PARTITION='mmcblk0p1'
 

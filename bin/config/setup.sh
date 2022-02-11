@@ -49,19 +49,21 @@ choose_som() {
                 echo "  Choose your system on module"
                 echo "    1: NVIDIA Jetson Nano (production) (https://developer.nvidia.com/embedded/jetson-nano)"
                 echo "    2: NVIDIA Jetson Nano (devkit) (https://developer.nvidia.com/embedded/jetson-nano)"
-                echo "    3: NVIDIA Jetson Xavier NX (production) (https://developer.nvidia.com/embedded/jetson-xavier-nx)"
-                echo "    4: NVIDIA Jetson Xavier NX (devkit) (https://developer.nvidia.com/embedded/jetson-xavier-nx)"
-                echo "    5: NVIDIA Jetson AGX Xavier (devkit) (https://developer.nvidia.com/embedded/jetson-agx-xavier-developer-kit)"
-                echo "    6: NVIDIA Jetson TX2 (devkit) (https://developer.nvidia.com/embedded/jetson-tx2-developer-kit)"
-                read_selection 1 6
+                echo "    3: NVIDIA Jetson Nano 2GB (devkit) (https://developer.nvidia.com/embedded/jetson-nano-2gb-developer-kit)"
+                echo "    4: NVIDIA Jetson Xavier NX (production) (https://developer.nvidia.com/embedded/jetson-xavier-nx)"
+                echo "    5: NVIDIA Jetson Xavier NX (devkit) (https://developer.nvidia.com/embedded/jetson-xavier-nx)"
+                echo "    6: NVIDIA Jetson AGX Xavier (devkit) (https://developer.nvidia.com/embedded/jetson-agx-xavier-developer-kit)"
+                echo "    7: NVIDIA Jetson TX2 (devkit) (https://developer.nvidia.com/embedded/jetson-tx2-developer-kit)"
+                read_selection 1 7
         fi
         case ${selection} in
         1) som=Nano ;;
         2) som=NanoSD ;;
-        3) som=XavierNX ;;
-        4) som=XavierNXSD ;;
-        5) som=AGXXavier ;;
-        6) som=TX2 ;;
+        3) som=Nano2GB ;;
+        4) som=XavierNX ;;
+        5) som=XavierNXSD ;;
+        6) som=AGXXavier ;;
+        7) som=TX2 ;;
         esac
 }
 
@@ -76,8 +78,22 @@ choose_board_nano() {
                 read_selection 1 2
         fi
         case ${selection} in
-        1) board=NV_DevKit_Nano_B01 ;;
+        1) board=NV_DevKit_Nano ;;
         2) board=Auvidea_JNX30 ;;
+        esac
+}
+
+choose_board_nano2GB() {
+        if [[ -n ${selected_board} ]]; then
+                selection=${selected_board}
+        else
+                echo "------------------------------------------------------------"
+                echo "  Choose your carrier board"
+                echo "    1: NVIDIA Jetson Nano 2GB Developer Kit (https://developer.nvidia.com/embedded/jetson-nano-2gb-developer-kit)"
+                read_selection 1 1
+        fi
+        case ${selection} in
+        1) board=NV_DevKit_Nano ;;
         esac
 }
 
@@ -188,6 +204,10 @@ setup_driver() {
         case ${som} in
         Nano|NanoSD)
                 choose_board_nano
+                choose_bsp
+                ;;
+        Nano2GB)
+                choose_board_nano2GB
                 choose_bsp
                 ;;
         XavierNX|XavierNXSD) 

@@ -1,0 +1,35 @@
+From 2ae66f4953119de6dd0929709554ff2a166d8a0e Mon Sep 17 00:00:00 2001
+From: "/setup.sh" <support@vision-components.com>
+Date: Fri, 11 Feb 2022 11:50:55 +0100
+Subject: [PATCH] Modified tegra210-p3448-0003-p3542-0000.dts to integrate VC
+ MIPI Driver and deactivate IMX219 and IM477 driver.
+
+---
+ .../kernel-dts/tegra210-p3448-0003-p3542-0000.dts      | 10 ++++++++--
+ 1 file changed, 8 insertions(+), 2 deletions(-)
+
+diff --git a/hardware/nvidia/platform/t210/batuu/kernel-dts/tegra210-p3448-0003-p3542-0000.dts b/hardware/nvidia/platform/t210/batuu/kernel-dts/tegra210-p3448-0003-p3542-0000.dts
+index 7d19df5a8..f768b38c3 100644
+--- a/hardware/nvidia/platform/t210/batuu/kernel-dts/tegra210-p3448-0003-p3542-0000.dts
++++ b/hardware/nvidia/platform/t210/batuu/kernel-dts/tegra210-p3448-0003-p3542-0000.dts
+@@ -18,9 +18,15 @@
+  *
+  */
+ 
++#define VC_MIPI 1
++
+ #include "../../porg/kernel-dts/tegra210-porg-p3448-common.dtsi"
+-#include "../../porg/kernel-dts/porg-platforms/tegra210-porg-camera-rbpcv3-imx477.dtsi"
+-#include "../../porg/kernel-dts/porg-platforms/tegra210-porg-camera-rbpcv2-imx219.dtsi"
++#if VC_MIPI
++	#include "../../porg/kernel-dts/porg-platforms/tegra210-camera-vc-mipi-cam.dtsi"
++#else
++        #include "../../porg/kernel-dts/porg-platforms/tegra210-porg-camera-rbpcv3-imx477.dtsi"
++        #include "../../porg/kernel-dts/porg-platforms/tegra210-porg-camera-rbpcv2-imx219.dtsi"
++#endif
+ #include "batuu-platforms/tegra210-batuu-pinmux-p3448-0003.dtsi"
+ #include "batuu-platforms/tegra210-batuu-gpio-p3448-0003.dtsi"
+ #include "batuu-platforms/tegra210-batuu-p3448-emc-a00.dtsi"
+-- 
+2.25.1
+

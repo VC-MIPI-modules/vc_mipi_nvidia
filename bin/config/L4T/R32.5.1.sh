@@ -3,7 +3,7 @@
 DEV_URL=https://developer.nvidia.com/embedded/l4t/r32_release_v5.1/r32_release_v5.1
 
 case $VC_MIPI_SOM in
-        Nano|NanoSD|TX1)
+        Nano|NanoSD|Nano2GB|TX1)
                 BSP_FILE=jetson-210_linux_r32.5.1_aarch64.tbz2
                 ;;
         AGXXavier|XavierNX|XavierNXSD|TX2)
