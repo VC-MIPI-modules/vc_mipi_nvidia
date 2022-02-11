@@ -1237,7 +1237,7 @@ static void vc_core_get_timing(struct vc_cam *cam, __u32 *period_1H_ns)
 	__u8 format = vc_core_v4l2_code_to_format(state->format_code);
 	__u8 index = 0;
 
-	for (index = 0; index < 6; index++) {
+	for (index = 0; index <= 7; index++) {
 		struct vc_timing *timing = &ctrl->expo_timing[index];
 		if (timing->num_lanes == num_lanes && timing->format == format) {
 			*period_1H_ns = ((__u64)timing->clk * 1000000000) / desc->clk_pixel;
