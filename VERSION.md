@@ -1,5 +1,15 @@
 # Version History
 
+## v0.9.0 (Support IMX335 and Jetson Nano 2GB)
+  * New Features
+    * Added support for system on modules
+      * NVIDIA Jetson Nano 2GB
+    * Added support for VC MIPI Camera Modules
+      * IMX335
+    * Black level can now also be set for IMX178 and IMX226
+    * Bugfixes
+      * Changed default resolutions from IMX178, IMX226 and IMX335 to NVIDIA compliant resolutions.
+
 ## v0.8.1 (Bugfix)
   * Bugfixes
     * Fixed the version number of the driver module

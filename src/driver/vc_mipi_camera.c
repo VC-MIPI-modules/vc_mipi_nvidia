@@ -693,7 +693,7 @@ static struct i2c_driver vc_i2c_driver = {
 };
 module_i2c_driver(vc_i2c_driver);
 
-MODULE_VERSION("0.8.1");
+MODULE_VERSION("0.9.0");
 MODULE_DESCRIPTION("Vision Components GmbH - VC MIPI NVIDIA driver");
 MODULE_AUTHOR("Peter Martienssen, Liquify Consulting <peter.martienssen@liquify-consulting.de>");
 MODULE_LICENSE("GPL v2");
