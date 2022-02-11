@@ -56,13 +56,13 @@ void vc_adjust_cam_ctrls(struct vc_cam *cam, __u32 *width, __u32 *height)
 	// TEGRA_VI_CSI_ERROR_STATUS=0x00000008 (Bits 3-0: h>,<, w>,<) => height is to low
 	switch (cam->desc.mod_id) {
 #ifdef VC_MIPI_JETSON_NANO
-	case MOD_ID_IMX178: // Active pixels 3072 x 2076
-		*height = 2047;
-		if (trigger_enabled) {
-			*height = 2048;
-		}
-		break;
-
+        case MOD_ID_IMX178: // Active pixels 3072 x 2048
+                if (trigger_enabled) {
+                        cam->state.frame.height = *height;
+                } else {
+                        cam->state.frame.height = *height + 1;
+                }
+                break;
 	case MOD_ID_IMX183: // Active pixels 5440 x 3648
 		if (trigger_enabled) {
 			switch (code) {
@@ -74,32 +74,6 @@ void vc_adjust_cam_ctrls(struct vc_cam *cam, __u32 *width, __u32 *height)
 		}
 		break;
 
-	case MOD_ID_IMX226: // Active pixels 3840 x 3046 (FPGA)
-			if (!trigger_enabled) {
-				switch (code) {
-				case MEDIA_BUS_FMT_Y8_1X8: 	case MEDIA_BUS_FMT_SRGGB8_1X8:
-				case MEDIA_BUS_FMT_Y10_1X10: 	case MEDIA_BUS_FMT_SRGGB10_1X10:
-					*height = 3044;
-					break;
-				}
-			} else {
-				switch (code) {
-				case MEDIA_BUS_FMT_Y8_1X8: 	case MEDIA_BUS_FMT_SRGGB8_1X8:
-				case MEDIA_BUS_FMT_Y10_1X10: 	case MEDIA_BUS_FMT_SRGGB10_1X10:
-					*height = 3045;
-					break;
-				case MEDIA_BUS_FMT_Y12_1X12: 	case MEDIA_BUS_FMT_SRGGB12_1X12:
-					// 3045 sometimes height to short
-					// 3046 sometimes height to long
-					*height = 3046; 
-					break;
-				}
-			}
-			if (num_lanes == 4) {
-				(*height)--;
-			}
-			break;
-
 	case MOD_ID_IMX252: // Active pixels 2048 x 1536
 		if (num_lanes == 4) {
 			(*height)--;
@@ -109,19 +83,11 @@ void vc_adjust_cam_ctrls(struct vc_cam *cam, __u32 *width, __u32 *height)
 
 	case MOD_ID_IMX273: // Active pixels 1440 x 1080
 		if (num_lanes == 4) {
-			switch (code) {
-			case MEDIA_BUS_FMT_Y8_1X8: 	case MEDIA_BUS_FMT_SRGGB8_1X8:
-				*width = 1472;
-				break;
-			}
 #ifdef VC_MIPI_JETSON_NANO
 			(*height)--;
 #endif
 		}
 		break;
-
-	case MOD_ID_IMX412: // Active pixels 4056 x 3040
-		*width = 4032;
 	}
 }
 
@@ -155,12 +121,6 @@ void vc_adjust_tegracam(struct tegracam_device *tc_dev)
 	if (width != cam->ctrl.frame.width || height != cam->ctrl.frame.height)
 		vc_notice(dev, "%s(): Adjust tegracam framework settings (w: %u h: %u l: %u)\n", __FUNCTION__, 
 			width, height, line_length);
-
-	switch (cam->desc.mod_id) {
-	case MOD_ID_IMX273:
-	case MOD_ID_IMX412: 
-		cam->state.frame.width = width;
-	}
 
 	// TODO: Problem! When the format is changed set_mode is called to late in s_stream 
 	//       to make the change active. Currently it is necessary to start streaming twice!
@@ -345,6 +305,7 @@ static int vc_start_streaming(struct tegracam_device *tc_dev)
 #ifdef VC_MIPI_JETSON_NANO
 	switch (cam->desc.mod_id) {
 	case MOD_ID_IMX183: sleepR = 100; sleepS =  50; break;
+        case MOD_ID_IMX226: sleepR = 100; sleepS =  50; break;
 	case MOD_ID_IMX273: sleepR = 100; sleepS =  10; break;
 	case MOD_ID_IMX296: sleepR = 200; sleepS =  10; break;
 	case MOD_ID_IMX412: sleepR =   0; sleepS =   0; break;

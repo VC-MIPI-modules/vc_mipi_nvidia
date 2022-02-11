@@ -119,8 +119,12 @@ static void vc_init_ctrl_imx178(struct vc_ctrl *ctrl, struct vc_desc* desc)
 
 	vc_init_ctrl_imx183_base(ctrl, desc);
 
+        ctrl->blacklevel 		= (vc_control) { .min =   0, .max =    262143, .def =     60 };
+	
+	ctrl->csr.sen.blacklevel        = (vc_csr2) { .l = 0x3015, .m = 0x3016 };
+
 	ctrl->frame.width		= 3072;
-	ctrl->frame.height		= 2076;
+	ctrl->frame.height		= 2048;
 
 	ctrl->expo_timing[0] 		= (vc_timing) { 2, FORMAT_RAW08, .clk =  680 };
 	ctrl->expo_timing[1] 		= (vc_timing) { 2, FORMAT_RAW10, .clk =  840 };
@@ -176,14 +180,21 @@ static void vc_init_ctrl_imx226(struct vc_ctrl *ctrl, struct vc_desc* desc)
 
 	vc_init_ctrl_imx183_base(ctrl, desc);
 
-	ctrl->frame.width		= 3840;
-	ctrl->frame.height		= 3046;
+        ctrl->blacklevel 		= (vc_control) { .min =   0, .max =       255, .def =     50 };
+	
+	ctrl->csr.sen.blacklevel        = (vc_csr2) { .l = 0x0045, .m = 0x0000 };
 
-	ctrl->expo_timing[0] 		= (vc_timing) { 2, FORMAT_RAW10, .clk = 1072 };
-	ctrl->expo_timing[1] 		= (vc_timing) { 2, FORMAT_RAW12, .clk = 1288 };
-	ctrl->expo_timing[2] 		= (vc_timing) { 4, FORMAT_RAW10, .clk =  536 };
-	ctrl->expo_timing[3] 		= (vc_timing) { 4, FORMAT_RAW12, .clk =  644 };
+	ctrl->frame.width		= 3904;
+	ctrl->frame.height		= 3000;
 
+        ctrl->expo_timing[0] 		= (vc_timing) { 2, FORMAT_RAW08, .clk = 1072 };
+	ctrl->expo_timing[1] 		= (vc_timing) { 2, FORMAT_RAW10, .clk = 1072 };
+	ctrl->expo_timing[2] 		= (vc_timing) { 2, FORMAT_RAW12, .clk = 1288 };
+        ctrl->expo_timing[3] 		= (vc_timing) { 4, FORMAT_RAW08, .clk =  536 };
+	ctrl->expo_timing[4] 		= (vc_timing) { 4, FORMAT_RAW10, .clk =  536 };
+	ctrl->expo_timing[5] 		= (vc_timing) { 4, FORMAT_RAW12, .clk =  644 };
+
+        ctrl->sen_clk                   = 72000000;
 	ctrl->expo_vmax 		= 3079;
 	ctrl->retrigger_def		= 0x00292d40;
 
@@ -291,7 +302,7 @@ static void vc_init_ctrl_imx273(struct vc_ctrl *ctrl, struct vc_desc* desc)
 
 	vc_init_ctrl_imx252_base(ctrl, desc);
 
-	ctrl->frame.width		= 1440;
+	ctrl->frame.width		= 1408;
 	ctrl->frame.height		= 1080;
 
 	ctrl->expo_timing[0] 		= (vc_timing) { 2, FORMAT_RAW08, .clk =  336 };
@@ -381,9 +392,8 @@ static void vc_init_ctrl_imx335(struct vc_ctrl *ctrl, struct vc_desc* desc)
         ctrl->csr.sen.mode_standby	= 0x01;
         ctrl->csr.sen.mode_operating	= 0x00;
 
-       
         ctrl->frame.width		= 2560;
-        ctrl->frame.height		= 1964;
+        ctrl->frame.height		= 1944;
 
         ctrl->expo_timing[0] 		= (vc_timing) { 2, FORMAT_RAW10, .clk =  1260 };
         ctrl->expo_timing[1] 		= (vc_timing) { 2, FORMAT_RAW12, .clk =  1260 };
@@ -435,7 +445,7 @@ static void vc_init_ctrl_imx412(struct vc_ctrl *ctrl, struct vc_desc* desc)
 	ctrl->gain			= (vc_control) { .min =   0, .max =      1023, .def =      0 };
 	ctrl->framerate 		= (vc_control) { .min =   0, .max =        41, .def =      0 };
 
-	ctrl->frame.width		= 4056;
+	ctrl->frame.width		= 4032;
 	ctrl->frame.height		= 3040;
 
 	ctrl->expo_factor               = 31755000;
