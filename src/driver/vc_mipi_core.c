@@ -260,7 +260,7 @@ static int vc_core_get_v4l2_fmt(__u32 code, char *buf)
 	case MEDIA_BUS_FMT_Y8_1X8:       sprintf(buf, "GREY"); break;
 	case MEDIA_BUS_FMT_Y10_1X10:     sprintf(buf, "Y10 "); break;
 	case MEDIA_BUS_FMT_Y12_1X12:     sprintf(buf, "Y12 "); break;
-	// case MEDIA_BUS_FMT_Y14_1X14:     sprintf(buf, "Y14 "); break; // Doesn't exist!
+	case MEDIA_BUS_FMT_Y14_1X14:     sprintf(buf, "Y14 "); break;
 	case MEDIA_BUS_FMT_SRGGB8_1X8:   sprintf(buf, "RGGB"); break;
 	case MEDIA_BUS_FMT_SRGGB10_1X10: sprintf(buf, "RG10"); break;
 	case MEDIA_BUS_FMT_SRGGB12_1X12: sprintf(buf, "RG12"); break;
@@ -289,7 +289,7 @@ static __u8 vc_core_v4l2_code_to_format(__u32 code)
 	case MEDIA_BUS_FMT_SRGGB12_1X12:
 	case MEDIA_BUS_FMT_SGBRG12_1X12:
 		return FORMAT_RAW12;
-	// case MEDIA_BUS_FMT_Y14_1X14:
+	case MEDIA_BUS_FMT_Y14_1X14:
 	case MEDIA_BUS_FMT_SRGGB14_1X14:
 	case MEDIA_BUS_FMT_SGBRG14_1X14:
 		return FORMAT_RAW14;
@@ -307,7 +307,7 @@ static __u32 vc_core_format_to_v4l2_code(__u8 format, int is_color, int is_gbrg)
 	case FORMAT_RAW12: 
 		return is_color ? (is_gbrg ? MEDIA_BUS_FMT_SGBRG12_1X12 : MEDIA_BUS_FMT_SRGGB12_1X12) : MEDIA_BUS_FMT_Y12_1X12;
 	case FORMAT_RAW14: 
-		return is_color ? (is_gbrg ? MEDIA_BUS_FMT_SGBRG14_1X14 : MEDIA_BUS_FMT_SRGGB14_1X14) : 0; // MEDIA_BUS_FMT_Y14_1X14
+		return is_color ? (is_gbrg ? MEDIA_BUS_FMT_SGBRG14_1X14 : MEDIA_BUS_FMT_SRGGB14_1X14) : MEDIA_BUS_FMT_Y14_1X14;
 	}
 	return 0;
 }
