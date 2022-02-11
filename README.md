@@ -68,7 +68,7 @@ If you want to change some settings of an camera in the device tree, please foll
 1. Edit the device tree file for your hardware setup. Currently there are four device tree files for four different combinations of SoMs and carrier boards.
    | system on module | carrier board | device tree file |
    | ---------------- | ------------- | ---------------- |
-   | NVIDIA Jetson Nano | NVIDIA Jetson Nano Developer Kit B01 | src/devicetree/NV_DevKit_Nano/tegra210-camera-vc-mipi-cam.dtsi |
+   | NVIDIA Jetson Nano | NVIDIA Jetson Nano Developer Kit | src/devicetree/NV_DevKit_Nano/tegra210-camera-vc-mipi-cam.dtsi |
    | NVIDIA Jetson Nano | Auvidea JNX30-LC-PD | src/devicetree/Auvidea_JNX30_Nano/tegra210-camera-vc-mipi-cam.dtsi |
    | NVIDIA Jetson Xavier NX | NVIDIA Jetson Xavier NX Developer Kit | src/devicetree/NV_DevKit_XavierNX/tegra194-camera-vc-mipi-cam.dtsi |
    | NVIDIA Jetson Xavier NX | Auvidea JNX30-LC-PD | src/devicetree/Auvidea_JNX30_XavierNX/tegra194-camera-vc-mipi-cam.dtsi |
