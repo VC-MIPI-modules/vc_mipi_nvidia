@@ -20,8 +20,7 @@ static void vc_init_ctrl(struct vc_ctrl *ctrl, struct vc_desc* desc)
 	ctrl->blacklevel 		= (vc_control) { .min =   0, .max =       255, .def =      0 };
 	ctrl->framerate 		= (vc_control) { .min =   0, .max =      1000, .def =      0 };
 
-	ctrl->csr.sen.mode.l 		= desc->csr_mode;
-	ctrl->csr.sen.mode.m 		= 0;
+	ctrl->csr.sen.mode 		= (vc_csr2) { .l = desc->csr_mode, .m = 0x0000 };
 
 	ctrl->csr.sen.mode_standby	= 0x00; 
 	ctrl->csr.sen.mode_operating	= 0x01;
@@ -489,6 +488,42 @@ static void vc_init_ctrl_imx415(struct vc_ctrl *ctrl, struct vc_desc* desc)
 }
 
 // ------------------------------------------------------------------------------------------------
+//  Settings for IMX568
+
+static void vc_init_ctrl_imx568(struct vc_ctrl *ctrl, struct vc_desc* desc)
+{
+        struct device *dev = &ctrl->client_mod->dev;
+
+        vc_notice(dev, "%s(): Initialising module control for IMX568\n", __FUNCTION__);
+
+        ctrl->exposure                  = (vc_control) { .min =  29, .max =  15110711, .def =  10000 };
+        ctrl->gain                      = (vc_control) { .min =   0, .max =       480, .def =      0 };
+
+        ctrl->csr.sen.vmax              = (vc_csr4) { .l = 0x30d4, .m = 0x30d5, .h = 0x30d6, .u = 0x0000 };
+        ctrl->csr.sen.mode              = (vc_csr2) { .l = 0x3000, .m = 0x3010 };
+        ctrl->csr.sen.mode_standby      = 0x01;
+        ctrl->csr.sen.mode_operating    = 0x00;
+
+        ctrl->frame.width               = 2472;
+        ctrl->frame.height              = 2048;
+
+        ctrl->expo_timing[0]            = (vc_timing) { 2, FORMAT_RAW08, .clk =  673 };
+        ctrl->expo_timing[1]            = (vc_timing) { 2, FORMAT_RAW10, .clk =  811 };
+        ctrl->expo_timing[2]            = (vc_timing) { 2, FORMAT_RAW12, .clk =  966 };
+        ctrl->expo_timing[3]            = (vc_timing) { 4, FORMAT_RAW08, .clk =  100 };
+        ctrl->expo_timing[4]            = (vc_timing) { 4, FORMAT_RAW10, .clk =  100 };
+        ctrl->expo_timing[5]            = (vc_timing) { 4, FORMAT_RAW12, .clk =  100 };
+
+        ctrl->expo_shs_min              = 30;
+        ctrl->expo_vmax                 = 2206;
+
+        ctrl->flags                     = FLAG_EXPOSURE_WRITE_VMAX;
+        ctrl->flags                    |= FLAG_IO_FLASH_ENABLED;
+        ctrl->flags                    |= FLAG_TRIGGER_EXTERNAL | FLAG_TRIGGER_PULSEWIDTH |
+                                          FLAG_TRIGGER_SELF | FLAG_TRIGGER_SINGLE;
+}
+
+// ------------------------------------------------------------------------------------------------
 //  Settings for OV9281
 //
 //  TODO: 
@@ -587,6 +622,7 @@ int vc_mod_ctrl_init(struct vc_ctrl* ctrl, struct vc_desc* desc)
 	case MOD_ID_IMX392: vc_init_ctrl_imx392(ctrl, desc); break;
 	case MOD_ID_IMX412: vc_init_ctrl_imx412(ctrl, desc); break;
 	case MOD_ID_IMX415: vc_init_ctrl_imx415(ctrl, desc); break;
+	case MOD_ID_IMX568: vc_init_ctrl_imx568(ctrl, desc); break;
 	case MOD_ID_OV9281: vc_init_ctrl_ov9281(ctrl, desc); break;
         case MOD_ID_OV7251: vc_init_ctrl_ov7251(ctrl, desc); break;
 	default:
