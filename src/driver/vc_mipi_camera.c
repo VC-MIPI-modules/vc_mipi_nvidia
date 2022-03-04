@@ -77,6 +77,7 @@ void vc_adjust_cam_ctrls(struct vc_cam *cam, __u32 *width, __u32 *height)
 		break;
 
 	case MOD_ID_IMX252: // Active pixels 2048 x 1536
+        case MOD_ID_IMX392: // Active pixels 1920 x 1200
 		if (num_lanes == 4) {
 			(*height)--;
 		}
