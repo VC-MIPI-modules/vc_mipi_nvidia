@@ -26,9 +26,11 @@ static struct sensor_mode_properties *tegracam_to_mode0(struct tegracam_device *
 void vc_adjust_cam_ctrls(struct vc_cam *cam, __u32 *width, __u32 *height)
 {
 	__u8 num_lanes = vc_core_get_num_lanes(cam);
-	__u32 code = vc_core_get_format(cam);
 	int trigger_mode = vc_mod_get_trigger_mode(cam);
 	int trigger_enabled = 0;
+#ifdef VC_MIPI_JETSON_NANO
+	__u32 code = vc_core_get_format(cam);
+#endif
 
 	// Triggermodi
 	// 0: FLAG_TRIGGER_DISABLE
