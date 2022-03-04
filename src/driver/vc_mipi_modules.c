@@ -67,9 +67,11 @@ static void vc_init_ctrl_imx183_base(struct vc_ctrl *ctrl, struct vc_desc* desc)
 static void vc_init_ctrl_imx252_base(struct vc_ctrl *ctrl, struct vc_desc* desc)
 {
 	ctrl->gain			= (vc_control) { .min =   0, .max =       511, .def =      0 };
+        ctrl->blacklevel 		= (vc_control) { .min =   0, .max =      4095, .def =     60 };
 
 	ctrl->csr.sen.vmax              = (vc_csr4) { .l = 0x0210, .m = 0x0211, .h = 0x0212, .u = 0x0000 };
 	ctrl->csr.sen.hmax              = (vc_csr4) { .l = 0x0214, .m = 0x0215, .h = 0x0000, .u = 0x0000 };
+        ctrl->csr.sen.blacklevel        = (vc_csr2) { .l = 0x0454, .m = 0x0455 };
 
 	ctrl->expo_shs_min		= 10;
 	ctrl->expo_vmax			= 2094;
