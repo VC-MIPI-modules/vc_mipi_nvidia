@@ -450,6 +450,8 @@ static void vc_init_ctrl_imx392(struct vc_ctrl *ctrl, struct vc_desc* desc)
 	ctrl->expo_timing[4] 		= (vc_timing) { 4, FORMAT_RAW10, .clk =  355 };
 	ctrl->expo_timing[5] 		= (vc_timing) { 4, FORMAT_RAW12, .clk =  441 };
 
+        ctrl->expo_shs_min              = 10;
+        ctrl->expo_vmax			= 1252;
 	ctrl->retrigger_def		= 0x00103b4a;
 }
 
