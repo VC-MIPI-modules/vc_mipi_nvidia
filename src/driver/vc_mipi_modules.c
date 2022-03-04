@@ -396,6 +396,10 @@ static void vc_init_ctrl_imx327(struct vc_ctrl *ctrl, struct vc_desc* desc)
 
 // ------------------------------------------------------------------------------------------------
 //  Settings for IMX335 (Rev.00)
+//
+//  TODO:
+//  - Black frame around image
+//  - Max. Framerate 20 fps with 4 lanes is to low
 
 static void vc_init_ctrl_imx335(struct vc_ctrl *ctrl, struct vc_desc* desc)
 {
