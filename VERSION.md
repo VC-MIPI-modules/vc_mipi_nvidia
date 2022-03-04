@@ -1,5 +1,13 @@
 # Version History
 
+## v0.10.0 (Support OV7251, IMX297, IMX568)
+  * New Features
+    * Added support for VC MIPI Camera Modules
+      * OV7251, IMX297, IMX568
+    * Black level can now also be set for IMX250, IMX252, IMX264, IMX265, IMX273, IMX392, IMX568
+    * Bugfixes
+      * Fixed a bug which caused a compilation error for all Xavier and TX2 plattforms
+
 ## v0.9.0 (Support IMX335 and Jetson Nano 2GB)
   * New Features
     * Added support for system on modules

@@ -1,7 +1,7 @@
 # Vision Components MIPI CSI-2 driver for NVIDIA Jetson Nano, Xavier NX, AGX Xavier and TX2
 ![VC MIPI camera](https://www.vision-components.com/fileadmin/external/documentation/hardware/VC_MIPI_Camera_Module/VC_MIPI_Camera_Module_Hardware_Operating_Manual-Dateien/mipi_sensor_front_back.png)
 
-## Version 0.9.0 ([History](VERSION.md))
+## Version 0.10.0 ([History](VERSION.md))
 * Supported system on modules
   * [NVIDIA Jetson Nano 4GB/2GB (production + devkit)](https://developer.nvidia.com/embedded/jetson-nano)
   * [NVIDIA Jetson Xavier NX (production + devkit)](https://developer.nvidia.com/embedded/jetson-xavier-nx)
@@ -23,11 +23,12 @@
   * IMX178, IMX183, IMX226
   * IMX250, IMX252, IMX264, IMX265, IMX273, IMX392
   * IMX290, IMX327
-  * IMX296
+  * IMX296, IMX297
   * IMX335
   * IMX412
   * IMX415
-  * OV9281
+  * IMX568
+  * OV7251, OV9281
 * Features
   * Quickstart script for an easier installation process
   * Auto detection of VC MIPI camera modules
@@ -37,7 +38,7 @@
   * **Trigger mode** '0: disabled', '1: external', '2: pulsewidth', '3: self', '4: single', '5: sync', '6: stream_edge', '7: stream_level' can be set via device tree or V4L2 control 'trigger_mode'
   * **Flash mode** '0: disabled', '1: enabled' can be set via device tree or V4L2 control 'flash_mode'
   * **Frame rate** can be set via V4L2 control 'frame_rate' *(except IMX412 and OV9281)*
-  * **Black level** can be set via V4L2 control 'black_level' *(only IMX178, IMX183, IMX226 and IMX296)*
+  * **Black level** can be set via V4L2 control 'black_level' *(except IMX290, IMX327, IMX412, IMX415, OV7251 and OV9281)*
 
 ## Prerequisites for cross-compiling
 ### Host PC
@@ -104,11 +105,12 @@ If you want to use your camera in an application with long exposure times or ext
   * IMX178 (Rev.01), IMX183 (Rev.12), IMX226 (Rev.13), 
   * IMX250 (Rev.07), IMX252 (Rev.10), IMX264 (Rev.03), IMX265 (Rev.01), IMX273 (Rev.13), IMX392 (Rev.06)
   * IMX290 (Rev.02), IMX327 (Rev.02)
-  * IMX296 (Rev.42)
+  * IMX296 (Rev.42), IMX297 (Rev.??)
   * IMX335 (Rev.00)
   * IMX412 (Rev.02)
   * IMX415 (Rev.01)
-  * OV9281 (Rev.02)
+  * IMX568 (Rev.01)
+  * OV7251 (Rev.01), OV9281 (Rev.02)
 
 You can find the revision of the camera module in the dmesg log.
 ```
