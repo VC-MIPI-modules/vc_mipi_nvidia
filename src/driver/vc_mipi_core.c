@@ -5,6 +5,8 @@
 #include <linux/v4l2-mediabus.h>
 #include "vc_mipi_modules.h"
 
+// #define READ_VMAX
+
 #define MOD_REG_RESET            0x0100 // register  0 [0x0100]: reset and init register (R/W)
 #define MOD_REG_STATUS           0x0101 // register  1 [0x0101]: status (R)
 #define MOD_REG_MODE             0x0102 // register  2 [0x0102]: initialisation mode (R/W)
@@ -51,7 +53,7 @@
 #define M_BYTE(value) (__u8)((value >>  8) & 0xff)
 #define L_BYTE(value) (__u8)((value >>  0) & 0xff)
 
-static __u8 i2c_read_reg(struct i2c_client *client, const __u16 addr)
+static __u8 i2c_read_reg(struct device *dev, struct i2c_client *client, const __u16 addr, const char* func)
 {
 	__u8 buf[2] = { addr >> 8, addr & 0xff };
 	int ret;
@@ -72,9 +74,11 @@ static __u8 i2c_read_reg(struct i2c_client *client, const __u16 addr)
 
 	ret = i2c_transfer(client->adapter, msgs, ARRAY_SIZE(msgs));
 	if (ret < 0) {
-		vc_err(&client->dev, "%s(): Reading register 0x%04x from 0x%02x failed\n", __FUNCTION__, addr, client->addr);
+		vc_err(&client->dev, "%s(): Reading register 0x%04x from 0x%02x failed\n", func, addr, client->addr);
 		return ret;
 	}
+
+        vc_dbg(dev, "%s():   addr: 0x%04x => value: 0x%02x\n", func, addr, buf[0]);
 
 	return buf[0];
 }
@@ -100,15 +104,15 @@ static int i2c_write_reg(struct device *dev, struct i2c_client *client, const __
 	return ret == 1 ? 0 : -EIO;
 }
 
-static __u32 i2c_read_reg2(struct device *dev, struct i2c_client *client, struct vc_csr2 *csr)
+static __u32 i2c_read_reg2(struct device *dev, struct i2c_client *client, struct vc_csr2 *csr, const char* func)
 {
 	__u32 reg = 0;
 	__u32 value = 0;
 
-	reg = i2c_read_reg(client, csr->l);
+	reg = i2c_read_reg(dev, client, csr->l, func);
 	if (reg)
 		value |= (0x000000ff & reg);
-	reg = i2c_read_reg(client, csr->m);
+	reg = i2c_read_reg(dev, client, csr->m, func);
 	if (reg)
 		value |= (0x000000ff & reg) <<  8;
 
@@ -127,26 +131,28 @@ static int i2c_write_reg2(struct device *dev, struct i2c_client *client, struct 
 	return ret;
 }
 
-static __u32 i2c_read_reg4(struct device *dev, struct i2c_client *client, struct vc_csr4 *csr)
+#ifdef READ_VMAX
+static __u32 i2c_read_reg4(struct device *dev, struct i2c_client *client, struct vc_csr4 *csr, const char* func)
 {
 	__u32 reg = 0;
 	__u32 value = 0;
 
-	reg = i2c_read_reg(client, csr->l);
+	reg = i2c_read_reg(dev, client, csr->l, func);
 	if (reg)
 		value |= (0x000000ff & reg);
-	reg = i2c_read_reg(client, csr->m);
+	reg = i2c_read_reg(dev, client, csr->m, func);
 	if (reg)
 		value |= (0x000000ff & reg) <<  8;
-	reg = i2c_read_reg(client, csr->h);
+	reg = i2c_read_reg(dev, client, csr->h, func);
 	if (reg)
 		value |= (0x000000ff & reg) << 16;
-	reg = i2c_read_reg(client, csr->u);
+	reg = i2c_read_reg(dev, client, csr->u, func);
 	if (reg)
 		value |= (0x000000ff & reg) << 24;
 
 	return value;
 }
+#endif
 
 static int i2c_write_reg4(struct device *dev, struct i2c_client *client, struct vc_csr4 *csr, const __u32 value, const char *func)
 {
@@ -166,7 +172,7 @@ static int i2c_write_reg4(struct device *dev, struct i2c_client *client, struct 
 
 int vc_read_i2c_reg(struct i2c_client *client, const __u16 addr)
 {
-	return i2c_read_reg(client, addr);
+	return i2c_read_reg(&client->dev, client, addr, __FUNCTION__);
 }
 
 int vc_write_i2c_reg(struct i2c_client *client, const __u16 addr, const __u8 value)
@@ -541,7 +547,7 @@ static int vc_mod_read_status(struct i2c_client *client)
 	struct device *dev = &client->dev;
 	int ret;
 
-	ret = i2c_read_reg(client, MOD_REG_STATUS);
+	ret = i2c_read_reg(dev, client, MOD_REG_STATUS, __FUNCTION__);
 	if (ret < 0)
 		vc_err(dev, "%s(): Unable to get module status (error: %d)\n", __FUNCTION__, ret);
 	else
@@ -626,7 +632,7 @@ static int vc_mod_setup(struct vc_ctrl *ctrl, int mod_i2c_addr, struct vc_desc *
 	
 	dev_mod = &client_mod->dev;
 	for (addr = 0; addr < sizeof(*desc); addr++) {
-		reg = i2c_read_reg(client_mod, addr + 0x1000);
+		reg = i2c_read_reg(dev_mod, client_mod, addr + 0x1000, __FUNCTION__);
 		if (reg < 0) {
 			i2c_unregister_device(client_mod);
 			return -EIO;
@@ -674,6 +680,9 @@ static void vc_core_state_init(struct vc_cam *cam)
 }
 
 static int vc_sen_read_image_size(struct vc_ctrl *ctrl, struct vc_frame *size);
+#ifdef READ_VMAX
+static __u32 vc_sen_read_vmax(struct vc_ctrl *ctrl);
+#endif
 
 int vc_core_init(struct vc_cam *cam, struct i2c_client *client) 
 {
@@ -693,8 +702,11 @@ int vc_core_init(struct vc_cam *cam, struct i2c_client *client)
 	if (ctrl->frame.width == 0 || ctrl->frame.height == 0) {
 		vc_sen_read_image_size(ctrl, &ctrl->frame);
 	}
-	vc_core_state_init(cam);
-
+#ifdef READ_VMAX
+	vc_sen_read_vmax(&cam->ctrl);
+#endif
+        vc_core_state_init(cam);
+        
 	vc_notice(&ctrl->client_mod->dev, "VC MIPI Core succesfully initialized");
 	return 0;
 }
@@ -991,8 +1003,8 @@ static int vc_sen_read_image_size(struct vc_ctrl *ctrl, struct vc_frame *size)
 	struct i2c_client *client = ctrl->client_sen;
 	struct device *dev = &client->dev;
 
-	size->width = i2c_read_reg2(dev, client, &ctrl->csr.sen.o_width);
-	size->height = i2c_read_reg2(dev, client, &ctrl->csr.sen.o_height);
+	size->width = i2c_read_reg2(dev, client, &ctrl->csr.sen.o_width, __FUNCTION__);
+	size->height = i2c_read_reg2(dev, client, &ctrl->csr.sen.o_height, __FUNCTION__);
 
 	vc_dbg(dev, "%s(): Read image size (width: %u, height: %u)\n", __FUNCTION__, size->width, size->height);
 	
@@ -1032,22 +1044,24 @@ int vc_sen_set_roi(struct vc_cam *cam, int x, int y, int width, int height)
 	return 0;
 }
 
+#ifdef READ_VMAX
 static __u32 vc_sen_read_vmax(struct vc_ctrl *ctrl)
 {
 	struct i2c_client *client = ctrl->client_sen;
 	struct device *dev = &client->dev;
-	__u32 vmax = i2c_read_reg4(dev, client, &ctrl->csr.sen.vmax);
+	__u32 vmax = i2c_read_reg4(dev, client, &ctrl->csr.sen.vmax, __FUNCTION__);
 
-	vc_dbg(dev, "%s(): Read sensor VMAX: 0x%08x (%u)\n", __FUNCTION__, vmax, vmax);
+	vc_notice(dev, "%s(): Read sensor VMAX: 0x%08x (%u)\n", __FUNCTION__, vmax, vmax);
 
 	return vmax;
 }
+#endif
 
 // static __u32 vc_sen_read_hmax(struct vc_ctrl *ctrl)
 // {
 // 	struct i2c_client *client = ctrl->client_sen;
 // 	struct device *dev = &client->dev;
-// 	__u32 hmax = i2c_read_reg4(dev, client, &ctrl->csr.sen.hmax);
+// 	__u32 hmax = i2c_read_reg4(dev, client, &ctrl->csr.sen.hmax, __FUNCTION__);
 
 // 	vc_dbg(dev, "%s(): Read sensor HMAX: 0x%08x (%u)\n", __FUNCTION__, hmax, hmax);
 
