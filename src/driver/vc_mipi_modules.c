@@ -58,7 +58,7 @@ static void vc_init_ctrl_imx183_base(struct vc_ctrl *ctrl, struct vc_desc* desc)
 	ctrl->expo_shs_min		= 5;
 	ctrl->expo_vmax			= 3728;
 
-	ctrl->flags			 = FLAG_EXPOSURE_WRITE_VMAX;
+	ctrl->flags			 = FLAG_EXPOSURE_SONY;
 	ctrl->flags			|= FLAG_IO_FLASH_ENABLED;
 	ctrl->flags			|= FLAG_TRIGGER_EXTERNAL | FLAG_TRIGGER_SELF |
 				           FLAG_TRIGGER_SINGLE | FLAG_TRIGGER_SYNC;
@@ -76,7 +76,7 @@ static void vc_init_ctrl_imx252_base(struct vc_ctrl *ctrl, struct vc_desc* desc)
 	ctrl->expo_shs_min		= 10;
 	ctrl->expo_vmax			= 2094;
 
-	ctrl->flags			 = FLAG_EXPOSURE_WRITE_VMAX;
+	ctrl->flags			 = FLAG_EXPOSURE_SONY;
 	ctrl->flags			|= FLAG_IO_FLASH_ENABLED;
 	ctrl->flags			|= FLAG_TRIGGER_EXTERNAL | FLAG_TRIGGER_PULSEWIDTH |
 					   FLAG_TRIGGER_SELF | FLAG_TRIGGER_SINGLE;
@@ -106,6 +106,7 @@ static void vc_init_ctrl_imx290_base(struct vc_ctrl *ctrl, struct vc_desc* desc)
 	ctrl->expo_shs_min              = 1;
 	ctrl->expo_vmax 		= 1125;
 
+	ctrl->flags			= FLAG_EXPOSURE_SONY;
 }
 
 static void vc_init_ctrl_imx296_base(struct vc_ctrl *ctrl, struct vc_desc* desc)
@@ -125,7 +126,7 @@ static void vc_init_ctrl_imx296_base(struct vc_ctrl *ctrl, struct vc_desc* desc)
 	ctrl->expo_vmax 		= 1118;
 	ctrl->retrigger_def		= 0x000d7940;
 
-	ctrl->flags			 = FLAG_EXPOSURE_WRITE_VMAX;
+	ctrl->flags			 = FLAG_EXPOSURE_SONY;
 	ctrl->flags			|= FLAG_IO_FLASH_ENABLED;
 	ctrl->flags			|= FLAG_TRIGGER_EXTERNAL | FLAG_TRIGGER_PULSEWIDTH | FLAG_TRIGGER_SELF;
 }
@@ -423,7 +424,7 @@ static void vc_init_ctrl_imx335(struct vc_ctrl *ctrl, struct vc_desc* desc)
         ctrl->expo_shs_min              = 9;
         ctrl->expo_vmax 		= 4500;
 
-        ctrl->flags		       |= FLAG_EXPOSURE_WRITE_VMAX;
+        ctrl->flags		       |= FLAG_EXPOSURE_SONY;
         ctrl->flags		       |= FLAG_DOUBLE_HEIGHT;
         ctrl->flags		       |= FLAG_IO_FLASH_ENABLED;
 }
@@ -502,7 +503,7 @@ static void vc_init_ctrl_imx415(struct vc_ctrl *ctrl, struct vc_desc* desc)
 	ctrl->expo_shs_min              = 8;
 	ctrl->expo_vmax 		= 2250;
 
-	ctrl->flags                     = FLAG_EXPOSURE_WRITE_VMAX;
+	ctrl->flags                     = FLAG_EXPOSURE_SONY;
 	ctrl->flags		       |= FLAG_DOUBLE_HEIGHT;
 	ctrl->flags		       |= FLAG_FORMAT_GBRG;
 	ctrl->flags		       |= FLAG_IO_FLASH_ENABLED;
@@ -550,50 +551,10 @@ static void vc_init_ctrl_imx568(struct vc_ctrl *ctrl, struct vc_desc* desc)
 }
 
 // ------------------------------------------------------------------------------------------------
-//  Settings for OV9281
-//
-//  TODO: 
-//  - Set frame length to increase exposure time. 
-//    Maximum exposure time is frame length -25 row periods, where frame length is set by registers
-//    {0x380E, 0x380F}
-//  - Trigger mode could not be activated. When 0x0108 = 0x01 exposure time has no effect.
-
-static void vc_init_ctrl_ov9281(struct vc_ctrl *ctrl, struct vc_desc* desc)
-{
-	struct device *dev = &ctrl->client_mod->dev;
-
-	vc_notice(dev, "%s(): Initialising module control for OV9281\n", __FUNCTION__);
-	
-	// exposure max => L4T 32.5.0+: 8253, L4T 32.6.1+: 8244 (if > black line in image)
-	ctrl->exposure			= (vc_control) { .min =  29, .max =      8244, .def =   1000 };
-	ctrl->gain			= (vc_control) { .min =   1, .max =       255, .def =      0 };
-
-	ctrl->csr.sen.flash_duration	= (vc_csr4) { .l = 0x3928, .m = 0x3927, .h = 0x3926, .u = 0x3925 };
-	ctrl->csr.sen.flash_offset	= (vc_csr4) { .l = 0x3924, .m = 0x3923, .h = 0x3922, .u = 0x0000 };
-	// NOTE: Modules rom table contains swapped address assigment.
-	ctrl->csr.sen.gain 		= (vc_csr2) { .l = 0x3509, .m = 0x0000 };
-	
-	ctrl->frame.width		= 1280;
-	ctrl->frame.height		= 800;
-
-	ctrl->sen_clk			= 25000000;
-	ctrl->expo_factor               = 1758241; 	// (1000 << 4)/9100
-	ctrl->expo_toffset 		= 0;
-	ctrl->flash_factor		= ctrl->expo_factor >> 4;
-	ctrl->flash_toffset		= 4;
-
-	ctrl->flags		 	= FLAG_EXPOSURE_SIMPLE;
-	ctrl->flags		       |= FLAG_IO_FLASH_DURATION;
-	ctrl->flags		       |= FLAG_IO_FLASH_ENABLED;
-	ctrl->flags		       |= FLAG_TRIGGER_EXTERNAL;
-}
-
-// ------------------------------------------------------------------------------------------------
-//  Settings for OV7251
+//  Settings for OV7251 (Rev.01)
 
 //  TODO: 
-//  - Check calculation of exposure time, frame length
-//  - Check flash out functionality
+//  - No flash out
 
 static void vc_init_ctrl_ov7251(struct vc_ctrl *ctrl, struct vc_desc* desc)
 {
@@ -601,28 +562,67 @@ static void vc_init_ctrl_ov7251(struct vc_ctrl *ctrl, struct vc_desc* desc)
 
 	vc_notice(dev, "%s(): Initialising module control for OV7251\n", __FUNCTION__);
 
-	ctrl->exposure			= (vc_control) { .min =   1, .max = 100000000, .def =   1000 };
-	ctrl->gain			= (vc_control) { .min =   1, .max =       255, .def =      0 };
+	ctrl->exposure			= (vc_control) { .min =   1, .max =   1000000, .def =  10000 };
+	ctrl->gain			= (vc_control) { .min =   0, .max =      1023, .def =      0 };
 
-	// ctrl->csr.sen.flash_duration	= (vc_csr4) { .l = 0x3928, .m = 0x3927, .h = 0x3926, .u = 0x3925 };
-	// ctrl->csr.sen.flash_offset	= (vc_csr4) { .l = 0x3924, .m = 0x3923, .h = 0x3922, .u = 0x0000 };
-	
-        ctrl->csr.sen.vmax              = (vc_csr4) { .l = 0x380e, .m = 0x380F, .h = 0x0000, .u = 0x0000 };
+	ctrl->csr.sen.flash_duration	= (vc_csr4) { .l = 0x3b8f, .m = 0x3b8e, .h = 0x3b8d, .u = 0x3b8c };
+	ctrl->csr.sen.flash_offset	= (vc_csr4) { .l = 0x3b8b, .m = 0x3b8a, .h = 0x3b89, .u = 0x3b88 };
+        ctrl->csr.sen.vmax              = (vc_csr4) { .l = 0x380f, .m = 0x380e, .h = 0x0000, .u = 0x0000 };
         // NOTE: Modules rom table contains swapped address assigment.
-	ctrl->csr.sen.gain 		= (vc_csr2) { .l = 0x350b, .m = 0x0000 };
+	ctrl->csr.sen.gain 		= (vc_csr2) { .l = 0x350b, .m = 0x350a };
 	
 	ctrl->frame.width		= 640;
 	ctrl->frame.height		= 480;
 
-	ctrl->sen_clk			= 48000000;
-	ctrl->expo_factor               = 1758241; 	// (1000 << 4)/9100
-	ctrl->expo_toffset 		= 0;
-	ctrl->flash_factor		= ctrl->expo_factor >> 4;
+        ctrl->expo_timing[0]            = (vc_timing) { 1, FORMAT_RAW08, .clk =  772 };
+        ctrl->expo_timing[1]            = (vc_timing) { 1, FORMAT_RAW10, .clk =  772 };
+
+        ctrl->expo_shs_min              = 0;
+        ctrl->expo_vmax                 = 598;
+	ctrl->flash_factor		= 1758241 >> 4; // (1000 << 4)/9100 >> 4
 	ctrl->flash_toffset		= 4;
 
-	ctrl->flags		 	= FLAG_EXPOSURE_SIMPLE;
-	ctrl->flags		       |= FLAG_IO_FLASH_DURATION;
-	ctrl->flags		       |= FLAG_IO_FLASH_ENABLED;
+	ctrl->flags		 	= FLAG_EXPOSURE_OMNIVISION;
+	ctrl->flags		       |= FLAG_IO_FLASH_ENABLED | FLAG_IO_FLASH_DURATION;
+}
+
+// ------------------------------------------------------------------------------------------------
+//  Settings for OV9281 (Rev.02)
+//
+//  TODO: 
+//  - Trigger mode could not be activated. 
+//    - Additionally: When 0x0108 = 0x01 => exposure time has no effect.
+
+static void vc_init_ctrl_ov9281(struct vc_ctrl *ctrl, struct vc_desc* desc)
+{
+	struct device *dev = &ctrl->client_mod->dev;
+
+	vc_notice(dev, "%s(): Initialising module control for OV9281\n", __FUNCTION__);
+	
+	ctrl->exposure			= (vc_control) { .min = 146, .max =    595000, .def =  10000 };
+	ctrl->gain			= (vc_control) { .min =   1, .max =       255, .def =      0 };
+
+	ctrl->csr.sen.flash_duration	= (vc_csr4) { .l = 0x3928, .m = 0x3927, .h = 0x3926, .u = 0x3925 };
+	ctrl->csr.sen.flash_offset	= (vc_csr4) { .l = 0x3924, .m = 0x3923, .h = 0x3922, .u = 0x0000 };
+        ctrl->csr.sen.vmax              = (vc_csr4) { .l = 0x380f, .m = 0x380e, .h = 0x0000, .u = 0x0000 };
+	// NOTE: Modules rom table contains swapped address assigment.
+	ctrl->csr.sen.gain 		= (vc_csr2) { .l = 0x3509, .m = 0x0000 };
+	
+	ctrl->frame.width		= 1280;
+	ctrl->frame.height		= 800;
+
+        ctrl->expo_timing[0]            = (vc_timing) { 2, FORMAT_RAW08, .clk =  227 };
+        ctrl->expo_timing[1]            = (vc_timing) { 2, FORMAT_RAW10, .clk =  227 };
+
+        ctrl->expo_shs_min              = 16;
+        ctrl->expo_vmax                 = 910;
+	ctrl->sen_clk			= 25000000;
+	ctrl->flash_factor		= 1758241 >> 4; // (1000 << 4)/9100 >> 4
+	ctrl->flash_toffset		= 4;
+
+	ctrl->flags		 	= FLAG_EXPOSURE_OMNIVISION;
+	ctrl->flags		       |= FLAG_IO_FLASH_ENABLED | FLAG_IO_FLASH_DURATION;
+	ctrl->flags		       |= FLAG_TRIGGER_EXTERNAL;
 }
 
 
@@ -650,8 +650,8 @@ int vc_mod_ctrl_init(struct vc_ctrl* ctrl, struct vc_desc* desc)
 	case MOD_ID_IMX412: vc_init_ctrl_imx412(ctrl, desc); break;
 	case MOD_ID_IMX415: vc_init_ctrl_imx415(ctrl, desc); break;
 	case MOD_ID_IMX568: vc_init_ctrl_imx568(ctrl, desc); break;
-	case MOD_ID_OV9281: vc_init_ctrl_ov9281(ctrl, desc); break;
-        case MOD_ID_OV7251: vc_init_ctrl_ov7251(ctrl, desc); break;
+	case MOD_ID_OV7251: vc_init_ctrl_ov7251(ctrl, desc); break;
+        case MOD_ID_OV9281: vc_init_ctrl_ov9281(ctrl, desc); break;
 	default:
 		vc_err(dev, "%s(): Detected module not supported!\n", __FUNCTION__);
 		return 1;

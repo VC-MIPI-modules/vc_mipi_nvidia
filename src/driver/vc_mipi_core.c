@@ -1242,9 +1242,8 @@ static void vc_calculate_exposure_simple(struct vc_cam *cam, __u32 exposure)
 	state->shs = (((__u64)exposure)*factor)/1000000 - toffset;
 }
 
-static void vc_core_get_timing(struct vc_cam *cam, __u32 *period_1H_ns)
+static void vc_core_calculate_timing(struct vc_cam *cam, __u32 *period_1H_ns)
 {
-	struct vc_desc *desc = &cam->desc;
 	struct vc_ctrl *ctrl = &cam->ctrl;
 	struct vc_state *state = &cam->state;
 	__u8 num_lanes = state->num_lanes;
@@ -1254,7 +1253,7 @@ static void vc_core_get_timing(struct vc_cam *cam, __u32 *period_1H_ns)
 	for (index = 0; index <= 7; index++) {
 		struct vc_timing *timing = &ctrl->expo_timing[index];
 		if (timing->num_lanes == num_lanes && timing->format == format) {
-			*period_1H_ns = ((__u64)timing->clk * 1000000000) / desc->clk_pixel;
+			*period_1H_ns = ((__u64)timing->clk * 1000000000) / ctrl->sen_clk;
 			return;
 		}
 	}
@@ -1262,34 +1261,15 @@ static void vc_core_get_timing(struct vc_cam *cam, __u32 *period_1H_ns)
 	*period_1H_ns = ctrl->expo_period_1H;
 }
 
-static void vc_calculate_exposure_vmax(struct vc_cam *cam, __u32 exposure)
+static void vc_core_calculate_vmax(struct vc_cam *cam, __u32 period_1H_ns)
 {
-	struct vc_ctrl *ctrl = &cam->ctrl;
-	struct vc_state *state = &cam->state;
-	struct device *dev = &ctrl->client_sen->dev;
-	__u32 period_1H_ns = 0;
-	__u32 shs_min = ctrl->expo_shs_min;
-	__u64 frametime_ns;
+        struct vc_ctrl *ctrl = &cam->ctrl;
+        struct vc_state *state = &cam->state;
+        struct device *dev = &ctrl->client_sen->dev;
+        __u64 frametime_ns;
 	__u64 frametime_1H;
-	__u64 exposure_ns;
-	__u64 exposure_1H;
-	// __u64 hmax;
 
-	vc_core_get_timing(cam, &period_1H_ns);
-	
-	vc_dbg(dev, "%s(): flags: 0x%04x, period_1H_ns: %u, shs_min: %u, vmax: %u\n", __FUNCTION__, 
-		ctrl->flags, period_1H_ns, shs_min, ctrl->expo_vmax);
-
-	if (ctrl->flags & FLAG_EXPOSURE_READ_VMAX) {	
-		state->vmax = vc_sen_read_vmax(&cam->ctrl);
-		if (state->vmax == 0) {
-			vc_err(dev, "%s(): VMAX should not be zero! Using default value.\n", __FUNCTION__);
-			state->vmax = ctrl->expo_vmax;
-		}
-	} else {
-		state->vmax = ctrl->expo_vmax;	
-	}
-
+        state->vmax = ctrl->expo_vmax;
 	if (state->framerate > 0) {
 		frametime_ns = 1000000000 / state->framerate;
 		frametime_1H = frametime_ns / period_1H_ns;
@@ -1299,18 +1279,17 @@ static void vc_calculate_exposure_vmax(struct vc_cam *cam, __u32 exposure)
 
 		vc_dbg(dev, "%s(): framerate: %u, frametime: %llu ns, %llu 1H", __FUNCTION__, 
 			state->framerate, frametime_ns, frametime_1H);
-	}	
+	}
+}
 
-	// hmax = vc_sen_read_hmax(&cam->ctrl);
-	// h1period = (hmax*1000000)/ctrl->sen_clk;
+static void vc_calculate_exposure_sony(struct vc_cam *cam, __u64 exposure_1H)
+{
+	struct vc_ctrl *ctrl = &cam->ctrl;
+	struct vc_state *state = &cam->state;
+	__u32 shs_min = ctrl->expo_shs_min;
 
 	// Exposure time [s] = (1 H period) × (Number of lines per frame - SHS) 
 	//                     + Exposure time error (t OFFSET ) [µs]
-
-	// Convert exposure time from µs to ns.
-	exposure_ns = (__u64)(exposure)*1000;
-	// Calculate number of lines equivalent to the exposure time without shs_min.
-	exposure_1H = exposure_ns / period_1H_ns;
 
 	// Is exposure time less than frame time?
 	if (exposure_1H < state->vmax - shs_min) {
@@ -1334,6 +1313,64 @@ static void vc_calculate_exposure_vmax(struct vc_cam *cam, __u32 exposure)
 	if (state->trigger_mode == REG_TRIGGER_SYNC) {
 		state->vmax--;
 	}
+}
+
+static void vc_calculate_exposure_omnivision(struct vc_cam *cam, __u64 exposure_1H)
+{
+	struct vc_ctrl *ctrl = &cam->ctrl;
+	struct vc_state *state = &cam->state;
+        __u32 shs_min = ctrl->expo_shs_min;
+
+	// Is exposure time greater than shs_min and less than frame time?
+	if (shs_min <= exposure_1H && exposure_1H < state->vmax) {
+                // Yes then calculate exposure delay (shs) in between frame time.
+		// |                 VMAX (frame time)             ---> |
+		// +------------------------+---------------------------+
+		// | exposure time ---> SHS |                           |
+		state->shs = exposure_1H;
+	
+	} else if (exposure_1H < shs_min) {
+                // Yes, then set shs equal to shs_min
+		// |                 VMAX (frame time)             ---> |
+		// +----------------------------+-----------------------+
+                // | SHS_MIN |                                          |
+                state->shs = shs_min;
+
+        } else {
+                // |                 VMAX (frame time)                   ---> |
+		// +----------------------------------------------------------+
+		// |                                       exposure time ---> | 
+		state->vmax = exposure_1H;
+		state->shs = exposure_1H;
+	}
+}
+
+static void vc_calculate_exposure(struct vc_cam *cam, __u32 exposure)
+{
+	struct vc_ctrl *ctrl = &cam->ctrl;
+	struct device *dev = &ctrl->client_sen->dev;
+	__u32 period_1H_ns = 0;
+	__u32 shs_min = ctrl->expo_shs_min;
+        __u64 exposure_ns;
+	__u64 exposure_1H;
+
+	vc_core_calculate_timing(cam, &period_1H_ns);
+        vc_core_calculate_vmax(cam, period_1H_ns);
+
+        // Convert exposure time from µs to ns.
+	exposure_ns = (__u64)(exposure)*1000;
+	// Calculate number of lines equivalent to the exposure time without shs_min.
+	exposure_1H = exposure_ns / period_1H_ns;
+	
+	vc_dbg(dev, "%s(): flags: 0x%04x, period_1H_ns: %u, shs_min: %u, vmax: %u\n", __FUNCTION__, 
+		ctrl->flags, period_1H_ns, shs_min, ctrl->expo_vmax);
+
+        if (ctrl->flags & FLAG_EXPOSURE_SONY) {
+                vc_calculate_exposure_sony(cam, exposure_1H);
+
+        } else if (ctrl->flags & FLAG_EXPOSURE_OMNIVISION) {
+                vc_calculate_exposure_omnivision(cam, exposure_1H);
+        } 
 }
 
 int vc_sen_set_exposure(struct vc_cam *cam, int exposure)
@@ -1385,16 +1422,15 @@ int vc_sen_set_exposure(struct vc_cam *cam, int exposure)
 	case REG_TRIGGER_SYNC:
 	case REG_TRIGGER_STREAM_EDGE:
 	case REG_TRIGGER_STREAM_LEVEL:
-		if (ctrl->flags & FLAG_EXPOSURE_SIMPLE) {
-			vc_calculate_exposure_simple(cam, exposure);
+                if (ctrl->flags & FLAG_EXPOSURE_SIMPLE) {
+                        vc_calculate_exposure_simple(cam, exposure);
+                        ret |= vc_sen_write_shs(ctrl, state->shs);
 
-		} else if (ctrl->flags & (FLAG_EXPOSURE_READ_VMAX | FLAG_EXPOSURE_WRITE_VMAX)) {
-			vc_calculate_exposure_vmax(cam, exposure);
-		} 
-		ret = vc_sen_write_shs(ctrl, state->shs);
-		if (ctrl->flags & FLAG_EXPOSURE_WRITE_VMAX) {
-			ret |= vc_sen_write_vmax(ctrl, state->vmax);
-		}
+                } else {
+                        vc_calculate_exposure(cam, exposure);
+                        ret |= vc_sen_write_shs(ctrl, state->shs);
+                        ret |= vc_sen_write_vmax(ctrl, state->vmax);
+                }
 	}
 
 	if (ctrl->flags & FLAG_IO_FLASH_DURATION) {

@@ -14,9 +14,9 @@
 #define vc_err(dev, fmt, ...) dev_err(dev, fmt, ##__VA_ARGS__)
 
 #define FLAG_RESET_ALWAYS		0x0001
-#define FLAG_EXPOSURE_SIMPLE		0x0002
-#define FLAG_EXPOSURE_WRITE_VMAX	0x0004
-#define FLAG_EXPOSURE_READ_VMAX		0x0008
+#define FLAG_EXPOSURE_SIMPLE      	0x0002
+#define FLAG_EXPOSURE_SONY      	0x0004
+#define FLAG_EXPOSURE_OMNIVISION	0x0008
 
 #define FLAG_FORMAT_GBRG		0x0010
 #define FLAG_DOUBLE_HEIGHT        	0x0020
