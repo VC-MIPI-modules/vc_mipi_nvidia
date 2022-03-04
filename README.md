@@ -64,9 +64,9 @@
    > If you have changed your hardware setup simply execute this script again.
 
 # Changing camera settings in the device tree
-If you want to change some settings of an camera in the device tree, please follow these steps.
+If you want to change some settings of a camera in the device tree, please follow these steps.
 
-1. Edit the device tree file for your hardware setup. Currently there are four device tree files for four different combinations of SoMs and carrier boards.
+1. Edit the device tree file for your hardware setup. Currently there are six device tree files for six different combinations of SoMs and carrier boards.
    | system on module | carrier board | device tree file |
    | ---------------- | ------------- | ---------------- |
    | NVIDIA Jetson Nano | NVIDIA Jetson Nano Developer Kit | src/devicetree/NV_DevKit_Nano/tegra210-camera-vc-mipi-cam.dtsi |
@@ -76,7 +76,7 @@ If you want to change some settings of an camera in the device tree, please foll
    | NVIDIA Jetson AGX Xavier | Auvidea J20 on DevKit | src/devicetree/Auvidea_J20_AGXXavier/tegra194-camera-vc-mipi-cam.dtsi |
    | NVIDIA Jetson TX2 | Auvidea J20 on DevKit | src/devicetree/Auvidea_J20_TX2/tegra186-camera-vc-mipi-cam.dtsi |
    
-   To edit the correct device tree file you can simply use the setup script. It will open the device tree file in the nano editor.
+   To edit the correct device tree file you can simply use the setup script. It will open the correct device tree file in the nano editor.
    ```
      $ ./setup.sh --camera
    ```
