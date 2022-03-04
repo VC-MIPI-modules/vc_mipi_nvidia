@@ -110,7 +110,7 @@ static void vc_init_ctrl_imx290_base(struct vc_ctrl *ctrl, struct vc_desc* desc)
 }
 
 // ------------------------------------------------------------------------------------------------
-//  Settings for IMX178/IMX178C
+//  Settings for IMX178/IMX178C  (Rev.01)
 
 static void vc_init_ctrl_imx178(struct vc_ctrl *ctrl, struct vc_desc* desc)
 {
@@ -142,7 +142,7 @@ static void vc_init_ctrl_imx178(struct vc_ctrl *ctrl, struct vc_desc* desc)
 }
 
 // ------------------------------------------------------------------------------------------------
-//  Settings for IMX183/IMX183C
+//  Settings for IMX183/IMX183C (Rev.12)
 
 static void vc_init_ctrl_imx183(struct vc_ctrl *ctrl, struct vc_desc* desc)
 {
@@ -171,7 +171,7 @@ static void vc_init_ctrl_imx183(struct vc_ctrl *ctrl, struct vc_desc* desc)
 }
 
 // ------------------------------------------------------------------------------------------------
-//  Settings for IMX226/IMX226C
+//  Settings for IMX226/IMX226C (Rev.13)
 
 static void vc_init_ctrl_imx226(struct vc_ctrl *ctrl, struct vc_desc* desc)
 {
@@ -203,7 +203,7 @@ static void vc_init_ctrl_imx226(struct vc_ctrl *ctrl, struct vc_desc* desc)
 }
 
 // ------------------------------------------------------------------------------------------------
-//  Settings for IMX250/IMX250C
+//  Settings for IMX250/IMX250C (Rev.07)
 
 static void vc_init_ctrl_imx250(struct vc_ctrl *ctrl, struct vc_desc* desc)
 {
@@ -227,7 +227,7 @@ static void vc_init_ctrl_imx250(struct vc_ctrl *ctrl, struct vc_desc* desc)
 }
 
 // ------------------------------------------------------------------------------------------------
-//  Settings for IMX252/IMX252C
+//  Settings for IMX252/IMX252C (Rev.10)
 
 static void vc_init_ctrl_imx252(struct vc_ctrl *ctrl, struct vc_desc* desc)
 {
@@ -251,7 +251,7 @@ static void vc_init_ctrl_imx252(struct vc_ctrl *ctrl, struct vc_desc* desc)
 }
 
 // ------------------------------------------------------------------------------------------------
-//  Settings for IMX264/IMX264C
+//  Settings for IMX264/IMX264C (Rev.03)
 
 static void vc_init_ctrl_imx264(struct vc_ctrl *ctrl, struct vc_desc* desc)
 {
@@ -272,7 +272,7 @@ static void vc_init_ctrl_imx264(struct vc_ctrl *ctrl, struct vc_desc* desc)
 }
 
 // ------------------------------------------------------------------------------------------------
-//  Settings for IMX265/IMX265C
+//  Settings for IMX265/IMX265C (Rev.01)
 
 static void vc_init_ctrl_imx265(struct vc_ctrl *ctrl, struct vc_desc* desc)
 {
@@ -293,7 +293,7 @@ static void vc_init_ctrl_imx265(struct vc_ctrl *ctrl, struct vc_desc* desc)
 }
 
 // ------------------------------------------------------------------------------------------------
-//  Settings for IMX273/IMX273C
+//  Settings for IMX273/IMX273C (Rev.13)
 
 static void vc_init_ctrl_imx273(struct vc_ctrl *ctrl, struct vc_desc* desc)
 {
@@ -319,7 +319,7 @@ static void vc_init_ctrl_imx273(struct vc_ctrl *ctrl, struct vc_desc* desc)
 }
 
 // ------------------------------------------------------------------------------------------------
-//  Settings for IMX290
+//  Settings for IMX290 (Rev.02)
 
 static void vc_init_ctrl_imx290(struct vc_ctrl *ctrl, struct vc_desc* desc)
 {
@@ -331,7 +331,7 @@ static void vc_init_ctrl_imx290(struct vc_ctrl *ctrl, struct vc_desc* desc)
 }
 
 // ------------------------------------------------------------------------------------------------
-//  Settings for IMX296/IMX296C
+//  Settings for IMX296/IMX296C (Rev.42)
 
 static void vc_init_ctrl_imx296(struct vc_ctrl *ctrl, struct vc_desc* desc)
 {
@@ -363,7 +363,7 @@ static void vc_init_ctrl_imx296(struct vc_ctrl *ctrl, struct vc_desc* desc)
 }
 
 // ------------------------------------------------------------------------------------------------
-//  Settings for IMX327C
+//  Settings for IMX327C (Rev.02)
 
 static void vc_init_ctrl_imx327(struct vc_ctrl *ctrl, struct vc_desc* desc)
 {
@@ -375,7 +375,7 @@ static void vc_init_ctrl_imx327(struct vc_ctrl *ctrl, struct vc_desc* desc)
 }
 
 // ------------------------------------------------------------------------------------------------
-//  Settings for IMX335 (Rev 0)
+//  Settings for IMX335 (Rev.00)
 
 static void vc_init_ctrl_imx335(struct vc_ctrl *ctrl, struct vc_desc* desc)
 {
@@ -410,7 +410,7 @@ static void vc_init_ctrl_imx335(struct vc_ctrl *ctrl, struct vc_desc* desc)
 }
 
 // ------------------------------------------------------------------------------------------------
-//  Settings for IMX392/IMX392C
+//  Settings for IMX392/IMX392C (Rev.06)
 
 static void vc_init_ctrl_imx392(struct vc_ctrl *ctrl, struct vc_desc* desc)
 {
@@ -434,7 +434,7 @@ static void vc_init_ctrl_imx392(struct vc_ctrl *ctrl, struct vc_desc* desc)
 }
 
 // ------------------------------------------------------------------------------------------------
-//  Settings for IMX412C
+//  Settings for IMX412C (Rev.02)
 
 static void vc_init_ctrl_imx412(struct vc_ctrl *ctrl, struct vc_desc* desc)
 {
@@ -459,7 +459,7 @@ static void vc_init_ctrl_imx412(struct vc_ctrl *ctrl, struct vc_desc* desc)
 }
 
 // ------------------------------------------------------------------------------------------------
-//  Settings for IMX415C
+//  Settings for IMX415C (Rev.01)
 
 static void vc_init_ctrl_imx415(struct vc_ctrl *ctrl, struct vc_desc* desc)
 {
@@ -490,7 +490,7 @@ static void vc_init_ctrl_imx415(struct vc_ctrl *ctrl, struct vc_desc* desc)
 }
 
 // ------------------------------------------------------------------------------------------------
-//  Settings for IMX568
+//  Settings for IMX568 (Rev.01)
 
 static void vc_init_ctrl_imx568(struct vc_ctrl *ctrl, struct vc_desc* desc)
 {
