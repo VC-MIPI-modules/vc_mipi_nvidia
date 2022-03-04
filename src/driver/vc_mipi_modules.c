@@ -106,7 +106,28 @@ static void vc_init_ctrl_imx290_base(struct vc_ctrl *ctrl, struct vc_desc* desc)
 	ctrl->expo_shs_min              = 1;
 	ctrl->expo_vmax 		= 1125;
 
-	ctrl->flags			= FLAG_EXPOSURE_WRITE_VMAX;
+}
+
+static void vc_init_ctrl_imx296_base(struct vc_ctrl *ctrl, struct vc_desc* desc)
+{
+	ctrl->gain			= (vc_control) { .min =   0, .max =       512, .def =      0 };
+	ctrl->blacklevel 		= (vc_control) { .min =   0, .max =       255, .def =     60 };
+	
+	ctrl->csr.sen.vmax              = (vc_csr4) { .l = 0x3010, .m = 0x3011, .h = 0x3012, .u = 0x0000 };
+	ctrl->csr.sen.mode              = (vc_csr2) { .l = 0x3000, .m = 0x300A };
+	ctrl->csr.sen.mode_standby	= 0x01;
+	ctrl->csr.sen.mode_operating	= 0x00;
+	ctrl->csr.sen.blacklevel        = (vc_csr2) { .l = 0x3254, .m = 0x3255 };
+
+	ctrl->sen_clk			= 54000000;	// Hz
+	ctrl->expo_period_1H 		= 14815;	// ns
+	ctrl->expo_shs_min              = 5;
+	ctrl->expo_vmax 		= 1118;
+	ctrl->retrigger_def		= 0x000d7940;
+
+	ctrl->flags			 = FLAG_EXPOSURE_WRITE_VMAX;
+	ctrl->flags			|= FLAG_IO_FLASH_ENABLED;
+	ctrl->flags			|= FLAG_TRIGGER_EXTERNAL | FLAG_TRIGGER_PULSEWIDTH | FLAG_TRIGGER_SELF;
 }
 
 // ------------------------------------------------------------------------------------------------
@@ -339,27 +360,25 @@ static void vc_init_ctrl_imx296(struct vc_ctrl *ctrl, struct vc_desc* desc)
 
 	vc_notice(dev, "%s(): Initialising module control for IMX296\n", __FUNCTION__);
 
-	ctrl->gain			= (vc_control) { .min =   0, .max =       512, .def =      0 };
-	ctrl->blacklevel 		= (vc_control) { .min =   0, .max =       255, .def =     60 };
-	
-	ctrl->csr.sen.vmax              = (vc_csr4) { .l = 0x3010, .m = 0x3011, .h = 0x3012, .u = 0x0000 };
-	ctrl->csr.sen.mode              = (vc_csr2) { .l = 0x3000, .m = 0x300A };
-	ctrl->csr.sen.mode_standby	= 0x01;
-	ctrl->csr.sen.mode_operating	= 0x00;
-	ctrl->csr.sen.blacklevel        = (vc_csr2) { .l = 0x3254, .m = 0x3255 };
+        vc_init_ctrl_imx296_base(ctrl, desc);
 
 	ctrl->frame.width		= 1440;
 	ctrl->frame.height		= 1080;
+}
 
-	ctrl->sen_clk			= 54000000;	// Hz
-	ctrl->expo_period_1H 		= 14815;	// ns
-	ctrl->expo_shs_min              = 5;
-	ctrl->expo_vmax 		= 1118;
-	ctrl->retrigger_def		= 0x000d7940;
+// ------------------------------------------------------------------------------------------------
+//  Settings for IMX297 (Rev.??)
 
-	ctrl->flags			 = FLAG_EXPOSURE_WRITE_VMAX;
-	ctrl->flags			|= FLAG_IO_FLASH_ENABLED;
-	ctrl->flags			|= FLAG_TRIGGER_EXTERNAL | FLAG_TRIGGER_PULSEWIDTH | FLAG_TRIGGER_SELF;
+static void vc_init_ctrl_imx297(struct vc_ctrl *ctrl, struct vc_desc* desc)
+{
+	struct device *dev = &ctrl->client_mod->dev;
+
+	vc_notice(dev, "%s(): Initialising module control for IMX297\n", __FUNCTION__);
+
+        vc_init_ctrl_imx296_base(ctrl, desc);
+
+	ctrl->frame.width		= 720;
+	ctrl->frame.height		= 540;
 }
 
 // ------------------------------------------------------------------------------------------------
@@ -624,6 +643,7 @@ int vc_mod_ctrl_init(struct vc_ctrl* ctrl, struct vc_desc* desc)
 	case MOD_ID_IMX273: vc_init_ctrl_imx273(ctrl, desc); break;
 	case MOD_ID_IMX290: vc_init_ctrl_imx290(ctrl, desc); break;
 	case MOD_ID_IMX296: vc_init_ctrl_imx296(ctrl, desc); break;
+        case MOD_ID_IMX297: vc_init_ctrl_imx297(ctrl, desc); break;
 	case MOD_ID_IMX327: vc_init_ctrl_imx327(ctrl, desc); break;
         case MOD_ID_IMX335: vc_init_ctrl_imx335(ctrl, desc); break;
 	case MOD_ID_IMX392: vc_init_ctrl_imx392(ctrl, desc); break;
