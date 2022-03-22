@@ -235,7 +235,7 @@ static void vc_init_ctrl_imx250(struct vc_ctrl *ctrl, struct vc_desc* desc)
 
 	vc_init_ctrl_imx252_base(ctrl, desc);
 
-	ctrl->frame.width		= 2448;
+	ctrl->frame.width		= 2432;
 	ctrl->frame.height		= 2048;
 
 	ctrl->expo_timing[0] 		= (vc_timing) { 2, FORMAT_RAW08, .clk =  540 };
