@@ -6,7 +6,7 @@ case $VC_MIPI_SOM in
         Nano|NanoSD|Nano2GB|TX1)
                 BSP_FILE=jetson-210_linux_r32.5.1_aarch64.tbz2
                 ;;
-        AGXXavier|XavierNX|XavierNXSD|TX2)
+        AGXXavier|XavierNX|XavierNXSD|TX2|TX2i)
                 BSP_FILE=tegra186_linux_r32.5.1_aarch64.tbz2
                 ;;
 esac

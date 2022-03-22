@@ -8,7 +8,7 @@ case $VC_MIPI_BSP in
                 RFS_URL=$DEV_URL/t210
                 SRC_URL=$DEV_URL/sources/t210
                 ;;
-        AGXXavier|XavierNX|XavierNXSD|TX2)
+        AGXXavier|XavierNX|XavierNXSD|TX2|TX2i)
                 BSP_URL=$DEV_URL/t186
                 RFS_URL=$DEV_URL/t186
                 SRC_URL=$DEV_URL/sources/t186
