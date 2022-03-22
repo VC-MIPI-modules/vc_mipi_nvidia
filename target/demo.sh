@@ -17,7 +17,6 @@ usage() {
         echo "-s, --shutter             Set the shutter time in µs"
         echo "-t, --trigger             Set the trigger mode (Options: 0-7)"
         echo "-a, --flash               Set the flash mode (Options: 0-1)"
-        echo "-v, --value               Set value fot testing"
         echo "-w, --whitebalance        Activate white balance"
 }
 
@@ -139,10 +138,6 @@ while [ $# != 0 ] ; do
                 ;;
         -t|--trigger)
                 trigger="$1"
-                shift
-                ;;
-        -v|--value)
-                value="$1"
                 shift
                 ;;
         -w|--whitebalance)
