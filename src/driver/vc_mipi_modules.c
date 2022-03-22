@@ -18,7 +18,7 @@ static void vc_init_ctrl(struct vc_ctrl *ctrl, struct vc_desc* desc)
 	ctrl->exposure			= (vc_control) { .min =   1, .max = 100000000, .def =  10000 };
 	ctrl->gain			= (vc_control) { .min =   0, .max =       255, .def =      0 };
 	ctrl->blacklevel 		= (vc_control) { .min =   0, .max =       255, .def =      0 };
-	ctrl->framerate 		= (vc_control) { .min =   0, .max =      1000, .def =      0 };
+	ctrl->framerate 		= (vc_control) { .min =   0, .max =   1000000, .def =      0 };
 
 	ctrl->csr.sen.mode 		= (vc_csr2) { .l = desc->csr_mode, .m = 0x0000 };
 
@@ -89,7 +89,7 @@ static void vc_init_ctrl_imx290_base(struct vc_ctrl *ctrl, struct vc_desc* desc)
 
 	ctrl->exposure			= (vc_control) { .min =   1, .max =  15000000, .def =  10000 };
 	ctrl->gain			= (vc_control) { .min =   0, .max =       255, .def =      0 };
-	ctrl->framerate 		= (vc_control) { .min =   0, .max =        60, .def =      0 };
+	ctrl->framerate 		= (vc_control) { .min =   0, .max =     60000, .def =      0 };
 	
 	ctrl->csr.sen.vmax              = (vc_csr4) { .l = 0x3018, .m = 0x3019, .h = 0x301A, .u = 0x0000 };
 	ctrl->csr.sen.mode_standby	= 0x01;
@@ -410,7 +410,7 @@ static void vc_init_ctrl_imx335(struct vc_ctrl *ctrl, struct vc_desc* desc)
         ctrl->exposure			= (vc_control) { .min =   1, .max =  15000000, .def =  10000 };
         ctrl->gain			= (vc_control) { .min =   0, .max =       255, .def =      0 };
         ctrl->blacklevel 		= (vc_control) { .min =   0, .max =      1023, .def =     50 };
-        ctrl->framerate 		= (vc_control) { .min =   0, .max =        60, .def =      0 };
+        ctrl->framerate 		= (vc_control) { .min =   0, .max =     60000, .def =      0 };
 
         ctrl->csr.sen.blacklevel        = (vc_csr2) { .l = 0x3302, .m = 0x3303 };
         ctrl->csr.sen.vmax              = (vc_csr4) { .l = 0x3030, .m = 0x3031, .h = 0x3032, .u = 0x0000 };
@@ -470,7 +470,7 @@ static void vc_init_ctrl_imx412(struct vc_ctrl *ctrl, struct vc_desc* desc)
 	
 	ctrl->exposure			= (vc_control) { .min = 190, .max =    405947, .def =  10000 };
 	ctrl->gain			= (vc_control) { .min =   0, .max =      1023, .def =      0 };
-	ctrl->framerate 		= (vc_control) { .min =   0, .max =        41, .def =      0 };
+	ctrl->framerate 		= (vc_control) { .min =   0, .max =     41000, .def =      0 };
 
 	ctrl->frame.width		= 4032;
 	ctrl->frame.height		= 3040;

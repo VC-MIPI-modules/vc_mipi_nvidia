@@ -469,7 +469,7 @@ int vc_core_set_framerate(struct vc_cam *cam, __u32 framerate)
 	struct vc_state *state = &cam->state;
 	struct device *dev = vc_core_get_sen_device(cam);
 
-	vc_notice(dev, "%s(): Set framerate %u Hz\n", __FUNCTION__, framerate);
+	vc_notice(dev, "%s(): Set framerate %u mHz\n", __FUNCTION__, framerate);
 
 	if (framerate < ctrl->framerate.min) {
 		framerate = ctrl->framerate.min;
@@ -487,7 +487,7 @@ __u32 vc_core_get_framerate(struct vc_cam *cam)
 	struct vc_state *state = &cam->state;
 	struct device *dev = vc_core_get_sen_device(cam);
 
-	vc_info(dev, "%s(): Get framerate %u Hz\n", __FUNCTION__, state->framerate);
+	vc_info(dev, "%s(): Get framerate %u mHz\n", __FUNCTION__, state->framerate);
 	return state->framerate;
 }
 
@@ -1178,7 +1178,7 @@ int vc_sen_start_stream(struct vc_cam *cam)
 			__u32 frametime;
 			__u32 retrigger = 0;
 
-			frametime = 1000000 / state->framerate;
+			frametime = 1000000000 / state->framerate;
 			if (frametime >= state->exposure) {
 				retrigger = frametime - state->exposure;
 			} 
@@ -1271,13 +1271,13 @@ static void vc_core_calculate_vmax(struct vc_cam *cam, __u32 period_1H_ns)
 
         state->vmax = ctrl->expo_vmax;
 	if (state->framerate > 0) {
-		frametime_ns = 1000000000 / state->framerate;
+		frametime_ns = 1000000000000 / state->framerate;
 		frametime_1H = frametime_ns / period_1H_ns;
 		if (frametime_1H > state->vmax) {
 			state->vmax = frametime_1H;
 		}
 
-		vc_dbg(dev, "%s(): framerate: %u, frametime: %llu ns, %llu 1H", __FUNCTION__, 
+		vc_dbg(dev, "%s(): framerate: %u mHz, frametime: %llu ns, %llu 1H", __FUNCTION__, 
 			state->framerate, frametime_ns, frametime_1H);
 	}
 }
