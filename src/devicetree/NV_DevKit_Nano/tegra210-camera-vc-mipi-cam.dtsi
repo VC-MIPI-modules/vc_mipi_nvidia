@@ -464,9 +464,9 @@
             #address-cells = <1>;
             #size-cells = <0>;
 #if VC_MIPI_MANUFACTURER == 1
-            vc_mipi@60 {
-#else
             vc_mipi@1a {
+#else
+            vc_mipi@60 {
 #endif
                 status = "okay";
                 reset-gpios = <&gpio CAM1_PWDN GPIO_ACTIVE_HIGH>;
@@ -480,9 +480,9 @@
             #address-cells = <1>;
             #size-cells = <0>;
 #if VC_MIPI_MANUFACTURER == 1
-            vc_mipi@60 {
-#else
             vc_mipi@1a {
+#else
+            vc_mipi@60 {
 #endif
                 status = "okay";
                 reset-gpios = <&gpio CAM2_PWDN GPIO_ACTIVE_HIGH>;
