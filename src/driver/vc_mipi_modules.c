@@ -50,13 +50,10 @@ static void vc_init_ctrl(struct vc_ctrl *ctrl, struct vc_desc* desc)
 
 static void vc_init_ctrl_imx183_base(struct vc_ctrl *ctrl, struct vc_desc* desc)
 {
-	ctrl->gain			= (vc_control) { .min =   0, .max =      2047, .def =      0 };
+	ctrl->gain			= (vc_control) { .min =   0, .max =     0x1ff, .def =      0 };
 
 	ctrl->csr.sen.vmax              = (vc_csr4) { .l = 0x7004, .m = 0x7005, .h = 0x7006, .u = 0x0000 };
 	ctrl->csr.sen.hmax              = (vc_csr4) { .l = 0x7002, .m = 0x7003, .h = 0x0000, .u = 0x0000 };
-
-	ctrl->expo_shs_min		= 5;
-	ctrl->expo_vmax			= 3728;
 
 	ctrl->flags			 = FLAG_EXPOSURE_SONY;
 	ctrl->flags			|= FLAG_IO_FLASH_ENABLED;
@@ -66,15 +63,13 @@ static void vc_init_ctrl_imx183_base(struct vc_ctrl *ctrl, struct vc_desc* desc)
 
 static void vc_init_ctrl_imx252_base(struct vc_ctrl *ctrl, struct vc_desc* desc)
 {
+	ctrl->vmax			= (vc_control) { .min =  10, .max =   0xfffff, .def =  0x82e };
 	ctrl->gain			= (vc_control) { .min =   0, .max =       511, .def =      0 };
         ctrl->blacklevel 		= (vc_control) { .min =   0, .max =      4095, .def =     60 };
 
 	ctrl->csr.sen.vmax              = (vc_csr4) { .l = 0x0210, .m = 0x0211, .h = 0x0212, .u = 0x0000 };
 	ctrl->csr.sen.hmax              = (vc_csr4) { .l = 0x0214, .m = 0x0215, .h = 0x0000, .u = 0x0000 };
         ctrl->csr.sen.blacklevel        = (vc_csr2) { .l = 0x0454, .m = 0x0455 };
-
-	ctrl->expo_shs_min		= 10;
-	ctrl->expo_vmax			= 2094;
 
 	ctrl->flags			 = FLAG_EXPOSURE_SONY;
 	ctrl->flags			|= FLAG_IO_FLASH_ENABLED;
@@ -84,9 +79,7 @@ static void vc_init_ctrl_imx252_base(struct vc_ctrl *ctrl, struct vc_desc* desc)
 
 static void vc_init_ctrl_imx290_base(struct vc_ctrl *ctrl, struct vc_desc* desc)
 {
-	ctrl->frame.width		= 1920;
-	ctrl->frame.height		= 1080;
-
+	ctrl->vmax			= (vc_control) { .min =   1, .max =   0x3ffff, .def =   1125 };
 	ctrl->exposure			= (vc_control) { .min =   1, .max =  15000000, .def =  10000 };
 	ctrl->gain			= (vc_control) { .min =   0, .max =       255, .def =      0 };
 	ctrl->framerate 		= (vc_control) { .min =   0, .max =     60000, .def =      0 };
@@ -94,25 +87,25 @@ static void vc_init_ctrl_imx290_base(struct vc_ctrl *ctrl, struct vc_desc* desc)
 	ctrl->csr.sen.vmax              = (vc_csr4) { .l = 0x3018, .m = 0x3019, .h = 0x301A, .u = 0x0000 };
 	ctrl->csr.sen.mode_standby	= 0x01;
 	ctrl->csr.sen.mode_operating	= 0x00;
+
+	ctrl->frame.width		= 1920;
+	ctrl->frame.height		= 1080;
 	
 	ctrl->expo_timing[0] 		= (vc_timing) { 2, FORMAT_RAW10, .clk =  1100 };
 	ctrl->expo_timing[1] 		= (vc_timing) { 2, FORMAT_RAW12, .clk =  1100 };
 	ctrl->expo_timing[2] 		= (vc_timing) { 4, FORMAT_RAW10, .clk =  1100 }; 
 	ctrl->expo_timing[3] 		= (vc_timing) { 4, FORMAT_RAW12, .clk =  1100 };
 	
-	desc->clk_ext_trigger		= 74250000;
-	desc->clk_pixel			= desc->clk_ext_trigger;
-	ctrl->sen_clk                   = desc->clk_ext_trigger;
-	ctrl->expo_shs_min              = 1;
-	ctrl->expo_vmax 		= 1125;
+	ctrl->sen_clk                   = 74250000;
 
 	ctrl->flags			= FLAG_EXPOSURE_SONY;
 }
 
 static void vc_init_ctrl_imx296_base(struct vc_ctrl *ctrl, struct vc_desc* desc)
 {
-	ctrl->gain			= (vc_control) { .min =   0, .max =       512, .def =      0 };
-	ctrl->blacklevel 		= (vc_control) { .min =   0, .max =       255, .def =     60 };
+	ctrl->vmax			= (vc_control) { .min =   5, .max =   0xfffff, .def =   1118 };
+	ctrl->gain			= (vc_control) { .min =   0, .max =       480, .def =      0 };
+	ctrl->blacklevel 		= (vc_control) { .min =   0, .max =     0xfff, .def =     60 };
 	
 	ctrl->csr.sen.vmax              = (vc_csr4) { .l = 0x3010, .m = 0x3011, .h = 0x3012, .u = 0x0000 };
 	ctrl->csr.sen.mode              = (vc_csr2) { .l = 0x3000, .m = 0x300A };
@@ -120,10 +113,9 @@ static void vc_init_ctrl_imx296_base(struct vc_ctrl *ctrl, struct vc_desc* desc)
 	ctrl->csr.sen.mode_operating	= 0x00;
 	ctrl->csr.sen.blacklevel        = (vc_csr2) { .l = 0x3254, .m = 0x3255 };
 
-	ctrl->sen_clk			= 54000000;	// Hz
-	ctrl->expo_period_1H 		= 14815;	// ns
-	ctrl->expo_shs_min              = 5;
-	ctrl->expo_vmax 		= 1118;
+	ctrl->expo_timing[0] 		= (vc_timing) { 1, FORMAT_RAW10, .clk =  800 };
+
+	ctrl->sen_clk			= 54000000;
 	ctrl->retrigger_def		= 0x000d7940;
 
 	ctrl->flags			 = FLAG_EXPOSURE_SONY;
@@ -142,7 +134,8 @@ static void vc_init_ctrl_imx178(struct vc_ctrl *ctrl, struct vc_desc* desc)
 
 	vc_init_ctrl_imx183_base(ctrl, desc);
 
-        ctrl->blacklevel 		= (vc_control) { .min =   0, .max =    262143, .def =     60 };
+	ctrl->vmax			= (vc_control) { .min =   9, .max =   0x1ffff, .def =   2145 };
+        ctrl->blacklevel 		= (vc_control) { .min =   0, .max =     0x3ff, .def =     60 };
 	
 	ctrl->csr.sen.blacklevel        = (vc_csr2) { .l = 0x3015, .m = 0x3016 };
 
@@ -158,8 +151,6 @@ static void vc_init_ctrl_imx178(struct vc_ctrl *ctrl, struct vc_desc* desc)
 	ctrl->expo_timing[6] 		= (vc_timing) { 4, FORMAT_RAW12, .clk =  680 };
 	ctrl->expo_timing[7] 		= (vc_timing) { 4, FORMAT_RAW14, .clk = 1156 };
 
-	ctrl->expo_shs_min		= 9;
-	ctrl->expo_vmax 		= 2145;
 	ctrl->retrigger_def		= 0x00292d40;
 }
 
@@ -174,6 +165,7 @@ static void vc_init_ctrl_imx183(struct vc_ctrl *ctrl, struct vc_desc* desc)
 
 	vc_init_ctrl_imx183_base(ctrl, desc);
 
+	ctrl->vmax			= (vc_control) { .min =   5, .max =   0x1ffff, .def =   3728 };
 	ctrl->blacklevel 		= (vc_control) { .min =   0, .max =       255, .def =     50 };
 	
 	ctrl->csr.sen.blacklevel        = (vc_csr2) { .l = 0x0045, .m = 0x0000 };
@@ -188,7 +180,6 @@ static void vc_init_ctrl_imx183(struct vc_ctrl *ctrl, struct vc_desc* desc)
 	ctrl->expo_timing[4] 		= (vc_timing) { 4, FORMAT_RAW10, .clk =  720 };
 	ctrl->expo_timing[5] 		= (vc_timing) { 4, FORMAT_RAW12, .clk =  862 };
 
-	ctrl->expo_vmax			= 3728;
 	ctrl->retrigger_def		= 0x0036ee7d;
 }
 
@@ -203,6 +194,7 @@ static void vc_init_ctrl_imx226(struct vc_ctrl *ctrl, struct vc_desc* desc)
 
 	vc_init_ctrl_imx183_base(ctrl, desc);
 
+	ctrl->vmax			= (vc_control) { .min =   5, .max =   0x1ffff, .def =   3079 };
         ctrl->blacklevel 		= (vc_control) { .min =   0, .max =       255, .def =     50 };
 	
 	ctrl->csr.sen.blacklevel        = (vc_csr2) { .l = 0x0045, .m = 0x0000 };
@@ -218,7 +210,6 @@ static void vc_init_ctrl_imx226(struct vc_ctrl *ctrl, struct vc_desc* desc)
 	ctrl->expo_timing[5] 		= (vc_timing) { 4, FORMAT_RAW12, .clk =  644 };
 
         ctrl->sen_clk                   = 72000000;
-	ctrl->expo_vmax 		= 3079;
 	ctrl->retrigger_def		= 0x00292d40;
 
 	ctrl->flags			|= FLAG_TRIGGER_STREAM_EDGE | FLAG_TRIGGER_STREAM_LEVEL;
@@ -325,7 +316,9 @@ static void vc_init_ctrl_imx273(struct vc_ctrl *ctrl, struct vc_desc* desc)
 
 	vc_init_ctrl_imx252_base(ctrl, desc);
 
-	ctrl->frame.width		= 1408;
+	ctrl->vmax			= (vc_control) { .min =  15, .max =   0xfffff, .def =   1130 };
+
+	ctrl->frame.width		= 1440;
 	ctrl->frame.height		= 1080;
 
 	ctrl->expo_timing[0] 		= (vc_timing) { 2, FORMAT_RAW08, .clk =  336 };
@@ -335,8 +328,6 @@ static void vc_init_ctrl_imx273(struct vc_ctrl *ctrl, struct vc_desc* desc)
 	ctrl->expo_timing[4] 		= (vc_timing) { 4, FORMAT_RAW10, .clk =  290 };
 	ctrl->expo_timing[5] 		= (vc_timing) { 4, FORMAT_RAW12, .clk =  396 };
 
-	ctrl->expo_shs_min		= 15;
-	ctrl->expo_vmax			= 1130;
 	ctrl->retrigger_def		= 0x0007ec3e;
 }
 
@@ -407,30 +398,26 @@ static void vc_init_ctrl_imx335(struct vc_ctrl *ctrl, struct vc_desc* desc)
 
         vc_notice(dev, "%s(): Initialising module control for IMX335\n", __FUNCTION__);
 
-        ctrl->exposure			= (vc_control) { .min =   1, .max =  15000000, .def =  10000 };
-        ctrl->gain			= (vc_control) { .min =   0, .max =       255, .def =      0 };
-        ctrl->blacklevel 		= (vc_control) { .min =   0, .max =      1023, .def =     50 };
-        ctrl->framerate 		= (vc_control) { .min =   0, .max =     60000, .def =      0 };
+	ctrl->vmax			= (vc_control) { .min =   9, .max =   0xfffff, .def =   4500 };
+        ctrl->gain			= (vc_control) { .min =   0, .max =      0xff, .def =      0 };
+        ctrl->blacklevel 		= (vc_control) { .min =   0, .max =     0x3ff, .def =     50 };
 
-        ctrl->csr.sen.blacklevel        = (vc_csr2) { .l = 0x3302, .m = 0x3303 };
-        ctrl->csr.sen.vmax              = (vc_csr4) { .l = 0x3030, .m = 0x3031, .h = 0x3032, .u = 0x0000 };
-        ctrl->csr.sen.mode_standby	= 0x01;
+	ctrl->csr.sen.blacklevel        = (vc_csr2) { .l = 0x3302, .m = 0x3303 };
+	ctrl->csr.sen.vmax              = (vc_csr4) { .l = 0x3030, .m = 0x3031, .h = 0x3032, .u = 0x0000 };
+	ctrl->csr.sen.mode_standby	= 0x01;
         ctrl->csr.sen.mode_operating	= 0x00;
 
-        ctrl->frame.width		= 2560;
+        ctrl->frame.width		= 2592;
         ctrl->frame.height		= 1944;
 
-        ctrl->expo_timing[0] 		= (vc_timing) { 2, FORMAT_RAW10, .clk =  1260 };
-        ctrl->expo_timing[1] 		= (vc_timing) { 2, FORMAT_RAW12, .clk =  1260 };
-        ctrl->expo_timing[2] 		= (vc_timing) { 4, FORMAT_RAW10, .clk =   845 };
-        ctrl->expo_timing[3] 		= (vc_timing) { 4, FORMAT_RAW12, .clk =   845 };
+        ctrl->expo_timing[0] 		= (vc_timing) { 2, FORMAT_RAW10, .clk =   916 };
+        ctrl->expo_timing[1] 		= (vc_timing) { 2, FORMAT_RAW12, .clk =   916 };
+        ctrl->expo_timing[2] 		= (vc_timing) { 4, FORMAT_RAW10, .clk =   614 };
+        ctrl->expo_timing[3] 		= (vc_timing) { 4, FORMAT_RAW12, .clk =   614 };
 
-        ctrl->expo_shs_min              = 9;
-        ctrl->expo_vmax 		= 4500;
-
-        ctrl->flags		       |= FLAG_EXPOSURE_SONY;
-        ctrl->flags		       |= FLAG_DOUBLE_HEIGHT;
-        ctrl->flags		       |= FLAG_IO_FLASH_ENABLED;
+	ctrl->flags		       |= FLAG_EXPOSURE_SONY;
+	ctrl->flags		       |= FLAG_DOUBLE_HEIGHT;
+	ctrl->flags		       |= FLAG_IO_FLASH_ENABLED;
 }
 
 // ------------------------------------------------------------------------------------------------
@@ -444,6 +431,8 @@ static void vc_init_ctrl_imx392(struct vc_ctrl *ctrl, struct vc_desc* desc)
 
 	vc_init_ctrl_imx252_base(ctrl, desc);
 
+	ctrl->vmax			= (vc_control) { .min =  10, .max =   0xfffff, .def =   1252 };
+
 	ctrl->frame.width		= 1920;
 	ctrl->frame.height		= 1200;
 
@@ -454,8 +443,6 @@ static void vc_init_ctrl_imx392(struct vc_ctrl *ctrl, struct vc_desc* desc)
 	ctrl->expo_timing[4] 		= (vc_timing) { 4, FORMAT_RAW10, .clk =  355 };
 	ctrl->expo_timing[5] 		= (vc_timing) { 4, FORMAT_RAW12, .clk =  441 };
 
-        ctrl->expo_shs_min              = 10;
-        ctrl->expo_vmax			= 1252;
 	ctrl->retrigger_def		= 0x00103b4a;
 }
 
@@ -493,9 +480,11 @@ static void vc_init_ctrl_imx415(struct vc_ctrl *ctrl, struct vc_desc* desc)
 
 	vc_notice(dev, "%s(): Initialising module control for IMX415\n", __FUNCTION__);
 	
-	ctrl->exposure			= (vc_control) { .min =   1, .max =   5000000, .def =  10000 };
+	ctrl->vmax			= (vc_control) { .min =   8, .max =   0xfffff, .def =  0x8ca };
 	ctrl->gain			= (vc_control) { .min =   0, .max =       240, .def =      0 };
+	ctrl->blacklevel		= (vc_control) { .min =   0, .max =     0x3ff, .def =   0x32 };
 
+	ctrl->csr.sen.blacklevel        = (vc_csr2) { .l = 0x30e2, .m = 0x30e3 };
 	ctrl->csr.sen.vmax              = (vc_csr4) { .l = 0x3024, .m = 0x3025, .h = 0x3026, .u = 0x0000 };
 	ctrl->csr.sen.mode_standby	= 0x01;
 	ctrl->csr.sen.mode_operating	= 0x00;
@@ -505,9 +494,6 @@ static void vc_init_ctrl_imx415(struct vc_ctrl *ctrl, struct vc_desc* desc)
 
 	ctrl->expo_timing[0] 		= (vc_timing) { 2, FORMAT_RAW10, .clk = 1042 };
 	ctrl->expo_timing[1] 		= (vc_timing) { 4, FORMAT_RAW10, .clk =  551 };
-
-	ctrl->expo_shs_min              = 8;
-	ctrl->expo_vmax 		= 2250;
 
 	ctrl->flags                     = FLAG_EXPOSURE_SONY;
 	ctrl->flags		       |= FLAG_DOUBLE_HEIGHT;
@@ -527,9 +513,9 @@ static void vc_init_ctrl_imx568(struct vc_ctrl *ctrl, struct vc_desc* desc)
 
         vc_notice(dev, "%s(): Initialising module control for IMX568\n", __FUNCTION__);
 
-        ctrl->exposure                  = (vc_control) { .min =   1, .max =  15000000, .def =  10000 };
+	ctrl->vmax			= (vc_control) { .min =  42, .max =  0xffffff, .def =   2206 };
         ctrl->gain                      = (vc_control) { .min =   0, .max =       480, .def =      0 };
-        ctrl->blacklevel 		= (vc_control) { .min =   0, .max =      4095, .def =     60 };
+        ctrl->blacklevel 		= (vc_control) { .min =   0, .max =      4095, .def =   0x3c };
 
         ctrl->csr.sen.blacklevel        = (vc_csr2) { .l = 0x35b4, .m = 0x35b5 };
         ctrl->csr.sen.vmax              = (vc_csr4) { .l = 0x30d4, .m = 0x30d5, .h = 0x30d6, .u = 0x0000 };
@@ -546,9 +532,6 @@ static void vc_init_ctrl_imx568(struct vc_ctrl *ctrl, struct vc_desc* desc)
         ctrl->expo_timing[3]            = (vc_timing) { 4, FORMAT_RAW08, .clk =  348 };
         ctrl->expo_timing[4]            = (vc_timing) { 4, FORMAT_RAW10, .clk =  425 };
         ctrl->expo_timing[5]            = (vc_timing) { 4, FORMAT_RAW12, .clk =  502 };
-
-        ctrl->expo_shs_min              = 42;
-        ctrl->expo_vmax                 = 2206;
 
         ctrl->flags                     = FLAG_EXPOSURE_SONY;
         ctrl->flags                    |= FLAG_IO_FLASH_ENABLED;
@@ -568,6 +551,7 @@ static void vc_init_ctrl_ov7251(struct vc_ctrl *ctrl, struct vc_desc* desc)
 
 	vc_notice(dev, "%s(): Initialising module control for OV7251\n", __FUNCTION__);
 
+	ctrl->vmax			= (vc_control) { .min =   0, .max =    0xffff, .def =    598 };
 	ctrl->exposure			= (vc_control) { .min =   1, .max =   1000000, .def =  10000 };
 	ctrl->gain			= (vc_control) { .min =   0, .max =      1023, .def =      0 };
 
@@ -583,8 +567,6 @@ static void vc_init_ctrl_ov7251(struct vc_ctrl *ctrl, struct vc_desc* desc)
         ctrl->expo_timing[0]            = (vc_timing) { 1, FORMAT_RAW08, .clk =  772 };
         ctrl->expo_timing[1]            = (vc_timing) { 1, FORMAT_RAW10, .clk =  772 };
 
-        ctrl->expo_shs_min              = 0;
-        ctrl->expo_vmax                 = 598;
 	ctrl->flash_factor		= 1758241 >> 4; // (1000 << 4)/9100 >> 4
 	ctrl->flash_toffset		= 4;
 
@@ -605,6 +587,7 @@ static void vc_init_ctrl_ov9281(struct vc_ctrl *ctrl, struct vc_desc* desc)
 
 	vc_notice(dev, "%s(): Initialising module control for OV9281\n", __FUNCTION__);
 	
+	ctrl->vmax			= (vc_control) { .min =  16, .max =    0xffff, .def =    910 };
 	ctrl->exposure			= (vc_control) { .min = 146, .max =    595000, .def =  10000 };
 	ctrl->gain			= (vc_control) { .min =   1, .max =       255, .def =      0 };
 
@@ -620,8 +603,6 @@ static void vc_init_ctrl_ov9281(struct vc_ctrl *ctrl, struct vc_desc* desc)
         ctrl->expo_timing[0]            = (vc_timing) { 2, FORMAT_RAW08, .clk =  227 };
         ctrl->expo_timing[1]            = (vc_timing) { 2, FORMAT_RAW10, .clk =  227 };
 
-        ctrl->expo_shs_min              = 16;
-        ctrl->expo_vmax                 = 910;
 	ctrl->sen_clk			= 25000000;
 	ctrl->flash_factor		= 1758241 >> 4; // (1000 << 4)/9100 >> 4
 	ctrl->flash_toffset		= 4;

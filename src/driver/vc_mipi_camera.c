@@ -188,7 +188,8 @@ static int vc_set_gain(struct tegracam_device *tc_dev, __s64 val)
 	if (mode != NULL) {
 		control = &mode->control_properties;
 
-		gain =  ((cam->ctrl.gain.max - cam->ctrl.gain.min)*val)/(control->max_gain_val - control->min_gain_val) 
+		gain =  ((cam->ctrl.gain.max - cam->ctrl.gain.min)*val) /
+			(control->max_gain_val - control->min_gain_val) 
 			+ cam->ctrl.gain.min;
 
 		return vc_sen_set_gain(cam, gain);
@@ -212,12 +213,7 @@ static int vc_set_black_level(struct tegracam_device *tc_dev, __s64 val)
 static int vc_set_frame_rate(struct tegracam_device *tc_dev, __s64 val)
 {
 	struct vc_cam *cam = tegracam_to_cam(tc_dev);
-	int ret = 0;
-
-	ret  = vc_core_set_framerate(cam, val);
-	ret |= vc_sen_set_exposure(cam, cam->state.exposure);
-
-	return ret;
+	return vc_core_set_framerate(cam, val);
 }
 
 static int vc_set_trigger_mode(struct tegracam_device *tc_dev, __s64 val)
@@ -272,12 +268,14 @@ static int vc_set_value(struct tegracam_device *tc_dev, __s64 val)
 	}
 	if (60000 <= val && val < 70000) {
 		__u32 shs_min = val - 60000;
-		cam->ctrl.expo_shs_min = shs_min;
+		cam->ctrl.vmax.min = shs_min;
+		vc_core_update_controls(cam);
 		vc_notice(dev, "%s(): Set testing shs_min = %u", __FUNCTION__, shs_min);
 	}
 	if (70000 <= val && val < 80000) {
 		__u32 vmax = val - 70000;
-		cam->ctrl.expo_vmax = vmax;
+		cam->ctrl.vmax.def = vmax;
+		vc_core_update_controls(cam);
 		vc_notice(dev, "%s(): Set testing vmax = %u", __FUNCTION__, vmax);
 	}
 	if (80000 <= val && val < 90000) {
@@ -648,11 +646,11 @@ static int vc_probe(struct i2c_client *client, const struct i2c_device_id *id)
 
 	// This functions need tc_dev->s_data to be initialized.
 	vc_init_image(tc_dev);
-	vc_init_controls(tc_dev);
 	ret = vc_init_lanes(tc_dev);
 	if (ret)
 		goto unregister_subdev;
 
+	vc_init_controls(tc_dev);
 	vc_adjust_tegracam(tc_dev);
 	
 	return 0;

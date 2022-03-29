@@ -148,6 +148,7 @@ struct vc_ctrl {
 	struct i2c_client *client_sen;
 	struct i2c_client *client_mod;
 	// Controls
+	struct vc_control vmax;
 	struct vc_control exposure;
 	struct vc_control gain;
 	struct vc_control framerate;
@@ -161,9 +162,6 @@ struct vc_ctrl {
 	__u32 sen_clk;			// Hz
 	__u32 expo_factor;
 	__s32 expo_toffset;
-	__u32 expo_period_1H;
-	__u32 expo_shs_min;
-	__u32 expo_vmax;
 	// Framerate
 	__u32 retrigger_def;
 	// Flash
@@ -218,6 +216,7 @@ __u32 vc_core_get_framerate(struct vc_cam *cam);
 
 // --- Function to initialize the vc core --------------------------------------
 int vc_core_init(struct vc_cam *cam, struct i2c_client *client);
+int vc_core_update_controls(struct vc_cam *cam);
 
 // --- Functions for the VC MIPI Controller Module ----------------------------
 int vc_mod_set_mode(struct vc_cam *cam, int *reset);
