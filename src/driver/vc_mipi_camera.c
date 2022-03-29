@@ -448,6 +448,7 @@ void vc_init_image(struct tegracam_device *tc_dev)
 		case MEDIA_BUS_FMT_Y8_1X8:       image->pixel_format = V4L2_PIX_FMT_GREY;    break;
 		case MEDIA_BUS_FMT_Y10_1X10:     image->pixel_format = V4L2_PIX_FMT_Y10;     break;
 		case MEDIA_BUS_FMT_Y12_1X12:     image->pixel_format = V4L2_PIX_FMT_Y12;     break;
+                case MEDIA_BUS_FMT_Y14_1X14:     image->pixel_format = V4L2_PIX_FMT_Y14;     break;
 		case MEDIA_BUS_FMT_SRGGB8_1X8:   image->pixel_format = V4L2_PIX_FMT_SRGGB8;  break;
 		case MEDIA_BUS_FMT_SRGGB10_1X10: image->pixel_format = V4L2_PIX_FMT_SRGGB10; break;
 		case MEDIA_BUS_FMT_SRGGB12_1X12: image->pixel_format = V4L2_PIX_FMT_SRGGB12; break;
