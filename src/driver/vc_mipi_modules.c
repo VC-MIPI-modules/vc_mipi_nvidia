@@ -82,7 +82,6 @@ static void vc_init_ctrl_imx290_base(struct vc_ctrl *ctrl, struct vc_desc* desc)
 	ctrl->vmax			= (vc_control) { .min =   1, .max =   0x3ffff, .def =   1125 };
 	ctrl->exposure			= (vc_control) { .min =   1, .max =  15000000, .def =  10000 };
 	ctrl->gain			= (vc_control) { .min =   0, .max =       255, .def =      0 };
-	ctrl->framerate 		= (vc_control) { .min =   0, .max =     60000, .def =      0 };
 	
 	ctrl->csr.sen.vmax              = (vc_csr4) { .l = 0x3018, .m = 0x3019, .h = 0x301A, .u = 0x0000 };
 	ctrl->csr.sen.mode_standby	= 0x01;
