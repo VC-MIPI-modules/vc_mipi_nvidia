@@ -140,11 +140,28 @@ void vc_adjust_tegracam(struct tegracam_device *tc_dev)
 	mode->image_properties.line_length = line_length;
 }
 
+void vc_update_controls(struct tegracam_device *tc_dev) 
+{
+	struct vc_cam *cam = tegracam_to_cam(tc_dev);
+	struct sensor_mode_properties *mode = tegracam_to_mode0(tc_dev);
+	struct sensor_control_properties *control;
+
+	if (mode != NULL) {
+		control = &mode->control_properties;
+
+		control->max_exp_time.val = cam->ctrl.exposure.max;
+		control->max_framerate = cam->ctrl.framerate.max;
+	}
+}
+
 static int vc_set_mode(struct tegracam_device *tc_dev)
 {
 	struct vc_cam *cam = tegracam_to_cam(tc_dev);
+	int ret = 0;
 	vc_adjust_tegracam(tc_dev);
-	return vc_core_set_format(cam , tc_dev->s_data->colorfmt->code);
+	ret = vc_core_set_format(cam , tc_dev->s_data->colorfmt->code);
+	vc_update_controls(tc_dev);
+	return ret;
 }
 
 static int vc_read_reg(struct camera_common_data *s_data, __u16 addr, __u8 *val)
