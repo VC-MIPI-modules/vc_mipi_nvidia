@@ -270,12 +270,12 @@ static int vc_set_value(struct tegracam_device *tc_dev, __s64 val)
 	}
 	if (30000 <= val && val < 40000) {
 		__u32 width = val - 30000;
-		vc_sen_set_roi(cam, 0, 0, width, cam->state.frame.height);
+		vc_sen_set_roi(cam, cam->state.frame.x, cam->state.frame.y, width, cam->state.frame.height);
 		vc_notice(dev, "%s(): Set testing roi width = %u", __FUNCTION__, width);
 	}
 	if (40000 <= val && val < 50000) {
 		__u32 height = val - 40000;
-		vc_sen_set_roi(cam, 0, 0, cam->state.frame.width, height);
+		vc_sen_set_roi(cam, cam->state.frame.x, cam->state.frame.y, cam->state.frame.width, height);
 		vc_notice(dev, "%s(): Set testing roi height = %u", __FUNCTION__, height);
 	}
 	if (50000 <= val && val < 60000) {
@@ -340,7 +340,7 @@ static int vc_start_streaming(struct tegracam_device *tc_dev)
 	if (!ret && reset) {
 		usleep_range(1000*sleepR, 1000*sleepR);
 	}
-	ret |= vc_sen_set_roi(cam, 0, 0, cam->state.frame.width, cam->state.frame.height);
+	ret |= vc_sen_set_roi(cam, cam->state.frame.x, cam->state.frame.y, cam->state.frame.width, cam->state.frame.height);
 	if (!ret && reset) {
 		ret |= vc_sen_set_exposure(cam, cam->state.exposure);
 		ret |= vc_sen_set_gain(cam, cam->state.gain);

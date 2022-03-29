@@ -388,7 +388,6 @@ static void vc_init_ctrl_imx327(struct vc_ctrl *ctrl, struct vc_desc* desc)
 //  Settings for IMX335 (Rev.00)
 //
 //  TODO:
-//  - Black frame around image
 //  - Max. Framerate 20 fps with 4 lanes is to low
 
 static void vc_init_ctrl_imx335(struct vc_ctrl *ctrl, struct vc_desc* desc)
@@ -397,15 +396,17 @@ static void vc_init_ctrl_imx335(struct vc_ctrl *ctrl, struct vc_desc* desc)
 
         vc_notice(dev, "%s(): Initialising module control for IMX335\n", __FUNCTION__);
 
-	ctrl->vmax			= (vc_control) { .min =   9, .max =   0xfffff, .def =   4500 };
+	ctrl->vmax			= (vc_control) { .min =   9, .max =   0xfffff, .def = 0x1194 };
         ctrl->gain			= (vc_control) { .min =   0, .max =      0xff, .def =      0 };
-        ctrl->blacklevel 		= (vc_control) { .min =   0, .max =     0x3ff, .def =     50 };
+        ctrl->blacklevel 		= (vc_control) { .min =   0, .max =     0x3ff, .def =   0x32 };
 
 	ctrl->csr.sen.blacklevel        = (vc_csr2) { .l = 0x3302, .m = 0x3303 };
 	ctrl->csr.sen.vmax              = (vc_csr4) { .l = 0x3030, .m = 0x3031, .h = 0x3032, .u = 0x0000 };
 	ctrl->csr.sen.mode_standby	= 0x01;
         ctrl->csr.sen.mode_operating	= 0x00;
 
+	ctrl->frame.x			= 7;
+	ctrl->frame.y			= 52;
         ctrl->frame.width		= 2592;
         ctrl->frame.height		= 1944;
 

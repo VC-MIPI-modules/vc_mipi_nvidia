@@ -1111,22 +1111,52 @@ static int vc_sen_read_image_size(struct vc_ctrl *ctrl, struct vc_frame *size)
 int vc_sen_set_roi(struct vc_cam *cam, int x, int y, int width, int height)
 {
 	struct vc_ctrl *ctrl = &cam->ctrl;
+	struct vc_state *state = &cam->state;
 	struct i2c_client *client = ctrl->client_sen;
 	struct device *dev = &client->dev;
-	int w_y = y;
-	int w_height = height;
+	int w_x, w_y, w_width, w_height;
 	int ret = 0;
+
+	if (width < 1) {
+		width = 1;
+	}
+	if (width > ctrl->frame.width) {
+		width = ctrl->frame.width;
+	}
+	if (height < 1) {
+		height = 1;
+	}
+	if (height > ctrl->frame.height) {
+		height = ctrl->frame.height;
+	}
+	if (x < 0) {
+		x = 0;
+	}
+	if (x + width > ctrl->frame.width) {
+		x = ctrl->frame.width - width;
+	}
+	if (y < 0) {
+		y = 0;
+	}
+	if (y + height > ctrl->frame.height) {
+		y = ctrl->frame.height - height;
+	}
 
 	vc_notice(dev, "%s(): Set sensor roi: (x: %u, y: %u, width: %u, height: %u)\n", __FUNCTION__, x, y, width, height);
 
+	w_x = x + ctrl->frame.x;
+	w_y = y + ctrl->frame.y;
+	w_width = width;
+	w_height = height;
+
 	if (ctrl->flags & FLAG_DOUBLE_HEIGHT) {
-		w_y = 2*y;
-		w_height = 2*height;
+		w_y *= 2;
+		w_height *= 2;
 	}
 
-	ret |= i2c_write_reg2(dev, client, &ctrl->csr.sen.h_start, x, __FUNCTION__);
+	ret |= i2c_write_reg2(dev, client, &ctrl->csr.sen.h_start, w_x, __FUNCTION__);
 	ret |= i2c_write_reg2(dev, client, &ctrl->csr.sen.v_start, w_y, __FUNCTION__);
-	ret |= i2c_write_reg2(dev, client, &ctrl->csr.sen.o_width, width, __FUNCTION__);
+	ret |= i2c_write_reg2(dev, client, &ctrl->csr.sen.o_width, w_width, __FUNCTION__);
 	ret |= i2c_write_reg2(dev, client, &ctrl->csr.sen.o_height, w_height, __FUNCTION__);
 	if (ret) {
 		vc_err(dev, "%s(): Couldn't set sensor roi: (x: %u, y: %u, width: %u, height: %u) (error: %d)\n", __FUNCTION__, 
@@ -1134,10 +1164,10 @@ int vc_sen_set_roi(struct vc_cam *cam, int x, int y, int width, int height)
 		return ret;
 	}
 
-	cam->state.frame.x = x;
-	cam->state.frame.y = y;
-	cam->state.frame.width = width;
-	cam->state.frame.height = height;
+	state->frame.x = x;
+	state->frame.y = y;
+	state->frame.width = width;
+	state->frame.height = height;
 	vc_core_update_controls(cam);
 	return 0;
 }
