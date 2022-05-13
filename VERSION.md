@@ -1,11 +1,14 @@
 # Version History
 
-## v0.11.0 (Support GStreamer, ROI Cropping, TX2i)
+## v0.11.0 (Support GStreamer, ROI Cropping and L4T 32.7.1, 32.7.2)
+  * Features
+    * Added support for board support packages
+      * NVIDIA L4T 32.7.1 (experimental)
+      * NVIDIA L4T 32.7.2 (experimental)
+    * Added support for ROI cropping and frame rate increase in case of smaller image height. ROI cropping can be set via device tree properties active_w and active_h
   * Improvements
     * Added improvements for better GStreamer support. README.md now describes how to setup the device tree correct to get full nvarguscamerasrc support
-    * Added support for ROI cropping and frame rate increase in case of smaller image height. ROI cropping can be set via device tree properties active_w and active_h
     * V4L2 controls exposure and frame_rate now updates its maximal values due to pixel format change
-    * Added TX2i to the L4T configuration scripts
   * Bugfixes
     * Fixed the black frame problem from the IMX335 sensor
     * Fixed missing Y14 format handling in vc_init_image

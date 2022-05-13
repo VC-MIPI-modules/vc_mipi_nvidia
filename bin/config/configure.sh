@@ -50,7 +50,7 @@ case $VC_MIPI_SOM in
                 Auvidea_JNX30)
                 DT_CAM_FILE=$DT_CAM_DIR/Auvidea_JNX30_Nano/tegra210-camera-vc-mipi-cam.dtsi
                 case $VC_MIPI_BSP in
-                32.5.0|32.5.1|32.5.2|32.6.1)
+                32.5.0|32.5.1|32.5.2|32.6.1|32.7.1|32.7.2)
                         PATCHES=('dt_Auvidea_JNX30_Nano_32.5.0+')
                         ;;
                 esac
@@ -75,7 +75,7 @@ case $VC_MIPI_SOM in
                 32.5.0|32.5.1|32.5.2)
                 PATCHES+=('dt_camera_Nano_32.5.0+')
                 ;;
-                32.6.1|32.7.2)
+                32.6.1|32.7.1|32.7.2)
                 PATCHES+=('dt_camera_Nano_32.6.1+')
                 ;;
         esac
@@ -90,7 +90,7 @@ case $VC_MIPI_SOM in
                 Auvidea_JNX30)
                 DT_CAM_FILE=$DT_CAM_DIR/Auvidea_JNX30_XavierNX/tegra194-camera-vc-mipi-cam.dtsi
                 case $VC_MIPI_BSP in
-                32.5.0|32.5.1|32.5.2|32.6.1|32.7.2)
+                32.5.0|32.5.1|32.5.2|32.6.1|32.7.1|32.7.2)
                         PATCHES+=('dt_Auvidea_JNX30_XavierNX_32.5.0+')
                         ;;
                 esac
@@ -105,7 +105,7 @@ case $VC_MIPI_SOM in
                 32.5.0|32.5.1|32.5.2)
                 PATCHES+=('kernel_Xavier_32.5.0+')
                 ;;
-                32.6.1|32.7.2)
+                32.6.1|32.7.1|32.7.2)
                 PATCHES+=('kernel_Xavier_32.6.1+')
                 ;;
         esac
@@ -122,7 +122,7 @@ case $VC_MIPI_SOM in
                 32.5.0|32.5.1|32.5.2)
                 PATCHES+=('dt_camera_XavierNX_32.5.0+')
                 ;;
-                32.6.1|32.7.2)
+                32.6.1|32.7.1|32.7.2)
                 PATCHES+=('dt_camera_XavierNX_32.6.1+')
                 ;;
         esac
@@ -137,7 +137,7 @@ case $VC_MIPI_SOM in
         32.5.0|32.5.1|32.5.2)
                 PATCHES+=('kernel_Xavier_32.5.0+')
                 ;;
-        32.6.1|32.7.2)
+        32.6.1|32.7.1|32.7.2)
                 PATCHES+=('kernel_Xavier_32.6.1+')
                 ;;
         esac
@@ -154,7 +154,7 @@ case $VC_MIPI_SOM in
         32.5.0|32.5.1|32.5.2)
                 PATCHES+=('kernel_TX2_32.5.0+')
                 ;;
-        32.6.1|32.7.2)
+        32.6.1|32.7.1|32.7.2)
                 PATCHES+=('kernel_TX2_32.6.1+')
                 ;;
         esac
