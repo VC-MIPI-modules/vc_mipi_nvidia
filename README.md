@@ -19,6 +19,8 @@
   * [NVIDIA L4T 32.5.1](https://developer.nvidia.com/embedded/linux-tegra-r3251)
   * [NVIDIA L4T 32.5.2](https://developer.nvidia.com/embedded/linux-tegra-r3251)
   * [NVIDIA L4T 32.6.1](https://developer.nvidia.com/embedded/linux-tegra-r3261)
+  * [NVIDIA L4T 32.7.1](https://developer.nvidia.com/embedded/linux-tegra-r3271) *(experimental)*
+  * [NVIDIA L4T 32.7.2](https://developer.nvidia.com/embedded/linux-tegra-r3272) *(experimental)*
 * Supported [VC MIPI Camera Modules](https://www.vision-components.com/fileadmin/external/documentation/hardware/VC_MIPI_Camera_Module/index.html) 
   * IMX178, IMX183, IMX226
   * IMX250, IMX252, IMX264, IMX265, IMX273, IMX392

@@ -137,13 +137,17 @@ choose_bsp() {
                 echo "    2: NVIDIA L4T 32.5.1 (https://developer.nvidia.com/embedded/linux-tegra-r3251)"
                 echo "    3: NVIDIA L4T 32.5.2 (https://developer.nvidia.com/embedded/linux-tegra-r3251)"
                 echo "    4: NVIDIA L4T 32.6.1 (https://developer.nvidia.com/embedded/linux-tegra-r3261)"
-                read_selection 1 4
+                echo "    5: NVIDIA L4T 32.7.1 (https://developer.nvidia.com/embedded/linux-tegra-r3271)"
+                echo "    6: NVIDIA L4T 32.7.2 (https://developer.nvidia.com/embedded/linux-tegra-r3272)"
+                read_selection 1 6
         fi
         case ${selection} in
         1) bsp=32.5.0 ;;
         2) bsp=32.5.1 ;;
         3) bsp=32.5.2 ;;
         4) bsp=32.6.1 ;;
+        5) bsp=32.7.1 ;;
+        6) bsp=32.7.2 ;;
         esac
 }
 
@@ -158,7 +162,9 @@ choose_bsp_agx() {
                 echo "    3: NVIDIA L4T 32.5.1 (https://developer.nvidia.com/embedded/linux-tegra-r3251)"
                 echo "    4: NVIDIA L4T 32.5.2 (https://developer.nvidia.com/embedded/linux-tegra-r3251)"
                 echo "    5: NVIDIA L4T 32.6.1 (https://developer.nvidia.com/embedded/linux-tegra-r3261)"
-                read_selection 1 5
+                echo "    6: NVIDIA L4T 32.7.1 (https://developer.nvidia.com/embedded/linux-tegra-r3271)"
+                echo "    7: NVIDIA L4T 32.7.2 (https://developer.nvidia.com/embedded/linux-tegra-r3272)"
+                read_selection 1 7
         fi
         case ${selection} in
         1) bsp=32.3.1 ;;
@@ -166,6 +172,8 @@ choose_bsp_agx() {
         3) bsp=32.5.1 ;;
         4) bsp=32.5.2 ;;
         5) bsp=32.6.1 ;;
+        6) bsp=32.7.1 ;;
+        7) bsp=32.7.2 ;;
         esac
 }
 
