@@ -64,6 +64,157 @@
    > If you have changed your hardware setup simply execute this script again.
 
 # Changing camera settings in the device tree
+
+## GStreamer Support
+If you want to use GStreamer with nvarguscamerasrc it is essential to adjust some properties in the device tree. To do that follow the instructions in this section. For each camera there is a mode0 node in the device tree. There is an additional comment in this node to mark the properties that you need to customize. In the tables below you will find the specific values for each camera. 
+
+The value of the property *pixel_t* lists the supported pixel formats. Here you have to choose one out of the following table.
+
+| pixel_t | value  RAW08 | value  RAW10 | value  RAW12 |
+| ------- | ------------ | ------------ | ------------ |
+| RGGB    | bayer_rggb8  | bayer_rggb   | bayer_rggb12 |
+| GBRG    | bayer_gbrg8  | bayer_gbrg   | bayer_gbrg12 |
+
+The property *max_framerate* is given for the number of lanes and the pixel format. For example, 4L10 stands for 4 lanes and the pixel format RAW10. Always set the *def_framerate* to the same value as *max_framerate*
+
+<details>
+  <summary>GStreamer properties for IMX296, IMX297, OV7281 (cameras with 1 lane support only)</summary>
+
+| Property             | IMX296     | IMX297     | OV7281     |
+| -------------------- | ---------: | ---------: | ---------: |
+| physical_w           |      4.968 |      4.968 |      1.920 |
+| physical_h           |      3.726 |      3.726 |      1.440 |
+| active_w             |       1440 |        720 |        640 |
+| active_h             |       1080 |        540 |        480 |
+| pixel_t              |      RG 10 |      RG 10 |    RG 8,10 |
+| max_gain_val         |         48 |         48 |         18 |
+| step_gain_val        |      0.100 |      0.100 |      0.018 |
+| max_framerate (1L08) |          - |          - |      104.0 |
+| max_framerate (1L10) |       60.3 |       60.3 |      104.0 |
+| max_framerate (1L12) |          - |          - |          - |
+</details>
+
+<details>
+  <summary>GStreamer properties for IMX264, IMX265, OV9281 (cameras with 2 lanes support only)</summary>
+
+| Property             | IMX264     | IMX265     | OV9281     |
+| -------------------- | ---------: | ---------: | ---------: |
+| physical_w           |      8.390 |      7.065 |      3.840 |
+| physical_h           |      7.066 |      5.299 |      2.400 |
+| active_w             |       2432 |       2048 |       1280 |
+| active_h             |       2048 |       1536 |        800 |
+| pixel_t              | RG 8,10,12 | RG 8,10,12 |    RG 8,10 |
+| max_gain_val         |         48 |         48 |         12 |
+| step_gain_val        |      0.100 |      0.100 |      0.050 |
+| max_framerate (2L08) |       35.5 |       55.3 |      120.6 |
+| max_framerate (2L10) |       35.5 |       55.3 |      120.6 |
+| max_framerate (2L12) |       35.5 |       55.3 |          - |
+</details>
+
+<details>
+  <summary>GStreamer properties for IMX178, IMX183, IMX226 (cameras with 2 and 4 lanes support)</summary>
+
+| Property             | IMX178     | IMX183     | IMX226     |
+| -------------------- | ---------: | ---------: | ---------: |
+| physical_w           |      7.430 |     13.305 |      7.533 |
+| physical_h           |      4.992 |      8.865 |      5.635 |
+| active_w             |       3072 |       5440 |       3904 |
+| active_h             |       2048 |       3648 |       3000 |
+| pixel_t              | RG 8,10,12 | RG 8,10,12 | GB 8,10,12 |
+| max_gain_val         |         48 |         27 |         27 |
+| step_gain_val        |      0.100 |      0.026 |      0.014 |
+| max_framerate (2L08) |       51.3 |       13.4 |       21.8 |
+| max_framerate (2L10) |       41.6 |       13.4 |       21.8 |
+| max_framerate (2L12) |       35.4 |       11.2 |       18.1 |
+| max_framerate (4L08) |       58.2 |       26.8 |       43.6 |
+| max_framerate (4L10) |       58.2 |       26.8 |       43.6 |
+| max_framerate (4L12) |       51.3 |       22.4 |       36.3 |
+</details>
+
+<details>
+  <summary>GStreamer properties for IMX250, IMX252, IMX273, IMX392 (cameras with 2 and 4 lanes support)</summary>
+
+| Property             | IMX250     | IMX252     | IMX273     | IMX392     |
+| -------------------- | ---------: | ---------: | ---------: | ---------: |
+| physical_w           |      8.446 |      7.066 |      4.970 |      6.679 |
+| physical_h           |      7.066 |      5.299 |      3.726 |      4.195 |
+| active_w             |       2432 |       2048 |       1440 |       1920 |
+| active_h             |       2048 |       1536 |       1080 |       1200 |
+| pixel_t              | RG 8,10,12 | RG 8,10,12 | RG 8,10,12 | RG 8,10,12 |
+| max_gain_val         |         48 |         48 |         48 |         48 |
+| step_gain_val        |      0.100 |      0.100 |      0.100 |      0.100 |
+| max_framerate (2L08) |       65.7 |      102.0 |      195.6 |      132.4 |
+| max_framerate (2L10) |       53.7 |       83.8 |      156.5 |      111.9 |
+| max_framerate (2L12) |       45.5 |       69.8 |      136.9 |       95.0 |
+| max_framerate (4L08) |      101.3 |      151.4 |      276.0 |      201.7 |
+| max_framerate (4L10) |       82.5 |      123.5 |      226.5 |      167.0 |
+| max_framerate (4L12) |       69.5 |      105.7 |      165.9 |      134.4 |
+</details>
+
+<details>
+  <summary>GStreamer properties for IMX290, IMX327, IMX335, IMX412, IMX415, IMX568 (cameras with 2 and 4 lanes support)</summary>
+
+| Property             | IMX290/327 | IMX335     | IMX412     | IMX415     | IMX568     |
+| -------------------- | ---------: | ---------: | ---------: | ---------: | ---------: |
+| physical_w           |      5.617 |      5.120 |      6.287 |      5.602 |      6.773 |
+| physical_h           |      3.181 |      3.928 |      4.712 |      3.155 |      5.655 |
+| active_w             |       1920 |       2560 |       4032 |       3840 |       2472 |
+| active_h             |       1080 |       1944 |       3040 |       2160 |       2048 |
+| pixel_t              |      RG 10 |   RG 10,12 |      RG 10 |      GB 10 | RG 8,10,12 |
+| max_gain_val         |         71 |         72 |         51 |         72 |         48 |
+| step_gain_val        |      0.300 |      0.300 |      0.050 |      0.300 |      0.100 |
+| max_framerate (2L08) |          - |          - |          - |          - |       49.8 |
+| max_framerate (2L10) |       60.0 |       15.0 |       20.0 |       31.7 |       41.3 |
+| max_framerate (2L12) |          - |       15.0 |          - |          - |       34.6 |
+| max_framerate (4L08) |          - |          - |          - |          - |       96.2 |
+| max_framerate (4L10) |       60.0 |       22.3 |       40.0 |       59.9 |       78.8 |
+| max_framerate (4L12) |          - |       22.3 |          - |          - |       66.7 |
+</details>
+</br>
+
+### Example
+As an example the device tree for the IMX226 with 4 lanes and pixel format RAW10 is shown on the code snippet. Be aware of that the property values for gain are given in mbB [:)] and the frame rate in mHz. So, you have to multiply the values from the table with 1000.
+```
+  ...
+  // ----------------------------------------------------
+  // If you want to use GStreamer with nvarguscamerasrc
+  // you have to adjust this settings
+  physical_w              = "7.533";
+  physical_h              = "5.635";
+  // ----------------------------------------------------
+
+  // This node is needed by the Tegra framework.
+  // You don't have to change any settings if just want to use the V4L API.
+  mode0 {
+      ...
+
+      // ----------------------------------------------------
+      // If you want to use GStreamer with nvarguscamerasrc
+      // you have to adjust this settings. 
+      active_w                 = "3904";
+      active_h                 = "3000";
+      pixel_t                  = "bayer_rggb";
+
+      min_gain_val             = "0";         //     0.0 dB
+      max_gain_val             = "27000";     //    27.0 dB
+      step_gain_val            = "14";        //   0.014 dB
+      default_gain             = "0";         //     0.0 dB
+      
+      min_exp_time             = "1";         //       1 us
+      max_exp_time             = "1000000";   // 1000000 us
+      step_exp_time            = "1";         //       1 us
+      default_exp_time         = "10000";     //   10000 us
+
+      min_framerate            = "0";         //       0 Hz
+      max_framerate            = "43600";     //    43.6 Hz
+      step_framerate           = "100";       //     0.1 Hz
+      default_framerate        = "43600";     //    43.6 Hz
+      // ----------------------------------------------------
+      ...
+```
+
+## Device Tree File
+
 If you want to change some settings of a camera in the device tree, please follow these steps.
 
 1. Edit the device tree file for your hardware setup. Currently there are six device tree files for six different combinations of SoMs and carrier boards.

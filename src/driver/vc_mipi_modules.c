@@ -37,6 +37,10 @@ static void vc_init_ctrl(struct vc_ctrl *ctrl, struct vc_desc* desc)
 	ctrl->csr.sen.h_start.m 	= desc->csr_h_start_h;
 	ctrl->csr.sen.v_start.l 	= desc->csr_v_start_l;
 	ctrl->csr.sen.v_start.m 	= desc->csr_v_start_h;
+	ctrl->csr.sen.h_end.l 		= desc->csr_h_end_l;
+	ctrl->csr.sen.h_end.m 		= desc->csr_h_end_h;
+	ctrl->csr.sen.v_end.l 		= desc->csr_v_end_l;
+	ctrl->csr.sen.v_end.m 		= desc->csr_v_end_h;
 	ctrl->csr.sen.o_width.l		= desc->csr_o_width_l;
 	ctrl->csr.sen.o_width.m		= desc->csr_o_width_h;
 	ctrl->csr.sen.o_height.l	= desc->csr_o_height_l;
@@ -50,20 +54,18 @@ static void vc_init_ctrl(struct vc_ctrl *ctrl, struct vc_desc* desc)
 
 static void vc_init_ctrl_imx183_base(struct vc_ctrl *ctrl, struct vc_desc* desc)
 {
-	ctrl->gain			= (vc_control) { .min =   0, .max =     0x1ff, .def =      0 };
-
 	ctrl->csr.sen.vmax              = (vc_csr4) { .l = 0x7004, .m = 0x7005, .h = 0x7006, .u = 0x0000 };
 	ctrl->csr.sen.hmax              = (vc_csr4) { .l = 0x7002, .m = 0x7003, .h = 0x0000, .u = 0x0000 };
 
-	ctrl->flags			 = FLAG_EXPOSURE_SONY;
-	ctrl->flags			|= FLAG_IO_FLASH_ENABLED;
-	ctrl->flags			|= FLAG_TRIGGER_EXTERNAL | FLAG_TRIGGER_SELF |
-				           FLAG_TRIGGER_SINGLE | FLAG_TRIGGER_SYNC;
+	ctrl->flags                     = FLAG_EXPOSURE_SONY;
+	ctrl->flags                    |= FLAG_INCREASE_FRAME_RATE;
+	ctrl->flags                    |= FLAG_IO_FLASH_ENABLED;
+	ctrl->flags                    |= FLAG_TRIGGER_EXTERNAL | FLAG_TRIGGER_SELF |
+	                                  FLAG_TRIGGER_SINGLE | FLAG_TRIGGER_SYNC;
 }
 
 static void vc_init_ctrl_imx252_base(struct vc_ctrl *ctrl, struct vc_desc* desc)
 {
-	ctrl->vmax			= (vc_control) { .min =  10, .max =   0xfffff, .def =  0x82e };
 	ctrl->gain			= (vc_control) { .min =   0, .max =       511, .def =      0 };
         ctrl->blacklevel 		= (vc_control) { .min =   0, .max =      4095, .def =     60 };
 
@@ -71,10 +73,11 @@ static void vc_init_ctrl_imx252_base(struct vc_ctrl *ctrl, struct vc_desc* desc)
 	ctrl->csr.sen.hmax              = (vc_csr4) { .l = 0x0214, .m = 0x0215, .h = 0x0000, .u = 0x0000 };
         ctrl->csr.sen.blacklevel        = (vc_csr2) { .l = 0x0454, .m = 0x0455 };
 
-	ctrl->flags			 = FLAG_EXPOSURE_SONY;
-	ctrl->flags			|= FLAG_IO_FLASH_ENABLED;
-	ctrl->flags			|= FLAG_TRIGGER_EXTERNAL | FLAG_TRIGGER_PULSEWIDTH |
-					   FLAG_TRIGGER_SELF | FLAG_TRIGGER_SINGLE;
+	ctrl->flags                     = FLAG_EXPOSURE_SONY;
+	ctrl->flags                    |= FLAG_INCREASE_FRAME_RATE;
+	ctrl->flags                    |= FLAG_IO_FLASH_ENABLED;
+	ctrl->flags                    |= FLAG_TRIGGER_EXTERNAL | FLAG_TRIGGER_PULSEWIDTH |
+	                                  FLAG_TRIGGER_SELF | FLAG_TRIGGER_SINGLE;
 }
 
 static void vc_init_ctrl_imx290_base(struct vc_ctrl *ctrl, struct vc_desc* desc)
@@ -82,10 +85,12 @@ static void vc_init_ctrl_imx290_base(struct vc_ctrl *ctrl, struct vc_desc* desc)
 	ctrl->vmax			= (vc_control) { .min =   1, .max =   0x3ffff, .def =   1125 };
 	ctrl->exposure			= (vc_control) { .min =   1, .max =  15000000, .def =  10000 };
 	ctrl->gain			= (vc_control) { .min =   0, .max =       255, .def =      0 };
+	ctrl->blacklevel 		= (vc_control) { .min =   0, .max =       511, .def =  0x0f0 };
 	
 	ctrl->csr.sen.vmax              = (vc_csr4) { .l = 0x3018, .m = 0x3019, .h = 0x301A, .u = 0x0000 };
 	ctrl->csr.sen.mode_standby	= 0x01;
 	ctrl->csr.sen.mode_operating	= 0x00;
+	ctrl->csr.sen.blacklevel        = (vc_csr2) { .l = 0x300a, .m = 0x300b };
 
 	ctrl->frame.width		= 1920;
 	ctrl->frame.height		= 1080;
@@ -97,7 +102,9 @@ static void vc_init_ctrl_imx290_base(struct vc_ctrl *ctrl, struct vc_desc* desc)
 	
 	ctrl->sen_clk                   = 74250000;
 
-	ctrl->flags			= FLAG_EXPOSURE_SONY;
+	ctrl->flags                     = FLAG_EXPOSURE_SONY;
+	ctrl->flags                    |= FLAG_INCREASE_FRAME_RATE;
+	ctrl->flags                    |= FLAG_FORMAT_GBRG;
 }
 
 static void vc_init_ctrl_imx296_base(struct vc_ctrl *ctrl, struct vc_desc* desc)
@@ -117,9 +124,9 @@ static void vc_init_ctrl_imx296_base(struct vc_ctrl *ctrl, struct vc_desc* desc)
 	ctrl->sen_clk			= 54000000;
 	ctrl->retrigger_def		= 0x000d7940;
 
-	ctrl->flags			 = FLAG_EXPOSURE_SONY;
-	ctrl->flags			|= FLAG_IO_FLASH_ENABLED;
-	ctrl->flags			|= FLAG_TRIGGER_EXTERNAL | FLAG_TRIGGER_PULSEWIDTH | FLAG_TRIGGER_SELF;
+	ctrl->flags                     = FLAG_EXPOSURE_SONY;
+	ctrl->flags                    |= FLAG_IO_FLASH_ENABLED;
+	ctrl->flags                    |= FLAG_TRIGGER_EXTERNAL | FLAG_TRIGGER_PULSEWIDTH | FLAG_TRIGGER_SELF;
 }
 
 // ------------------------------------------------------------------------------------------------
@@ -133,7 +140,8 @@ static void vc_init_ctrl_imx178(struct vc_ctrl *ctrl, struct vc_desc* desc)
 
 	vc_init_ctrl_imx183_base(ctrl, desc);
 
-	ctrl->vmax			= (vc_control) { .min =   9, .max =   0x1ffff, .def =   2145 };
+	ctrl->vmax			= (vc_control) { .min =   9, .max =   0x1ffff, .def =   2126 };
+	ctrl->gain			= (vc_control) { .min =   0, .max =       480, .def =      0 };
         ctrl->blacklevel 		= (vc_control) { .min =   0, .max =     0x3ff, .def =     60 };
 	
 	ctrl->csr.sen.blacklevel        = (vc_csr2) { .l = 0x3015, .m = 0x3016 };
@@ -165,7 +173,8 @@ static void vc_init_ctrl_imx183(struct vc_ctrl *ctrl, struct vc_desc* desc)
 	vc_init_ctrl_imx183_base(ctrl, desc);
 
 	ctrl->vmax			= (vc_control) { .min =   5, .max =   0x1ffff, .def =   3728 };
-	ctrl->blacklevel 		= (vc_control) { .min =   0, .max =       255, .def =     50 };
+	ctrl->gain			= (vc_control) { .min =   0, .max =     0x7a5, .def =      0 };
+	ctrl->blacklevel 		= (vc_control) { .min =   0, .max =      0xff, .def =   0x32 };
 	
 	ctrl->csr.sen.blacklevel        = (vc_csr2) { .l = 0x0045, .m = 0x0000 };
 
@@ -194,6 +203,7 @@ static void vc_init_ctrl_imx226(struct vc_ctrl *ctrl, struct vc_desc* desc)
 	vc_init_ctrl_imx183_base(ctrl, desc);
 
 	ctrl->vmax			= (vc_control) { .min =   5, .max =   0x1ffff, .def =   3079 };
+	ctrl->gain			= (vc_control) { .min =   0, .max =     0x7a5, .def =      0 };
         ctrl->blacklevel 		= (vc_control) { .min =   0, .max =       255, .def =     50 };
 	
 	ctrl->csr.sen.blacklevel        = (vc_csr2) { .l = 0x0045, .m = 0x0000 };
@@ -211,11 +221,15 @@ static void vc_init_ctrl_imx226(struct vc_ctrl *ctrl, struct vc_desc* desc)
         ctrl->sen_clk                   = 72000000;
 	ctrl->retrigger_def		= 0x00292d40;
 
-	ctrl->flags			|= FLAG_TRIGGER_STREAM_EDGE | FLAG_TRIGGER_STREAM_LEVEL;
+	ctrl->flags		       |= FLAG_FORMAT_GBRG;
+	ctrl->flags                    |= FLAG_TRIGGER_STREAM_EDGE | FLAG_TRIGGER_STREAM_LEVEL;
 }
 
 // ------------------------------------------------------------------------------------------------
 //  Settings for IMX250/IMX250C (Rev.07)
+//
+// TODO:
+// - Tegra image height has to be decreased by 1 in 4 lanes mode
 
 static void vc_init_ctrl_imx250(struct vc_ctrl *ctrl, struct vc_desc* desc)
 {
@@ -224,6 +238,8 @@ static void vc_init_ctrl_imx250(struct vc_ctrl *ctrl, struct vc_desc* desc)
 	vc_notice(dev, "%s(): Initialising module control for IMX250\n", __FUNCTION__);
 
 	vc_init_ctrl_imx252_base(ctrl, desc);
+
+	ctrl->vmax			= (vc_control) { .min =  10, .max =   0xfffff, .def =   2094 };
 
 	ctrl->frame.width		= 2432;
 	ctrl->frame.height		= 2048;
@@ -240,6 +256,9 @@ static void vc_init_ctrl_imx250(struct vc_ctrl *ctrl, struct vc_desc* desc)
 
 // ------------------------------------------------------------------------------------------------
 //  Settings for IMX252/IMX252C (Rev.10)
+//
+// TODO:
+// - Tegra image height has to be decreased by 1 in 4 lanes mode
 
 static void vc_init_ctrl_imx252(struct vc_ctrl *ctrl, struct vc_desc* desc)
 {
@@ -248,6 +267,8 @@ static void vc_init_ctrl_imx252(struct vc_ctrl *ctrl, struct vc_desc* desc)
 	vc_notice(dev, "%s(): Initialising module control for IMX252\n", __FUNCTION__);
 
 	vc_init_ctrl_imx252_base(ctrl, desc);
+
+	ctrl->vmax			= (vc_control) { .min =  10, .max =   0xfffff, .def =   1582 };
 
 	ctrl->frame.width		= 2048;
 	ctrl->frame.height		= 1536;
@@ -264,6 +285,9 @@ static void vc_init_ctrl_imx252(struct vc_ctrl *ctrl, struct vc_desc* desc)
 
 // ------------------------------------------------------------------------------------------------
 //  Settings for IMX264/IMX264C (Rev.03)
+//
+// TODO:
+// - Tegra image height has to be decreased by 1 in 2 lanes mode
 
 static void vc_init_ctrl_imx264(struct vc_ctrl *ctrl, struct vc_desc* desc)
 {
@@ -272,6 +296,8 @@ static void vc_init_ctrl_imx264(struct vc_ctrl *ctrl, struct vc_desc* desc)
 	vc_notice(dev, "%s(): Initialising module control for IMX264\n", __FUNCTION__);
 
 	vc_init_ctrl_imx252_base(ctrl, desc);
+
+	ctrl->vmax			= (vc_control) { .min =  10, .max =   0xfffff, .def =   2100 };
 
 	ctrl->frame.width		= 2432;
 	ctrl->frame.height		= 2048;
@@ -285,6 +311,9 @@ static void vc_init_ctrl_imx264(struct vc_ctrl *ctrl, struct vc_desc* desc)
 
 // ------------------------------------------------------------------------------------------------
 //  Settings for IMX265/IMX265C (Rev.01)
+//
+// TODO:
+// - Tegra image height has to be decreased by 1 in 2 lanes mode
 
 static void vc_init_ctrl_imx265(struct vc_ctrl *ctrl, struct vc_desc* desc)
 {
@@ -293,6 +322,8 @@ static void vc_init_ctrl_imx265(struct vc_ctrl *ctrl, struct vc_desc* desc)
 	vc_notice(dev, "%s(): Initialising module control for IMX265\n", __FUNCTION__);
 
 	vc_init_ctrl_imx252_base(ctrl, desc);
+
+	ctrl->vmax			= (vc_control) { .min =  10, .max =   0xfffff, .def =   1587 };
 
 	ctrl->frame.width		= 2048;
 	ctrl->frame.height		= 1536;
@@ -306,6 +337,9 @@ static void vc_init_ctrl_imx265(struct vc_ctrl *ctrl, struct vc_desc* desc)
 
 // ------------------------------------------------------------------------------------------------
 //  Settings for IMX273/IMX273C (Rev.13)
+//
+// TODO:
+// - Tegra image height has to be decreased by 1 in 4 lanes mode
 
 static void vc_init_ctrl_imx273(struct vc_ctrl *ctrl, struct vc_desc* desc)
 {
@@ -344,6 +378,9 @@ static void vc_init_ctrl_imx290(struct vc_ctrl *ctrl, struct vc_desc* desc)
 
 // ------------------------------------------------------------------------------------------------
 //  Settings for IMX296/IMX296C (Rev.42)
+//
+// TODO:
+// - ROI cropping does not work
 
 static void vc_init_ctrl_imx296(struct vc_ctrl *ctrl, struct vc_desc* desc)
 {
@@ -359,6 +396,9 @@ static void vc_init_ctrl_imx296(struct vc_ctrl *ctrl, struct vc_desc* desc)
 
 // ------------------------------------------------------------------------------------------------
 //  Settings for IMX297 (Rev.??)
+//
+// TODO:
+// - ROI cropping does not work
 
 static void vc_init_ctrl_imx297(struct vc_ctrl *ctrl, struct vc_desc* desc)
 {
@@ -374,6 +414,17 @@ static void vc_init_ctrl_imx297(struct vc_ctrl *ctrl, struct vc_desc* desc)
 
 // ------------------------------------------------------------------------------------------------
 //  Settings for IMX327C (Rev.02)
+//
+// NOTES:
+// - For vertical flipping VREVERSE 0x3007 = 0x01 has to be set.
+// - For horizontal flipping HREVERSE 0x3007 = 0x02 has to be set.
+// - For cropping WINMODE 0x3007 = 0x40 has to be set. Unfortunatly cropping mode does not reduce 
+//   the image size. The image is always filled up to a size of 1920x1080.
+// - To increase the frame rate it is possible to reduce VMAX. In this case the image height is forced
+//   to be height = VMAX - 15. This is independend of the cropped image height.
+// => Cropping is not properly supported.
+// => Frame rate increase by image height reduction could be implemented. 
+//    But, it need an own implementation.
 
 static void vc_init_ctrl_imx327(struct vc_ctrl *ctrl, struct vc_desc* desc)
 {
@@ -388,7 +439,7 @@ static void vc_init_ctrl_imx327(struct vc_ctrl *ctrl, struct vc_desc* desc)
 //  Settings for IMX335 (Rev.00)
 //
 //  TODO:
-//  - Max. Framerate 20 fps with 4 lanes is to low
+//  - Max. Framerate of 22.3 fps is to low. Has to be 60 fps
 
 static void vc_init_ctrl_imx335(struct vc_ctrl *ctrl, struct vc_desc* desc)
 {
@@ -396,7 +447,7 @@ static void vc_init_ctrl_imx335(struct vc_ctrl *ctrl, struct vc_desc* desc)
 
         vc_notice(dev, "%s(): Initialising module control for IMX335\n", __FUNCTION__);
 
-	ctrl->vmax			= (vc_control) { .min =   9, .max =   0xfffff, .def = 0x1194 };
+	ctrl->vmax			= (vc_control) { .min =   9, .max =   0xfffff, .def =   3942 };
         ctrl->gain			= (vc_control) { .min =   0, .max =      0xff, .def =      0 };
         ctrl->blacklevel 		= (vc_control) { .min =   0, .max =     0x3ff, .def =   0x32 };
 
@@ -422,6 +473,9 @@ static void vc_init_ctrl_imx335(struct vc_ctrl *ctrl, struct vc_desc* desc)
 
 // ------------------------------------------------------------------------------------------------
 //  Settings for IMX392/IMX392C (Rev.06)
+//
+// TODO:
+// - Tegra image height has to be decreased by 1 in 4 lanes mode
 
 static void vc_init_ctrl_imx392(struct vc_ctrl *ctrl, struct vc_desc* desc)
 {
@@ -448,6 +502,8 @@ static void vc_init_ctrl_imx392(struct vc_ctrl *ctrl, struct vc_desc* desc)
 
 // ------------------------------------------------------------------------------------------------
 //  Settings for IMX412C (Rev.02)
+//
+// NOTE: This sensor does not support frame rate control.
 
 static void vc_init_ctrl_imx412(struct vc_ctrl *ctrl, struct vc_desc* desc)
 {
@@ -462,7 +518,7 @@ static void vc_init_ctrl_imx412(struct vc_ctrl *ctrl, struct vc_desc* desc)
 	ctrl->frame.width		= 4032;
 	ctrl->frame.height		= 3040;
 
-	ctrl->expo_factor               = 31755000;
+	ctrl->expo_factor               = 7938750;
 	ctrl->expo_toffset 		= 5975;
 
 	// No VMAX value present. No TRIGGER and FLASH capability.
@@ -473,6 +529,9 @@ static void vc_init_ctrl_imx412(struct vc_ctrl *ctrl, struct vc_desc* desc)
 
 // ------------------------------------------------------------------------------------------------
 //  Settings for IMX415C (Rev.01)
+//
+// TODO:
+// - Multi-bit transmission error (err: 0x0820022, frame: 0)
 
 static void vc_init_ctrl_imx415(struct vc_ctrl *ctrl, struct vc_desc* desc)
 {
@@ -495,7 +554,10 @@ static void vc_init_ctrl_imx415(struct vc_ctrl *ctrl, struct vc_desc* desc)
 	ctrl->expo_timing[0] 		= (vc_timing) { 2, FORMAT_RAW10, .clk = 1042 };
 	ctrl->expo_timing[1] 		= (vc_timing) { 4, FORMAT_RAW10, .clk =  551 };
 
+	ctrl->sen_clk			= 74250000;
+
 	ctrl->flags                     = FLAG_EXPOSURE_SONY;
+	ctrl->flags                    |= FLAG_INCREASE_FRAME_RATE; // TEST
 	ctrl->flags		       |= FLAG_DOUBLE_HEIGHT;
 	ctrl->flags		       |= FLAG_FORMAT_GBRG;
 	ctrl->flags		       |= FLAG_IO_FLASH_ENABLED;
@@ -506,6 +568,9 @@ static void vc_init_ctrl_imx415(struct vc_ctrl *ctrl, struct vc_desc* desc)
 //
 //  TODO:
 //  - pixelformat RAW08 has alternating horizontal line shift
+//  - ROI cropping does not work. 
+//    - Image width isn't adjustable! Image width is to short 2464 -> 2472
+//    - Image height and frame rate increase is working!
 
 static void vc_init_ctrl_imx568(struct vc_ctrl *ctrl, struct vc_desc* desc)
 {
@@ -513,7 +578,7 @@ static void vc_init_ctrl_imx568(struct vc_ctrl *ctrl, struct vc_desc* desc)
 
         vc_notice(dev, "%s(): Initialising module control for IMX568\n", __FUNCTION__);
 
-	ctrl->vmax			= (vc_control) { .min =  42, .max =  0xffffff, .def =   2206 };
+	ctrl->vmax			= (vc_control) { .min =  42, .max =  0xffffff, .def =  0x8aa };
         ctrl->gain                      = (vc_control) { .min =   0, .max =       480, .def =      0 };
         ctrl->blacklevel 		= (vc_control) { .min =   0, .max =      4095, .def =   0x3c };
 
@@ -523,17 +588,18 @@ static void vc_init_ctrl_imx568(struct vc_ctrl *ctrl, struct vc_desc* desc)
         ctrl->csr.sen.mode_standby      = 0x01;
         ctrl->csr.sen.mode_operating    = 0x00;
 
-        ctrl->frame.width               = 2464;
+        ctrl->frame.width               = 2472;
         ctrl->frame.height              = 2048;
 
-        ctrl->expo_timing[0]            = (vc_timing) { 2, FORMAT_RAW08, .clk =  673 };
-        ctrl->expo_timing[1]            = (vc_timing) { 2, FORMAT_RAW10, .clk =  811 };
-        ctrl->expo_timing[2]            = (vc_timing) { 2, FORMAT_RAW12, .clk =  966 };
-        ctrl->expo_timing[3]            = (vc_timing) { 4, FORMAT_RAW08, .clk =  348 };
-        ctrl->expo_timing[4]            = (vc_timing) { 4, FORMAT_RAW10, .clk =  425 };
-        ctrl->expo_timing[5]            = (vc_timing) { 4, FORMAT_RAW12, .clk =  502 };
+        ctrl->expo_timing[0]            = (vc_timing) { 2, FORMAT_RAW08, .clk =  489 };
+        ctrl->expo_timing[1]            = (vc_timing) { 2, FORMAT_RAW10, .clk =  590 };
+        ctrl->expo_timing[2]            = (vc_timing) { 2, FORMAT_RAW12, .clk =  703 };
+        ctrl->expo_timing[3]            = (vc_timing) { 4, FORMAT_RAW08, .clk =  253 };
+        ctrl->expo_timing[4]            = (vc_timing) { 4, FORMAT_RAW10, .clk =  309 };
+        ctrl->expo_timing[5]            = (vc_timing) { 4, FORMAT_RAW12, .clk =  365 };
 
         ctrl->flags                     = FLAG_EXPOSURE_SONY;
+	ctrl->flags                    |= FLAG_INCREASE_FRAME_RATE;
         ctrl->flags                    |= FLAG_IO_FLASH_ENABLED;
         ctrl->flags                    |= FLAG_TRIGGER_EXTERNAL | FLAG_TRIGGER_PULSEWIDTH |
                                           FLAG_TRIGGER_SELF | FLAG_TRIGGER_SINGLE;
@@ -571,7 +637,7 @@ static void vc_init_ctrl_ov7251(struct vc_ctrl *ctrl, struct vc_desc* desc)
 	ctrl->flash_toffset		= 4;
 
 	ctrl->flags		 	= FLAG_EXPOSURE_OMNIVISION;
-	ctrl->flags		       |= FLAG_IO_FLASH_ENABLED | FLAG_IO_FLASH_DURATION;
+	ctrl->flags		       |= FLAG_IO_FLASH_ENABLED;
 }
 
 // ------------------------------------------------------------------------------------------------
@@ -589,7 +655,7 @@ static void vc_init_ctrl_ov9281(struct vc_ctrl *ctrl, struct vc_desc* desc)
 	
 	ctrl->vmax			= (vc_control) { .min =  16, .max =    0xffff, .def =    910 };
 	ctrl->exposure			= (vc_control) { .min = 146, .max =    595000, .def =  10000 };
-	ctrl->gain			= (vc_control) { .min =   1, .max =       255, .def =      0 };
+	ctrl->gain			= (vc_control) { .min =  16, .max =       255, .def =     16 };
 
 	ctrl->csr.sen.flash_duration	= (vc_csr4) { .l = 0x3928, .m = 0x3927, .h = 0x3926, .u = 0x3925 };
 	ctrl->csr.sen.flash_offset	= (vc_csr4) { .l = 0x3924, .m = 0x3923, .h = 0x3922, .u = 0x0000 };
@@ -608,7 +674,7 @@ static void vc_init_ctrl_ov9281(struct vc_ctrl *ctrl, struct vc_desc* desc)
 	ctrl->flash_toffset		= 4;
 
 	ctrl->flags		 	= FLAG_EXPOSURE_OMNIVISION;
-	ctrl->flags		       |= FLAG_IO_FLASH_ENABLED | FLAG_IO_FLASH_DURATION;
+	ctrl->flags		       |= FLAG_IO_FLASH_ENABLED;
 	ctrl->flags		       |= FLAG_TRIGGER_EXTERNAL;
 }
 

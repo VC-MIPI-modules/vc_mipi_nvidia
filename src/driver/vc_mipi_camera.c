@@ -23,14 +23,31 @@ static struct sensor_mode_properties *tegracam_to_mode0(struct tegracam_device *
 	return NULL;
 }
 
-void vc_adjust_cam_ctrls(struct vc_cam *cam, __u32 *width, __u32 *height)
+void vc_update_image_size_from_mode(struct tegracam_device *tc_dev, __u32 *width, __u32 *height)
 {
+	struct vc_cam *cam = tegracam_to_cam(tc_dev);
+	struct device *dev = vc_core_get_sen_device(cam);
+	struct sensor_image_properties *image = &tegracam_to_mode0(tc_dev)->image_properties;
+
+	if (image->width != 0 && image->height != 0) {
+		*width = image->width;
+		*height = image->height;
+
+		vc_notice(dev, "%s(): Update image size from mode0 (w: %u, h: %u)\n",
+			__FUNCTION__, *width, *height);
+	}
+}
+
+#ifdef VC_MIPI_JETSON_NANO
+void vc_fix_image_size(struct tegracam_device *tc_dev, __u32 *width, __u32 *height, 
+	__u32 *tegra_width, __u32 *tegra_height, __u32 *tegra_line_length)
+{
+	struct vc_cam *cam = tegracam_to_cam(tc_dev);
 	__u8 num_lanes = vc_core_get_num_lanes(cam);
 	int trigger_mode = vc_mod_get_trigger_mode(cam);
 	int trigger_enabled = 0;
-#ifdef VC_MIPI_JETSON_NANO
+
 	__u32 code = vc_core_get_format(cam);
-#endif
 
 	// Triggermodi
 	// 0: FLAG_TRIGGER_DISABLE
@@ -57,76 +74,75 @@ void vc_adjust_cam_ctrls(struct vc_cam *cam, __u32 *width, __u32 *height)
 	// TEGRA_VI_CSI_ERROR_STATUS=0x00000004 (Bits 3-0: h>,<, w>,<) => height is to high
 	// TEGRA_VI_CSI_ERROR_STATUS=0x00000008 (Bits 3-0: h>,<, w>,<) => height is to low
 	switch (cam->desc.mod_id) {
-#ifdef VC_MIPI_JETSON_NANO
-        case MOD_ID_IMX178: // Active pixels 3072 x 2048
-                if (trigger_enabled) {
-                        cam->state.frame.height = *height;
-                } else {
-                        cam->state.frame.height = *height + 1;
-                }
+        case MOD_ID_IMX178: // Active pixels 3072 x 2048 (Rev. 01)
+                if (!trigger_enabled) {
+			*height += 1;
+		}
                 break;
-	case MOD_ID_IMX183: // Active pixels 5440 x 3648
+	case MOD_ID_IMX183: // Active pixels 5440 x 3648 (Rev. 12)
 		if (trigger_enabled) {
 			switch (code) {
 			case MEDIA_BUS_FMT_Y8_1X8: 	case MEDIA_BUS_FMT_SRGGB8_1X8:
 			case MEDIA_BUS_FMT_Y10_1X10: 	case MEDIA_BUS_FMT_SRGGB10_1X10:
-				*height = 3636; 
+				*height += 12;
 				break;
 			}
 		}
 		break;
 
-	case MOD_ID_IMX252: // Active pixels 2048 x 1536
-        case MOD_ID_IMX392: // Active pixels 1920 x 1200
-		if (num_lanes == 4) {
-			(*height)--;
+	case MOD_ID_IMX264:
+	case MOD_ID_IMX265:
+		if (num_lanes == 2) {
+			(*tegra_height)--;
 		}
 		break;
-#endif
 
+	case MOD_ID_IMX250: // Active pixels 2432 x 2048
+	case MOD_ID_IMX252: // Active pixels 2048 x 1536
 	case MOD_ID_IMX273: // Active pixels 1440 x 1080
+        case MOD_ID_IMX392: // Active pixels 1920 x 1200
 		if (num_lanes == 4) {
-#ifdef VC_MIPI_JETSON_NANO
-			(*height)--;
-#endif
+			(*tegra_height)--;
 		}
 		break;
 	}
 }
+#endif
 
 __u32 g_width = 0;
 __u32 g_height = 0;
-__u32 g_line_length = 0;
+__u32 g_tegra_width = 0;
+__u32 g_tegra_height = 0;
+__u32 g_tegra_line_length = 0;
 
-void vc_adjust_tegracam(struct tegracam_device *tc_dev)
+void vc_overwrite_image_size(struct tegracam_device *tc_dev, __u32 *width, __u32 *height, 
+	__u32 *tegra_width, __u32 *tegra_height, __u32 *tegra_line_length)
 {
-	struct vc_cam *cam = tegracam_to_cam(tc_dev);
-	struct device *dev = tc_dev->s_data->dev;
-	struct camera_common_frmfmt *frmfmt1 = (struct camera_common_frmfmt *)tc_dev->sensor_ops->frmfmt_table;
-	struct camera_common_frmfmt *frmfmt2 = (struct camera_common_frmfmt *)tc_dev->s_data->frmfmt;
-	struct sensor_mode_properties *mode = tegracam_to_mode0(tc_dev);
-	__u32 width = cam->ctrl.frame.width;
-	__u32 height = cam->ctrl.frame.height;
-	__u32 line_length = cam->ctrl.frame.width;
-
-	vc_adjust_cam_ctrls(cam, &width, &height);
-
 	if (g_width != 0) {
-		width = g_width;
+		*width = g_width;
 	}
 	if (g_height != 0) {
-		height = g_height;
+		*height = g_height;
 	}
-	if (g_line_length != 0) {
-		line_length = g_line_length;
+	if (g_tegra_width != 0) {
+		*tegra_width = g_tegra_width;
 	}
+	if (g_tegra_height != 0) {
+		*tegra_height = g_tegra_height;
+	}
+	if (g_tegra_line_length != 0) {
+		*tegra_line_length = g_tegra_line_length;
+	}
+}
 
-	if (width != cam->ctrl.frame.width || height != cam->ctrl.frame.height)
-		vc_notice(dev, "%s(): Adjust tegracam framework settings (w: %u h: %u l: %u)\n", __FUNCTION__, 
-			width, height, line_length);
+void vc_update_tegra_image_size(struct tegracam_device *tc_dev, __u32 width, __u32 height, __u32 line_length)
+{
+	struct camera_common_frmfmt *frmfmt1 = (struct camera_common_frmfmt *)tc_dev->sensor_ops->frmfmt_table;
+	struct camera_common_frmfmt *frmfmt2 = (struct camera_common_frmfmt *)tc_dev->s_data->frmfmt;
+	struct sensor_image_properties *image = &tegracam_to_mode0(tc_dev)->image_properties;
 
 	// TODO: Problem! When the format is changed set_mode is called to late in s_stream 
-	//       to make the change active. Currently it is necessary to start streaming twice!
+ 	//       to make the change active. Currently it is necessary to start streaming twice!
 	tc_dev->s_data->def_width = width;
 	tc_dev->s_data->def_height = height;
 	tc_dev->s_data->fmt_width = width;
@@ -135,12 +151,12 @@ void vc_adjust_tegracam(struct tegracam_device *tc_dev)
 	frmfmt1[0].size.height = height;
 	frmfmt2[0].size.width = width;
 	frmfmt2[0].size.height = height;
-	mode->image_properties.width = width;
-	mode->image_properties.height = height;
-	mode->image_properties.line_length = line_length;
+	if (line_length != 0) {
+		image->line_length = line_length;
+	}
 }
 
-void vc_update_controls(struct tegracam_device *tc_dev) 
+void vc_update_tegra_controls(struct tegracam_device *tc_dev) 
 {
 	struct vc_cam *cam = tegracam_to_cam(tc_dev);
 	struct sensor_mode_properties *mode = tegracam_to_mode0(tc_dev);
@@ -157,10 +173,28 @@ void vc_update_controls(struct tegracam_device *tc_dev)
 static int vc_set_mode(struct tegracam_device *tc_dev)
 {
 	struct vc_cam *cam = tegracam_to_cam(tc_dev);
+	struct vc_state *state = &cam->state;
+	__u32 width = cam->ctrl.frame.width;
+	__u32 height = cam->ctrl.frame.height;
+	__u32 tegra_width = 0;
+	__u32 tegra_height = 0;
+	__u32 tegra_line_length = 0;
 	int ret = 0;
-	vc_adjust_tegracam(tc_dev);
-	ret = vc_core_set_format(cam , tc_dev->s_data->colorfmt->code);
-	vc_update_controls(tc_dev);
+
+	ret  = vc_core_set_format(cam , tc_dev->s_data->colorfmt->code);
+
+	vc_update_image_size_from_mode(tc_dev, &width, &height);
+	tegra_width = width;
+	tegra_height = height;
+#ifdef VC_MIPI_JETSON_NANO
+	vc_fix_image_size(tc_dev, &width, &height, &tegra_width, &tegra_height, &tegra_line_length);
+#endif
+	vc_overwrite_image_size(tc_dev, &width, &height, &tegra_width, &tegra_height, &tegra_line_length);
+	state->frame.width = width;
+	state->frame.height = height;
+	vc_update_tegra_image_size(tc_dev, tegra_width, tegra_height, tegra_line_length);
+	vc_update_tegra_controls(tc_dev);
+
 	return ret;
 }
 
@@ -236,7 +270,6 @@ static int vc_set_frame_rate(struct tegracam_device *tc_dev, __s64 val)
 static int vc_set_trigger_mode(struct tegracam_device *tc_dev, __s64 val)
 {
 	struct vc_cam *cam = tegracam_to_cam(tc_dev);
-	vc_adjust_tegracam(tc_dev);
 	return vc_mod_set_trigger_mode(cam, val);
 }
 
@@ -257,26 +290,24 @@ static int vc_set_value(struct tegracam_device *tc_dev, __s64 val)
 	struct device *dev = vc_core_get_sen_device(cam);
 	
 	if (0 < val && val < 10000) {
-		g_width = val;
-		vc_notice(dev, "%s(): Set testing width = %u", __FUNCTION__, g_width);
+		g_tegra_width = val;
+		vc_notice(dev, "%s(): Set testing tegra width = %u", __FUNCTION__, g_tegra_width);
 	}
 	if (10000 <= val && val < 20000) {
-		g_height = val - 10000;
-		vc_notice(dev, "%s(): Set testing height = %u", __FUNCTION__, g_height);
+		g_tegra_height = val - 10000;
+		vc_notice(dev, "%s(): Set testing tegra height = %u", __FUNCTION__, g_tegra_height);
 	}
 	if (20000 <= val && val < 30000) {
-		g_line_length = val - 20000;
-		vc_notice(dev, "%s(): Set testing line_length = %u", __FUNCTION__, g_line_length);
+		g_tegra_line_length = val - 20000;
+		vc_notice(dev, "%s(): Set testing tegra line_length = %u", __FUNCTION__, g_tegra_line_length);
 	}
 	if (30000 <= val && val < 40000) {
-		__u32 width = val - 30000;
-		vc_sen_set_roi(cam, cam->state.frame.x, cam->state.frame.y, width, cam->state.frame.height);
-		vc_notice(dev, "%s(): Set testing roi width = %u", __FUNCTION__, width);
+		g_width = val - 30000;
+		vc_notice(dev, "%s(): Set testing sensor width = %u", __FUNCTION__, g_width);
 	}
 	if (40000 <= val && val < 50000) {
-		__u32 height = val - 40000;
-		vc_sen_set_roi(cam, cam->state.frame.x, cam->state.frame.y, cam->state.frame.width, height);
-		vc_notice(dev, "%s(): Set testing roi height = %u", __FUNCTION__, height);
+		g_height = val - 40000;
+		vc_notice(dev, "%s(): Set testing sensor height = %u", __FUNCTION__, g_height);
 	}
 	if (50000 <= val && val < 60000) {
 		__u32 gain = val - 50000;
@@ -286,13 +317,17 @@ static int vc_set_value(struct tegracam_device *tc_dev, __s64 val)
 	if (60000 <= val && val < 70000) {
 		__u32 shs_min = val - 60000;
 		cam->ctrl.vmax.min = shs_min;
+		vc_sen_set_exposure(cam, cam->state.exposure);
 		vc_core_update_controls(cam);
+		vc_core_print_debug(cam);
 		vc_notice(dev, "%s(): Set testing shs_min = %u", __FUNCTION__, shs_min);
 	}
 	if (70000 <= val && val < 80000) {
 		__u32 vmax = val - 70000;
 		cam->ctrl.vmax.def = vmax;
+		vc_sen_set_exposure(cam, cam->state.exposure);
 		vc_core_update_controls(cam);
+		vc_core_print_debug(cam);
 		vc_notice(dev, "%s(): Set testing vmax = %u", __FUNCTION__, vmax);
 	}
 	if (80000 <= val && val < 90000) {
@@ -340,7 +375,7 @@ static int vc_start_streaming(struct tegracam_device *tc_dev)
 	if (!ret && reset) {
 		usleep_range(1000*sleepR, 1000*sleepR);
 	}
-	ret |= vc_sen_set_roi(cam, cam->state.frame.x, cam->state.frame.y, cam->state.frame.width, cam->state.frame.height);
+	ret |= vc_sen_set_roi(cam);
 	if (!ret && reset) {
 		ret |= vc_sen_set_exposure(cam, cam->state.exposure);
 		ret |= vc_sen_set_gain(cam, cam->state.gain);
@@ -429,45 +464,6 @@ int vc_init_frmfmt(struct device *dev, struct vc_cam *cam)
 	return -ENOMEM;
 }
 
-void vc_init_image(struct tegracam_device *tc_dev)
-{
-	struct vc_cam *cam = tegracam_to_cam(tc_dev);
-	struct device *dev = tc_dev->dev;
-	struct sensor_mode_properties *mode = tegracam_to_mode0(tc_dev);
-	struct sensor_image_properties *image;
-	__u32 code;
-
-	if (mode != NULL) {
-		image = &mode->image_properties;
-		image->width = cam->ctrl.frame.width;
-		image->height = cam->ctrl.frame.height;
-		image->line_length = cam->ctrl.frame.width;
-
-		code = vc_core_get_format(cam);
-		switch(code) {
-		case MEDIA_BUS_FMT_Y8_1X8:       image->pixel_format = V4L2_PIX_FMT_GREY;    break;
-		case MEDIA_BUS_FMT_Y10_1X10:     image->pixel_format = V4L2_PIX_FMT_Y10;     break;
-		case MEDIA_BUS_FMT_Y12_1X12:     image->pixel_format = V4L2_PIX_FMT_Y12;     break;
-                case MEDIA_BUS_FMT_Y14_1X14:     image->pixel_format = V4L2_PIX_FMT_Y14;     break;
-		case MEDIA_BUS_FMT_SRGGB8_1X8:   image->pixel_format = V4L2_PIX_FMT_SRGGB8;  break;
-		case MEDIA_BUS_FMT_SRGGB10_1X10: image->pixel_format = V4L2_PIX_FMT_SRGGB10; break;
-		case MEDIA_BUS_FMT_SRGGB12_1X12: image->pixel_format = V4L2_PIX_FMT_SRGGB12; break;
-		case MEDIA_BUS_FMT_SGBRG8_1X8:   image->pixel_format = V4L2_PIX_FMT_SGBRG8;  break;
-		case MEDIA_BUS_FMT_SGBRG10_1X10: image->pixel_format = V4L2_PIX_FMT_SGBRG10; break;
-		case MEDIA_BUS_FMT_SGBRG12_1X12: image->pixel_format = V4L2_PIX_FMT_SGBRG12; break;
-		}
-
-		tc_dev->s_data->colorfmt = camera_common_find_datafmt(code);
-		
-		vc_notice(dev, "%s(): Init image (width: %d, height: %d, line_length: %d, pixel_t: %c%c%c%c)\n", __FUNCTION__,
-			image->width, image->height, image->line_length, 
-			(char)((image->pixel_format >>  0)&0xFF),
-			(char)((image->pixel_format >>  8)&0xFF),
-			(char)((image->pixel_format >> 16)&0xFF),
-			(char)((image->pixel_format >> 24)&0xFF));
-	}
-}
-
 static int vc_init_lanes(struct tegracam_device *tc_dev) 
 {
 	struct vc_cam *cam = tegracam_to_cam(tc_dev);
@@ -530,7 +526,7 @@ static void vc_init_io(struct device *dev, struct vc_cam *cam)
 	}
 }
 
-void vc_init_controls(struct tegracam_device *tc_dev) 
+void vc_init_tegra_controls(struct tegracam_device *tc_dev) 
 {
 	struct vc_cam *cam = tegracam_to_cam(tc_dev);
 	struct device *dev = tc_dev->dev;
@@ -663,13 +659,11 @@ static int vc_probe(struct i2c_client *client, const struct i2c_device_id *id)
     	}
 
 	// This functions need tc_dev->s_data to be initialized.
-	vc_init_image(tc_dev);
 	ret = vc_init_lanes(tc_dev);
 	if (ret)
 		goto unregister_subdev;
 
-	vc_init_controls(tc_dev);
-	vc_adjust_tegracam(tc_dev);
+	vc_init_tegra_controls(tc_dev);
 	
 	return 0;
 

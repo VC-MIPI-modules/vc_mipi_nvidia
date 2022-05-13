@@ -18,10 +18,10 @@
 #define FLAG_EXPOSURE_SONY      	0x0004
 #define FLAG_EXPOSURE_OMNIVISION	0x0008
 
-#define FLAG_FORMAT_GBRG		0x0010
-#define FLAG_DOUBLE_HEIGHT        	0x0020
-#define FLAG_IO_FLASH_ENABLED        	0x0040
-#define FLAG_IO_FLASH_DURATION        	0x0080
+#define FLAG_IO_FLASH_ENABLED        	0x0010
+#define FLAG_FORMAT_GBRG		0x0020
+#define FLAG_DOUBLE_HEIGHT        	0x0040
+#define FLAG_INCREASE_FRAME_RATE       	0x0080
 
 #define FLAG_TRIGGER_DISABLE      	0x0100
 #define FLAG_TRIGGER_EXTERNAL     	0x0200
@@ -126,6 +126,8 @@ struct vc_sen_csr {
 	struct vc_csr2 blacklevel;
 	struct vc_csr2 h_start;
 	struct vc_csr2 v_start;
+	struct vc_csr2 h_end;
+	struct vc_csr2 v_end;
 	struct vc_csr2 o_width;
 	struct vc_csr2 o_height;
 	struct vc_csr4 flash_duration;
@@ -202,6 +204,7 @@ int vc_read_i2c_reg(struct i2c_client *client, const __u16 addr);
 int vc_write_i2c_reg(struct i2c_client *client, const __u16 addr, const __u8 value);
 
 // --- Helper functions for internal data structures --------------------------
+void vc_core_print_debug(struct vc_cam *cam);
 struct device *vc_core_get_sen_device(struct vc_cam *cam);
 struct device *vc_core_get_mod_device(struct vc_cam *cam);
 int vc_core_try_format(struct vc_cam *cam, __u32 code);
@@ -229,7 +232,7 @@ int vc_mod_set_io_mode(struct vc_cam *cam, int mode);
 int vc_mod_get_io_mode(struct vc_cam *cam);
 
 // --- Functions for the VC MIPI Sensors --------------------------------------
-int vc_sen_set_roi(struct vc_cam *cam, int x, int y, int width, int height);
+int vc_sen_set_roi(struct vc_cam *cam);
 int vc_sen_set_exposure(struct vc_cam *cam, int exposure);
 int vc_sen_set_gain(struct vc_cam *cam, int gain);
 int vc_sen_set_blacklevel(struct vc_cam *cam, int blacklevel);

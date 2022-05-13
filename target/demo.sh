@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 usage() {
         echo "Usage: $0 [options]"
@@ -182,15 +182,7 @@ if [[ -n ${argus} ]]; then
         get_image_size
         adjust_pixel_format
 
-        v4l2-ctl -d /dev/video${device} -c exposure=${shutter} -c gain=${gain}
-
-        gst-launch-1.0 -t \
-                nvarguscamerasrc sensor-id=${device} awblock=false aelock=false aeantibanding=0 \
-                tnr-mode=1 wbmode=1 ispdigitalgainrange="1 1" \
-                exposurecompensation="0.0" saturation="1.0" \
-                exposuretimerange="${exposure} ${exposure}" gainrange="1 8" ! \
-                "video/x-raw(memory:NVMM), width=${width}, height=${height}, format=NV12" ! \
-                nvegltransform ! nveglglessink -e
+        gst-launch-1.0 nvarguscamerasrc sensor-id=${device} ! 'video/x-raw(memory:NVMM),framerate=20/1' ! nvegltransform ! nveglglessink
 else 
         cd ${script_dir}
         ./vcmipidemo -d${device} -an${option2} ${optionY} -s${shutter} -g${gain} -w '128 180 128'
