@@ -1,5 +1,16 @@
 # Version History
 
+## v0.11.0 (Support GStreamer, ROI Cropping, TX2i)
+  * Improvements
+    * Added improvements for better GStreamer support. README.md now describes how to setup the device tree correct to get full nvarguscamerasrc support
+    * Added support for ROI cropping and frame rate increase in case of smaller image height. ROI cropping can be set via device tree properties active_w and active_h
+    * V4L2 controls exposure and frame_rate now updates its maximal values due to pixel format change
+    * Added TX2i to the L4T configuration scripts
+  * Bugfixes
+    * Fixed the black frame problem from the IMX335 sensor
+    * Fixed missing Y14 format handling in vc_init_image
+    * Fixed an inconsistency in the i2c address assignment for VC_MIPI_MANUFACTURER
+
 ## v0.10.0 (Support OV7251, IMX297, IMX568)
   * New Features
     * Added support for VC MIPI Camera Modules
@@ -16,7 +27,7 @@
       * IMX335
     * Black level can now also be set for IMX178 and IMX226
     * Bugfixes
-      * Changed default resolutions from IMX178, IMX226 and IMX335 to NVIDIA compliant resolutions.
+      * Changed default resolutions from IMX178, IMX226 and IMX335 to NVIDIA compliant resolutions
 
 ## v0.8.1 (Bugfix)
   * Bugfixes
@@ -88,8 +99,8 @@
   * New Features
     * Added support for VC MIPI Camera Modules
       * IMX178, IMX226, IMX296, OV9281
-    * Trigger modes '0: disabled', '1: external', '2: pulsewidth', '3: self', '4: single', '5: sync', '6: stream_edge', '7: stream_level' can be set via device tree or V4L2 control 'trigger_mode'.
-    * Flash mode '0: disabled', '1: enabled' can be set via device tree or V4L2 control 'flash_mode'.
+    * Trigger modes '0: disabled', '1: external', '2: pulsewidth', '3: self', '4: single', '5: sync', '6: stream_edge', '7: stream_level' can be set via device tree or V4L2 control 'trigger_mode'
+    * Flash mode '0: disabled', '1: enabled' can be set via device tree or V4L2 control 'flash_mode'
 
 ## v0.3.0 (Universal driver)
   * New Features
@@ -114,5 +125,5 @@
       * NVIDIA L4T 32.4.4
     * Added support for VC MIPI Camera Modules
       * IMX183, IMX226, IMX250, IMX252, IMX273, IMX290, IMX296, IMX327, IMX412, IMX415, OV9281
-    * Image Streaming in GREY, Y10, Y12, SRGGB8, SRGGB10, SRGGB12 format.
+    * Image Streaming in GREY, Y10, Y12, SRGGB8, SRGGB10, SRGGB12 format
     * Exposure and Gain can be set via V4L2 library.
