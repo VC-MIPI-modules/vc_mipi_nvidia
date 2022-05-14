@@ -1,7 +1,7 @@
 # Version History
 
 ## v0.11.0 (Support GStreamer, ROI Cropping and L4T 32.7.1, 32.7.2)
-  * Features
+  * New Features
     * Added support for board support packages
       * NVIDIA L4T 32.7.1 (experimental)
       * NVIDIA L4T 32.7.2 (experimental)
