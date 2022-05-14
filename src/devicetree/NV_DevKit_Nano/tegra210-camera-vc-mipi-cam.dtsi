@@ -45,7 +45,7 @@
 //  If you want to use GStreamer with nvarguscamerasrc you have to adjust this settings in the 
 //  device tree below. The sections which have to be modified are marked by a comment. 
 //  To find the correct parameter values please follow the instruction in the main README.md of 
-//  this repository https://github.com/VC-MIPI-modules/vc_mipi_nvidia/blob/master/README.md
+//  this repository https://github.com/VC-MIPI-modules/vc_mipi_nvidia#gstreamer-support
 // ------------------------------------------------------------------------------------------------
 
 #define VC_MIPI_METADATA_H  "0"
