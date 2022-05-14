@@ -195,7 +195,7 @@ As an example the device tree for the IMX226 with 4 lanes and pixel format RAW10
       // you have to adjust this settings. 
       active_w                 = "3904";
       active_h                 = "3000";
-      pixel_t                  = "bayer_rggb";
+      pixel_t                  = "bayer_gbrg";
 
       min_gain_val             = "0";         //     0.0 dB
       max_gain_val             = "27000";     //    27.0 dB
