@@ -67,20 +67,11 @@ setup_kernel() {
         cd $BUILD_DIR/Linux_for_Tegra/source/public
         tar xvf kernel_src.tbz2
 
-        git init
-        git config gc.auto 0
-        git config --local user.name "$0"
-        git config --local user.email "support@vision-components.com"
-
-        git add hardware
-        git add kernel
-        git commit -m "Initial commit"
         for patch in ${PATCHES[@]}; do
                 for patchfile in $PATCH_DIR/${patch}/*.patch; do
-                        git am -3 --whitespace=fix --ignore-whitespace < ${patchfile}
+                    patch -p1 --ignore-whitespace < ${patchfile} || true
                 done
         done
-        git config gc.auto 1
 
         cp -R $DRIVER_DIR/* $DRIVER_DST_DIR
         cp -R $DT_CAM_FILE $DT_CAM_FILE_DST_DIR
