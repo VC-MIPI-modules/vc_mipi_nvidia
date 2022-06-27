@@ -95,11 +95,6 @@ static void vc_init_ctrl_imx290_base(struct vc_ctrl *ctrl, struct vc_desc* desc)
 	ctrl->frame.width		= 1920;
 	ctrl->frame.height		= 1080;
 	
-	ctrl->expo_timing[0] 		= (vc_timing) { 2, FORMAT_RAW10, .clk =  1100 };
-	ctrl->expo_timing[1] 		= (vc_timing) { 2, FORMAT_RAW12, .clk =  1100 };
-	ctrl->expo_timing[2] 		= (vc_timing) { 4, FORMAT_RAW10, .clk =  1100 }; 
-	ctrl->expo_timing[3] 		= (vc_timing) { 4, FORMAT_RAW12, .clk =  1100 };
-	
 	ctrl->sen_clk                   = 74250000;
 
 	ctrl->flags                     = FLAG_EXPOSURE_SONY;
@@ -374,6 +369,11 @@ static void vc_init_ctrl_imx290(struct vc_ctrl *ctrl, struct vc_desc* desc)
 	vc_notice(dev, "%s(): Initialising module control for IMX290\n", __FUNCTION__);
 
 	vc_init_ctrl_imx290_base(ctrl, desc);
+
+	ctrl->expo_timing[0] 		= (vc_timing) { 2, FORMAT_RAW10, .clk =  550 };
+	ctrl->expo_timing[1] 		= (vc_timing) { 2, FORMAT_RAW12, .clk =  550 };
+	ctrl->expo_timing[2] 		= (vc_timing) { 4, FORMAT_RAW10, .clk =  550 }; 
+	ctrl->expo_timing[3] 		= (vc_timing) { 4, FORMAT_RAW12, .clk =  550 };
 }
 
 // ------------------------------------------------------------------------------------------------
@@ -433,6 +433,11 @@ static void vc_init_ctrl_imx327(struct vc_ctrl *ctrl, struct vc_desc* desc)
 	vc_notice(dev, "%s(): Initialising module control for IMX327\n", __FUNCTION__);
 
 	vc_init_ctrl_imx290_base(ctrl, desc);
+
+	ctrl->expo_timing[0] 		= (vc_timing) { 2, FORMAT_RAW10, .clk =  1100 };
+	ctrl->expo_timing[1] 		= (vc_timing) { 2, FORMAT_RAW12, .clk =  1100 };
+	ctrl->expo_timing[2] 		= (vc_timing) { 4, FORMAT_RAW10, .clk =  1100 }; 
+	ctrl->expo_timing[3] 		= (vc_timing) { 4, FORMAT_RAW12, .clk =  1100 };
 }
 
 // ------------------------------------------------------------------------------------------------
