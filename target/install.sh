@@ -26,6 +26,18 @@ setup_iq_tuning()
         ls -l /var/nvidia/nvcam/settings/camera_overrides.isp
 }
 
+setup_gst_perf_plugin()
+{
+        sudo apt update
+        sudo apt install libgstreamer1.0-dev
+        git clone https://github.com/RidgeRun/gst-perf.git
+        cd gst-perf
+        ./autogen.sh
+        ./configure --prefix /usr/ --libdir /usr/lib/$(uname -m)-linux-gnu/
+        make
+        sudo make install
+}
+
 while [ $# != 0 ] ; do
         option="$1"
         shift
@@ -41,6 +53,10 @@ while [ $# != 0 ] ; do
                 ;;
         -k|--kernel)
                 setup_kernel
+                exit 0
+                ;;
+        -p|--perf)
+                setup_gst_perf_plugin
                 exit 0
                 ;;
         *)
