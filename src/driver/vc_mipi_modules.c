@@ -99,7 +99,6 @@ static void vc_init_ctrl_imx290_base(struct vc_ctrl *ctrl, struct vc_desc* desc)
 
 	ctrl->flags                     = FLAG_EXPOSURE_SONY;
 	ctrl->flags                    |= FLAG_INCREASE_FRAME_RATE;
-	ctrl->flags                    |= FLAG_FORMAT_GBRG;
 }
 
 static void vc_init_ctrl_imx296_base(struct vc_ctrl *ctrl, struct vc_desc* desc)
