@@ -503,7 +503,11 @@ static void vc_init_ctrl_imx392(struct vc_ctrl *ctrl, struct vc_desc* desc)
 // ------------------------------------------------------------------------------------------------
 //  Settings for IMX412C (Rev.02)
 //
-// NOTE: This sensor does not support frame rate control.
+// NOTES: 
+// - No TRIGGER and FLASH capability.
+// TODO:
+// - Slave Mode not implemented.
+// - Check framerate increase with reduced image height
 
 static void vc_init_ctrl_imx412(struct vc_ctrl *ctrl, struct vc_desc* desc)
 {
@@ -511,20 +515,25 @@ static void vc_init_ctrl_imx412(struct vc_ctrl *ctrl, struct vc_desc* desc)
 
 	vc_notice(dev, "%s(): Initialising module control for IMX412\n", __FUNCTION__);
 	
-	ctrl->exposure			= (vc_control) { .min = 190, .max =    405947, .def =  10000 };
+	ctrl->vmax			= (vc_control) { .min =  10, .max =    0xffff, .def = 0x0c14 };
 	ctrl->gain			= (vc_control) { .min =   0, .max =      1023, .def =      0 };
-	ctrl->framerate 		= (vc_control) { .min =   0, .max =     41000, .def =      0 };
+
+	ctrl->csr.sen.vmax              = (vc_csr4) { .l = 0x0341, .m = 0x0340, .h = 0x0000, .u = 0x0000 };
+	ctrl->csr.sen.shs               = (vc_csr4) { .l = 0x0203, .m = 0x0202, .h = 0x0000, .u = 0x0000 };
 
 	ctrl->frame.width		= 4032;
 	ctrl->frame.height		= 3040;
 
-	ctrl->expo_factor               = 7938750;
-	ctrl->expo_toffset 		= 5975;
+	ctrl->expo_timing[0] 		= (vc_timing) { 2, FORMAT_RAW10, .clk =  436 };
+	ctrl->expo_timing[1] 		= (vc_timing) { 4, FORMAT_RAW10, .clk =  218 };
 
-	// No VMAX value present. No TRIGGER and FLASH capability.
+	ctrl->sen_clk			= 27000000;
+
 	ctrl->flags			= FLAG_RESET_ALWAYS;
-	ctrl->flags		       |= FLAG_EXPOSURE_SIMPLE;
+	ctrl->flags		       |= FLAG_EXPOSURE_NORMAL;
+	ctrl->flags                    |= FLAG_INCREASE_FRAME_RATE;
 	ctrl->flags		       |= FLAG_IO_FLASH_ENABLED;
+	ctrl->flags                    |= FLAG_TRIGGER_SLAVE;
 }
 
 // ------------------------------------------------------------------------------------------------
@@ -532,6 +541,7 @@ static void vc_init_ctrl_imx412(struct vc_ctrl *ctrl, struct vc_desc* desc)
 //
 // TODO:
 // - Multi-bit transmission error (err: 0x0820022, frame: 0)
+// - Check framerate increase with reduced image height
 
 static void vc_init_ctrl_imx415(struct vc_ctrl *ctrl, struct vc_desc* desc)
 {
@@ -557,7 +567,7 @@ static void vc_init_ctrl_imx415(struct vc_ctrl *ctrl, struct vc_desc* desc)
 	ctrl->sen_clk			= 74250000;
 
 	ctrl->flags                     = FLAG_EXPOSURE_SONY;
-	ctrl->flags                    |= FLAG_INCREASE_FRAME_RATE; // TEST
+	ctrl->flags                    |= FLAG_INCREASE_FRAME_RATE;
 	ctrl->flags		       |= FLAG_DOUBLE_HEIGHT;
 	ctrl->flags		       |= FLAG_FORMAT_GBRG;
 	ctrl->flags		       |= FLAG_IO_FLASH_ENABLED;
@@ -636,8 +646,8 @@ static void vc_init_ctrl_ov7251(struct vc_ctrl *ctrl, struct vc_desc* desc)
 	ctrl->flash_factor		= 1758241 >> 4; // (1000 << 4)/9100 >> 4
 	ctrl->flash_toffset		= 4;
 
-	ctrl->flags		 	= FLAG_EXPOSURE_OMNIVISION;
-	ctrl->flags		       |= FLAG_IO_FLASH_ENABLED;
+	ctrl->flags		 	= FLAG_EXPOSURE_NORMAL;
+	ctrl->flags		       |= FLAG_IO_FLASH_ENABLED | FLAG_SET_FLASH_DURATION;
 }
 
 // ------------------------------------------------------------------------------------------------
@@ -673,8 +683,8 @@ static void vc_init_ctrl_ov9281(struct vc_ctrl *ctrl, struct vc_desc* desc)
 	ctrl->flash_factor		= 1758241 >> 4; // (1000 << 4)/9100 >> 4
 	ctrl->flash_toffset		= 4;
 
-	ctrl->flags		 	= FLAG_EXPOSURE_OMNIVISION;
-	ctrl->flags		       |= FLAG_IO_FLASH_ENABLED;
+	ctrl->flags		 	= FLAG_EXPOSURE_NORMAL;
+	ctrl->flags		       |= FLAG_IO_FLASH_ENABLED | FLAG_SET_FLASH_DURATION;
 	ctrl->flags		       |= FLAG_TRIGGER_EXTERNAL;
 }
 

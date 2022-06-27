@@ -256,6 +256,7 @@ static void vc_core_print_modes(struct device *dev, struct vc_desc *desc)
 		switch (mode->type) {
 		case 0x01: strcpy(type, "STREAM "); break;
 		case 0x02: strcpy(type, "EXT.TRG"); break;
+		case 0x03: strcpy(type, "SLAVE  "); break;
 		default: sprintf(type, "0x%02x   ", mode->type); break;
 		}
 		vc_notice(dev, "| %2d |    %4u |       %u | %s   | %s |       %u |\n",
@@ -1353,16 +1354,6 @@ int vc_sen_stop_stream(struct vc_cam *cam)
 
 // ------------------------------------------------------------------------------------------------
 
-static void vc_calculate_exposure_simple(struct vc_cam *cam, __u32 exposure)
-{
-	struct vc_ctrl *ctrl = &cam->ctrl;
-	struct vc_state *state = &cam->state;
-	__u32 factor = ctrl->expo_factor * state->num_lanes;
-	__u32 toffset = ctrl->expo_toffset;
-
-	state->shs = (((__u64)exposure)*factor)/1000000 - toffset;
-}
-
 static __u32 vc_core_calculate_timing(struct vc_cam *cam, __u8 num_lanes, __u8 format)
 {
 	struct vc_ctrl *ctrl = &cam->ctrl;
@@ -1432,7 +1423,7 @@ static void vc_calculate_exposure_sony(struct vc_cam *cam, __u64 exposure_1H)
 	}
 }
 
-static void vc_calculate_exposure_omnivision(struct vc_cam *cam, __u64 exposure_1H)
+static void vc_calculate_exposure_normal(struct vc_cam *cam, __u64 exposure_1H)
 {
 	struct vc_ctrl *ctrl = &cam->ctrl;
 	struct vc_state *state = &cam->state;
@@ -1484,8 +1475,8 @@ static void vc_calculate_exposure(struct vc_cam *cam, __u32 exposure)
         if (ctrl->flags & FLAG_EXPOSURE_SONY) {
                 vc_calculate_exposure_sony(cam, exposure_1H);
 
-        } else if (ctrl->flags & FLAG_EXPOSURE_OMNIVISION) {
-                vc_calculate_exposure_omnivision(cam, exposure_1H);
+        } else if (ctrl->flags & FLAG_EXPOSURE_NORMAL) {
+                vc_calculate_exposure_normal(cam, exposure_1H);
         } 
 
 	vc_dbg(dev, "%s(): flags: 0x%04x, period_1H_ns: %u, shs: %u/%u, vmax: %u/%u\n", __FUNCTION__, 
@@ -1541,18 +1532,12 @@ int vc_sen_set_exposure(struct vc_cam *cam, int exposure)
 	case REG_TRIGGER_SYNC:
 	case REG_TRIGGER_STREAM_EDGE:
 	case REG_TRIGGER_STREAM_LEVEL:
-                if (ctrl->flags & FLAG_EXPOSURE_SIMPLE) {
-                        vc_calculate_exposure_simple(cam, exposure);
-                        ret |= vc_sen_write_shs(ctrl, state->shs);
-
-                } else if (ctrl->flags & FLAG_EXPOSURE_SONY || ctrl->flags & FLAG_EXPOSURE_OMNIVISION) {
-                        vc_calculate_exposure(cam, exposure);
-                        ret |= vc_sen_write_shs(ctrl, state->shs);
-                        ret |= vc_sen_write_vmax(ctrl, state->vmax);
-                }
+		vc_calculate_exposure(cam, exposure);
+		ret |= vc_sen_write_shs(ctrl, state->shs);
+		ret |= vc_sen_write_vmax(ctrl, state->vmax);
 	}
 
-	if (ctrl->flags & FLAG_EXPOSURE_OMNIVISION) {
+	if (ctrl->flags & FLAG_SET_FLASH_DURATION) {
 		__u32 duration = (((__u64)exposure)*ctrl->flash_factor)/1000000;
 		ret |= vc_sen_write_flash_duration(ctrl, duration);
 		ret |= vc_sen_write_flash_offset(ctrl, ctrl->flash_toffset);

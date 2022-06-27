@@ -13,24 +13,25 @@
 #define vc_warn(dev, fmt, ...) dev_warn(dev, fmt, ##__VA_ARGS__)
 #define vc_err(dev, fmt, ...) dev_err(dev, fmt, ##__VA_ARGS__)
 
-#define FLAG_RESET_ALWAYS		0x0001
-#define FLAG_EXPOSURE_SIMPLE      	0x0002
-#define FLAG_EXPOSURE_SONY      	0x0004
-#define FLAG_EXPOSURE_OMNIVISION	0x0008
+#define FLAG_RESET_ALWAYS		0x00000001
+#define FLAG_EXPOSURE_SONY      	0x00000002
+#define FLAG_EXPOSURE_NORMAL    	0x00000004
+#define FLAG_SET_FLASH_DURATION		0x00000008
 
-#define FLAG_IO_FLASH_ENABLED        	0x0010
-#define FLAG_FORMAT_GBRG		0x0020
-#define FLAG_DOUBLE_HEIGHT        	0x0040
-#define FLAG_INCREASE_FRAME_RATE       	0x0080
+#define FLAG_IO_FLASH_ENABLED        	0x00000010
+#define FLAG_FORMAT_GBRG		0x00000020
+#define FLAG_DOUBLE_HEIGHT        	0x00000040
+#define FLAG_INCREASE_FRAME_RATE       	0x00000080
 
-#define FLAG_TRIGGER_DISABLE      	0x0100
-#define FLAG_TRIGGER_EXTERNAL     	0x0200
-#define FLAG_TRIGGER_PULSEWIDTH   	0x0400
-#define FLAG_TRIGGER_SELF         	0x0800
-#define FLAG_TRIGGER_SINGLE  	  	0x1000
-#define FLAG_TRIGGER_SYNC         	0x2000
-#define FLAG_TRIGGER_STREAM_EDGE  	0x4000
-#define FLAG_TRIGGER_STREAM_LEVEL 	0x8000
+#define FLAG_TRIGGER_DISABLE      	0x00000100
+#define FLAG_TRIGGER_EXTERNAL     	0x00000200
+#define FLAG_TRIGGER_PULSEWIDTH   	0x00000400
+#define FLAG_TRIGGER_SELF         	0x00000800
+#define FLAG_TRIGGER_SINGLE  	  	0x00001000
+#define FLAG_TRIGGER_SYNC         	0x00002000
+#define FLAG_TRIGGER_STREAM_EDGE  	0x00004000
+#define FLAG_TRIGGER_STREAM_LEVEL 	0x00008000
+#define FLAG_TRIGGER_SLAVE       	0x00010000
 
 #define FORMAT_RAW08			0x2a
 #define FORMAT_RAW10			0x2b
@@ -162,15 +163,13 @@ struct vc_ctrl {
 	// Exposure
 	struct vc_timing expo_timing[8];
 	__u32 sen_clk;			// Hz
-	__u32 expo_factor;
-	__s32 expo_toffset;
 	// Framerate
 	__u32 retrigger_def;
 	// Flash
 	__u32 flash_factor;
 	__s32 flash_toffset;
 	// Special features
-	__u16 flags;
+	__u32 flags;
 };
 
 struct vc_state {
