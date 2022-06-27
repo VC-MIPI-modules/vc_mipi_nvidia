@@ -103,7 +103,7 @@ static void vc_init_ctrl_imx290_base(struct vc_ctrl *ctrl, struct vc_desc* desc)
 
 static void vc_init_ctrl_imx296_base(struct vc_ctrl *ctrl, struct vc_desc* desc)
 {
-	ctrl->vmax			= (vc_control) { .min =   5, .max =   0xfffff, .def =   1118 };
+	ctrl->vmax			= (vc_control) { .min =   5, .max =   0xfffff, .def =   1110 };
 	ctrl->gain			= (vc_control) { .min =   0, .max =       480, .def =      0 };
 	ctrl->blacklevel 		= (vc_control) { .min =   0, .max =     0xfff, .def =     60 };
 	
@@ -119,6 +119,7 @@ static void vc_init_ctrl_imx296_base(struct vc_ctrl *ctrl, struct vc_desc* desc)
 	ctrl->retrigger_def		= 0x000d7940;
 
 	ctrl->flags                     = FLAG_EXPOSURE_SONY;
+	ctrl->flags                    |= FLAG_INCREASE_FRAME_RATE;
 	ctrl->flags                    |= FLAG_IO_FLASH_ENABLED;
 	ctrl->flags                    |= FLAG_TRIGGER_EXTERNAL | FLAG_TRIGGER_PULSEWIDTH | FLAG_TRIGGER_SELF;
 }
@@ -377,9 +378,6 @@ static void vc_init_ctrl_imx290(struct vc_ctrl *ctrl, struct vc_desc* desc)
 
 // ------------------------------------------------------------------------------------------------
 //  Settings for IMX296/IMX296C (Rev.42)
-//
-// TODO:
-// - ROI cropping does not work
 
 static void vc_init_ctrl_imx296(struct vc_ctrl *ctrl, struct vc_desc* desc)
 {
@@ -395,9 +393,6 @@ static void vc_init_ctrl_imx296(struct vc_ctrl *ctrl, struct vc_desc* desc)
 
 // ------------------------------------------------------------------------------------------------
 //  Settings for IMX297 (Rev.??)
-//
-// TODO:
-// - ROI cropping does not work
 
 static void vc_init_ctrl_imx297(struct vc_ctrl *ctrl, struct vc_desc* desc)
 {
@@ -621,7 +616,7 @@ static void vc_init_ctrl_imx568(struct vc_ctrl *ctrl, struct vc_desc* desc)
 
 // ------------------------------------------------------------------------------------------------
 //  Settings for OV7251 (Rev.01)
-
+//
 //  TODO: 
 //  - No flash out
 
