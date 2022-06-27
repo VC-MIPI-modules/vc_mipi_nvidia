@@ -98,8 +98,8 @@ typedef struct vc_control {
 } vc_control;
 
 typedef struct vc_frame {
-	__u32 x;
-	__u32 y;
+	__u32 left;
+	__u32 top;
 	__u32 width;
 	__u32 height;
 } vc_frame;

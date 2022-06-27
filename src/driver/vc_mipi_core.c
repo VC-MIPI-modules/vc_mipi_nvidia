@@ -435,13 +435,13 @@ __u32 vc_core_get_format(struct vc_cam *cam)
 	return code;
 }
 
-int vc_core_set_frame(struct vc_cam *cam, __u32 x, __u32 y, __u32 width, __u32 height)
+int vc_core_set_frame(struct vc_cam *cam, __u32 left, __u32 top, __u32 width, __u32 height)
 {
 	struct vc_ctrl *ctrl = &cam->ctrl;
 	struct vc_state *state = &cam->state;
 	struct device *dev = vc_core_get_sen_device(cam);
 
-	vc_notice(dev, "%s(): Set frame (x: %u, y: %u, width: %u, height: %u)\n", __FUNCTION__, x, y, width, height);
+	vc_notice(dev, "%s(): Set frame (left: %u, top: %u, width: %u, height: %u)\n", __FUNCTION__, left, top, width, height);
 
 	if (width > ctrl->frame.width) {
 		state->frame.width = ctrl->frame.width;
@@ -449,10 +449,10 @@ int vc_core_set_frame(struct vc_cam *cam, __u32 x, __u32 y, __u32 width, __u32 h
 		state->frame.width = width;
 	}
 
-	if (x > ctrl->frame.width - state->frame.width) {
-		state->frame.x = ctrl->frame.width - state->frame.width;
+	if (left > ctrl->frame.width - state->frame.width) {
+		state->frame.left = ctrl->frame.width - state->frame.width;
 	} else {
-		state->frame.x = x;
+		state->frame.left = left;
 	}
 
 	if (height > ctrl->frame.height) {
@@ -461,15 +461,15 @@ int vc_core_set_frame(struct vc_cam *cam, __u32 x, __u32 y, __u32 width, __u32 h
 		state->frame.height = height;
 	}
 
-	if (y > ctrl->frame.height - state->frame.height) {
-		state->frame.y = ctrl->frame.height - state->frame.height;
+	if (top > ctrl->frame.height - state->frame.height) {
+		state->frame.top = ctrl->frame.height - state->frame.height;
 	} else {
-		state->frame.y = y;
+		state->frame.top = top;
 	}
 
-	if (state->frame.x != x || state->frame.y != y || state->frame.width != width || state->frame.height != height) {
-		vc_warn(dev, "%s(): Adjusted frame (x: %u, y: %u, width: %u, height: %u)\n", __FUNCTION__, 
-		state->frame.x, state->frame.y, state->frame.width, state->frame.height);
+	if (state->frame.left != left || state->frame.top != top || state->frame.width != width || state->frame.height != height) {
+		vc_warn(dev, "%s(): Adjusted frame (left: %u, top: %u, width: %u, height: %u)\n", __FUNCTION__, 
+		state->frame.left, state->frame.top, state->frame.width, state->frame.height);
 	}
 
 	return 0;
@@ -794,8 +794,8 @@ static void vc_core_state_init(struct vc_cam *cam)
 	state->framerate = ctrl->framerate.def;
 	state->num_lanes = desc->modes[0].num_lanes;
 	state->format_code = vc_core_get_default_format(cam);
-	state->frame.x = 0;
-	state->frame.y = 0;
+	state->frame.left = 0;
+	state->frame.top = 0;
 	state->frame.width = ctrl->frame.width;
 	state->frame.height = ctrl->frame.height;	
 	state->streaming = 0;
@@ -1137,29 +1137,29 @@ int vc_sen_set_roi(struct vc_cam *cam)
 	struct vc_state *state = &cam->state;
 	struct i2c_client *client = ctrl->client_sen;
 	struct device *dev = &client->dev;
-	int w_x, w_y, w_width, w_height;
+	int w_left, w_top, w_width, w_height;
 	int ret = 0;
 
-	w_x = ctrl->frame.x + state->frame.x;
-	w_y = ctrl->frame.y + state->frame.y;
+	w_left = ctrl->frame.left + state->frame.left;
+	w_top = ctrl->frame.top + state->frame.top;
 	w_width = state->frame.width;
 	w_height = state->frame.height;
 
 	if (ctrl->flags & FLAG_DOUBLE_HEIGHT) {
-		w_y *= 2;
+		w_top *= 2;
 		w_height *= 2;
 	}
 
-	vc_notice(dev, "%s(): Set sensor roi: (x: %u, y: %u, width: %u, height: %u)\n", __FUNCTION__, 
-		w_x, w_y, w_width, w_height);
+	vc_notice(dev, "%s(): Set sensor roi: (left: %u, top: %u, width: %u, height: %u)\n", __FUNCTION__, 
+		w_left, w_top, w_width, w_height);
 
-	ret |= i2c_write_reg2(dev, client, &ctrl->csr.sen.h_start, w_x, __FUNCTION__);
-	ret |= i2c_write_reg2(dev, client, &ctrl->csr.sen.v_start, w_y, __FUNCTION__);
+	ret |= i2c_write_reg2(dev, client, &ctrl->csr.sen.h_start, w_left, __FUNCTION__);
+	ret |= i2c_write_reg2(dev, client, &ctrl->csr.sen.v_start, w_top, __FUNCTION__);
 	ret |= i2c_write_reg2(dev, client, &ctrl->csr.sen.o_width, w_width, __FUNCTION__);
 	ret |= i2c_write_reg2(dev, client, &ctrl->csr.sen.o_height, w_height, __FUNCTION__);
 	if (ret) {
-		vc_err(dev, "%s(): Couldn't set sensor roi: (x: %u, y: %u, width: %u, height: %u) (error: %d)\n", __FUNCTION__, 
-			w_x, w_y, w_width, w_height, ret);
+		vc_err(dev, "%s(): Couldn't set sensor roi: (left: %u, top: %u, width: %u, height: %u) (error: %d)\n", __FUNCTION__, 
+			w_left, w_top, w_width, w_height, ret);
 		return ret;
 	}
 

@@ -46,8 +46,8 @@ static void vc_init_ctrl(struct vc_ctrl *ctrl, struct vc_desc* desc)
 	ctrl->csr.sen.o_height.l	= desc->csr_o_height_l;
 	ctrl->csr.sen.o_height.m	= desc->csr_o_height_h;
 
-	ctrl->frame.x			= 0;
-	ctrl->frame.y			= 0;
+	ctrl->frame.left		= 0;
+	ctrl->frame.top			= 0;
 
 	ctrl->sen_clk			= desc->clk_ext_trigger;
 }
@@ -460,8 +460,8 @@ static void vc_init_ctrl_imx335(struct vc_ctrl *ctrl, struct vc_desc* desc)
 	ctrl->csr.sen.mode_standby	= 0x01;
         ctrl->csr.sen.mode_operating	= 0x00;
 
-	ctrl->frame.x			= 7;
-	ctrl->frame.y			= 52;
+	ctrl->frame.left		= 7;
+	ctrl->frame.top			= 52;
         ctrl->frame.width		= 2592;
         ctrl->frame.height		= 1944;
 
