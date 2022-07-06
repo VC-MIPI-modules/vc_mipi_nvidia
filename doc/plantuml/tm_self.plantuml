@@ -1,0 +1,9 @@
+@startuml
+!theme plain
+clock "External trigger is disabled" as TRIG with period 1000 pulse 250
+clock "Exposure (3: self)"           as SELF with period 570 pulse 350 offset 0
+
+@0
+@2250
+
+@enduml

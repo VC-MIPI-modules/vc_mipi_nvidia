@@ -1,0 +1,15 @@
+@startuml
+!theme plain
+binary "Software trigger"     as TRIG
+binary "Exposure (4: single)" as SINGLE
+
+@0
+@1000
+TRIG is high
+SINGLE is high
+@1250
+TRIG is low
+@2250
+SINGLE is low
+
+@enduml
