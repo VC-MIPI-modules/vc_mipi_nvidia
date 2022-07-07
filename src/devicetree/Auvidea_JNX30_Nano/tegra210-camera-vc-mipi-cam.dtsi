@@ -238,7 +238,7 @@
 
                 num_lanes               = NUM_LANES;
                 trigger_mode            = "0";
-                flash_mode              = "0";
+                io_mode                 = "0";
 
                 // ----------------------------------------------------
                 // If you want to use GStreamer with nvarguscamerasrc
@@ -328,7 +328,7 @@
 
                 num_lanes               = NUM_LANES;
                 trigger_mode            = "0";
-                flash_mode              = "0";
+                io_mode                 = "0";
 
                 // ----------------------------------------------------
                 // If you want to use GStreamer with nvarguscamerasrc
@@ -420,7 +420,7 @@
 
             num_lanes               = NUM_LANES;
             trigger_mode            = "0";
-            flash_mode              = "0";
+            io_mode                 = "0";
 
             // ----------------------------------------------------
             // If you want to use GStreamer with nvarguscamerasrc
@@ -510,7 +510,7 @@
 
             num_lanes               = NUM_LANES;
             trigger_mode            = "0";
-            flash_mode              = "0";
+            io_mode                 = "0";
 
             // ----------------------------------------------------
             // If you want to use GStreamer with nvarguscamerasrc

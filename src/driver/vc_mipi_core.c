@@ -34,6 +34,8 @@
 
 #define REG_IO_DISABLE     	 0x00
 #define REG_IO_FLASH_ENABLE      0x01
+#define REG_IO_FLASH_ACTIVE_LOW	 0x10
+#define REG_IO_TRIG_ACTIVE_LOW	 0x40
 
 #define REG_TRIGGER_DISABLE      0x00
 #define REG_TRIGGER_EXTERNAL     0x01
@@ -1054,15 +1056,38 @@ int vc_mod_set_io_mode(struct vc_cam *cam, int mode)
 	struct vc_ctrl *ctrl = &cam->ctrl;
 	struct vc_state *state = &cam->state;
 	struct device *dev = vc_core_get_mod_device(cam);
-	char *mode_desc;
+	char *mode_desc = NULL;
 
 	if (mode == 0) {
 		mode_desc = "DISABLED";		
 		state->io_mode = REG_IO_DISABLE;
-	} else if (mode == 1 && ctrl->flags & FLAG_IO_FLASH_ENABLED) {
-		mode_desc = "FLASH";
+
+	} else if (ctrl->flags & FLAG_IO_ENABLED) {
+		switch (mode) {
+		case 1:
+			mode_desc = "FLASH ACTIVE HIGH";
 		state->io_mode = REG_IO_FLASH_ENABLE;
-	} else {
+			break;
+		case 2:
+			mode_desc = "FLASH ACTIVE LOW";
+			state->io_mode = REG_IO_FLASH_ENABLE | REG_IO_FLASH_ACTIVE_LOW;
+			break;
+		case 3:
+			mode_desc = "TRIGGER ACTIVE LOW";
+			state->io_mode = REG_IO_TRIG_ACTIVE_LOW;
+			break;
+		case 4:
+			mode_desc = "TRIGGER ACTIVE LOW / FLASH ACTIVE HIGH";
+			state->io_mode = REG_IO_FLASH_ENABLE | REG_IO_TRIG_ACTIVE_LOW;
+			break;
+		case 5: 
+			mode_desc = "TRIGGER AND FLASH ACTIVE LOW";
+			state->io_mode = REG_IO_FLASH_ENABLE | REG_IO_FLASH_ACTIVE_LOW | REG_IO_TRIG_ACTIVE_LOW;
+			break;
+		}
+	}
+
+	if (mode_desc == NULL) {
 		vc_err(dev, "%s(): IO mode %d not supported!\n", __FUNCTION__, mode);
 		return -EINVAL;
 	}

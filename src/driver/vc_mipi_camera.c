@@ -289,7 +289,7 @@ static int vc_set_trigger_mode(struct tegracam_device *tc_dev, __s64 val)
 	return vc_mod_set_trigger_mode(cam, val);
 }
 
-static int vc_set_flash_mode(struct tegracam_device *tc_dev, __s64 val)
+static int vc_set_io_mode(struct tegracam_device *tc_dev, __s64 val)
 {
 	struct vc_cam *cam = tegracam_to_cam(tc_dev);
 	return vc_mod_set_io_mode(cam, val);
@@ -533,9 +533,9 @@ static void vc_init_io(struct device *dev, struct vc_cam *cam)
 			vc_mod_set_trigger_mode(cam, value);
 		}
 
-		ret = read_property_u32(node, "flash_mode", 10, &value);
+		ret = read_property_u32(node, "io_mode", 10, &value);
 		if (ret) {
-			vc_err(dev, "%s(): Unable to read flash_mode from device tree!\n", __FUNCTION__);
+			vc_err(dev, "%s(): Unable to read io_mode from device tree!\n", __FUNCTION__);
 		} else {
 			vc_mod_set_io_mode(cam, value);
 		}
@@ -590,7 +590,7 @@ static const __u32 ctrl_cid_list[] = {
 	TEGRA_CAMERA_CID_BLACK_LEVEL,
 	TEGRA_CAMERA_CID_FRAME_RATE,
 	TEGRA_CAMERA_CID_TRIGGER_MODE,
-	TEGRA_CAMERA_CID_FLASH_MODE,
+	TEGRA_CAMERA_CID_IO_MODE,
 #ifdef VC_CTRL_VALUE
 	TEGRA_CAMERA_CID_VALUE,
 #endif
@@ -604,7 +604,7 @@ static struct tegracam_ctrl_ops vc_ctrl_ops = {
 	.set_black_level = vc_set_black_level,
 	.set_frame_rate = vc_set_frame_rate,
 	.set_trigger_mode = vc_set_trigger_mode,
-	.set_flash_mode = vc_set_flash_mode,
+	.set_io_mode = vc_set_io_mode,
 	.set_group_hold = vc_set_group_hold,
 #ifdef VC_CTRL_VALUE
 	.set_value = vc_set_value,

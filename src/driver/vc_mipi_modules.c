@@ -59,7 +59,7 @@ static void vc_init_ctrl_imx183_base(struct vc_ctrl *ctrl, struct vc_desc* desc)
 
 	ctrl->flags                     = FLAG_EXPOSURE_SONY;
 	ctrl->flags                    |= FLAG_INCREASE_FRAME_RATE;
-	ctrl->flags                    |= FLAG_IO_FLASH_ENABLED;
+	ctrl->flags                    |= FLAG_IO_ENABLED;
 	ctrl->flags                    |= FLAG_TRIGGER_EXTERNAL | FLAG_TRIGGER_SELF |
 	                                  FLAG_TRIGGER_SINGLE | FLAG_TRIGGER_SYNC;
 }
@@ -75,7 +75,7 @@ static void vc_init_ctrl_imx252_base(struct vc_ctrl *ctrl, struct vc_desc* desc)
 
 	ctrl->flags                     = FLAG_EXPOSURE_SONY;
 	ctrl->flags                    |= FLAG_INCREASE_FRAME_RATE;
-	ctrl->flags                    |= FLAG_IO_FLASH_ENABLED;
+	ctrl->flags                    |= FLAG_IO_ENABLED;
 	ctrl->flags                    |= FLAG_TRIGGER_EXTERNAL | FLAG_TRIGGER_PULSEWIDTH |
 	                                  FLAG_TRIGGER_SELF | FLAG_TRIGGER_SINGLE;
 }
@@ -120,7 +120,7 @@ static void vc_init_ctrl_imx296_base(struct vc_ctrl *ctrl, struct vc_desc* desc)
 
 	ctrl->flags                     = FLAG_EXPOSURE_SONY;
 	ctrl->flags                    |= FLAG_INCREASE_FRAME_RATE;
-	ctrl->flags                    |= FLAG_IO_FLASH_ENABLED;
+	ctrl->flags                    |= FLAG_IO_ENABLED;
 	ctrl->flags                    |= FLAG_TRIGGER_EXTERNAL | FLAG_TRIGGER_PULSEWIDTH | FLAG_TRIGGER_SELF;
 }
 
@@ -467,7 +467,7 @@ static void vc_init_ctrl_imx335(struct vc_ctrl *ctrl, struct vc_desc* desc)
 
 	ctrl->flags		       |= FLAG_EXPOSURE_SONY;
 	ctrl->flags		       |= FLAG_DOUBLE_HEIGHT;
-	ctrl->flags		       |= FLAG_IO_FLASH_ENABLED;
+	ctrl->flags		       |= FLAG_IO_ENABLED;
 }
 
 // ------------------------------------------------------------------------------------------------
@@ -531,7 +531,7 @@ static void vc_init_ctrl_imx412(struct vc_ctrl *ctrl, struct vc_desc* desc)
 	ctrl->flags			= FLAG_RESET_ALWAYS;
 	ctrl->flags		       |= FLAG_EXPOSURE_NORMAL;
 	ctrl->flags                    |= FLAG_INCREASE_FRAME_RATE;
-	ctrl->flags		       |= FLAG_IO_FLASH_ENABLED;
+	ctrl->flags		       |= FLAG_IO_ENABLED;
 	ctrl->flags                    |= FLAG_TRIGGER_SLAVE;
 }
 
@@ -569,7 +569,7 @@ static void vc_init_ctrl_imx415(struct vc_ctrl *ctrl, struct vc_desc* desc)
 	ctrl->flags                    |= FLAG_INCREASE_FRAME_RATE;
 	ctrl->flags		       |= FLAG_DOUBLE_HEIGHT;
 	ctrl->flags		       |= FLAG_FORMAT_GBRG;
-	ctrl->flags		       |= FLAG_IO_FLASH_ENABLED;
+	ctrl->flags		       |= FLAG_IO_ENABLED;
 }
 
 // ------------------------------------------------------------------------------------------------
@@ -609,7 +609,7 @@ static void vc_init_ctrl_imx568(struct vc_ctrl *ctrl, struct vc_desc* desc)
 
         ctrl->flags                     = FLAG_EXPOSURE_SONY;
 	ctrl->flags                    |= FLAG_INCREASE_FRAME_RATE;
-        ctrl->flags                    |= FLAG_IO_FLASH_ENABLED;
+        ctrl->flags                    |= FLAG_IO_ENABLED;
         ctrl->flags                    |= FLAG_TRIGGER_EXTERNAL | FLAG_TRIGGER_PULSEWIDTH |
                                           FLAG_TRIGGER_SELF | FLAG_TRIGGER_SINGLE;
 }
@@ -646,7 +646,7 @@ static void vc_init_ctrl_ov7251(struct vc_ctrl *ctrl, struct vc_desc* desc)
 	ctrl->flash_toffset		= 4;
 
 	ctrl->flags		 	= FLAG_EXPOSURE_NORMAL;
-	ctrl->flags		       |= FLAG_IO_FLASH_ENABLED | FLAG_SET_FLASH_DURATION;
+	ctrl->flags		       |= FLAG_IO_ENABLED | FLAG_SET_FLASH_DURATION;
 }
 
 // ------------------------------------------------------------------------------------------------
@@ -683,7 +683,7 @@ static void vc_init_ctrl_ov9281(struct vc_ctrl *ctrl, struct vc_desc* desc)
 	ctrl->flash_toffset		= 4;
 
 	ctrl->flags		 	= FLAG_EXPOSURE_NORMAL;
-	ctrl->flags		       |= FLAG_IO_FLASH_ENABLED | FLAG_SET_FLASH_DURATION;
+	ctrl->flags		       |= FLAG_IO_ENABLED | FLAG_SET_FLASH_DURATION;
 	ctrl->flags		       |= FLAG_TRIGGER_EXTERNAL;
 }
 
