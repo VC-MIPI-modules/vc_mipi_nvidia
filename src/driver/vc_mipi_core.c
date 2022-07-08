@@ -557,12 +557,28 @@ __u32 vc_core_calculate_max_exposure(struct vc_cam *cam, __u8 num_lanes, __u8 fo
 {
 	struct vc_ctrl *ctrl = &cam->ctrl;
 	struct device *dev = vc_core_get_sen_device(cam);
-	__u32 period_1H_ns = vc_core_calculate_timing(cam, num_lanes, format);
 
-	vc_dbg(dev, "%s(): period_1H_ns: %u, vmax.max: %u, vmax.min: %u\n",
-		__FUNCTION__, period_1H_ns, ctrl->vmax.max, ctrl->vmax.min);
-
-	return ((__u64)period_1H_ns * (cam->ctrl.vmax.max - ctrl->vmax.min)) / 1000;
+	switch (cam->state.trigger_mode) {
+	case REG_TRIGGER_DISABLE:
+	case REG_TRIGGER_SYNC:
+	case REG_TRIGGER_STREAM_EDGE:
+	case REG_TRIGGER_STREAM_LEVEL:
+	default:
+		{
+			__u32 period_1H_ns = vc_core_calculate_timing(cam, num_lanes, format);
+			vc_dbg(dev, "%s(): period_1H_ns: %u, vmax.max: %u, vmax.min: %u\n",
+				__FUNCTION__, period_1H_ns, ctrl->vmax.max, ctrl->vmax.min);
+			return ((__u64)period_1H_ns * (cam->ctrl.vmax.max - ctrl->vmax.min)) / 1000;
+		}
+	case REG_TRIGGER_EXTERNAL:
+	case REG_TRIGGER_PULSEWIDTH:
+	case REG_TRIGGER_SELF:
+	case REG_TRIGGER_SINGLE:
+		{
+			vc_dbg(dev, "%s(): sen_clk: %u\n", __FUNCTION__, ctrl->sen_clk);
+			return ((__u64)0xffffffff * 1000000) / ctrl->sen_clk;
+		}
+	}
 }
 
 __u32 vc_core_get_optimized_vmax(struct vc_cam *cam)
@@ -1015,6 +1031,8 @@ int vc_mod_set_trigger_mode(struct vc_cam *cam, int mode)
 		vc_err(dev, "%s(): Trigger mode %d not supported!\n", __FUNCTION__, mode);
 		return -EINVAL;
 	}
+
+	vc_core_update_controls(cam);
 
 	vc_notice(dev, "%s(): Set trigger mode: %s\n", __FUNCTION__, mode_desc);
 

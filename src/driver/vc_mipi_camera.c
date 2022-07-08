@@ -280,7 +280,9 @@ static int vc_set_frame_rate(struct tegracam_device *tc_dev, __s64 val)
 static int vc_set_trigger_mode(struct tegracam_device *tc_dev, __s64 val)
 {
 	struct vc_cam *cam = tegracam_to_cam(tc_dev);
-	return vc_mod_set_trigger_mode(cam, val);
+	int ret = vc_mod_set_trigger_mode(cam, val);
+	vc_update_tegra_controls(tc_dev);
+	return ret;
 }
 
 static int vc_set_io_mode(struct tegracam_device *tc_dev, __s64 val)
@@ -398,8 +400,8 @@ static int vc_start_streaming(struct tegracam_device *tc_dev)
 		usleep_range(1000*sleepR, 1000*sleepR);
 	}
 	ret |= vc_sen_set_roi(cam);
+	ret |= vc_sen_set_exposure(cam, cam->state.exposure);
 	if (!ret && reset) {
-		ret |= vc_sen_set_exposure(cam, cam->state.exposure);
 		ret |= vc_sen_set_gain(cam, cam->state.gain);
 		ret |= vc_sen_set_blacklevel(cam, cam->state.blacklevel);
 	}
