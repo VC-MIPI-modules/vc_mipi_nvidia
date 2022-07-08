@@ -333,6 +333,10 @@ static void vc_init_ctrl_imx265(struct vc_ctrl *ctrl, struct vc_desc* desc)
 // ------------------------------------------------------------------------------------------------
 //  Settings for IMX273/IMX273C (Rev.13)
 //
+// NOTE:
+// - Image width can't be reduced by cropping  
+//   - For RAW08 image width is fixed to and filled with black to 1472 columns
+//   - For RAW10/12 image width is fixed to 2880
 // TODO:
 // - Tegra image height has to be decreased by 1 in 4 lanes mode
 
@@ -507,7 +511,6 @@ static void vc_init_ctrl_imx392(struct vc_ctrl *ctrl, struct vc_desc* desc)
 // - No TRIGGER and FLASH capability.
 // TODO:
 // - Slave Mode not implemented.
-// - Check framerate increase with reduced image height
 
 static void vc_init_ctrl_imx412(struct vc_ctrl *ctrl, struct vc_desc* desc)
 {
@@ -631,6 +634,8 @@ static void vc_init_ctrl_ov7251(struct vc_ctrl *ctrl, struct vc_desc* desc)
 	ctrl->exposure			= (vc_control) { .min =   1, .max =   1000000, .def =  10000 };
 	ctrl->gain			= (vc_control) { .min =   0, .max =      1023, .def =      0 };
 
+	ctrl->csr.sen.h_end 		= (vc_csr2) { .l = 0x0000, .m = 0x0000 };
+	ctrl->csr.sen.v_end 		= (vc_csr2) { .l = 0x0000, .m = 0x0000 };
 	ctrl->csr.sen.flash_duration	= (vc_csr4) { .l = 0x3b8f, .m = 0x3b8e, .h = 0x3b8d, .u = 0x3b8c };
 	ctrl->csr.sen.flash_offset	= (vc_csr4) { .l = 0x3b8b, .m = 0x3b8a, .h = 0x3b89, .u = 0x3b88 };
         ctrl->csr.sen.vmax              = (vc_csr4) { .l = 0x380f, .m = 0x380e, .h = 0x0000, .u = 0x0000 };
@@ -667,6 +672,8 @@ static void vc_init_ctrl_ov9281(struct vc_ctrl *ctrl, struct vc_desc* desc)
 	ctrl->exposure			= (vc_control) { .min = 146, .max =    595000, .def =  10000 };
 	ctrl->gain			= (vc_control) { .min =  16, .max =       255, .def =     16 };
 
+	ctrl->csr.sen.h_end 		= (vc_csr2) { .l = 0x0000, .m = 0x0000 };
+	ctrl->csr.sen.v_end 		= (vc_csr2) { .l = 0x0000, .m = 0x0000 };
 	ctrl->csr.sen.flash_duration	= (vc_csr4) { .l = 0x3928, .m = 0x3927, .h = 0x3926, .u = 0x3925 };
 	ctrl->csr.sen.flash_offset	= (vc_csr4) { .l = 0x3924, .m = 0x3923, .h = 0x3922, .u = 0x0000 };
         ctrl->csr.sen.vmax              = (vc_csr4) { .l = 0x380f, .m = 0x380e, .h = 0x0000, .u = 0x0000 };
