@@ -1,7 +1,7 @@
 # Vision Components MIPI CSI-2 driver for NVIDIA Jetson Nano, Xavier NX, AGX Xavier and TX2
 ![VC MIPI camera](https://www.vision-components.com/fileadmin/external/documentation/hardware/VC_MIPI_Camera_Module/VC_MIPI_Camera_Module_Hardware_Operating_Manual-Dateien/mipi_sensor_front_back.png)
 
-## Version 0.11.0 ([History](VERSION.md))
+## Version 0.12.0 ([History](VERSION.md))
 * Supported system on modules
   * [NVIDIA Jetson Nano 4GB/2GB (production + devkit)](https://developer.nvidia.com/embedded/jetson-nano)
   * [NVIDIA Jetson Xavier NX (production + devkit)](https://developer.nvidia.com/embedded/jetson-xavier-nx)
@@ -37,11 +37,12 @@
   * Image Streaming in GREY, Y10, Y12, SRGGB8, SRGGB10, SRGGB12, SGBRG8, SGBRG10, SGBRG12 format
   * **Exposure** can be set via V4L2 control 'exposure'
   * **Gain** can be set via V4L2 control 'gain'
-  * **Trigger mode** '0: disabled', '1: external', '2: pulsewidth', '3: self', '4: single', '5: sync', '6: stream_edge', '7: stream_level' can be set via device tree or V4L2 control 'trigger_mode'
-  * **Flash mode** '0: disabled', '1: enabled' can be set via device tree or V4L2 control 'flash_mode'
+  * **[Trigger mode](doc/TRIGGER_MODE.md)** '0: disabled', '1: external', '2: pulsewidth', '3: self', '4: single', '5: sync', '6: stream_edge', '7: stream_level' can be set via device tree or V4L2 control 'trigger_mode'
+    * **Software trigger** can be executed by V4L2 control 'single_trigger'
+  * **[IO mode](doc/IO_MODE.md)** '0: disabled', '1: flash active high', '2: flash active low', '3: trigger active low', '4: trigger active low and flash active high', '5: trigger and flash active low' can be set via device tree or V4L2 control 'flash_mode'
   * **Frame rate** can be set via V4L2 control 'frame_rate' *(except IMX412 and OV9281)*
   * **Black level** can be set via V4L2 control 'black_level' *(except IMX290, IMX327, IMX412, IMX415, OV7251 and OV9281)*
-  * **ROI cropping** can be set via device tree properties active_w and active_h
+  * **[ROI cropping](doc/ROI_CROPPING.md)** can be set via device tree properties active_l, active_t, active_w and active_h or v4l2-ctl.
 
 ## Prerequisites for cross-compiling
 ### Host PC
