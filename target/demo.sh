@@ -182,7 +182,7 @@ if [[ -n ${argus} ]]; then
         get_image_size
         adjust_pixel_format
 
-        gst-launch-1.0 nvarguscamerasrc sensor-id=${device} ! 'video/x-raw(memory:NVMM),framerate=20/1' ! nvegltransform ! nveglglessink
+        gst-launch-1.0 nvarguscamerasrc sensor-id=${device} ! 'video/x-raw(memory:NVMM),framerate=20/1' ! autovideosink
 else 
         cd ${script_dir}
         ./vcmipidemo -d${device} -an${option2} ${optionY} -s${shutter} -g${gain} -w '128 180 128'
