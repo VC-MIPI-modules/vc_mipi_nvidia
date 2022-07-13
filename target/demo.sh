@@ -185,5 +185,6 @@ if [[ -n ${argus} ]]; then
         gst-launch-1.0 nvarguscamerasrc sensor-id=${device} ! 'video/x-raw(memory:NVMM),framerate=20/1' ! autovideosink
 else 
         cd ${script_dir}
+        v4l2-ctl -c bypass_mode=0
         ./vcmipidemo -d${device} -an${option2} ${optionY} -s${shutter} -g${gain} -w '128 180 128'
 fi
