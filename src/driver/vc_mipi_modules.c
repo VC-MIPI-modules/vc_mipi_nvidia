@@ -333,10 +333,6 @@ static void vc_init_ctrl_imx265(struct vc_ctrl *ctrl, struct vc_desc* desc)
 // ------------------------------------------------------------------------------------------------
 //  Settings for IMX273/IMX273C (Rev.13)
 //
-// NOTE:
-// - Image width can't be reduced by cropping  
-//   - For RAW08 image width is fixed to and filled with black to 1472 columns
-//   - For RAW10/12 image width is fixed to 2880
 // TODO:
 // - Tegra image height has to be decreased by 1 in 4 lanes mode
 
@@ -541,10 +537,6 @@ static void vc_init_ctrl_imx412(struct vc_ctrl *ctrl, struct vc_desc* desc)
 
 // ------------------------------------------------------------------------------------------------
 //  Settings for IMX415C (Rev.01)
-//
-// TODO:
-// - Multi-bit transmission error (err: 0x0820022, frame: 0)
-// - Check framerate increase with reduced image height
 
 static void vc_init_ctrl_imx415(struct vc_ctrl *ctrl, struct vc_desc* desc)
 {
@@ -578,12 +570,6 @@ static void vc_init_ctrl_imx415(struct vc_ctrl *ctrl, struct vc_desc* desc)
 
 // ------------------------------------------------------------------------------------------------
 //  Settings for IMX568 (Rev.01)
-//
-//  TODO:
-//  - pixelformat RAW08 has alternating horizontal line shift
-//  - ROI cropping does not work. 
-//    - Image width isn't adjustable! Image width is to short 2464 -> 2472
-//    - Image height and frame rate increase is working!
 
 static void vc_init_ctrl_imx568(struct vc_ctrl *ctrl, struct vc_desc* desc)
 {
