@@ -454,38 +454,33 @@ int vc_init_frmfmt(struct device *dev, struct vc_cam *cam)
 	struct camera_common_frmfmt *frmfmt = NULL;
 	int *fps = NULL;
 
-	vc_dbg(dev, "%s(): Allocate memory and init frame parameters\n", __FUNCTION__);
+	vc_dbg(dev, "%s(): Allocate memory and init frame parameters for %s\n", __FUNCTION__,
+		cam->desc.sen_type);
 
-	if (vc_sensor_ops.frmfmt_table == NULL) {
-		frmfmt = devm_kzalloc(dev, sizeof(*frmfmt), GFP_KERNEL);
-		if (!frmfmt)
-			return -ENOMEM;
+	frmfmt = devm_kzalloc(dev, sizeof(*frmfmt), GFP_KERNEL);
+	if (!frmfmt)
+		return -ENOMEM;
+
+	vc_sensor_ops.frmfmt_table = frmfmt;
+	vc_sensor_ops.numfrmfmts = 1;
+
+	fps = devm_kzalloc(dev, sizeof(int), GFP_KERNEL);
+	if (!fps)
+		return -ENOMEM;
+
+	frmfmt->framerates = fps;
+	frmfmt->num_framerates = 1;
+
+	fps[0] = cam->ctrl.framerate.def;
 	
-		vc_sensor_ops.frmfmt_table = frmfmt;
-		vc_sensor_ops.numfrmfmts = 1;
+	frmfmt->size.width = cam->ctrl.frame.width;
+	frmfmt->size.height = cam->ctrl.frame.height;
+	frmfmt->hdr_en = 0;
+	frmfmt->mode = 0;
 
-		fps = devm_kzalloc(dev, sizeof(int), GFP_KERNEL);
-		if (!fps)
-			return -ENOMEM;
-
-		frmfmt->framerates = fps;
-		frmfmt->num_framerates = 1;
-	}
-
-	if (frmfmt != NULL && fps != NULL) {
-		fps[0] = cam->ctrl.framerate.def;
-		
-		frmfmt->size.width = cam->ctrl.frame.width;
-		frmfmt->size.height = cam->ctrl.frame.height;
-		frmfmt->hdr_en = 0;
-		frmfmt->mode = 0;
-
-		vc_notice(dev, "%s(): Init frame (width: %d, height: %d, fps: %d)\n", __FUNCTION__,
-			frmfmt->size.width, frmfmt->size.height, frmfmt->framerates[0]);
-		return 0;
-	}
-
-	return -ENOMEM;
+	vc_notice(dev, "%s(): Init frame (width: %d, height: %d, fps: %d)\n", __FUNCTION__,
+		frmfmt->size.width, frmfmt->size.height, frmfmt->framerates[0]);
+	return 0;
 }
 
 static int vc_init_lanes(struct tegracam_device *tc_dev) 
