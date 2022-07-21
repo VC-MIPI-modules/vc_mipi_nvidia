@@ -1,5 +1,16 @@
 # Version History
 
+## v0.12.1 (Improvements & Bugfixes)
+  * Improvements
+    * Improved ROI cropping documentation with adjustable ranges for each camera.
+    * Reorganized common kernel patches in a shared folder.
+  * Bugfixes
+    * Reduced image size limitation from width 32 to 4 and height from 4 to 1.
+    * Fixed missing active_l and active_t device tree properties for Xavier and TX2 SoMs.
+    * Fixed a problem with image sizes in heterogenous multi camera setups.
+    * Added missing active_l and active_t device tree properties in README.md
+    * Fixed image height workaround for new ROI cropping implementation.
+
 ## v0.12.0 (ROI cropping by V4L)
   * New Features
     * Added ROI cropping by the V4L API

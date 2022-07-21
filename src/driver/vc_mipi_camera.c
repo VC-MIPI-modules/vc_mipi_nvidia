@@ -5,6 +5,7 @@
 #include "vc_mipi_core.h"
 #include "vc_mipi_modules.h"
 
+#define VERSION "0.12.1"
 // #define VC_CTRL_VALUE
 
 
@@ -639,7 +640,7 @@ static int vc_probe(struct i2c_client *client, const struct i2c_device_id *id)
 	struct tegracam_device *tc_dev;
 	int ret;
 
-	vc_notice(dev, "%s(): Probing UNIVERSAL VC MIPI Driver\n", __func__);
+	vc_notice(dev, "%s(): Probing UNIVERSAL VC MIPI Driver (v%s)\n", __func__, VERSION);
 	// --------------------------------------------------------------------
 
  	cam = devm_kzalloc(dev, sizeof(struct vc_cam), GFP_KERNEL);
@@ -740,7 +741,7 @@ static struct i2c_driver vc_i2c_driver = {
 };
 module_i2c_driver(vc_i2c_driver);
 
-MODULE_VERSION("0.12.0");
+MODULE_VERSION(VERSION);
 MODULE_DESCRIPTION("Vision Components GmbH - VC MIPI NVIDIA driver");
 MODULE_AUTHOR("Peter Martienssen, Liquify Consulting <peter.martienssen@liquify-consulting.de>");
 MODULE_LICENSE("GPL v2");
