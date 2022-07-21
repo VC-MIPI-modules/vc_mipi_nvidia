@@ -191,6 +191,8 @@
                 // ----------------------------------------------------
                 // If you want to use GStreamer with nvarguscamerasrc
                 // you have to adjust this settings. 
+                active_l                 = "0";
+                active_t                 = "0";
                 active_w                 = "0";
                 active_h                 = "0";
                 pixel_t                  = "bayer_rggb";
@@ -279,6 +281,8 @@
                 // ----------------------------------------------------
                 // If you want to use GStreamer with nvarguscamerasrc
                 // you have to adjust this settings. 
+                active_l                 = "0";
+                active_t                 = "0";
                 active_w                 = "0";
                 active_h                 = "0";
                 pixel_t                  = "bayer_rggb";
