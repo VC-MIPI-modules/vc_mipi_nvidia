@@ -86,12 +86,14 @@ void vc_fix_image_size(struct tegracam_device *tc_dev, __u32 *width, __u32 *heig
 	// TEGRA_VI_CSI_ERROR_STATUS=0x00000004 (Bits 3-0: h>,<, w>,<) => height is to high
 	// TEGRA_VI_CSI_ERROR_STATUS=0x00000008 (Bits 3-0: h>,<, w>,<) => height is to low
 	switch (cam->desc.mod_id) {
-        case MOD_ID_IMX178: // Active pixels 3072 x 2048 (Rev. 01)
+        case MOD_ID_IMX178: // Active pixels 3072 x 2048
+		if (cam->desc.mod_rev >  1) break;
                 if (!trigger_enabled) {
 			*height += 1;
 		}
                 break;
-	case MOD_ID_IMX183: // Active pixels 5440 x 3648 (Rev. 12)
+	case MOD_ID_IMX183: // Active pixels 5440 x 3648
+		if (cam->desc.mod_rev > 12) break;
 		if (trigger_enabled) {
 			switch (code) {
 			case MEDIA_BUS_FMT_Y8_1X8: 	case MEDIA_BUS_FMT_SRGGB8_1X8:
@@ -102,21 +104,32 @@ void vc_fix_image_size(struct tegracam_device *tc_dev, __u32 *width, __u32 *heig
 		}
 		break;
 
-	case MOD_ID_IMX264:
-	case MOD_ID_IMX265:
+	case MOD_ID_IMX264: // Active pixels 2432 x 2048
+		if (cam->desc.mod_rev >  3) break;
+	case MOD_ID_IMX265: // Active pixels 2048 x 1536
+		if (cam->desc.mod_rev >  1) break;
 		if (num_lanes == 2) {
-			(*tegra_height)--;
+			*height += 1;
 		}
 		break;
 
 	case MOD_ID_IMX250: // Active pixels 2432 x 2048
+		if (cam->desc.mod_rev >  7) break;
 	case MOD_ID_IMX252: // Active pixels 2048 x 1536
+		if (cam->desc.mod_rev > 10) break;
 	case MOD_ID_IMX273: // Active pixels 1440 x 1080
+		if (cam->desc.mod_rev > 13) break;
         case MOD_ID_IMX392: // Active pixels 1920 x 1200
+		if (cam->desc.mod_rev >  6) break;
 		if (num_lanes == 4) {
-			(*tegra_height)--;
+			*height += 1;
 		}
 		break;
+	}
+
+	if (*tegra_height != *height) {
+		vc_dbg(tc_dev->s_data->dev, "%s(): Fix image size (h: %u, hc: %u)\n",
+				__FUNCTION__, *tegra_height, *height);
 	}
 }
 #endif

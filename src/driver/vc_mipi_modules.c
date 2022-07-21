@@ -222,9 +222,6 @@ static void vc_init_ctrl_imx226(struct vc_ctrl *ctrl, struct vc_desc* desc)
 
 // ------------------------------------------------------------------------------------------------
 //  Settings for IMX250/IMX250C (Rev.07)
-//
-// TODO:
-// - Tegra image height has to be decreased by 1 in 4 lanes mode
 
 static void vc_init_ctrl_imx250(struct vc_ctrl *ctrl, struct vc_desc* desc)
 {
@@ -251,9 +248,6 @@ static void vc_init_ctrl_imx250(struct vc_ctrl *ctrl, struct vc_desc* desc)
 
 // ------------------------------------------------------------------------------------------------
 //  Settings for IMX252/IMX252C (Rev.10)
-//
-// TODO:
-// - Tegra image height has to be decreased by 1 in 4 lanes mode
 
 static void vc_init_ctrl_imx252(struct vc_ctrl *ctrl, struct vc_desc* desc)
 {
@@ -280,9 +274,6 @@ static void vc_init_ctrl_imx252(struct vc_ctrl *ctrl, struct vc_desc* desc)
 
 // ------------------------------------------------------------------------------------------------
 //  Settings for IMX264/IMX264C (Rev.03)
-//
-// TODO:
-// - Tegra image height has to be decreased by 1 in 2 lanes mode
 
 static void vc_init_ctrl_imx264(struct vc_ctrl *ctrl, struct vc_desc* desc)
 {
@@ -306,9 +297,6 @@ static void vc_init_ctrl_imx264(struct vc_ctrl *ctrl, struct vc_desc* desc)
 
 // ------------------------------------------------------------------------------------------------
 //  Settings for IMX265/IMX265C (Rev.01)
-//
-// TODO:
-// - Tegra image height has to be decreased by 1 in 2 lanes mode
 
 static void vc_init_ctrl_imx265(struct vc_ctrl *ctrl, struct vc_desc* desc)
 {
@@ -332,9 +320,6 @@ static void vc_init_ctrl_imx265(struct vc_ctrl *ctrl, struct vc_desc* desc)
 
 // ------------------------------------------------------------------------------------------------
 //  Settings for IMX273/IMX273C (Rev.13)
-//
-// TODO:
-// - Tegra image height has to be decreased by 1 in 4 lanes mode
 
 static void vc_init_ctrl_imx273(struct vc_ctrl *ctrl, struct vc_desc* desc)
 {
@@ -473,9 +458,6 @@ static void vc_init_ctrl_imx335(struct vc_ctrl *ctrl, struct vc_desc* desc)
 
 // ------------------------------------------------------------------------------------------------
 //  Settings for IMX392/IMX392C (Rev.06)
-//
-// TODO:
-// - Tegra image height has to be decreased by 1 in 4 lanes mode
 
 static void vc_init_ctrl_imx392(struct vc_ctrl *ctrl, struct vc_desc* desc)
 {
@@ -503,10 +485,10 @@ static void vc_init_ctrl_imx392(struct vc_ctrl *ctrl, struct vc_desc* desc)
 // ------------------------------------------------------------------------------------------------
 //  Settings for IMX412C (Rev.02)
 //
-// NOTES: 
-// - No TRIGGER and FLASH capability.
-// TODO:
-// - Slave Mode not implemented.
+//  NOTES: 
+//  - No TRIGGER and FLASH capability.
+//  TODO:
+//  - Slave Mode not implemented.
 
 static void vc_init_ctrl_imx412(struct vc_ctrl *ctrl, struct vc_desc* desc)
 {
