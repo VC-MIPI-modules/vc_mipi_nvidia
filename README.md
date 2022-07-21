@@ -194,6 +194,8 @@ As an example the device tree for the IMX226 with 4 lanes and pixel format RAW10
       // ----------------------------------------------------
       // If you want to use GStreamer with nvarguscamerasrc
       // you have to adjust this settings. 
+      active_l                 = "0";
+      active_t                 = "0";
       active_w                 = "3904";
       active_h                 = "3000";
       pixel_t                  = "bayer_gbrg";
