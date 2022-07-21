@@ -51,7 +51,7 @@ case $VC_MIPI_SOM in
                 DT_CAM_FILE=$DT_CAM_DIR/Auvidea_JNX30_Nano/tegra210-camera-vc-mipi-cam.dtsi
                 case $VC_MIPI_BSP in
                 32.5.0|32.5.1|32.5.2|32.6.1|32.7.1|32.7.2)
-                        PATCHES=('dt_Auvidea_JNX30_Nano_32.5.0+')
+                        PATCHES+=('dt_Auvidea_JNX30_Nano_32.5.0+')
                         ;;
                 esac
                 ;;
