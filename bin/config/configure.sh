@@ -38,7 +38,7 @@ else
         exit 1
 fi
 
-PATCHES=()
+PATCHES=('kernel_common_32.3.1+')
 
 case $VC_MIPI_SOM in
         Nano|NanoSD|Nano2GB)

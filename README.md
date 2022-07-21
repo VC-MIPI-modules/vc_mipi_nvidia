@@ -280,7 +280,7 @@ You can find the revision of the camera module in the dmesg log.
 
 If you have your own BSP, you have to integrate the driver into it. Please follow these steps.
 
-1. Apply all patches listed in the following table that match your hardware setup
+1. Apply all patches in the folder kernel_common_32.3.1+ and the patches listed in the following table that match your hardware setup
    
    | system on module         | carrier board | BSP             | all patches in folder patch/... |
    | ------------------------ | ------------- | --------------- | --------------------- |
