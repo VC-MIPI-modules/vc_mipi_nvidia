@@ -1,5 +1,8 @@
 # Version History
 
+## v0.12.2 (Bugfixes)
+  * Bugfixes
+    * Fixed a problem in function vc_fix_image_size.
 ## v0.12.1 (Improvements & Bugfixes)
   * Improvements
     * Improved ROI cropping documentation with adjustable ranges for each camera.
