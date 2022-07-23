@@ -106,25 +106,17 @@ void vc_fix_image_size(struct tegracam_device *tc_dev, __u32 *width, __u32 *heig
 		break;
 
 	case MOD_ID_IMX264: // Active pixels 2432 x 2048
-		if (cam->desc.mod_rev >  3) break;
+		if (cam->desc.mod_rev <=  3 && num_lanes == 2) { *height += 1; } break;
 	case MOD_ID_IMX265: // Active pixels 2048 x 1536
-		if (cam->desc.mod_rev >  1) break;
-		if (num_lanes == 2) {
-			*height += 1;
-		}
-		break;
-
+		if (cam->desc.mod_rev <=  1 && num_lanes == 2) { *height += 1; } break;
 	case MOD_ID_IMX250: // Active pixels 2432 x 2048
-		if (cam->desc.mod_rev >  7) break;
+		if (cam->desc.mod_rev <=  7 && num_lanes == 4) { *height += 1; } break;
 	case MOD_ID_IMX252: // Active pixels 2048 x 1536
-		if (cam->desc.mod_rev > 10) break;
+		if (cam->desc.mod_rev <= 10 && num_lanes == 4) { *height += 1; } break;
 	case MOD_ID_IMX273: // Active pixels 1440 x 1080
-		if (cam->desc.mod_rev > 13) break;
+		if (cam->desc.mod_rev <= 13 && num_lanes == 4) { *height += 1; } break;
         case MOD_ID_IMX392: // Active pixels 1920 x 1200
-		if (cam->desc.mod_rev >  6) break;
-		if (num_lanes == 4) {
-			*height += 1;
-		}
+		if (cam->desc.mod_rev <=  6 && num_lanes == 4) { *height += 1; } break;
 		break;
 	}
 
