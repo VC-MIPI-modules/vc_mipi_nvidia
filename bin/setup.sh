@@ -51,7 +51,7 @@ setup_toolchain() {
 
 setup_kernel() {
         echo "Setup kernel ..."
-        mkdir -p $BUILD_DIR
+        mkdir -p $BSP_DIR
         mkdir -p $DOWNLOAD_DIR
 
         cd $DOWNLOAD_DIR
@@ -59,12 +59,12 @@ setup_kernel() {
                 wget $SRC_URL/$SRC_FILE
         fi
 
-        cd $BUILD_DIR
-        rm -Rf $BUILD_DIR/Linux_for_Tegra/source/public
+        cd $BSP_DIR
+        rm -Rf $BSP_DIR/Linux_for_Tegra/source/public
         cd $DOWNLOAD_DIR
-        tar xjvf $SRC_FILE -C $BUILD_DIR
+        tar xjvf $SRC_FILE -C $BSP_DIR
 
-        cd $BUILD_DIR/Linux_for_Tegra/source/public
+        cd $BSP_DIR/Linux_for_Tegra/source/public
         tar xvf kernel_src.tbz2
 
         git init
@@ -99,15 +99,15 @@ setup_bsp() {
         cd $BUILD_DIR
         sudo rm -Rf Linux_for_Tegra
         cd $DOWNLOAD_DIR
-        tar xjvf $BSP_FILE -C $BUILD_DIR
+        tar xjvf $BSP_FILE -C $BSP_DIR
 
         cd $DOWNLOAD_DIR
         if [[ ! -e $RFS_FILE ]]; then 
                 wget $RFS_URL/$RFS_FILE
         fi
-        sudo tar xjvf $RFS_FILE -C $BUILD_DIR/Linux_for_Tegra/rootfs
+        sudo tar xjvf $RFS_FILE -C $BSP_DIR/Linux_for_Tegra/rootfs
 
-        cd $BUILD_DIR/Linux_for_Tegra
+        cd $BSP_DIR/Linux_for_Tegra
         sudo ./apply_binaries.sh
 }
 
