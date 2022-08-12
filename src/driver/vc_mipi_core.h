@@ -13,25 +13,26 @@
 #define vc_warn(dev, fmt, ...) dev_warn(dev, fmt, ##__VA_ARGS__)
 #define vc_err(dev, fmt, ...) dev_err(dev, fmt, ##__VA_ARGS__)
 
-#define FLAG_RESET_ALWAYS		0x00000001
-#define FLAG_EXPOSURE_SONY      	0x00000002
-#define FLAG_EXPOSURE_NORMAL    	0x00000004
-#define FLAG_SET_FLASH_DURATION		0x00000008
+#define FLAG_RESET_ALWAYS		(1 <<  0)
+#define FLAG_EXPOSURE_SONY      	(1 <<  1)
+#define FLAG_EXPOSURE_NORMAL    	(1 <<  2)
+#define FLAG_SET_FLASH_DURATION		(1 <<  3)
 
-#define FLAG_IO_ENABLED           	0x00000010
-#define FLAG_FORMAT_GBRG		0x00000020
-#define FLAG_DOUBLE_HEIGHT        	0x00000040
-#define FLAG_INCREASE_FRAME_RATE       	0x00000080
+#define FLAG_IO_ENABLED           	(1 <<  4)
+#define FLAG_FORMAT_GBRG		(1 <<  5)
+#define FLAG_DOUBLE_HEIGHT        	(1 <<  6)
+#define FLAG_INCREASE_FRAME_RATE       	(1 <<  7)
 
-#define FLAG_TRIGGER_DISABLE      	0x00000100
-#define FLAG_TRIGGER_EXTERNAL     	0x00000200
-#define FLAG_TRIGGER_PULSEWIDTH   	0x00000400
-#define FLAG_TRIGGER_SELF         	0x00000800
-#define FLAG_TRIGGER_SINGLE  	  	0x00001000
-#define FLAG_TRIGGER_SYNC         	0x00002000
-#define FLAG_TRIGGER_STREAM_EDGE  	0x00004000
-#define FLAG_TRIGGER_STREAM_LEVEL 	0x00008000
-#define FLAG_TRIGGER_SLAVE       	0x00010000
+#define FLAG_TRIGGER_DISABLE      	(1 <<  8)
+#define FLAG_TRIGGER_EXTERNAL     	(1 <<  9)
+#define FLAG_TRIGGER_PULSEWIDTH   	(1 << 10)
+#define FLAG_TRIGGER_SELF         	(1 << 11)
+#define FLAG_TRIGGER_SELF_V2         	(1 << 12)
+#define FLAG_TRIGGER_SINGLE  	  	(1 << 13)
+#define FLAG_TRIGGER_SYNC         	(1 << 14)
+#define FLAG_TRIGGER_STREAM_EDGE  	(1 << 15)
+#define FLAG_TRIGGER_STREAM_LEVEL 	(1 << 16)
+#define FLAG_TRIGGER_SLAVE       	(1 << 17)
 
 #define FORMAT_RAW08			0x2a
 #define FORMAT_RAW10			0x2b
@@ -142,7 +143,7 @@ struct vc_csr {
 typedef struct vc_timing {
 	__u8 num_lanes;
 	__u8 format;
-	__u32 clk;
+	__u32 hmax;
 } vc_timing;
 
 struct vc_ctrl {
@@ -162,9 +163,9 @@ struct vc_ctrl {
 	struct vc_csr csr;
 	// Exposure
 	struct vc_timing expo_timing[8];
-	__u32 sen_clk;			// Hz
-	// Framerate
-	__u32 retrigger_def;
+	__u32 clk_ext_trigger;		// Hz
+	__u32 clk_pixel;		// Hz
+	__u32 retrigger_min;
 	// Flash
 	__u32 flash_factor;
 	__s32 flash_toffset;
