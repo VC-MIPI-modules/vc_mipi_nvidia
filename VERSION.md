@@ -1,5 +1,8 @@
 # Version History
 
+## v0.12.3 (Bugfixes)
+  * Bugfixes
+    * Fixed an issue with the IMX183's self-triggering mode.
 ## v0.12.2 (Bugfixes)
   * Bugfixes
     * Fixed a problem in function vc_fix_image_size.
