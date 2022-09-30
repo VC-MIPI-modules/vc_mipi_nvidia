@@ -139,7 +139,8 @@ choose_bsp() {
                 echo "    4: NVIDIA L4T 32.6.1 (https://developer.nvidia.com/embedded/linux-tegra-r3261)"
                 echo "    5: NVIDIA L4T 32.7.1 (https://developer.nvidia.com/embedded/linux-tegra-r3271)"
                 echo "    6: NVIDIA L4T 32.7.2 (https://developer.nvidia.com/embedded/linux-tegra-r3272)"
-                read_selection 1 6
+                echo "    7: NVIDIA L4T 35.1.0 (https://developer.nvidia.com/embedded/jetson-linux-r351)"
+                read_selection 1 7
         fi
         case ${selection} in
         1) bsp=32.5.0 ;;
@@ -148,6 +149,7 @@ choose_bsp() {
         4) bsp=32.6.1 ;;
         5) bsp=32.7.1 ;;
         6) bsp=32.7.2 ;;
+        7) bsp=35.1.0 ;;
         esac
 }
 

@@ -9,6 +9,7 @@ usage() {
         echo "-c, --camera              Open device tree file to activate camera."
         echo "-h, --help                Show this help text."
         echo "-k, --kernel              Setup/Reset kernel sources."
+        echo "-p, --repatch             Repatch kernel sources."
         echo "-r, --reconfigure         Reconfigures the driver for a changed hardware setup."
         echo "-t, --target              Setup ssh login and installs some scripts."
         echo "-o, --host                Installs system tools, toolchain and board support package."
@@ -75,7 +76,7 @@ setup_kernel() {
         git add hardware
         git add kernel
         git commit -m "Initial commit"
-        for patch in ${PATCHES[@]}; do
+        for patch in "${PATCHES[@]}"; do
                 for patchfile in $PATCH_DIR/${patch}/*.patch; do
                         git am -3 --whitespace=fix --ignore-whitespace < ${patchfile}
                 done
@@ -84,6 +85,19 @@ setup_kernel() {
 
         cp -R $DRIVER_DIR/* $DRIVER_DST_DIR
         cp -R $DT_CAM_FILE $DT_CAM_FILE_DST_DIR
+}
+
+repatch_kernel() {
+        echo "Repatch kernel ..."
+        cd $BSP_DIR/Linux_for_Tegra/source/public
+        git am --abort
+        FIRST_COMMIT=$(git rev-list --max-parents=0 --abbrev-commit HEAD)
+        git reset --hard $FIRST_COMMIT
+        for patch in ${PATCHES[@]}; do
+                for patchfile in $PATCH_DIR/${patch}/*.patch; do
+                        git am -3 --whitespace=fix --ignore-whitespace < ${patchfile}
+                done
+        done
 }
 
 setup_bsp() {
@@ -146,6 +160,11 @@ while [ $# != 0 ] ; do
         -k|--kernel)
                 configure
                 setup_kernel
+                exit 0
+                ;;
+        -p|--repatch)
+                configure
+                repatch_kernel
                 exit 0
                 ;;
         -r|--reconfigure)

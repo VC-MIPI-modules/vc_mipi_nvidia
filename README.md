@@ -1,7 +1,7 @@
 # Vision Components MIPI CSI-2 driver for NVIDIA Jetson Nano, Xavier NX, AGX Xavier and TX2
 ![VC MIPI camera](https://www.vision-components.com/fileadmin/external/documentation/hardware/VC_MIPI_Camera_Module/VC_MIPI_Camera_Module_Hardware_Operating_Manual-Dateien/mipi_sensor_front_back.png)
 
-## Version 0.12.3 ([History](VERSION.md))
+## Version 0.13.0 ([History](VERSION.md))
 * Supported system on modules
   * [NVIDIA Jetson Nano 4GB/2GB (production + devkit)](https://developer.nvidia.com/embedded/jetson-nano)
   * [NVIDIA Jetson Xavier NX (production + devkit)](https://developer.nvidia.com/embedded/jetson-xavier-nx)
@@ -21,6 +21,7 @@
   * [NVIDIA L4T 32.6.1](https://developer.nvidia.com/embedded/linux-tegra-r3261)
   * [NVIDIA L4T 32.7.1](https://developer.nvidia.com/embedded/linux-tegra-r3271) *(experimental)*
   * [NVIDIA L4T 32.7.2](https://developer.nvidia.com/embedded/linux-tegra-r3272) *(experimental)*
+  * [NVIDIA L4T 35.1.0](https://developer.nvidia.com/embedded/jetson-linux-r351) *(experimental)*
 * Supported [VC MIPI Camera Modules](https://www.vision-components.com/fileadmin/external/documentation/hardware/VC_MIPI_Camera_Module/index.html) 
   * IMX178, IMX183, IMX226
   * IMX250, IMX252, IMX264, IMX265, IMX273, IMX392
@@ -292,6 +293,7 @@ If you have your own BSP, you have to integrate the driver into it. Please follo
    |                          |               | 32.6.1          | dt_Auvidea_JNX30_Nano_32.5.0+ <br> dt_camera_Nano_32.6.1+ <br> kernel_Nano_32.5.0+ |
    | NVIDIA Jetson Xavier NX  | NVIDIA DevKit | 32.5.0 - 32.5.2 | dt_camera_XavierNX_32.5.0+ <br> kernel_Xavier_32.5.0+  |
    |                          |               | 32.6.1          | dt_camera_XavierNX_32.6.1+ <br> kernel_Xavier_32.6.1+  |
+   |                          |               | 35.1.0          | dt_camera_XavierNX_32.6.1+ <br> kernel_Xavier_35.1.0+  |
    |                          | Auvidea JNX30 | 32.5.0 - 32.5.2 | dt_Auvidea_JNX30_XavierNX_32.5.0+ <br> dt_camera_XavierNX_32.5.0+ <br> kernel_Xavier_32.5.0+  |
    |                          |               | 32.6.1          | dt_Auvidea_JNX30_XavierNX_32.5.0+ <br> dt_camera_XavierNX_32.6.1+ <br> kernel_Xavier_32.6.1+  |
    | NVIDIA Jetson AGX Xavier | DevKit + J20  | 32.3.1          | dt_camera_AGXXavier_32.3.1+ <br> kernel_Xavier_32.3.1+  |

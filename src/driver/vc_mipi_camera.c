@@ -1,3 +1,4 @@
+#include <linux/version.h>
 #include <linux/module.h>
 #include <linux/of.h>
 #include <media/tegra-v4l2-camera.h>
@@ -5,7 +6,7 @@
 #include "vc_mipi_core.h"
 #include "vc_mipi_modules.h"
 
-#define VERSION "0.12.3"
+#define VERSION "0.13.0"
 // #define VC_CTRL_VALUE
 
 
@@ -589,7 +590,11 @@ static const struct regmap_config vc_regmap_config = {
 	.reg_bits = 16,
 	.val_bits = 8,
 	.cache_type = REGCACHE_RBTREE,
+#if LINUX_VERSION_CODE < KERNEL_VERSION(5,5,0)
 	.use_single_rw = true,
+#else
+	.use_single_read = true,
+#endif
 };
 
 static const __u32 ctrl_cid_list[] = {

@@ -16,6 +16,18 @@ KERNEL_SOURCE=$BSP_DIR/Linux_for_Tegra/source/public
 KERNEL_OUT=$KERNEL_SOURCE/build
 MODULES_OUT=$KERNEL_SOURCE/modules
 DRIVER_DST_DIR=$KERNEL_SOURCE/kernel/nvidia/drivers/media/i2c
+case $VC_MIPI_BSP in
+        35.1.0)
+        KERNEL_DIR=kernel/kernel-5.10/
+        MODULES_BSP=$BSP_DIR/Linux_for_Tegra/rootfs/usr
+        DTB_OUT=$KERNEL_OUT/arch/arm64/boot/dts/nvidia
+        ;;
+        *)
+        KERNEL_DIR=kernel/kernel-4.9/
+        MODULES_BSP=$BSP_DIR/Linux_for_Tegra/rootfs
+        DTB_OUT=$KERNEL_OUT/arch/arm64/boot/dts
+        ;;
+esac
 
 TARGET_USER=$USER
 TARGET_IP=
@@ -98,6 +110,8 @@ case $VC_MIPI_SOM in
                 32.5.0|32.5.1|32.5.2|32.6.1|32.7.1|32.7.2)
                         PATCHES+=('dt_Auvidea_JNX30_XavierNX_32.5.0+')
                         ;;
+                35.1.0)
+                        ;;
                 esac
                 ;;
                 *)
@@ -113,6 +127,9 @@ case $VC_MIPI_SOM in
                 32.6.1|32.7.1|32.7.2)
                 PATCHES+=('kernel_Xavier_32.6.1+')
                 ;;
+                35.1.0)
+                PATCHES+=('kernel_Xavier_35.1.0+')
+                ;;
         esac
         DT_CAM_FILE_DST_DIR=$KERNEL_SOURCE/hardware/nvidia/platform/t19x/jakku/kernel-dts/common/
 
@@ -127,7 +144,7 @@ case $VC_MIPI_SOM in
                 32.5.0|32.5.1|32.5.2)
                 PATCHES+=('dt_camera_XavierNX_32.5.0+')
                 ;;
-                32.6.1|32.7.1|32.7.2)
+                32.6.1|32.7.1|32.7.2|35.1.0)
                 PATCHES+=('dt_camera_XavierNX_32.6.1+')
                 ;;
         esac
@@ -144,6 +161,9 @@ case $VC_MIPI_SOM in
                 ;;
         32.6.1|32.7.1|32.7.2)
                 PATCHES+=('kernel_Xavier_32.6.1+')
+                ;;
+        35.1.0)
+                PATCHES+=('kernel_Xavier_35.1.0+')
                 ;;
         esac
         DT_CAM_FILE=$DT_CAM_DIR/Auvidea_J20_AGXXavier/tegra194-camera-vc-mipi-cam.dtsi

@@ -1,4 +1,5 @@
 #include "vc_mipi_core.h"
+#include <linux/version.h>
 #include <linux/device.h>
 #include <linux/delay.h>
 #include <linux/errno.h>
@@ -619,15 +620,31 @@ __u32 vc_core_calculate_max_frame_rate(struct vc_cam *cam, __u8 num_lanes, __u8 
 // ------------------------------------------------------------------------------------------------
 //  Helper Functions for the VC MIPI Controller Module
 
-static struct i2c_client *vc_mod_get_client(struct i2c_adapter *adapter, __u8 i2c_addr)
+static struct i2c_client *vc_mod_get_client(struct device *dev, struct i2c_adapter *adapter, __u8 i2c_addr)
 {
-	// struct device *dev;
 	struct i2c_client *client;
-	struct i2c_board_info info = {
-		I2C_BOARD_INFO("i2c", i2c_addr),
-	};
-	unsigned short addr_list[2] = { i2c_addr, I2C_CLIENT_END };
-	client = i2c_new_probed_device(adapter, &info, addr_list, NULL);
+        struct i2c_board_info info = {
+                I2C_BOARD_INFO("i2c", i2c_addr),
+        };
+        unsigned short addr_list[2] = { i2c_addr, I2C_CLIENT_END };
+        int count;
+
+        for (count = 0; count < 200; count++) {
+                msleep(1);
+#if LINUX_VERSION_CODE < KERNEL_VERSION(5,5,0)
+                client = i2c_new_probed_device(adapter, &info, addr_list, NULL);
+                if (client != NULL) {
+                        vc_dbg(dev, "%s(): %u attempts took %u ms to probe i2c device 0x%02x\n", __func__, count, count, i2c_addr);
+	                return client;
+                }
+#else
+                client = i2c_new_scanned_device(adapter, &info, addr_list, NULL);
+                if (!IS_ERR(client)) {
+                        vc_dbg(dev, "%s(): %u attempts took %u ms to scan i2c device 0x%02x\n", __func__, count, count, i2c_addr);
+                        return client;
+                } 
+#endif
+        }
 
 	// How to change the drivers name.
 	// i2c 6-0010
@@ -642,7 +659,7 @@ static struct i2c_client *vc_mod_get_client(struct i2c_adapter *adapter, __u8 i2
 	// 	vc_err(dev, "%s(): dev->driver == 0\n", __FUNCTION__);
 	// }
 
-	return client;
+	return NULL;
 }
 
 int vc_mod_set_power(struct vc_cam *cam, int on)
@@ -748,7 +765,7 @@ static int vc_mod_setup(struct vc_ctrl *ctrl, int mod_i2c_addr, struct vc_desc *
 		return 0;
 	}
 
-	client_mod = vc_mod_get_client(adapter, mod_i2c_addr);
+	client_mod = vc_mod_get_client(dev_sen, adapter, mod_i2c_addr);
 	if (client_mod == 0) {
 		vc_err(dev_sen, "%s(): Unable to get module I2C client for address 0x%02x\n", __FUNCTION__, mod_i2c_addr);
 		return -EIO;
