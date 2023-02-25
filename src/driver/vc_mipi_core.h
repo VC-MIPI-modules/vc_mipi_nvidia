@@ -13,24 +13,26 @@
 #define vc_warn(dev, fmt, ...) dev_warn(dev, fmt, ##__VA_ARGS__)
 #define vc_err(dev, fmt, ...) dev_err(dev, fmt, ##__VA_ARGS__)
 
-#define FLAG_RESET_ALWAYS		0x0001
-#define FLAG_EXPOSURE_SIMPLE      	0x0002
-#define FLAG_EXPOSURE_SONY      	0x0004
-#define FLAG_EXPOSURE_OMNIVISION	0x0008
+#define FLAG_RESET_ALWAYS		(1 <<  0)
+#define FLAG_EXPOSURE_SONY      	(1 <<  1)
+#define FLAG_EXPOSURE_NORMAL    	(1 <<  2)
+#define FLAG_SET_FLASH_DURATION		(1 <<  3)
 
-#define FLAG_IO_FLASH_ENABLED        	0x0010
-#define FLAG_FORMAT_GBRG		0x0020
-#define FLAG_DOUBLE_HEIGHT        	0x0040
-#define FLAG_INCREASE_FRAME_RATE       	0x0080
+#define FLAG_IO_ENABLED           	(1 <<  4)
+#define FLAG_FORMAT_GBRG		(1 <<  5)
+#define FLAG_DOUBLE_HEIGHT        	(1 <<  6)
+#define FLAG_INCREASE_FRAME_RATE       	(1 <<  7)
 
-#define FLAG_TRIGGER_DISABLE      	0x0100
-#define FLAG_TRIGGER_EXTERNAL     	0x0200
-#define FLAG_TRIGGER_PULSEWIDTH   	0x0400
-#define FLAG_TRIGGER_SELF         	0x0800
-#define FLAG_TRIGGER_SINGLE  	  	0x1000
-#define FLAG_TRIGGER_SYNC         	0x2000
-#define FLAG_TRIGGER_STREAM_EDGE  	0x4000
-#define FLAG_TRIGGER_STREAM_LEVEL 	0x8000
+#define FLAG_TRIGGER_DISABLE      	(1 <<  8)
+#define FLAG_TRIGGER_EXTERNAL     	(1 <<  9)
+#define FLAG_TRIGGER_PULSEWIDTH   	(1 << 10)
+#define FLAG_TRIGGER_SELF         	(1 << 11)
+#define FLAG_TRIGGER_SELF_V2         	(1 << 12)
+#define FLAG_TRIGGER_SINGLE  	  	(1 << 13)
+#define FLAG_TRIGGER_SYNC         	(1 << 14)
+#define FLAG_TRIGGER_STREAM_EDGE  	(1 << 15)
+#define FLAG_TRIGGER_STREAM_LEVEL 	(1 << 16)
+#define FLAG_TRIGGER_SLAVE       	(1 << 17)
 
 #define FORMAT_RAW08			0x2a
 #define FORMAT_RAW10			0x2b
@@ -97,8 +99,8 @@ typedef struct vc_control {
 } vc_control;
 
 typedef struct vc_frame {
-	__u32 x;
-	__u32 y;
+	__u32 left;
+	__u32 top;
 	__u32 width;
 	__u32 height;
 } vc_frame;
@@ -141,7 +143,7 @@ struct vc_csr {
 typedef struct vc_timing {
 	__u8 num_lanes;
 	__u8 format;
-	__u32 clk;
+	__u32 hmax;
 } vc_timing;
 
 struct vc_ctrl {
@@ -161,16 +163,14 @@ struct vc_ctrl {
 	struct vc_csr csr;
 	// Exposure
 	struct vc_timing expo_timing[8];
-	__u32 sen_clk;			// Hz
-	__u32 expo_factor;
-	__s32 expo_toffset;
-	// Framerate
-	__u32 retrigger_def;
+	__u32 clk_ext_trigger;		// Hz
+	__u32 clk_pixel;		// Hz
+	__u32 retrigger_min;
 	// Flash
 	__u32 flash_factor;
 	__s32 flash_toffset;
 	// Special features
-	__u16 flags;
+	__u32 flags;
 };
 
 struct vc_state {

@@ -1,0 +1,174 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?><svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" contentStyleType="text/css" height="154px" preserveAspectRatio="none" style="width:644px;height:154px;background:#FFFFFF;" version="1.1" viewBox="0 0 644 154" width="644px" zoomAndPan="magnify"><defs/><g><line style="stroke:#000000;stroke-width:1.0;" x1="5" x2="5" y1="5" y2="129.0293"/><line style="stroke:#000000;stroke-width:1.0;" x1="637" x2="637" y1="5" y2="129.0293"/><line style="stroke:#000000;stroke-width:0.5;stroke-dasharray:3.0,5.0;" x1="132" x2="132" y1="5" y2="129.0293"/><line style="stroke:#000000;stroke-width:0.5;stroke-dasharray:3.0,5.0;" x1="182" x2="182" y1="5" y2="129.0293"/><line style="stroke:#000000;stroke-width:0.5;stroke-dasharray:3.0,5.0;" x1="232" x2="232" y1="5" y2="129.0293"/><line style="stroke:#000000;stroke-width:0.5;stroke-dasharray:3.0,5.0;" x1="282" x2="282" y1="5" y2="129.0293"/><line style="stroke:#000000;stroke-width:0.5;stroke-dasharray:3.0,5.0;" x1="332" x2="332" y1="5" y2="129.0293"/><line style="stroke:#000000;stroke-width:0.5;stroke-dasharray:3.0,5.0;" x1="382" x2="382" y1="5" y2="129.0293"/><line style="stroke:#000000;stroke-width:0.5;stroke-dasharray:3.0,5.0;" x1="432" x2="432" y1="5" y2="129.0293"/><line style="stroke:#000000;stroke-width:0.5;stroke-dasharray:3.0,5.0;" x1="482" x2="482" y1="5" y2="129.0293"/><line style="stroke:#000000;stroke-width:0.5;stroke-dasharray:3.0,5.0;" x1="532" x2="532" y1="5" y2="129.0293"/><line style="stroke:#000000;stroke-width:0.5;stroke-dasharray:3.0,5.0;" x1="582" x2="582" y1="5" y2="129.0293"/><line style="stroke:#000000;stroke-width:0.5;stroke-dasharray:3.0,5.0;" x1="632" x2="632" y1="5" y2="129.0293"/><line style="stroke:#000000;stroke-width:1.0;" x1="5" x2="637" y1="5" y2="5"/><text fill="#000000" font-family="Verdana" font-size="14" font-weight="bold" lengthAdjust="spacing" textLength="122" x="10" y="19.0752">External trigger</text><line style="stroke:#000000;stroke-width:1.0;" x1="5" x2="133" y1="23.0146" y2="23.0146"/><line style="stroke:#000000;stroke-width:1.0;" x1="133" x2="143" y1="23.0146" y2="5"/><line style="stroke:#000000;stroke-width:1.0;" x1="132" x2="132" y1="30.0146" y2="44.0146"/><line style="stroke:#000000;stroke-width:1.0;" x1="132" x2="182" y1="30.0146" y2="30.0146"/><line style="stroke:#000000;stroke-width:1.0;" x1="182" x2="182" y1="30.0146" y2="44.0146"/><line style="stroke:#000000;stroke-width:1.0;" x1="182" x2="382" y1="44.0146" y2="44.0146"/><line style="stroke:#000000;stroke-width:1.0;" x1="382" x2="382" y1="30.0146" y2="44.0146"/><line style="stroke:#000000;stroke-width:1.0;" x1="382" x2="432" y1="30.0146" y2="30.0146"/><line style="stroke:#000000;stroke-width:1.0;" x1="432" x2="432" y1="30.0146" y2="44.0146"/><line style="stroke:#000000;stroke-width:1.0;" x1="432" x2="632" y1="44.0146" y2="44.0146"/><line style="stroke:#000000;stroke-width:1.0;" x1="632" x2="632" y1="30.0146" y2="44.0146"/><line style="stroke:#000000;stroke-width:1.0;" x1="632" x2="632" y1="30.0146" y2="30.0146"/><line style="stroke:#000000;stroke-width:1.0;" x1="5" x2="637" y1="52.0146" y2="52.0146"/><text fill="#000000" font-family="Verdana" font-size="14" font-weight="bold" lengthAdjust="spacing" textLength="73" x="10" y="66.0898">Exposure</text><line style="stroke:#000000;stroke-width:1.0;" x1="5" x2="84" y1="70.0293" y2="70.0293"/><line style="stroke:#000000;stroke-width:1.0;" x1="84" x2="94" y1="70.0293" y2="52.0146"/><line style="stroke:#000000;stroke-width:1.0;" x1="132" x2="132" y1="77.0293" y2="91.0293"/><line style="stroke:#000000;stroke-width:1.0;" x1="132" x2="282" y1="77.0293" y2="77.0293"/><line style="stroke:#000000;stroke-width:1.0;" x1="282" x2="282" y1="77.0293" y2="91.0293"/><line style="stroke:#000000;stroke-width:1.0;" x1="282" x2="382" y1="91.0293" y2="91.0293"/><line style="stroke:#000000;stroke-width:1.0;" x1="382" x2="382" y1="77.0293" y2="91.0293"/><line style="stroke:#000000;stroke-width:1.0;" x1="382" x2="532" y1="77.0293" y2="77.0293"/><line style="stroke:#000000;stroke-width:1.0;" x1="532" x2="532" y1="77.0293" y2="91.0293"/><line style="stroke:#000000;stroke-width:1.0;" x1="532" x2="632" y1="91.0293" y2="91.0293"/><line style="stroke:#000000;stroke-width:1.0;" x1="632" x2="632" y1="77.0293" y2="91.0293"/><line style="stroke:#000000;stroke-width:1.0;" x1="632" x2="632" y1="77.0293" y2="77.0293"/><line style="stroke:#000000;stroke-width:1.0;" x1="5" x2="637" y1="99.0293" y2="99.0293"/><text fill="#000000" font-family="Verdana" font-size="14" font-weight="bold" lengthAdjust="spacing" textLength="97" x="10" y="119.5972">Flash output</text><line style="stroke:#000000;stroke-width:1.0;" x1="132" x2="632" y1="121.0293" y2="121.0293"/><line style="stroke:#000000;stroke-width:2.0;" x1="132" x2="132" y1="129.0293" y2="134.0293"/><line style="stroke:#000000;stroke-width:2.0;" x1="182" x2="182" y1="129.0293" y2="134.0293"/><line style="stroke:#000000;stroke-width:2.0;" x1="232" x2="232" y1="129.0293" y2="134.0293"/><line style="stroke:#000000;stroke-width:2.0;" x1="282" x2="282" y1="129.0293" y2="134.0293"/><line style="stroke:#000000;stroke-width:2.0;" x1="332" x2="332" y1="129.0293" y2="134.0293"/><line style="stroke:#000000;stroke-width:2.0;" x1="382" x2="382" y1="129.0293" y2="134.0293"/><line style="stroke:#000000;stroke-width:2.0;" x1="432" x2="432" y1="129.0293" y2="134.0293"/><line style="stroke:#000000;stroke-width:2.0;" x1="482" x2="482" y1="129.0293" y2="134.0293"/><line style="stroke:#000000;stroke-width:2.0;" x1="532" x2="532" y1="129.0293" y2="134.0293"/><line style="stroke:#000000;stroke-width:2.0;" x1="582" x2="582" y1="129.0293" y2="134.0293"/><line style="stroke:#000000;stroke-width:2.0;" x1="632" x2="632" y1="129.0293" y2="134.0293"/><line style="stroke:#000000;stroke-width:2.0;" x1="132" x2="632" y1="129.0293" y2="129.0293"/><text fill="#000000" font-family="Verdana" font-size="11" lengthAdjust="spacing" textLength="7" x="128.5" y="146.0884">0</text><text fill="#000000" font-family="Verdana" font-size="11" lengthAdjust="spacing" textLength="28" x="368" y="146.0884">1250</text><text fill="#000000" font-family="Verdana" font-size="11" lengthAdjust="spacing" textLength="28" x="568" y="146.0884">2250</text><!--MD5=[5d7c7d02f23979f73136010dda429144]
+@startuml
+!theme plain
+clock  "External trigger" as TRIG  with period 1250 pulse 250
+clock  "Exposure"         as EXP   with period 1250 pulse 750
+binary "Flash output"     as FLASH 
+
+@0
+@2250
+
+@enduml
+
+@startuml
+
+
+
+
+
+
+
+<style>
+  root {
+    BackgroundColor white
+    FontColor black
+    FontName Verdana
+    HyperLinkColor blue
+    LineColor black
+    LineThickness 1
+    Margin 5
+  }
+  caption {
+    LineThickness 0
+  }
+  footer {
+    LineThickness 0
+  }
+  header {
+    LineThickness 0
+  }
+  node {
+    MaximumWidth 300
+  }
+  title {
+    FontSize 22
+    LineThickness 0
+  }
+</style>
+
+skinparam ArrowLollipopColor black
+skinparam BackgroundColor white
+skinparam DefaultFontName Verdana
+skinparam DefaultMonospacedFontName Courier
+skinparam LifelineStrategy nosolid
+skinparam ParticipantPadding 10
+skinparam SequenceLifeLineBorderColor black
+skinparam Shadowing false
+skinparam UseBetaStyle true
+
+skinparam Activity {
+  BackgroundColor white
+  BarColor black
+  BorderColor black
+  FontColor black
+  FontName Verdana
+}
+skinparam Boundary {
+  FontColor black
+}
+skinparam Box {
+  Padding 5
+}
+skinparam CircledCharacter {
+  FontColor black
+  FontName Courier
+  Radius 9
+}
+skinparam Class {
+  BackgroundColor white
+  BorderColor black
+  FontColor black
+  FontName Verdana
+}
+skinparam ClassAttribute {
+  FontColor black
+  FontName Verdana
+}
+skinparam ClassStereotype {
+  FontColor black
+  FontName Verdana
+}
+skinparam Footer {
+  FontColor black
+  FontName Verdana
+}
+skinparam Header {
+  FontColor black
+  FontName Verdana
+}
+skinparam Hyperlink {
+  Color blue
+}
+skinparam IconPackage {
+  Color black
+  BackgroundColor white
+}
+skinparam IconPrivate {
+  Color black
+  BackgroundColor white
+}
+skinparam IconProtected {
+  Color black
+  BackgroundColor white
+}
+skinparam IconPublic {
+  Color black
+  BackgroundColor white
+}
+skinparam Note {
+  FontColor black
+  FontName Verdana
+}
+skinparam Object {
+  BorderColor black
+}
+skinparam Package {
+  BorderColor black
+  FontColor black
+  FontName Verdana
+}
+skinparam State {
+  BackgroundColor white
+  BorderColor black
+}
+skinparam StereotypeA {
+  BackgroundColor white
+  BorderColor black
+}
+skinparam StereotypeC {
+  BackgroundColor white
+  BorderColor black
+}
+skinparam StereotypeE {
+  BackgroundColor white
+  BorderColor black
+}
+skinparam StereotypeI {
+  BackgroundColor white
+  BorderColor black
+}
+skinparam StereotypeN {
+  BackgroundColor white
+  BorderColor black
+}
+skinparam UseCaseStereoType {
+  FontColor black
+  FontName Verdana
+}
+clock  "External trigger" as TRIG  with period 1250 pulse 250
+clock  "Exposure"         as EXP   with period 1250 pulse 750
+binary "Flash output"     as FLASH 
+
+@0
+@2250
+
+@enduml
+
+PlantUML version 1.2022.5(Sat Apr 30 12:55:52 CEST 2022)
+(GPL source distribution)
+Java Runtime: OpenJDK Runtime Environment
+JVM: OpenJDK 64-Bit Server VM
+Default Encoding: UTF-8
+Language: en
+Country: US
+--></g></svg>

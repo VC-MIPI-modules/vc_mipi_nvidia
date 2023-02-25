@@ -32,7 +32,7 @@ build_kernel() {
         echo "Build kernel ..."
         cd $KERNEL_SOURCE
         make -C kernel/kernel-4.9/ O=$KERNEL_OUT -j$(nproc) --output-sync=target Image
-        cp -rfv $KERNEL_OUT/arch/arm64/boot/Image $BUILD_DIR/Linux_for_Tegra/kernel/
+        cp -rfv $KERNEL_OUT/arch/arm64/boot/Image $BSP_DIR/Linux_for_Tegra/kernel/
 }
 
 build_modules() {
@@ -40,14 +40,14 @@ build_modules() {
         cd $KERNEL_SOURCE
         make -C kernel/kernel-4.9/ O=$KERNEL_OUT -j$(nproc) --output-sync=target modules
         make -C kernel/kernel-4.9/ O=$KERNEL_OUT INSTALL_MOD_PATH=$MODULES_OUT modules_install 
-        sudo cp -arfv $MODULES_OUT/lib $BUILD_DIR/Linux_for_Tegra/rootfs/
+        sudo cp -arfv $MODULES_OUT/lib $BSP_DIR/Linux_for_Tegra/rootfs/
 }
 
 build_device_tree() {
         echo "Build device tree ..."
         cd $KERNEL_SOURCE
         make -C kernel/kernel-4.9/ O=$KERNEL_OUT -j$(nproc) --output-sync=target dtbs
-        cp -rfv $KERNEL_OUT/arch/arm64/boot/dts/*.dtb $BUILD_DIR/Linux_for_Tegra/kernel/dtb/
+        cp -rfv $KERNEL_OUT/arch/arm64/boot/dts/*.dtb $BSP_DIR/Linux_for_Tegra/kernel/dtb/
 }
 
 set -e

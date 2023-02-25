@@ -1,5 +1,37 @@
 # Version History
 
+## v0.12.3 (Bugfixes)
+  * Bugfixes
+    * Fixed an issue with the IMX183's self-triggering mode.
+## v0.12.2 (Bugfixes)
+  * Bugfixes
+    * Fixed a problem in function vc_fix_image_size.
+## v0.12.1 (Improvements & Bugfixes)
+  * Improvements
+    * Improved ROI cropping documentation with adjustable ranges for each camera.
+    * Reorganized common kernel patches in a shared folder.
+  * Bugfixes
+    * Reduced image size limitation from width 32 to 4 and height from 4 to 1.
+    * Fixed missing active_l and active_t device tree properties for Xavier and TX2 SoMs.
+    * Fixed a problem with image sizes in heterogenous multi camera setups.
+    * Added missing active_l and active_t device tree properties in README.md
+    * Fixed image height workaround for new ROI cropping implementation.
+
+## v0.12.0 (ROI cropping by V4L)
+  * New Features
+    * Added ROI cropping by the V4L API
+    * Added the possibility to control the polarity of the trigger and flash signal
+    * Added documentation for trigger modes, IO modes and ROI cropping
+    * Added V4L2 control 'single_trigger'
+  * Improvements
+    * Added frame rate control support for IMX412
+    * Added ROI cropping for IMX296/IMX297
+  * Bugfixes
+    * Fixed wrong exposure time calculation for IMX290
+    * Fixed wrong pixel format for IMX290/IMX327
+    * Fixed an issue with calculating the correct maximum exposure time for trigger modes
+    * Fixed vmax default value and added framerate increase for IMX335
+
 ## v0.11.0 (Support GStreamer, ROI Cropping and L4T 32.7.1, 32.7.2)
   * New Features
     * Added support for board support packages

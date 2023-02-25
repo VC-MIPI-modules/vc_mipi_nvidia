@@ -10,7 +10,12 @@ if [[ ! -e $CONFIGURATION_FILE ]]; then
 fi
 . $CONFIGURATION_FILE
 
-DOWNLOAD_DIR=$BUILD_DIR/downloads/$VC_MIPI_SOM/$VC_MIPI_BSP
+BSP_DIR=$BUILD_DIR/$VC_MIPI_SOM\_$VC_MIPI_BSP
+DOWNLOAD_DIR=$BSP_DIR/downloads
+KERNEL_SOURCE=$BSP_DIR/Linux_for_Tegra/source/public
+KERNEL_OUT=$KERNEL_SOURCE/build
+MODULES_OUT=$KERNEL_SOURCE/modules
+DRIVER_DST_DIR=$KERNEL_SOURCE/kernel/nvidia/drivers/media/i2c
 
 TARGET_USER=$USER
 TARGET_IP=
@@ -38,7 +43,7 @@ else
         exit 1
 fi
 
-PATCHES=()
+PATCHES=('kernel_common_32.3.1+')
 
 case $VC_MIPI_SOM in
         Nano|NanoSD|Nano2GB)
@@ -51,7 +56,7 @@ case $VC_MIPI_SOM in
                 DT_CAM_FILE=$DT_CAM_DIR/Auvidea_JNX30_Nano/tegra210-camera-vc-mipi-cam.dtsi
                 case $VC_MIPI_BSP in
                 32.5.0|32.5.1|32.5.2|32.6.1|32.7.1|32.7.2)
-                        PATCHES=('dt_Auvidea_JNX30_Nano_32.5.0+')
+                        PATCHES+=('dt_Auvidea_JNX30_Nano_32.5.0+')
                         ;;
                 esac
                 ;;

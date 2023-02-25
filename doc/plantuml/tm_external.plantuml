@@ -1,0 +1,10 @@
+@startuml
+!theme plain
+clock "External trigger"         as TRIG with period 1000 pulse 250
+clock "Exposure (1: external)"   as EXT  with period 1000 pulse 750
+clock "Exposure (2: pulsewidth)" as PULS with period 1000 pulse 250
+
+@0
+@2250
+
+@enduml

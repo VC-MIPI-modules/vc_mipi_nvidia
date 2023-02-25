@@ -1,0 +1,32 @@
+@startuml
+!theme plain
+clock   "Exposure (freerun)"             as FREE with period 375 pulse 250
+binary  "External trigger"               as TRIG
+robust  "State machine"                  as STATE
+binary  "Video output (7: stream level)" as STREAM
+
+@0
+STATE is "1: check level of external trigger"
+@125
+TRIG is high
+STATE is "2: wait for next inactive image period"
+@250
+STATE is "3: wait for beginning of video frame"
+@375
+STATE is "4: enable MIPI CSI video output"
+STREAM is high
+@625
+STREAM is low
+@750
+STREAM is high
+@1000
+STREAM is low
+@1125
+STREAM is high
+@1375
+TRIG is low
+STATE is "1: check level of external trigger"
+STREAM is low
+@1500
+
+@enduml

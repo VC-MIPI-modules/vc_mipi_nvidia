@@ -1,0 +1,9 @@
+@startuml
+!theme plain
+clock "Exposure (3: self 'Master')" as TRIG with period 1000 pulse 750
+clock "Exposure (5: sync 'Slave')"  as EXT  with period 1000 pulse 720
+
+@0
+@2250
+
+@enduml

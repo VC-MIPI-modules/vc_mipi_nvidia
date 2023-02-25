@@ -238,7 +238,7 @@
 
                 num_lanes               = NUM_LANES;
                 trigger_mode            = "0";
-                flash_mode              = "0";
+                io_mode                 = "0";
 
                 // ----------------------------------------------------
                 // If you want to use GStreamer with nvarguscamerasrc
@@ -258,6 +258,8 @@
                     // ----------------------------------------------------
                     // If you want to use GStreamer with nvarguscamerasrc
                     // you have to adjust this settings. 
+                    active_l                 = "0";
+                    active_t                 = "0";
                     active_w                 = "0";
                     active_h                 = "0";
                     pixel_t                  = "bayer_rggb";
@@ -326,7 +328,7 @@
 
                 num_lanes               = NUM_LANES;
                 trigger_mode            = "0";
-                flash_mode              = "0";
+                io_mode                 = "0";
 
                 // ----------------------------------------------------
                 // If you want to use GStreamer with nvarguscamerasrc
@@ -346,6 +348,8 @@
                     // ----------------------------------------------------
                     // If you want to use GStreamer with nvarguscamerasrc
                     // you have to adjust this settings. 
+                    active_l                 = "0";
+                    active_t                 = "0";
                     active_w                 = "0";
                     active_h                 = "0";
                     pixel_t                  = "bayer_rggb";
@@ -416,7 +420,7 @@
 
             num_lanes               = NUM_LANES;
             trigger_mode            = "0";
-            flash_mode              = "0";
+            io_mode                 = "0";
 
             // ----------------------------------------------------
             // If you want to use GStreamer with nvarguscamerasrc
@@ -436,37 +440,36 @@
                 // ----------------------------------------------------
                 // If you want to use GStreamer with nvarguscamerasrc
                 // you have to adjust this settings. 
-                active_w                 = "1024";
-                active_h                 = "768";
-                line_length              = "1024";
+                active_l                 = "0";
+                active_t                 = "0";
+                active_w                 = "0";
+                active_h                 = "0";
                 pixel_t                  = "bayer_rggb";
-                mode_type                = "bayer";
-                pixel_phase              = "rggb";
-                csi_pixel_bit_depth      = "10";
+
+                min_gain_val             = "0";         // mdB
+                max_gain_val             = "48000";     // mdB
+                step_gain_val            = "100";       // mdB
+                default_gain             = "0";         // mdB
+
+                min_exp_time             = "1";         // us
+                max_exp_time             = "1000000";   // us
+                step_exp_time            = "1";         // us
+                default_exp_time         = "10000";     // us
+
+                min_framerate            = "0";         // mHz
+                max_framerate            = "60000";     // mHz
+                step_framerate           = "100";       // mHz
+                default_framerate        = "60000";     // mHz
                 // ----------------------------------------------------
 
-                gain_factor              = "1";
-                min_gain_val             = "1";
-                max_gain_val             = "32";
-                step_gain_val            = "1";
-                default_gain             = "1";
+                gain_factor              = "1000";
+                exposure_factor          = "1000000";
+                framerate_factor         = "1000";
                 inherent_gain            = "1";
-
-                exposure_factor          = "1000";
-                min_exp_time             = "1000000";
-                max_exp_time             = "150000000";
-                step_exp_time            = "1000000";
-                default_exp_time         = "10000000";
-
-                framerate_factor         = "1";
-                min_framerate            = "1";
-                max_framerate            = "1000";
-                step_framerate           = "1";
-                default_framerate        = "1000";
-
                 min_hdr_ratio            = "1";
                 max_hdr_ratio            = "1";
 
+                line_length              = "0";
                 phy_mode                 = "DPHY";
                 discontinuous_clk        = "no";
                 mclk_khz                 = "24000";
@@ -507,7 +510,7 @@
 
             num_lanes               = NUM_LANES;
             trigger_mode            = "0";
-            flash_mode              = "0";
+            io_mode                 = "0";
 
             // ----------------------------------------------------
             // If you want to use GStreamer with nvarguscamerasrc
@@ -527,37 +530,36 @@
                 // ----------------------------------------------------
                 // If you want to use GStreamer with nvarguscamerasrc
                 // you have to adjust this settings. 
-                active_w                 = "1024";
-                active_h                 = "768";
-                line_length              = "1024";
+                active_l                 = "0";
+                active_t                 = "0";
+                active_w                 = "0";
+                active_h                 = "0";
                 pixel_t                  = "bayer_rggb";
-                mode_type                = "bayer";
-                pixel_phase              = "rggb";
-                csi_pixel_bit_depth      = "10";
+
+                min_gain_val             = "0";         // mdB
+                max_gain_val             = "48000";     // mdB
+                step_gain_val            = "100";       // mdB
+                default_gain             = "0";         // mdB
+
+                min_exp_time             = "1";         // us
+                max_exp_time             = "1000000";   // us
+                step_exp_time            = "1";         // us
+                default_exp_time         = "10000";     // us
+
+                min_framerate            = "0";         // mHz
+                max_framerate            = "60000";     // mHz
+                step_framerate           = "100";       // mHz
+                default_framerate        = "60000";     // mHz
                 // ----------------------------------------------------
 
-                gain_factor              = "1";
-                min_gain_val             = "1";
-                max_gain_val             = "32";
-                step_gain_val            = "1";
-                default_gain             = "1";
+                gain_factor              = "1000";
+                exposure_factor          = "1000000";
+                framerate_factor         = "1000";
                 inherent_gain            = "1";
-
-				exposure_factor          = "1000";
-				min_exp_time             = "1000000";
-				max_exp_time             = "150000000";
-				step_exp_time            = "1000000";
-				default_exp_time         = "10000000";
-
-                framerate_factor         = "1";
-                min_framerate            = "1";
-                max_framerate            = "1000";
-                step_framerate           = "1";
-                default_framerate        = "1000";
-
                 min_hdr_ratio            = "1";
                 max_hdr_ratio            = "1";
 
+                line_length              = "0";
                 phy_mode                 = "DPHY";
                 discontinuous_clk        = "no";
                 mclk_khz                 = "24000";

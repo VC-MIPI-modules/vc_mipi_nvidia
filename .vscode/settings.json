@@ -1,3 +1,28 @@
 {
-        "C_Cpp.errorSquiggles": "Disabled"
+        "files.exclude": {
+                "**/Linux_for_Tegra": true
+        },
+        "files.watcherExclude": {
+                "**/Linux_for_Tegra": true
+        },
+        "search.exclude": {
+                "**/Linux_for_Tegra": true,
+        },
+        "C_Cpp.files.exclude": {
+                "**/Linux_for_Tegra": true,
+                "**/.vscode": true,
+                "**/.vs": true
+        },
+        "C_Cpp.codeAnalysis.exclude": {
+                "**/Linux_for_Tegra": true,
+        },
+        "C_Cpp.exclusionPolicy": "checkFilesAndFolders",
+        "C_Cpp.errorSquiggles": "Disabled",
+        "plantuml.exportOutDir": ".",
+        "plantuml.exportSubFolder": false,
+        "files.associations": {
+                "chrono": "c",
+                "random": "c",
+                "limits": "c"
+        },
 }

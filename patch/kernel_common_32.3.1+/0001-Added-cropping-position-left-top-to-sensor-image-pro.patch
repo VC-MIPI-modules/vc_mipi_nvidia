@@ -1,0 +1,52 @@
+From 9ed1a76da228d9b3eb9ec77ff417ecb5e5f6846d Mon Sep 17 00:00:00 2001
+From: "/setup.sh" <support@vision-components.com>
+Date: Mon, 27 Jun 2022 14:07:36 +0200
+Subject: [PATCH] Added cropping position (left, top) to sensor image
+ properties.
+
+---
+ .../media/platform/tegra/camera/sensor_common.c    | 14 ++++++++++++++
+ kernel/nvidia/include/media/tegra-v4l2-camera.h    |  2 ++
+ 2 files changed, 16 insertions(+)
+
+diff --git a/kernel/nvidia/drivers/media/platform/tegra/camera/sensor_common.c b/kernel/nvidia/drivers/media/platform/tegra/camera/sensor_common.c
+index 4d8cf4c..f02cd2e 100644
+--- a/kernel/nvidia/drivers/media/platform/tegra/camera/sensor_common.c
++++ b/kernel/nvidia/drivers/media/platform/tegra/camera/sensor_common.c
+@@ -264,6 +264,20 @@ static int sensor_common_parse_image_props(
+ 	char pix_format[24];
+ 	u32 value = 0;
+ 
++	err = read_property_u32(node, "active_l",
++		&image->left);
++	if (err) {
++		dev_err(dev, "%s:active_l property missing\n", __func__);
++		goto fail;
++	}
++
++	err = read_property_u32(node, "active_t",
++		&image->top);
++	if (err) {
++		dev_err(dev, "%s:active_t property missing\n", __func__);
++		goto fail;
++	}
++
+ 	err = read_property_u32(node, "active_w",
+ 		&image->width);
+ 	if (err) {
+diff --git a/kernel/nvidia/include/media/tegra-v4l2-camera.h b/kernel/nvidia/include/media/tegra-v4l2-camera.h
+index a433ac0..bf419ea 100644
+--- a/kernel/nvidia/include/media/tegra-v4l2-camera.h
++++ b/kernel/nvidia/include/media/tegra-v4l2-camera.h
+@@ -117,6 +117,8 @@ struct sensor_signal_properties {
+ };
+ 
+ struct sensor_image_properties {
++	__u32 left;
++	__u32 top;
+ 	__u32 width;
+ 	__u32 height;
+ 	__u32 line_length;
+-- 
+2.25.1
+

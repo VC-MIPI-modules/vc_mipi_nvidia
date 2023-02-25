@@ -1,0 +1,218 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?><svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" contentStyleType="text/css" height="232px" preserveAspectRatio="none" style="width:913px;height:232px;background:#FFFFFF;" version="1.1" viewBox="0 0 913 232" width="913px" zoomAndPan="magnify"><defs/><g><line style="stroke:#000000;stroke-width:1.0;" x1="5" x2="5" y1="5" y2="207.0293"/><line style="stroke:#000000;stroke-width:1.0;" x1="906" x2="906" y1="5" y2="207.0293"/><line style="stroke:#000000;stroke-width:0.5;stroke-dasharray:3.0,5.0;" x1="251" x2="251" y1="5" y2="207.0293"/><line style="stroke:#000000;stroke-width:0.5;stroke-dasharray:3.0,5.0;" x1="301" x2="301" y1="5" y2="207.0293"/><line style="stroke:#000000;stroke-width:0.5;stroke-dasharray:3.0,5.0;" x1="351" x2="351" y1="5" y2="207.0293"/><line style="stroke:#000000;stroke-width:0.5;stroke-dasharray:3.0,5.0;" x1="401" x2="401" y1="5" y2="207.0293"/><line style="stroke:#000000;stroke-width:0.5;stroke-dasharray:3.0,5.0;" x1="451" x2="451" y1="5" y2="207.0293"/><line style="stroke:#000000;stroke-width:0.5;stroke-dasharray:3.0,5.0;" x1="501" x2="501" y1="5" y2="207.0293"/><line style="stroke:#000000;stroke-width:0.5;stroke-dasharray:3.0,5.0;" x1="551" x2="551" y1="5" y2="207.0293"/><line style="stroke:#000000;stroke-width:0.5;stroke-dasharray:3.0,5.0;" x1="601" x2="601" y1="5" y2="207.0293"/><line style="stroke:#000000;stroke-width:0.5;stroke-dasharray:3.0,5.0;" x1="651" x2="651" y1="5" y2="207.0293"/><line style="stroke:#000000;stroke-width:0.5;stroke-dasharray:3.0,5.0;" x1="701" x2="701" y1="5" y2="207.0293"/><line style="stroke:#000000;stroke-width:0.5;stroke-dasharray:3.0,5.0;" x1="751" x2="751" y1="5" y2="207.0293"/><line style="stroke:#000000;stroke-width:0.5;stroke-dasharray:3.0,5.0;" x1="801" x2="801" y1="5" y2="207.0293"/><line style="stroke:#000000;stroke-width:0.5;stroke-dasharray:3.0,5.0;" x1="851" x2="851" y1="5" y2="207.0293"/><line style="stroke:#000000;stroke-width:0.5;stroke-dasharray:3.0,5.0;" x1="901" x2="901" y1="5" y2="207.0293"/><line style="stroke:#000000;stroke-width:1.0;" x1="5" x2="906" y1="5" y2="5"/><text fill="#000000" font-family="Verdana" font-size="14" font-weight="bold" lengthAdjust="spacing" textLength="152" x="10" y="19.0752">Exposure (freerun)</text><line style="stroke:#000000;stroke-width:1.0;" x1="5" x2="163" y1="23.0146" y2="23.0146"/><line style="stroke:#000000;stroke-width:1.0;" x1="163" x2="173" y1="23.0146" y2="5"/><line style="stroke:#000000;stroke-width:1.0;" x1="251" x2="251" y1="30.0146" y2="44.0146"/><line style="stroke:#000000;stroke-width:1.0;" x1="251" x2="351" y1="30.0146" y2="30.0146"/><line style="stroke:#000000;stroke-width:1.0;" x1="351" x2="351" y1="30.0146" y2="44.0146"/><line style="stroke:#000000;stroke-width:1.0;" x1="351" x2="401" y1="44.0146" y2="44.0146"/><line style="stroke:#000000;stroke-width:1.0;" x1="401" x2="401" y1="30.0146" y2="44.0146"/><line style="stroke:#000000;stroke-width:1.0;" x1="401" x2="501" y1="30.0146" y2="30.0146"/><line style="stroke:#000000;stroke-width:1.0;" x1="501" x2="501" y1="30.0146" y2="44.0146"/><line style="stroke:#000000;stroke-width:1.0;" x1="501" x2="551" y1="44.0146" y2="44.0146"/><line style="stroke:#000000;stroke-width:1.0;" x1="551" x2="551" y1="30.0146" y2="44.0146"/><line style="stroke:#000000;stroke-width:1.0;" x1="551" x2="651" y1="30.0146" y2="30.0146"/><line style="stroke:#000000;stroke-width:1.0;" x1="651" x2="651" y1="30.0146" y2="44.0146"/><line style="stroke:#000000;stroke-width:1.0;" x1="651" x2="701" y1="44.0146" y2="44.0146"/><line style="stroke:#000000;stroke-width:1.0;" x1="701" x2="701" y1="30.0146" y2="44.0146"/><line style="stroke:#000000;stroke-width:1.0;" x1="701" x2="801" y1="30.0146" y2="30.0146"/><line style="stroke:#000000;stroke-width:1.0;" x1="801" x2="801" y1="30.0146" y2="44.0146"/><line style="stroke:#000000;stroke-width:1.0;" x1="801" x2="851" y1="44.0146" y2="44.0146"/><line style="stroke:#000000;stroke-width:1.0;" x1="851" x2="851" y1="30.0146" y2="44.0146"/><line style="stroke:#000000;stroke-width:1.0;" x1="851" x2="901" y1="30.0146" y2="30.0146"/><line style="stroke:#000000;stroke-width:1.0;" x1="5" x2="906" y1="52.0146" y2="52.0146"/><text fill="#000000" font-family="Verdana" font-size="14" font-weight="bold" lengthAdjust="spacing" textLength="122" x="10" y="72.5825">External trigger</text><line style="stroke:#000000;stroke-width:1.0;" x1="251" x2="301" y1="74.0146" y2="74.0146"/><line style="stroke:#000000;stroke-width:1.0;" x1="301" x2="301" y1="60.0146" y2="74.0146"/><line style="stroke:#000000;stroke-width:1.0;" x1="301" x2="801" y1="60.0146" y2="60.0146"/><line style="stroke:#000000;stroke-width:1.0;" x1="801" x2="801" y1="60.0146" y2="74.0146"/><line style="stroke:#000000;stroke-width:1.0;" x1="801" x2="901" y1="74.0146" y2="74.0146"/><line style="stroke:#000000;stroke-width:1.0;" x1="5" x2="906" y1="82.0146" y2="82.0146"/><text fill="#000000" font-family="Verdana" font-size="14" font-weight="bold" lengthAdjust="spacing" textLength="109" x="10" y="96.0898">State machine</text><line style="stroke:#000000;stroke-width:1.0;" x1="5" x2="120" y1="100.0293" y2="100.0293"/><line style="stroke:#000000;stroke-width:1.0;" x1="120" x2="130" y1="100.0293" y2="82.0146"/><text fill="#000000" font-family="Verdana" font-size="12" lengthAdjust="spacing" textLength="203" x="11" y="170.8018">1: check level of external trigger</text><text fill="#000000" font-family="Verdana" font-size="12" lengthAdjust="spacing" textLength="235" x="11" y="150.8018">2: wait for next inactive image period</text><text fill="#000000" font-family="Verdana" font-size="12" lengthAdjust="spacing" textLength="225" x="11" y="130.8018">3: wait for beginning of video frame</text><text fill="#000000" font-family="Verdana" font-size="12" lengthAdjust="spacing" textLength="202" x="11" y="110.8018">4: enable MIPI CSI video output</text><line style="stroke:#000000;stroke-width:1.0;" x1="251" x2="301" y1="165.0293" y2="165.0293"/><line style="stroke:#000000;stroke-width:1.0;" x1="301" x2="351" y1="145.0293" y2="145.0293"/><line style="stroke:#000000;stroke-width:1.0;" x1="351" x2="401" y1="125.0293" y2="125.0293"/><line style="stroke:#000000;stroke-width:1.0;" x1="401" x2="801" y1="105.0293" y2="105.0293"/><line style="stroke:#000000;stroke-width:1.0;" x1="801" x2="901" y1="165.0293" y2="165.0293"/><line style="stroke:#000000;stroke-width:1.0;" x1="301" x2="301" y1="145.0293" y2="165.0293"/><line style="stroke:#000000;stroke-width:1.0;" x1="351" x2="351" y1="125.0293" y2="145.0293"/><line style="stroke:#000000;stroke-width:1.0;" x1="401" x2="401" y1="105.0293" y2="125.0293"/><line style="stroke:#000000;stroke-width:1.0;" x1="801" x2="801" y1="105.0293" y2="165.0293"/><line style="stroke:#000000;stroke-width:1.0;" x1="5" x2="906" y1="177.0293" y2="177.0293"/><text fill="#000000" font-family="Verdana" font-size="14" font-weight="bold" lengthAdjust="spacing" textLength="236" x="10" y="197.5972">Video output (7: stream level)</text><line style="stroke:#000000;stroke-width:1.0;" x1="251" x2="401" y1="199.0293" y2="199.0293"/><line style="stroke:#000000;stroke-width:1.0;" x1="401" x2="401" y1="185.0293" y2="199.0293"/><line style="stroke:#000000;stroke-width:1.0;" x1="401" x2="501" y1="185.0293" y2="185.0293"/><line style="stroke:#000000;stroke-width:1.0;" x1="501" x2="501" y1="185.0293" y2="199.0293"/><line style="stroke:#000000;stroke-width:1.0;" x1="501" x2="551" y1="199.0293" y2="199.0293"/><line style="stroke:#000000;stroke-width:1.0;" x1="551" x2="551" y1="185.0293" y2="199.0293"/><line style="stroke:#000000;stroke-width:1.0;" x1="551" x2="651" y1="185.0293" y2="185.0293"/><line style="stroke:#000000;stroke-width:1.0;" x1="651" x2="651" y1="185.0293" y2="199.0293"/><line style="stroke:#000000;stroke-width:1.0;" x1="651" x2="701" y1="199.0293" y2="199.0293"/><line style="stroke:#000000;stroke-width:1.0;" x1="701" x2="701" y1="185.0293" y2="199.0293"/><line style="stroke:#000000;stroke-width:1.0;" x1="701" x2="801" y1="185.0293" y2="185.0293"/><line style="stroke:#000000;stroke-width:1.0;" x1="801" x2="801" y1="185.0293" y2="199.0293"/><line style="stroke:#000000;stroke-width:1.0;" x1="801" x2="901" y1="199.0293" y2="199.0293"/><line style="stroke:#000000;stroke-width:2.0;" x1="251" x2="251" y1="207.0293" y2="212.0293"/><line style="stroke:#000000;stroke-width:2.0;" x1="301" x2="301" y1="207.0293" y2="212.0293"/><line style="stroke:#000000;stroke-width:2.0;" x1="351" x2="351" y1="207.0293" y2="212.0293"/><line style="stroke:#000000;stroke-width:2.0;" x1="401" x2="401" y1="207.0293" y2="212.0293"/><line style="stroke:#000000;stroke-width:2.0;" x1="451" x2="451" y1="207.0293" y2="212.0293"/><line style="stroke:#000000;stroke-width:2.0;" x1="501" x2="501" y1="207.0293" y2="212.0293"/><line style="stroke:#000000;stroke-width:2.0;" x1="551" x2="551" y1="207.0293" y2="212.0293"/><line style="stroke:#000000;stroke-width:2.0;" x1="601" x2="601" y1="207.0293" y2="212.0293"/><line style="stroke:#000000;stroke-width:2.0;" x1="651" x2="651" y1="207.0293" y2="212.0293"/><line style="stroke:#000000;stroke-width:2.0;" x1="701" x2="701" y1="207.0293" y2="212.0293"/><line style="stroke:#000000;stroke-width:2.0;" x1="751" x2="751" y1="207.0293" y2="212.0293"/><line style="stroke:#000000;stroke-width:2.0;" x1="801" x2="801" y1="207.0293" y2="212.0293"/><line style="stroke:#000000;stroke-width:2.0;" x1="851" x2="851" y1="207.0293" y2="212.0293"/><line style="stroke:#000000;stroke-width:2.0;" x1="901" x2="901" y1="207.0293" y2="212.0293"/><line style="stroke:#000000;stroke-width:2.0;" x1="251" x2="901" y1="207.0293" y2="207.0293"/><text fill="#000000" font-family="Verdana" font-size="11" lengthAdjust="spacing" textLength="7" x="247.5" y="224.0884">0</text><text fill="#000000" font-family="Verdana" font-size="11" lengthAdjust="spacing" textLength="21" x="290.5" y="224.0884">125</text><text fill="#000000" font-family="Verdana" font-size="11" lengthAdjust="spacing" textLength="21" x="340.5" y="224.0884">250</text><text fill="#000000" font-family="Verdana" font-size="11" lengthAdjust="spacing" textLength="21" x="390.5" y="224.0884">375</text><text fill="#000000" font-family="Verdana" font-size="11" lengthAdjust="spacing" textLength="21" x="490.5" y="224.0884">625</text><text fill="#000000" font-family="Verdana" font-size="11" lengthAdjust="spacing" textLength="21" x="540.5" y="224.0884">750</text><text fill="#000000" font-family="Verdana" font-size="11" lengthAdjust="spacing" textLength="28" x="637" y="224.0884">1000</text><text fill="#000000" font-family="Verdana" font-size="11" lengthAdjust="spacing" textLength="28" x="687" y="224.0884">1125</text><text fill="#000000" font-family="Verdana" font-size="11" lengthAdjust="spacing" textLength="28" x="787" y="224.0884">1375</text><text fill="#000000" font-family="Verdana" font-size="11" lengthAdjust="spacing" textLength="28" x="837" y="224.0884">1500</text><!--MD5=[88e0e18c4ddbaaa3b1835f1243432755]
+@startuml
+!theme plain
+clock   "Exposure (freerun)"             as FREE with period 375 pulse 250
+binary  "External trigger"               as TRIG
+robust  "State machine"                  as STATE
+binary  "Video output (7: stream level)" as STREAM
+
+@0
+STATE is "1: check level of external trigger"
+@125
+TRIG is high
+STATE is "2: wait for next inactive image period"
+@250
+STATE is "3: wait for beginning of video frame"
+@375
+STATE is "4: enable MIPI CSI video output"
+STREAM is high
+@625
+STREAM is low
+@750
+STREAM is high
+@1000
+STREAM is low
+@1125
+STREAM is high
+@1375
+TRIG is low
+STATE is "1: check level of external trigger"
+STREAM is low
+@1500
+
+@enduml
+
+@startuml
+
+
+
+
+
+
+
+<style>
+  root {
+    BackgroundColor white
+    FontColor black
+    FontName Verdana
+    HyperLinkColor blue
+    LineColor black
+    LineThickness 1
+    Margin 5
+  }
+  caption {
+    LineThickness 0
+  }
+  footer {
+    LineThickness 0
+  }
+  header {
+    LineThickness 0
+  }
+  node {
+    MaximumWidth 300
+  }
+  title {
+    FontSize 22
+    LineThickness 0
+  }
+</style>
+
+skinparam ArrowLollipopColor black
+skinparam BackgroundColor white
+skinparam DefaultFontName Verdana
+skinparam DefaultMonospacedFontName Courier
+skinparam LifelineStrategy nosolid
+skinparam ParticipantPadding 10
+skinparam SequenceLifeLineBorderColor black
+skinparam Shadowing false
+skinparam UseBetaStyle true
+
+skinparam Activity {
+  BackgroundColor white
+  BarColor black
+  BorderColor black
+  FontColor black
+  FontName Verdana
+}
+skinparam Boundary {
+  FontColor black
+}
+skinparam Box {
+  Padding 5
+}
+skinparam CircledCharacter {
+  FontColor black
+  FontName Courier
+  Radius 9
+}
+skinparam Class {
+  BackgroundColor white
+  BorderColor black
+  FontColor black
+  FontName Verdana
+}
+skinparam ClassAttribute {
+  FontColor black
+  FontName Verdana
+}
+skinparam ClassStereotype {
+  FontColor black
+  FontName Verdana
+}
+skinparam Footer {
+  FontColor black
+  FontName Verdana
+}
+skinparam Header {
+  FontColor black
+  FontName Verdana
+}
+skinparam Hyperlink {
+  Color blue
+}
+skinparam IconPackage {
+  Color black
+  BackgroundColor white
+}
+skinparam IconPrivate {
+  Color black
+  BackgroundColor white
+}
+skinparam IconProtected {
+  Color black
+  BackgroundColor white
+}
+skinparam IconPublic {
+  Color black
+  BackgroundColor white
+}
+skinparam Note {
+  FontColor black
+  FontName Verdana
+}
+skinparam Object {
+  BorderColor black
+}
+skinparam Package {
+  BorderColor black
+  FontColor black
+  FontName Verdana
+}
+skinparam State {
+  BackgroundColor white
+  BorderColor black
+}
+skinparam StereotypeA {
+  BackgroundColor white
+  BorderColor black
+}
+skinparam StereotypeC {
+  BackgroundColor white
+  BorderColor black
+}
+skinparam StereotypeE {
+  BackgroundColor white
+  BorderColor black
+}
+skinparam StereotypeI {
+  BackgroundColor white
+  BorderColor black
+}
+skinparam StereotypeN {
+  BackgroundColor white
+  BorderColor black
+}
+skinparam UseCaseStereoType {
+  FontColor black
+  FontName Verdana
+}
+clock   "Exposure (freerun)"             as FREE with period 375 pulse 250
+binary  "External trigger"               as TRIG
+robust  "State machine"                  as STATE
+binary  "Video output (7: stream level)" as STREAM
+
+@0
+STATE is "1: check level of external trigger"
+@125
+TRIG is high
+STATE is "2: wait for next inactive image period"
+@250
+STATE is "3: wait for beginning of video frame"
+@375
+STATE is "4: enable MIPI CSI video output"
+STREAM is high
+@625
+STREAM is low
+@750
+STREAM is high
+@1000
+STREAM is low
+@1125
+STREAM is high
+@1375
+TRIG is low
+STATE is "1: check level of external trigger"
+STREAM is low
+@1500
+
+@enduml
+
+PlantUML version 1.2022.5(Sat Apr 30 12:55:52 CEST 2022)
+(GPL source distribution)
+Java Runtime: OpenJDK Runtime Environment
+JVM: OpenJDK 64-Bit Server VM
+Default Encoding: UTF-8
+Language: en
+Country: US
+--></g></svg>

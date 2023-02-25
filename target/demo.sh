@@ -16,7 +16,7 @@ usage() {
         echo "-r, --framerate           Set the frame rate in Hz"
         echo "-s, --shutter             Set the shutter time in µs"
         echo "-t, --trigger             Set the trigger mode (Options: 0-7)"
-        echo "-a, --flash               Set the flash mode (Options: 0-1)"
+        echo "    --io                  Set the io mode (Options: 0-5)"
         echo "-w, --whitebalance        Activate white balance"
 }
 
@@ -74,7 +74,7 @@ script_dir=$(dirname $0)
 argus=
 format=
 trigger=
-flash=
+io=
 value=
 whitebalance=
 device=0
@@ -96,8 +96,8 @@ while [ $# != 0 ] ; do
                 argus=1
                 shift
                 ;;
-        -a|--flash)
-                flash="$1"
+        --io)
+                io="$1"
                 shift
                 ;;
         -d|--device)
@@ -169,9 +169,9 @@ if [[ -n ${trigger} ]]; then
         echo "Set trigger mode: ${trigger}"
         v4l2-ctl -d /dev/video${device} -c trigger_mode=${trigger}
 fi
-if [[ -n ${flash} ]]; then
-        echo "Set flash mode: ${flash}"
-        v4l2-ctl -d /dev/video${device} -c flash_mode=${flash}
+if [[ -n ${io} ]]; then
+        echo "Set io mode: ${io}"
+        v4l2-ctl -d /dev/video${device} -c io_mode=${io}
 fi
 if [[ -n ${value} ]]; then
         echo "Set Value: ${value}"
@@ -182,8 +182,9 @@ if [[ -n ${argus} ]]; then
         get_image_size
         adjust_pixel_format
 
-        gst-launch-1.0 nvarguscamerasrc sensor-id=${device} ! 'video/x-raw(memory:NVMM),framerate=20/1' ! nvegltransform ! nveglglessink
+        gst-launch-1.0 nvarguscamerasrc sensor-id=${device} ! 'video/x-raw(memory:NVMM),framerate=20/1' ! autovideosink
 else 
         cd ${script_dir}
+        v4l2-ctl -c bypass_mode=0
         ./vcmipidemo -d${device} -an${option2} ${optionY} -s${shutter} -g${gain} -w '128 180 128'
 fi
