@@ -199,7 +199,13 @@ As an example the device tree for the IMX226 with 4 lanes and pixel format RAW10
       active_t                 = "0";
       active_w                 = "3904";
       active_h                 = "3000";
-      pixel_t                  = "bayer_gbrg";
+#if LINUX_VERSION < 500
+      pixel_t                  = "bayer_rggb";
+#else
+      mode_type		             = "bayer";
+      pixel_phase		           = "rggb";
+      csi_pixel_bit_depth	     = "10";
+#endif
 
       min_gain_val             = "0";         //     0.0 dB
       max_gain_val             = "27000";     //    27.0 dB
@@ -296,9 +302,11 @@ If you have your own BSP, you have to integrate the driver into it. Please follo
    |                          |               | 35.1.0          | dt_camera_XavierNX_32.6.1+ <br> kernel_Xavier_35.1.0+  |
    |                          | Auvidea JNX30 | 32.5.0 - 32.5.2 | dt_Auvidea_JNX30_XavierNX_32.5.0+ <br> dt_camera_XavierNX_32.5.0+ <br> kernel_Xavier_32.5.0+  |
    |                          |               | 32.6.1          | dt_Auvidea_JNX30_XavierNX_32.5.0+ <br> dt_camera_XavierNX_32.6.1+ <br> kernel_Xavier_32.6.1+  |
+   |                          |               | 35.1.0          | dt_camera_XavierNX_35.1.0+ <br> kernel_Xavier_35.1.0+  |
    | NVIDIA Jetson AGX Xavier | DevKit + J20  | 32.3.1          | dt_camera_AGXXavier_32.3.1+ <br> kernel_Xavier_32.3.1+  |
    |                          |               | 32.5.0 - 32.5.2 | dt_camera_AGXXavier_32.3.1+ <br> kernel_Xavier_32.5.0+  |
    |                          |               | 32.6.1          | dt_camera_AGXXavier_32.3.1+ <br> kernel_Xavier_32.6.1+  |
+   |                          |               | 35.1.0          | dt_camera_AGXXavier_35.1.0+ <br> kernel_Xavier_35.1.0+  |
    | NVIDIA Jetson TX2        | DevKit + J20  | 32.5.0 - 32.5.2 | dt_camera_TX2_32.5.0+ <br> kernel_TX_32.5.0+  |
    |                          |               | 32.6.1          | dt_camera_TX2_32.5.0+ <br> kernel_TX_32.6.1+  |
 
@@ -317,3 +325,15 @@ If you have your own BSP, you have to integrate the driver into it. Please follo
 
 # Testing the camera
 To test the camera you can use [Vision Components MIPI CSI-2 demo software](https://github.com/pmliquify/vc_mipi_demo)
+
+# Annotations
+For Jetpack 5 (L4T 35.1):
+
+* In comparison to former L4T versions, you will have to add the packages 'flex', 'bison' and 'libssl-dev' to your chroot environment (for building the sources) and 'python3-pip' (for flashing the images).
+
+* When the test system has booted successfully, it is necessary to run the script max_speed.sh from the /target folder as superuser. It will read out the maximum frequencies and set them as the current ones. This is a recommendation from nvidia.
+   ```
+     $ sudo ./max_speed.sh
+   ```
+
+* For changing device trees only (build -d and flash -d), you will have to modify your /boot/extlinux/extlinux.conf by removing the FDT entry or by commenting out with '#'. Otherwise you will have to flash your complete linux image for every device tree change to take effect.

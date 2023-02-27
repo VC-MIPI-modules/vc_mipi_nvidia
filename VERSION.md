@@ -3,7 +3,7 @@
 ## v0.13.0 (L4T 35.1.0)
 * New Features
     * Added support for board support packages
-      * NVIDIA L4T 35.1.0 *(only NVIDIA Jetson Xavier NX)*
+      * NVIDIA L4T 35.1.0 *(only NVIDIA Jetson Xavier NX and AGXXavier)*
       
 ## v0.12.3 (Bugfixes)
   * Bugfixes
