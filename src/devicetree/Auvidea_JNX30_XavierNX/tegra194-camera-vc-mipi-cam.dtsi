@@ -263,7 +263,7 @@
 			// If you want to use GStreamer with nvarguscamerasrc
 			// you have to adjust this settings
 			physical_w              = "1.000";
-			physical_h              = "1.0000";
+			physical_h              = "1.000";
 			// ----------------------------------------------------
 
 			// This node is needed by the Tegra framework.
