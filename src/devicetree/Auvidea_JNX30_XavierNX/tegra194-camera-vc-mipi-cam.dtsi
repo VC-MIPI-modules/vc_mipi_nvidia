@@ -299,7 +299,7 @@
 				default_exp_time         = "10000";     // us
 
 				// For applications like argus_camera, there should be a minimal frame rate greater than zero!
-				min_framerate            = "1000";        // mHz
+				min_framerate            = "1000";      // mHz
 				max_framerate            = "60000";     // mHz
 				step_framerate           = "100";       // mHz
 				default_framerate        = "60000";     // mHz

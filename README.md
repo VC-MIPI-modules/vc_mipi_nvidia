@@ -336,4 +336,4 @@ For Jetpack 5 (L4T 35.1):
      $ sudo ./max_speed.sh
    ```
 
-* For changing device trees only (build -d and flash -d), you will have to modify your /boot/extlinux/extlinux.conf by removing the FDT entry or by commenting out with '#'. Otherwise you will have to flash your complete linux image for every device tree change to take effect.
+* For changing device trees only (build -d and flash -d), you will have to modify your /boot/extlinux/extlinux.conf on your target machine by removing the FDT entry or by commenting out with '#'. Otherwise you will have to flash your complete linux image for every device tree change to take effect.

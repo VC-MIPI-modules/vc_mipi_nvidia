@@ -212,9 +212,9 @@
 #if LINUX_VERSION < 500
                 pixel_t                  = "bayer_rggb";
 #else
-                mode_type		 = "bayer";
-                pixel_phase		 = "rggb";
-                csi_pixel_bit_depth	 = "10";
+                mode_type		         = "bayer";
+                pixel_phase		         = "rggb";
+                csi_pixel_bit_depth	     = "10";
 #endif
 
                 min_gain_val             = "0";         // mdB
@@ -227,7 +227,8 @@
                 step_exp_time            = "1";         // us
                 default_exp_time         = "10000";     // us
 
-                min_framerate            = "1000";         // mHz
+                // For applications like argus_camera, there should be a minimal frame rate greater than zero!
+		        min_framerate            = "1000";      // mHz
                 max_framerate            = "60000";     // mHz
                 step_framerate           = "100";       // mHz
                 default_framerate        = "60000";     // mHz
