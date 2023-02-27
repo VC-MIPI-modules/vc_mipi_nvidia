@@ -177,7 +177,7 @@ The property *max_framerate* is given for the number of lanes and the pixel form
 </details>
 
 ### Example
-As an example the device tree for the IMX226 with 4 lanes and pixel format RAW10 is shown on the code snippet. Be aware of that the property values for gain are given in mbB [:)] and the frame rate in mHz. So, you have to multiply the values from the table with 1000.
+As an example the device tree for the IMX226 with 4 lanes and pixel format RAW10 is shown on the code snippet. Be aware of that the property values for gain are given in mdB [:)] and the frame rate in mHz. So, you have to multiply the values from the table with 1000.
 ```
   ...
   // ----------------------------------------------------

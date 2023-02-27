@@ -111,7 +111,7 @@ case $VC_MIPI_SOM in
                         PATCHES+=('dt_Auvidea_JNX30_XavierNX_32.5.0+')
                         ;;
                 35.1.0)
-                        ;;
+		;;
                 esac
                 ;;
                 *)
@@ -144,14 +144,26 @@ case $VC_MIPI_SOM in
                 32.5.0|32.5.1|32.5.2)
                 PATCHES+=('dt_camera_XavierNX_32.5.0+')
                 ;;
-                32.6.1|32.7.1|32.7.2|35.1.0)
+                32.6.1|32.7.1|32.7.2)
                 PATCHES+=('dt_camera_XavierNX_32.6.1+')
+                ;;
+                35.1.0)
+                PATCHES+=('dt_camera_XavierNX_35.1.0+')
                 ;;
         esac
         ;;
 
         AGXXavier)
-        PATCHES+=('dt_camera_AGXXavier_32.3.1+')
+	echo "checking dt_cam_ versions"
+        case $VC_MIPI_BSP in
+                32.3.1)
+                PATCHES+=('dt_camera_AGXXavier_32.3.1+')
+                ;;
+                35.1.0)
+                PATCHES+=('dt_camera_AGXXavier_35.1.0+')
+                ;;
+        esac
+
         case $VC_MIPI_BSP in
         32.3.1)
                 PATCHES+=('kernel_Xavier_32.3.1+')

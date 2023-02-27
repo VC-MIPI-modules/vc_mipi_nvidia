@@ -25,6 +25,7 @@ check_recovery_mode() {
 
 flash_all() {
         cd $BSP_DIR/Linux_for_Tegra/
+	echo "Flashing all ... board: ${FLASH_BOARD}, partition: ${FLASH_PARTITION}"
         sudo ./flash.sh $FLASH_BOARD $FLASH_PARTITION
 }
 
@@ -34,6 +35,7 @@ flash_kernel() {
 
 flash_device_tree() {
         cd $BSP_DIR/Linux_for_Tegra/
+	echo "Flashing devtree only ... devtree: ${FLASH_DT} board: ${FLASH_BOARD}, partition: ${FLASH_PARTITION}"
         sudo ./flash.sh -r -k $FLASH_DT $FLASH_BOARD $FLASH_PARTITION
 }
 

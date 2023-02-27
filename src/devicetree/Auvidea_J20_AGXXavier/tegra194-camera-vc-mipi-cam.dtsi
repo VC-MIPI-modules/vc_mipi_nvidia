@@ -16,12 +16,13 @@
  */
 
 #include <dt-bindings/media/camera.h>
+#include <dt-bindings/version.h>
 
 // ------------------------------------------------------------------------------------------------
 //  Driver Configuration for NVIDIA Jetson AGX Xavier Developer Kit on Auvidea J20
 // ------------------------------------------------------------------------------------------------
 #define VC_MIPI_CAM_2       1   // 1: Enabled, 0: Disabled  (serial_c => CSI Port 2 => VI Stream 2)
-#define VC_MIPI_CAM_3       1   // 1: Enabled, 0: Disabled  (serial_e => CSI Port 4 => VI Stream 4)
+#define VC_MIPI_CAM_3       0   // 1: Enabled, 0: Disabled  (serial_e => CSI Port 4 => VI Stream 4)
 // ------------------------------------------------------------------------------------------------
 //  Supported number of lanes
 // -----+------------------------------------------------------------------------------------------
@@ -72,9 +73,14 @@
     #define VC_MIPI_CAMERAS 1
 #endif
 
+
 / {
-    host1x {
+#if LINUX_VERSION < 500
+	host1x {
         vc_vi_base: vi@15c10000 {
+#else
+	tegra-capture-vi  {
+#endif
             num-channels = <VC_MIPI_CAMERAS>;
             ports {
                 #address-cells = <1>;
@@ -101,8 +107,14 @@
 #endif
             };
         };
+#if LINUX_VERSION < 500
+	};
 
-        vc_csi_base: nvcsi@15a00000 {
+	vc_csi_base: nvcsi@15a00000 {
+#else
+	host1x@13e00000 {
+		nvcsi@15a00000 {
+#endif
             num-channels = <VC_MIPI_CAMERAS>;
             #address-cells = <1>;
             #size-cells = <0>;
@@ -152,7 +164,9 @@
                 };
             };
 #endif
-        };
+#if LINUX_VERSION >= 500
+		};
+#endif
     };
 
 #if VC_MIPI_CAM_2 == 1
@@ -195,7 +209,13 @@
                 active_t                 = "0";
                 active_w                 = "0";
                 active_h                 = "0";
+#if LINUX_VERSION < 500
                 pixel_t                  = "bayer_rggb";
+#else
+                mode_type		 = "bayer";
+                pixel_phase		 = "rggb";
+                csi_pixel_bit_depth	 = "10";
+#endif
 
                 min_gain_val             = "0";         // mdB
                 max_gain_val             = "48000";     // mdB
@@ -207,7 +227,7 @@
                 step_exp_time            = "1";         // us
                 default_exp_time         = "10000";     // us
 
-                min_framerate            = "0";         // mHz
+                min_framerate            = "1000";         // mHz
                 max_framerate            = "60000";     // mHz
                 step_framerate           = "100";       // mHz
                 default_framerate        = "60000";     // mHz
@@ -224,7 +244,7 @@
                 phy_mode                 = "DPHY";
                 discontinuous_clk        = "no";
                 mclk_khz                 = "24000";
-                pix_clk_hz               = "800000000";
+                pix_clk_hz               = "74250000";
                 mclk_multiplier          = "9.33";
                 cil_settletime           = "0";
                 dpcm_enable              = "false";
@@ -285,7 +305,13 @@
                 active_t                 = "0";
                 active_w                 = "0";
                 active_h                 = "0";
-                pixel_t                  = "bayer_rggb";
+#if LINUX_VERSION < 500
+		pixel_t                  = "bayer_rggb";
+#else
+		mode_type 		 = "bayer";
+		pixel_phase 		 = "rggb";
+		csi_pixel_bit_depth 	 = "10";
+#endif
 
                 min_gain_val             = "0";         // mdB
                 max_gain_val             = "48000";     // mdB
@@ -297,7 +323,7 @@
                 step_exp_time            = "1";         // us
                 default_exp_time         = "10000";     // us
 
-                min_framerate            = "0";         // mHz
+                min_framerate            = "1000";         // mHz
                 max_framerate            = "60000";     // mHz
                 step_framerate           = "100";       // mHz
                 default_framerate        = "60000";     // mHz
@@ -314,7 +340,7 @@
                 phy_mode                 = "DPHY";
                 discontinuous_clk        = "no";
                 mclk_khz                 = "24000";
-                pix_clk_hz               = "800000000";
+                pix_clk_hz               = "74250000";
                 mclk_multiplier          = "9.33";
                 cil_settletime           = "0";
                 dpcm_enable              = "false";

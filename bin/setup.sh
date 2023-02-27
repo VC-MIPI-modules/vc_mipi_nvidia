@@ -76,8 +76,11 @@ setup_kernel() {
         git add hardware
         git add kernel
         git commit -m "Initial commit"
+
         for patch in "${PATCHES[@]}"; do
+		echo "Applying patches: ${patch}"
                 for patchfile in $PATCH_DIR/${patch}/*.patch; do
+			echo "## PATCH_DIR: ${PATCH_DIR}/${patch} ... patchfile: ${patchfile}"
                         git am -3 --whitespace=fix --ignore-whitespace < ${patchfile}
                 done
         done
@@ -94,7 +97,9 @@ repatch_kernel() {
         FIRST_COMMIT=$(git rev-list --max-parents=0 --abbrev-commit HEAD)
         git reset --hard $FIRST_COMMIT
         for patch in ${PATCHES[@]}; do
+		echo "Applying patches: ${patch}"
                 for patchfile in $PATCH_DIR/${patch}/*.patch; do
+			echo "## PATCH_DIR: ${PATCH_DIR}/${patch} ... patchfile: ${patchfile}"
                         git am -3 --whitespace=fix --ignore-whitespace < ${patchfile}
                 done
         done
