@@ -48,7 +48,7 @@
 //   1  | Sony Sensor (IMX)
 //   2  | Omni Vision Sensor (OV)
 // -----+------------------------------------------------------------------------------------------
-#define VC_MIPI_MANUFACTURER 2
+#define VC_MIPI_MANUFACTURER 1
 // ------------------------------------------------------------------------------------------------
 //  GStreamer Support
 // ------------------------------------------------------------------------------------------------
@@ -91,6 +91,7 @@
 			ports {
 				#address-cells = <1>;
 				#size-cells = <0>;
+
 #if VC_MIPI_CAM_AB == 1
 				vc_vi_port0: port@0 {
 					reg = <0>;
@@ -131,10 +132,10 @@
 					};
 				};
 #endif
-			};
+			}; // ports
 		};
+
 #if LINUX_VERSION < 500
-	};
 
 	vc_csi_base: nvcsi@15a00000 {
 #else
@@ -144,6 +145,7 @@
 			num-channels = <VC_MIPI_CAMERAS>;
 			#address-cells = <1>;
 			#size-cells = <0>;
+
 #if VC_MIPI_CAM_AB == 1
 			vc_csi_chan0: channel@0 {
 				reg = <0>;
@@ -167,6 +169,7 @@
 				};
 			};
 #endif
+
 #if VC_MIPI_CAM_CD == 1
 			vc_csi_chan1: channel@1 {
 				reg = <1>;
@@ -190,6 +193,7 @@
 				};
 			};
 #endif
+
 #if VC_MIPI_CAM_E == 1
 			vc_csi_chan2: channel@2 {
 				reg = <2>;
@@ -213,6 +217,7 @@
 				};
 			};
 #endif
+
 #if VC_MIPI_CAM_F == 1
 			vc_csi_chan3: channel@3 {
 				reg = <3>;
@@ -236,19 +241,24 @@
 				};
 			};
 #endif
+
 #if LINUX_VERSION >= 500
 		};
 #endif
 	};
 
+#if LINUX_VERSION < 500
+	};
+#endif
+
 #if VC_MIPI_CAM_AB == 1
 	i2c@3180000 {
 #if VC_MIPI_MANUFACTURER == 1
 	vc_mipi_cam0: vc_mipi@1a {
-                	reg                     = <0x1a>;
+			reg                     = <0x1a>;
 #else
 	vc_mipi_cam0: vc_mipi@60 {
-                	reg                     = <0x60>;
+			reg                     = <0x60>;
 #endif
 			compatible              = "nvidia,vc_mipi";
 			devnode                 = "video0";
@@ -281,12 +291,13 @@
 				active_t                 = "0";
 				active_w                 = "0";
 				active_h                 = "0";
+
 #if LINUX_VERSION < 500
 				pixel_t                  = "bayer_rggb";
 #else
-				mode_type		 		 = "bayer";
-				pixel_phase		 		 = "rggb";
-				csi_pixel_bit_depth	 	 = "8";
+				mode_type                = "bayer";
+				pixel_phase              = "rggb";
+				csi_pixel_bit_depth      = "10";
 #endif
 				min_gain_val             = "0";         // mdB
 				max_gain_val             = "48000";     // mdB
@@ -299,7 +310,7 @@
 				default_exp_time         = "10000";     // us
 
 				// For applications like argus_camera, there should be a minimal frame rate greater than zero!
-				min_framerate            = "1000";      // mHz
+				min_framerate            = "100";       // mHz
 				max_framerate            = "60000";     // mHz
 				step_framerate           = "100";       // mHz
 				default_framerate        = "60000";     // mHz
@@ -316,7 +327,13 @@
 				phy_mode                 = "DPHY";
 				discontinuous_clk        = "no";
 				mclk_khz                 = "24000";
+
+#if LINUX_VERSION < 500
+				pix_clk_hz               = "800000000";
+#else
 				pix_clk_hz               = "74250000";
+#endif
+				
 				mclk_multiplier          = "9.33";
 				cil_settletime           = "0";
 				dpcm_enable              = "false";
@@ -336,15 +353,16 @@
 			};
 		};
 	};
-#endif
+#endif // VC_MIPI_CAM_AB
+
 #if VC_MIPI_CAM_CD == 1
 	i2c@c240000 {
 #if VC_MIPI_MANUFACTURER == 1
 	vc_mipi_cam1: vc_mipi@1a {
-                	reg                     = <0x1a>;
+			reg                     = <0x1a>;
 #else
 	vc_mipi_cam1: vc_mipi@60 {
-                	reg                     = <0x60>;
+			reg                     = <0x60>;
 #endif
 			compatible              = "nvidia,vc_mipi";
 			devnode                 = "video1";
@@ -377,12 +395,13 @@
 				active_t                 = "0";
 				active_w                 = "0";
 				active_h                 = "0";
+
 #if LINUX_VERSION < 500
 				pixel_t                  = "bayer_rggb";
 #else
-				mode_type 		 		 = "bayer";
-				pixel_phase 		 	 = "rggb";
-				csi_pixel_bit_depth 	 = "10";
+				mode_type                = "bayer";
+				pixel_phase              = "rggb";
+				csi_pixel_bit_depth      = "10";
 #endif
 				min_gain_val             = "0";         // mdB
 				max_gain_val             = "48000";     // mdB
@@ -394,7 +413,8 @@
 				step_exp_time            = "1";         // us
 				default_exp_time         = "10000";     // us
 
-				min_framerate            = "1000";         // mHz
+				// For applications like argus_camera, there should be a minimal frame rate greater than zero!
+				min_framerate            = "100";       // mHz
 				max_framerate            = "60000";     // mHz
 				step_framerate           = "100";       // mHz
 				default_framerate        = "60000";     // mHz
@@ -411,7 +431,13 @@
 				phy_mode                 = "DPHY";
 				discontinuous_clk        = "no";
 				mclk_khz                 = "24000";
+
+#if LINUX_VERSION < 500
+				pix_clk_hz               = "800000000";
+#else
 				pix_clk_hz               = "74250000";
+#endif
+				
 				mclk_multiplier          = "9.33";
 				cil_settletime           = "0";
 				dpcm_enable              = "false";
@@ -431,15 +457,16 @@
 			};
 		};
 	};
-#endif
+#endif // VC_MIPI_CAM_CD
+
 #if VC_MIPI_CAM_E == 1
 	i2c@31e0000 {
 #if VC_MIPI_MANUFACTURER == 1
 	vc_mipi_cam2: vc_mipi@1a {
-                	reg                     = <0x1a>;
+			reg                     = <0x1a>;
 #else
 	vc_mipi_cam2: vc_mipi@60 {
-                	reg                     = <0x60>;
+			reg                     = <0x60>;
 #endif
 			compatible              = "nvidia,vc_mipi";
 			devnode                 = "video2";
@@ -472,12 +499,13 @@
 				active_t                 = "0";
 				active_w                 = "0";
 				active_h                 = "0";
+
 #if LINUX_VERSION < 500
 				pixel_t                  = "bayer_rggb";
 #else
-				mode_type 		 		 = "bayer";
-				pixel_phase 		 	 = "rggb";
-				csi_pixel_bit_depth 	 = "10";
+				mode_type                = "bayer";
+				pixel_phase              = "rggb";
+				csi_pixel_bit_depth      = "10";
 #endif
 
 				min_gain_val             = "0";         // mdB
@@ -490,7 +518,8 @@
 				step_exp_time            = "1";         // us
 				default_exp_time         = "10000";     // us
 
-				min_framerate            = "0";         // mHz
+				// For applications like argus_camera, there should be a minimal frame rate greater than zero!
+				min_framerate            = "100";       // mHz
 				max_framerate            = "60000";     // mHz
 				step_framerate           = "100";       // mHz
 				default_framerate        = "60000";     // mHz
@@ -507,7 +536,13 @@
 				phy_mode                 = "DPHY";
 				discontinuous_clk        = "no";
 				mclk_khz                 = "24000";
+
+#if LINUX_VERSION < 500
+				pix_clk_hz               = "800000000";
+#else
 				pix_clk_hz               = "74250000";
+#endif
+				
 				mclk_multiplier          = "9.33";
 				cil_settletime           = "0";
 				dpcm_enable              = "false";
@@ -527,15 +562,16 @@
 			};
 		};
 	};
-#endif
+#endif // VC_MIPI_CAM_E
+
 #if VC_MIPI_CAM_F == 1
 	i2c@c250000 {
 #if VC_MIPI_MANUFACTURER == 1
 	vc_mipi_cam3: vc_mipi@1a {
-                	reg                     = <0x1a>;
+			reg                     = <0x1a>;
 #else
 	vc_mipi_cam3: vc_mipi@60 {
-                	reg                     = <0x60>;
+			reg                     = <0x60>;
 #endif
 			compatible              = "nvidia,vc_mipi";
 			devnode                 = "video3";
@@ -568,12 +604,13 @@
 				active_t                 = "0";
 				active_w                 = "0";
 				active_h                 = "0";
+
 #if LINUX_VERSION < 500
 				pixel_t                  = "bayer_rggb";
 #else
-				mode_type 		 		 = "bayer";
-				pixel_phase 		 	 = "rggb";
-				csi_pixel_bit_depth 	 = "10";
+				mode_type                = "bayer";
+				pixel_phase              = "rggb";
+				csi_pixel_bit_depth      = "10";
 #endif
 
 				min_gain_val             = "0";         // mdB
@@ -586,7 +623,8 @@
 				step_exp_time            = "1";         // us
 				default_exp_time         = "10000";     // us
 
-				min_framerate            = "0";         // mHz
+				// For applications like argus_camera, there should be a minimal frame rate greater than zero!
+				min_framerate            = "100";       // mHz
 				max_framerate            = "60000";     // mHz
 				step_framerate           = "100";       // mHz
 				default_framerate        = "60000";     // mHz
@@ -603,7 +641,13 @@
 				phy_mode                 = "DPHY";
 				discontinuous_clk        = "no";
 				mclk_khz                 = "24000";
+				
+#if LINUX_VERSION < 500
+				pix_clk_hz               = "800000000";
+#else
 				pix_clk_hz               = "74250000";
+#endif
+
 				mclk_multiplier          = "9.33";
 				cil_settletime           = "0";
 				dpcm_enable              = "false";
@@ -623,7 +667,7 @@
 			};
 		};
 	};
-#endif
+#endif // VC_MIPI_CAM_F
 
 	lens@vc_mipi {
 		min_focus_distance  = "0.0";
@@ -671,7 +715,8 @@
 					proc-device-tree = "/proc/device-tree/lens@vc_mipi/";
 				};
 			};
-#endif
+#endif // VC_MIPI_CAM_AB
+
 #if VC_MIPI_CAM_CD == 1
 			cam_module1: module1 {
 				status = "okay";
@@ -695,7 +740,8 @@
 					proc-device-tree = "/proc/device-tree/lens@vc_mipi/";
 				};
 			};
-#endif
+#endif // VC_MIPI_CAM_CD
+
 #if VC_MIPI_CAM_E == 1
 			cam_module2: module2 {
 				status = "okay";
@@ -719,7 +765,8 @@
 					proc-device-tree = "/proc/device-tree/lens@vc_mipi/";
 				};
 			};
-#endif
+#endif // VC_MIPI_CAM_E
+
 #if VC_MIPI_CAM_F == 1
 			cam_module3: module3 {
 				status = "okay";
@@ -743,7 +790,7 @@
 					proc-device-tree = "/proc/device-tree/lens@vc_mipi/";
 				};
 			};
-#endif
+#endif // VC_MIPI_CAM_F
 		};
 	};
 };
