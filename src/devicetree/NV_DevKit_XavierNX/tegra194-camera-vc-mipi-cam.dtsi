@@ -104,10 +104,10 @@
 				};
 			};
 #endif
-		};
+		}; // ports
 	};
+
 #if LINUX_VERSION < 500
-	};
 
 	vc_csi_base: nvcsi@15a00000 {
 #else
@@ -140,6 +140,7 @@
 				};
 			};
 #endif
+
 #if VC_MIPI_CAM_1 == 1
 			vc_csi_chan1: channel@1 {
 				reg = <1>;
@@ -163,10 +164,15 @@
 				};
 			};
 #endif
+
 #if LINUX_VERSION >= 500
 		};
 #endif
 	};
+
+#if LINUX_VERSION < 500
+	};
+#endif
 
 	cam_i2cmux {
 #if VC_MIPI_CAM_0 == 1
@@ -184,8 +190,8 @@
 				sensor_model            = "vc_mipi";
 
 				num_lanes               = NUM_LANES;
-                		trigger_mode            = "0";
-                		io_mode                 = "0";
+				trigger_mode            = "0";
+				io_mode                 = "0";
 
 				// ----------------------------------------------------
 				// If you want to use GStreamer with nvarguscamerasrc
@@ -209,12 +215,13 @@
 					active_t                 = "0";
 					active_w                 = "0";
 					active_h                 = "0";
+
 #if LINUX_VERSION < 500
 					pixel_t                  = "bayer_rggb";
 #else
-					mode_type 		 = "bayer";
-					pixel_phase 		 = "rggb";
-					csi_pixel_bit_depth 	 = "10";
+					mode_type                = "bayer";
+					pixel_phase              = "rggb";
+					csi_pixel_bit_depth      = "10";
 #endif
 					min_gain_val             = "0";         // mdB
 					max_gain_val             = "48000";     // mdB
@@ -226,7 +233,8 @@
 					step_exp_time            = "1";         // us
 					default_exp_time         = "10000";     // us
 
-					min_framerate            = "0";         // mHz
+					// For applications like argus_camera, there should be a minimal frame rate greater than zero!
+					min_framerate            = "100";       // mHz
 					max_framerate            = "60000";     // mHz
 					step_framerate           = "100";       // mHz
 					default_framerate        = "60000";     // mHz
@@ -243,7 +251,12 @@
 					phy_mode                 = "DPHY";
 					discontinuous_clk        = "no";
 					mclk_khz                 = "24000";
+
+#if LINUX_VERSION < 500
+					pix_clk_hz               = "800000000";
+#else
 					pix_clk_hz               = "74250000";
+#endif
 					mclk_multiplier          = "9.33";
 					cil_settletime           = "0";
 					dpcm_enable              = "false";
@@ -263,7 +276,8 @@
 				};
 			};
 		};
-#endif
+#endif // VC_MIPI_CAM_0
+
 #if VC_MIPI_CAM_1 == 1
 		i2c@1 {
 #if VC_MIPI_MANUFACTURER == 1
@@ -279,8 +293,8 @@
 				sensor_model            = "vc_mipi";
 
 				num_lanes               = NUM_LANES;
-                		trigger_mode            = "0";
-                		io_mode                 = "0";
+				trigger_mode            = "0";
+				io_mode                 = "0";
 
 				// ----------------------------------------------------
 				// If you want to use GStreamer with nvarguscamerasrc
@@ -304,12 +318,13 @@
 					active_t                 = "0";
 					active_w                 = "0";
 					active_h                 = "0";
+
 #if LINUX_VERSION < 500
 					pixel_t                  = "bayer_rggb";
 #else
-					mode_type 		 = "bayer";
-					pixel_phase 		 = "rggb";
-					csi_pixel_bit_depth 	 = "10";
+					mode_type                = "bayer";
+					pixel_phase              = "rggb";
+					csi_pixel_bit_depth      = "10";
 #endif
 					min_gain_val             = "0";         // mdB
 					max_gain_val             = "48000";     // mdB
@@ -321,7 +336,8 @@
 					step_exp_time            = "1";         // us
 					default_exp_time         = "10000";     // us
 
-					min_framerate            = "0";         // mHz
+					// For applications like argus_camera, there should be a minimal frame rate greater than zero!
+					min_framerate            = "100";       // mHz
 					max_framerate            = "60000";     // mHz
 					step_framerate           = "100";       // mHz
 					default_framerate        = "60000";     // mHz
@@ -338,7 +354,12 @@
 					phy_mode                 = "DPHY";
 					discontinuous_clk        = "no";
 					mclk_khz                 = "24000";
+
+#if LINUX_VERSION < 500
+					pix_clk_hz               = "800000000";
+#else
 					pix_clk_hz               = "74250000";
+#endif
 					mclk_multiplier          = "9.33";
 					cil_settletime           = "0";
 					dpcm_enable              = "false";
@@ -358,7 +379,7 @@
 				};
 			};
 		};
-#endif
+#endif // VC_MIPI_CAM_1
 	};
 
 	lens@vc_mipi {
@@ -407,7 +428,8 @@
 					proc-device-tree = "/proc/device-tree/lens@vc_mipi/";
 				};
 			};
-#endif
+#endif // VC_MIPI_CAM_0
+
 #if VC_MIPI_CAM_1 == 1
 			cam_module1: module1 {
 				status = "okay";
@@ -431,7 +453,7 @@
 					proc-device-tree = "/proc/device-tree/lens@vc_mipi/";
 				};
 			};
-#endif
+#endif // VC_MIPI_CAM_1
 		};
 	};
 };
