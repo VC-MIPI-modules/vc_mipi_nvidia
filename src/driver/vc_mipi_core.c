@@ -866,7 +866,7 @@ int vc_core_init(struct vc_cam *cam, struct i2c_client *client)
 	vc_core_update_controls(cam);
 	vc_core_print_timing(cam);
 
-	vc_notice(&ctrl->client_mod->dev, "VC MIPI Core succesfully initialized");
+	vc_notice(&ctrl->client_mod->dev, "VC MIPI Core successfully initialized");
 	return 0;
 }
 

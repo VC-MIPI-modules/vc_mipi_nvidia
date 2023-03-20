@@ -22,7 +22,7 @@
 //  Driver Configuration for NVIDIA Jetson AGX Xavier Developer Kit on Auvidea J20
 // ------------------------------------------------------------------------------------------------
 #define VC_MIPI_CAM_2       1   // 1: Enabled, 0: Disabled  (serial_c => CSI Port 2 => VI Stream 2)
-#define VC_MIPI_CAM_3       0   // 1: Enabled, 0: Disabled  (serial_e => CSI Port 4 => VI Stream 4)
+#define VC_MIPI_CAM_3       1   // 1: Enabled, 0: Disabled  (serial_e => CSI Port 4 => VI Stream 4)
 // ------------------------------------------------------------------------------------------------
 //  Supported number of lanes
 // -----+------------------------------------------------------------------------------------------
@@ -39,7 +39,7 @@
 //  1   | IMX290, IMX327, IMX335, IMX415, IMX568
 //  2   | IMX296, IMX297, IMX412
 // -----+------------------------------------------------------------------------------------------
-#define VC_MIPI_METADATA_H  "0" // "0", "1", "2" Lines of meta data
+#define VC_MIPI_METADATA_H  "1" // "0", "1", "2" Lines of meta data
 // ------------------------------------------------------------------------------------------------
 //   Sensor Manufacturer
 // -----+------------------------------------------------------------------------------------------
@@ -105,11 +105,10 @@
                     };
                 };
 #endif
-            };
+            }; //ports
         };
-#if LINUX_VERSION < 500
-	};
 
+#if LINUX_VERSION < 500
 	vc_csi_base: nvcsi@15a00000 {
 #else
 	host1x@13e00000 {
@@ -118,6 +117,7 @@
             num-channels = <VC_MIPI_CAMERAS>;
             #address-cells = <1>;
             #size-cells = <0>;
+
 #if VC_MIPI_CAM_2 == 1
             vc_csi_chan0: channel@0 {
                 reg = <0>;
@@ -140,7 +140,8 @@
                     };
                 };
             };
-#endif
+#endif // VC_MIPI_CAM_2
+
 #if VC_MIPI_CAM_3 == 1
             vc_csi_chan1: channel@1 {
                 reg = <1>;
@@ -163,11 +164,16 @@
                     };
                 };
             };
-#endif
+#endif // VC_MIPI_CAM_3
+
 #if LINUX_VERSION >= 500
 		};
 #endif
     };
+
+#if LINUX_VERSION < 500
+	};
+#endif
 
 #if VC_MIPI_CAM_2 == 1
     i2c@3180000 {
@@ -228,7 +234,7 @@
                 default_exp_time         = "10000";     // us
 
                 // For applications like argus_camera, there should be a minimal frame rate greater than zero!
-		        min_framerate            = "1000";      // mHz
+	            min_framerate            = "1000";      // mHz
                 max_framerate            = "60000";     // mHz
                 step_framerate           = "100";       // mHz
                 default_framerate        = "60000";     // mHz
@@ -245,7 +251,13 @@
                 phy_mode                 = "DPHY";
                 discontinuous_clk        = "no";
                 mclk_khz                 = "24000";
+
+#if LINUX_VERSION < 500
+                pix_clk_hz               = "800000000";
+#else
                 pix_clk_hz               = "74250000";
+#endif
+
                 mclk_multiplier          = "9.33";
                 cil_settletime           = "0";
                 dpcm_enable              = "false";
@@ -265,7 +277,8 @@
             };
         };
     };
-#endif
+#endif  // VC_MIPI_CAM_2
+
 #if VC_MIPI_CAM_3 == 1
     i2c@c250000 {
 #if VC_MIPI_MANUFACTURER == 1
@@ -307,11 +320,11 @@
                 active_w                 = "0";
                 active_h                 = "0";
 #if LINUX_VERSION < 500
-		pixel_t                  = "bayer_rggb";
+		        pixel_t                  = "bayer_rggb";
 #else
-		mode_type 		 = "bayer";
-		pixel_phase 		 = "rggb";
-		csi_pixel_bit_depth 	 = "10";
+                mode_type                = "bayer";
+                pixel_phase              = "rggb";
+                csi_pixel_bit_depth      = "10";
 #endif
 
                 min_gain_val             = "0";         // mdB
@@ -324,7 +337,8 @@
                 step_exp_time            = "1";         // us
                 default_exp_time         = "10000";     // us
 
-                min_framerate            = "1000";         // mHz
+                // For applications like argus_camera, there should be a minimal frame rate greater than zero!
+                min_framerate            = "1000";      // mHz
                 max_framerate            = "60000";     // mHz
                 step_framerate           = "100";       // mHz
                 default_framerate        = "60000";     // mHz
@@ -341,7 +355,13 @@
                 phy_mode                 = "DPHY";
                 discontinuous_clk        = "no";
                 mclk_khz                 = "24000";
+
+#if LINUX_VERSION < 500
+                pix_clk_hz               = "800000000";
+#else
                 pix_clk_hz               = "74250000";
+#endif
+
                 mclk_multiplier          = "9.33";
                 cil_settletime           = "0";
                 dpcm_enable              = "false";
@@ -361,7 +381,7 @@
             };
         };
     };
-#endif
+#endif  //VC_MIPI_CAM_3
 
     lens@vc_mipi {
         min_focus_distance  = "0.0";
@@ -409,7 +429,8 @@
                     proc-device-tree = "/proc/device-tree/lens@vc_mipi/";
                 };
             };
-#endif
+#endif // VC_MIPI_CAM_2
+
 #if VC_MIPI_CAM_3 == 1
             cam_module1: module1 {
                 status = "okay";
@@ -433,7 +454,7 @@
                     proc-device-tree = "/proc/device-tree/lens@vc_mipi/";
                 };
             };
-#endif
+#endif // VC_MIPI_CAM_3
         };
     };
 };
