@@ -299,7 +299,7 @@ If you have your own BSP, you have to integrate the driver into it. Please follo
    |                          |               | 32.6.1          | dt_Auvidea_JNX30_Nano_32.5.0+ <br> dt_camera_Nano_32.6.1+ <br> kernel_Nano_32.5.0+ |
    | NVIDIA Jetson Xavier NX  | NVIDIA DevKit | 32.5.0 - 32.5.2 | dt_camera_XavierNX_32.5.0+ <br> kernel_Xavier_32.5.0+  |
    |                          |               | 32.6.1          | dt_camera_XavierNX_32.6.1+ <br> kernel_Xavier_32.6.1+  |
-   |                          |               | 35.1.0          | dt_camera_XavierNX_32.6.1+ <br> kernel_Xavier_35.1.0+  |
+   |                          |               | 35.1.0          | dt_camera_XavierNX_35.1.0+ <br> kernel_Xavier_35.1.0+  |
    |                          | Auvidea JNX30 | 32.5.0 - 32.5.2 | dt_Auvidea_JNX30_XavierNX_32.5.0+ <br> dt_camera_XavierNX_32.5.0+ <br> kernel_Xavier_32.5.0+  |
    |                          |               | 32.6.1          | dt_Auvidea_JNX30_XavierNX_32.5.0+ <br> dt_camera_XavierNX_32.6.1+ <br> kernel_Xavier_32.6.1+  |
    |                          |               | 35.1.0          | dt_camera_XavierNX_35.1.0+ <br> kernel_Xavier_35.1.0+  |
