@@ -1,0 +1,27 @@
+diff --git a/hardware/nvidia/platform/t23x/p3768/kernel-dts/cvb/tegra234-p3509-a02.dtsi b/hardware/nvidia/platform/t23x/p3768/kernel-dts/cvb/tegra234-p3509-a02.dtsi
+index b6f1047d2..1e728421d 100644
+--- a/hardware/nvidia/platform/t23x/p3768/kernel-dts/cvb/tegra234-p3509-a02.dtsi
++++ b/hardware/nvidia/platform/t23x/p3768/kernel-dts/cvb/tegra234-p3509-a02.dtsi
+@@ -10,14 +10,20 @@
+  * FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for
+  * more details.
+  */
++#define VC_MIPI 1
++
+ #include <dt-bindings/gpio/tegra234-gpio.h>
+ #include "dt-bindings/input/input.h"
+ #include "tegra234-p3509-a02-pwm-fan.dtsi"
+ #include "tegra234-p3509-a02-pcie.dtsi"
+ #include "tegra234-p3509-a02-fixed-regulator.dtsi"
+ #include "tegra234-p3509-audio.dtsi"
+-#include "tegra234-p3768-camera-rbpcv3-imx477.dtsi"
+-#include "tegra234-p3768-camera-rbpcv2-imx219.dtsi"
++#ifdef VC_MIPI
++        #include "tegra234-p3768-camera-vc-mipi-cam.dtsi"
++#else
++        #include "tegra234-p3768-camera-rbpcv3-imx477.dtsi"
++        #include "tegra234-p3768-camera-rbpcv2-imx219.dtsi"
++#endif
+ 
+ / {
+ 	gpio-keys {
