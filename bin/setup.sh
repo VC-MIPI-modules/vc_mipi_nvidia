@@ -31,6 +31,10 @@ install_system_tools() {
         sudo apt install -y qemu-user-static
         sudo apt install -y libxml2-utils
         sudo apt install -y git
+        sudo apt install -y flex
+        sudo apt install -y bison
+        sudo apt install -y libssl-dev
+        sudo apt install -y python3-pip
 }
 
 setup_toolchain() {
@@ -78,12 +82,12 @@ setup_kernel() {
         git commit -m "Initial commit"
 
         for patch in "${PATCHES[@]}"; do
-		echo "Applying patches: ${patch}"
+                echo "Applying patches from ${PATCH_DIR}/${patch}"
                 for patchfile in $PATCH_DIR/${patch}/*.patch; do
-			echo "## PATCH_DIR: ${PATCH_DIR}/${patch} ... patchfile: ${patchfile}"
                         git am -3 --whitespace=fix --ignore-whitespace < ${patchfile}
                 done
         done
+
         git config gc.auto 1
 
         cp -R $DRIVER_DIR/* $DRIVER_DST_DIR
@@ -96,10 +100,10 @@ repatch_kernel() {
         git am --abort
         FIRST_COMMIT=$(git rev-list --max-parents=0 --abbrev-commit HEAD)
         git reset --hard $FIRST_COMMIT
+
         for patch in ${PATCHES[@]}; do
-		echo "Applying patches: ${patch}"
+                echo "Applying patches from ${PATCH_DIR}/${patch}"
                 for patchfile in $PATCH_DIR/${patch}/*.patch; do
-			echo "## PATCH_DIR: ${PATCH_DIR}/${patch} ... patchfile: ${patchfile}"
                         git am -3 --whitespace=fix --ignore-whitespace < ${patchfile}
                 done
         done

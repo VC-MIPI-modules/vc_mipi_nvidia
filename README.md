@@ -21,7 +21,7 @@
   * [NVIDIA L4T 32.6.1](https://developer.nvidia.com/embedded/linux-tegra-r3261)
   * [NVIDIA L4T 32.7.1](https://developer.nvidia.com/embedded/linux-tegra-r3271) *(experimental)*
   * [NVIDIA L4T 32.7.2](https://developer.nvidia.com/embedded/linux-tegra-r3272) *(experimental)*
-  * [NVIDIA L4T 35.1.0](https://developer.nvidia.com/embedded/jetson-linux-r351) *(experimental)*
+  * [NVIDIA L4T 35.1.0](https://developer.nvidia.com/embedded/jetson-linux-r351) *(only NVIDIA Jetson Xavier NX and AGX Xavier, experimental)*
 * Supported [VC MIPI Camera Modules](https://www.vision-components.com/fileadmin/external/documentation/hardware/VC_MIPI_Camera_Module/index.html) 
   * IMX178, IMX183, IMX226
   * IMX250, IMX252, IMX264, IMX265, IMX273, IMX392
@@ -327,13 +327,11 @@ If you have your own BSP, you have to integrate the driver into it. Please follo
 To test the camera you can use [Vision Components MIPI CSI-2 demo software](https://github.com/pmliquify/vc_mipi_demo)
 
 # Annotations
-For Jetpack 5 (L4T 35.1):
-
-* In comparison to former L4T versions, you will have to add the packages 'flex', 'bison' and 'libssl-dev' to your chroot environment (for building the sources) and 'python3-pip' (for flashing the images).
+For Jetpack 5 (L4T 35.1.0):
 
 * When the test system has booted successfully, it is necessary to run the script max_speed.sh from the /target folder as superuser. It will read out the maximum frequencies and set them as the current ones. This is a recommendation from nvidia.
    ```
      $ sudo ./max_speed.sh
    ```
 
-* For changing device trees only (build -d and flash -d), you will have to modify your /boot/extlinux/extlinux.conf on your target machine by removing the FDT entry or by commenting out with '#'. Otherwise you will have to flash your complete linux image for every device tree change to take effect.
+* For changing device trees only (./build.sh -d and ./flash.sh -d), you will have to modify your /boot/extlinux/extlinux.conf on your target machine by removing the FDT entry or by commenting out with '#'. Otherwise you will have to flash your complete linux image for every device tree change to take effect.
