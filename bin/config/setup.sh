@@ -54,7 +54,9 @@ choose_som() {
                 echo "    5: NVIDIA Jetson Xavier NX (devkit) (https://developer.nvidia.com/embedded/jetson-xavier-nx)"
                 echo "    6: NVIDIA Jetson AGX Xavier (devkit) (https://developer.nvidia.com/embedded/jetson-agx-xavier-developer-kit)"
                 echo "    7: NVIDIA Jetson TX2 (devkit) (https://developer.nvidia.com/embedded/jetson-tx2-developer-kit)"
-                read_selection 1 7
+                echo "    8: NVIDIA Jetson Orin NX (devkit) (https://developer.nvidia.com/embedded/jetson-tx2-developer-kit)"
+                echo "    9: NVIDIA Jetson Orin Nano (devkit) (https://developer.nvidia.com/embedded/jetson-tx2-developer-kit)"
+                read_selection 1 9
         fi
         case ${selection} in
         1) som=Nano ;;
@@ -64,6 +66,8 @@ choose_som() {
         5) som=XavierNXSD ;;
         6) som=AGXXavier ;;
         7) som=TX2 ;;
+        8) som=OrinNX ;;
+        9) som=OrinNano ;;
         esac
 }
 
@@ -127,6 +131,51 @@ choose_board_agx_tx2() {
         esac
 }
 
+bsps=(
+"NVIDIA L4T 32.3.1 (https://developer.nvidia.com/l4t-3231-archive)"
+"NVIDIA L4T 32.5.0 (https://developer.nvidia.com/embedded/linux-tegra-r325)"
+"NVIDIA L4T 32.5.1 (https://developer.nvidia.com/embedded/linux-tegra-r3251)"
+"NVIDIA L4T 32.5.2 (https://developer.nvidia.com/embedded/linux-tegra-r3251)"
+"NVIDIA L4T 32.6.1 (https://developer.nvidia.com/embedded/linux-tegra-r3261)"
+"NVIDIA L4T 32.7.1 (https://developer.nvidia.com/embedded/linux-tegra-r3271)"
+"NVIDIA L4T 32.7.2 (https://developer.nvidia.com/embedded/linux-tegra-r3272)"
+"NVIDIA L4T 35.1.0 (https://developer.nvidia.com/embedded/jetson-linux-r351)"
+"NVIDIA L4T 35.3.1 (https://developer.nvidia.com/embedded/jetson-linux-r3531)"
+)
+
+choose_bsp2() {
+        echo "------------------------------------------------------------"
+        echo "  Choose your board support package"
+        for ((i = 1; i <= ${#bsps[@]} ; i++)); do
+                echo "    $i: ${bsps[$i-1]}"
+        done
+        read_selection 1 ${#bsps[@]}
+}
+
+choose_bsp_nano_tx() {
+        if [[ -n ${selected_bsp} ]]; then
+                selection=${selected_bsp}
+        else
+                echo "------------------------------------------------------------"
+                echo "  Choose your board support package"
+                echo "    1: NVIDIA L4T 32.5.0 (https://developer.nvidia.com/embedded/linux-tegra-r325)"
+                echo "    2: NVIDIA L4T 32.5.1 (https://developer.nvidia.com/embedded/linux-tegra-r3251)"
+                echo "    3: NVIDIA L4T 32.5.2 (https://developer.nvidia.com/embedded/linux-tegra-r3251)"
+                echo "    4: NVIDIA L4T 32.6.1 (https://developer.nvidia.com/embedded/linux-tegra-r3261)"
+                echo "    5: NVIDIA L4T 32.7.1 (https://developer.nvidia.com/embedded/linux-tegra-r3271)"
+                echo "    6: NVIDIA L4T 32.7.2 (https://developer.nvidia.com/embedded/linux-tegra-r3272)"
+                read_selection 1 6
+        fi
+        case ${selection} in
+        1) bsp=32.5.0 ;;
+        2) bsp=32.5.1 ;;
+        3) bsp=32.5.2 ;;
+        4) bsp=32.6.1 ;;
+        5) bsp=32.7.1 ;;
+        6) bsp=32.7.2 ;;
+        esac
+}
+
 choose_bsp() {
         if [[ -n ${selected_bsp} ]]; then
                 selection=${selected_bsp}
@@ -140,7 +189,8 @@ choose_bsp() {
                 echo "    5: NVIDIA L4T 32.7.1 (https://developer.nvidia.com/embedded/linux-tegra-r3271)"
                 echo "    6: NVIDIA L4T 32.7.2 (https://developer.nvidia.com/embedded/linux-tegra-r3272)"
                 echo "    7: NVIDIA L4T 35.1.0 (https://developer.nvidia.com/embedded/jetson-linux-r351)"
-                read_selection 1 7
+                echo "    8: NVIDIA L4T 35.3.1 (https://developer.nvidia.com/embedded/jetson-linux-r3531)"
+                read_selection 1 8
         fi
         case ${selection} in
         1) bsp=32.5.0 ;;
@@ -150,6 +200,7 @@ choose_bsp() {
         5) bsp=32.7.1 ;;
         6) bsp=32.7.2 ;;
         7) bsp=35.1.0 ;;
+        8) bsp=35.3.1 ;;
         esac
 }
 
@@ -167,7 +218,8 @@ choose_bsp_agx() {
                 echo "    6: NVIDIA L4T 32.7.1 (https://developer.nvidia.com/embedded/linux-tegra-r3271)"
                 echo "    7: NVIDIA L4T 32.7.2 (https://developer.nvidia.com/embedded/linux-tegra-r3272)"
                 echo "    8: NVIDIA L4T 35.1.0 (https://developer.nvidia.com/embedded/jetson-linux-r351)"
-                read_selection 1 8
+                echo "    9: NVIDIA L4T 35.3.1 (https://developer.nvidia.com/embedded/jetson-linux-r3531)"
+                read_selection 1 9
         fi
         case ${selection} in
         1) bsp=32.3.1 ;;
@@ -178,8 +230,33 @@ choose_bsp_agx() {
         6) bsp=32.7.1 ;;
         7) bsp=32.7.2 ;;
         8) bsp=35.1.0 ;;
+        9) bsp=35.3.1 ;;
         esac
 }
+
+choose_bsp_orin_nano() {
+        if [[ -n ${selected_bsp} ]]; then
+                selection=${selected_bsp}
+        else
+                echo "------------------------------------------------------------"
+                echo "  Choose your board support package"
+                echo "    8: NVIDIA L4T 35.1.0 (https://developer.nvidia.com/embedded/jetson-linux-r351)"
+                echo "    9: NVIDIA L4T 35.3.1 (https://developer.nvidia.com/embedded/jetson-linux-r3531)"
+                read_selection 1 9
+        fi
+        case ${selection} in
+        1) bsp=32.3.1 ;;
+        2) bsp=32.5.0 ;;
+        3) bsp=32.5.1 ;;
+        4) bsp=32.5.2 ;;
+        5) bsp=32.6.1 ;;
+        6) bsp=32.7.1 ;;
+        7) bsp=32.7.2 ;;
+        8) bsp=35.1.0 ;;
+        9) bsp=35.3.1 ;;
+        esac
+}
+
 
 check_configuration() {
         if [[ -z ${selected_som} || -z ${selected_board} || -z ${selected_bsp} ]]; then
@@ -216,11 +293,11 @@ setup_driver() {
         case ${som} in
         Nano|NanoSD)
                 choose_board_nano
-                choose_bsp
+                choose_bsp_nano_tx
                 ;;
         Nano2GB)
                 choose_board_nano2GB
-                choose_bsp
+                choose_bsp_nano_tx
                 ;;
         XavierNX|XavierNXSD) 
                 choose_board_xavier_nx
@@ -232,7 +309,14 @@ setup_driver() {
                 ;;
         TX2)
                 choose_board_agx_tx2
-                choose_bsp
+                choose_bsp_nano_tx
+                ;;
+        AGXOrin)
+                ;;
+        OrinNX)
+                ;;
+        OrinNano)
+                choose_bsp2
                 ;;
         esac
         check_configuration $1 $2
