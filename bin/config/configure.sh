@@ -212,7 +212,7 @@ OrinNano)
         # Carrier board dependant settings
         case $VC_MIPI_BOARD in
         NV_DevKit_OrinNano)
-                DT_CAM_FILE=$DT_CAM_DIR/NV_DevKit_OrinNano/tegra234-p3768-camera-vc-mipi-cam.dtsi
+                DT_CAM_FILE=$DT_CAM_DIR/NV_DevKit_OrinNano/tegra234-camera-vc-mipi-cam.dtsi
                 ;;
         *)
                 echo "Carrier board $VC_MIPI_BOARD not supported!"
