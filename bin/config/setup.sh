@@ -41,144 +41,120 @@ read_selection() {
         done
 }
 
+som=
+soms=(
+"NVIDIA Jetson Nano (production) (https://developer.nvidia.com/embedded/jetson-nano)"
+"NVIDIA Jetson Nano (devkit) (https://developer.nvidia.com/embedded/jetson-nano)"
+"NVIDIA Jetson Nano 2GB (devkit) (https://developer.nvidia.com/embedded/jetson-nano-2gb-developer-kit)"
+"NVIDIA Jetson Xavier NX (production) (https://developer.nvidia.com/embedded/jetson-xavier-nx)"
+"NVIDIA Jetson Xavier NX (devkit) (https://developer.nvidia.com/embedded/jetson-xavier-nx)"
+"NVIDIA Jetson AGX Xavier (devkit) (https://developer.nvidia.com/embedded/jetson-agx-xavier-developer-kit)"
+"NVIDIA Jetson TX2 (devkit) (https://developer.nvidia.com/embedded/jetson-tx2-developer-kit)"
+"NVIDIA Jetson Orin NX (devkit) (https://developer.nvidia.com/embedded/jetson-tx2-developer-kit)"
+"NVIDIA Jetson Orin Nano (devkit) (https://developer.nvidia.com/embedded/jetson-tx2-developer-kit)"        
+)
+
+som_keys=(
+"Nano"
+"NanoSD"
+"Nano2GB"
+"XavierNX"
+"XavierNXSD"
+"AGXXavier"
+"TX2"
+"OrinNX"
+"OrinNano"
+)
+
 choose_som() {
+        indices=("$@")
         if [[ -n ${selected_som} ]]; then
                 selection=${selected_som}
         else
-                echo "------------------------------------------------------------"
-                echo "  Choose your system on module"
-                echo "    1: NVIDIA Jetson Nano (production) (https://developer.nvidia.com/embedded/jetson-nano)"
-                echo "    2: NVIDIA Jetson Nano (devkit) (https://developer.nvidia.com/embedded/jetson-nano)"
-                echo "    3: NVIDIA Jetson Nano 2GB (devkit) (https://developer.nvidia.com/embedded/jetson-nano-2gb-developer-kit)"
-                echo "    4: NVIDIA Jetson Xavier NX (production) (https://developer.nvidia.com/embedded/jetson-xavier-nx)"
-                echo "    5: NVIDIA Jetson Xavier NX (devkit) (https://developer.nvidia.com/embedded/jetson-xavier-nx)"
-                echo "    6: NVIDIA Jetson AGX Xavier (devkit) (https://developer.nvidia.com/embedded/jetson-agx-xavier-developer-kit)"
-                echo "    7: NVIDIA Jetson TX2 (devkit) (https://developer.nvidia.com/embedded/jetson-tx2-developer-kit)"
-                read_selection 1 7
+                index=1
+                for i in "${indices[@]}"; do
+                        echo "    $index: ${soms[$i]}"
+                        ((index=index+1))
+                done
+                read_selection 1 ${#indices[@]}
         fi
-        case ${selection} in
-        1) som=Nano ;;
-        2) som=NanoSD ;;
-        3) som=Nano2GB ;;
-        4) som=XavierNX ;;
-        5) som=XavierNXSD ;;
-        6) som=AGXXavier ;;
-        7) som=TX2 ;;
-        esac
+        som=${som_keys[indices[selection-1]]}
 }
 
-choose_board_nano() {
+board=
+boards=(
+"NVIDIA Jetson Nano 2GB Developer Kit (https://developer.nvidia.com/embedded/jetson-nano-2gb-developer-kit)"
+"NVIDIA Jetson Nano Developer Kit B01 (https://developer.nvidia.com/embedded/jetson-nano-developer-kit)"
+"NVIDIA Jetson Xavier NX Developer Kit (https://developer.nvidia.com/embedded/jetson-xavier-nx-devkit)"
+"NVIDIA Jetson Orin Nano Developer Kit (...)"
+"Auvidea JNX30-LC-PD (https://auvidea.eu/product/???)"
+"Auvidea J20 on Devkit Jetson AGX Xavier or TX2 (https://auvidea.eu/j20)"
+"Auvidea JNX30D (https://auvidea.eu/product/???)"
+)
+
+board_keys=(
+"NV_DevKit_Nano"
+"NV_DevKit_Nano"
+"NV_DevKit_XavierNX"
+"NV_DevKit_OrinNano"
+"Auvidea_JNX30"
+"Auvidea_J20"
+"Auvidea_JNX30D"
+)
+
+choose_board() {
+        indices=("$@")
         if [[ -n ${selected_board} ]]; then
                 selection=${selected_board}
         else
-                echo "------------------------------------------------------------"
-                echo "  Choose your carrier board"
-                echo "    1: NVIDIA Jetson Nano Developer Kit B01 (https://developer.nvidia.com/embedded/jetson-nano-developer-kit)"
-                echo "    2: Auvidea JNX30-LC-PD (https://auvidea.eu/product/70804)"
-                read_selection 1 2
+                index=1
+                for i in "${indices[@]}"; do
+                        echo "    $index: ${boards[$i]}"
+                        ((index=index+1))
+                done
+                read_selection 1 ${#indices[@]}
         fi
-        case ${selection} in
-        1) board=NV_DevKit_Nano ;;
-        2) board=Auvidea_JNX30 ;;
-        esac
+        board=${board_keys[indices[selection-1]]}
 }
 
-choose_board_nano2GB() {
-        if [[ -n ${selected_board} ]]; then
-                selection=${selected_board}
-        else
-                echo "------------------------------------------------------------"
-                echo "  Choose your carrier board"
-                echo "    1: NVIDIA Jetson Nano 2GB Developer Kit (https://developer.nvidia.com/embedded/jetson-nano-2gb-developer-kit)"
-                read_selection 1 1
-        fi
-        case ${selection} in
-        1) board=NV_DevKit_Nano ;;
-        esac
-}
+bsp=
+bsps=(
+"NVIDIA L4T 32.3.1 (https://developer.nvidia.com/l4t-3231-archive)"
+"NVIDIA L4T 32.5.0 (https://developer.nvidia.com/embedded/linux-tegra-r325)"
+"NVIDIA L4T 32.5.1 (https://developer.nvidia.com/embedded/linux-tegra-r3251)"
+"NVIDIA L4T 32.5.2 (https://developer.nvidia.com/embedded/linux-tegra-r3251)"
+"NVIDIA L4T 32.6.1 (https://developer.nvidia.com/embedded/linux-tegra-r3261)"
+"NVIDIA L4T 32.7.1 (https://developer.nvidia.com/embedded/linux-tegra-r3271)"
+"NVIDIA L4T 32.7.2 (https://developer.nvidia.com/embedded/linux-tegra-r3272)"
+"NVIDIA L4T 35.1.0 (https://developer.nvidia.com/embedded/jetson-linux-r351)"
+"NVIDIA L4T 35.2.1 (https://developer.nvidia.com/embedded/jetson-linux-r3521)"
+"NVIDIA L4T 35.3.1 (https://developer.nvidia.com/embedded/jetson-linux-r3531)"
+)
 
-choose_board_xavier_nx() {
-        if [[ -n ${selected_board} ]]; then
-                selection=${selected_board}
-        else
-                echo "------------------------------------------------------------"
-                echo "  Choose your carrier board"
-                echo "    1: NVIDIA Jetson Xavier NX Developer Kit (https://developer.nvidia.com/embedded/jetson-xavier-nx-devkit)"
-                echo "    2: Auvidea JNX30-LC-PD (https://auvidea.eu/product/70804)"
-                read_selection 1 2
-        fi
-        case ${selection} in
-        1) board=NV_DevKit_XavierNX ;;
-        2) board=Auvidea_JNX30 ;;
-        esac
-}
-
-choose_board_agx_tx2() {
-        if [[ -n ${selected_board} ]]; then
-                selection=${selected_board}
-        else
-                echo "------------------------------------------------------------"
-                echo "  Choose your carrier board"
-                echo "    1: Auvidea J20 on Devkit Jetson AGX Xavier or TX2 (https://auvidea.eu/j20)"
-                read_selection 1 1
-        fi
-        case ${selection} in
-        1) board=Auvidea_J20 ;;
-        esac
-}
+bsps_keys=(
+"32.3.1"
+"32.5.0"
+"32.5.1"
+"32.5.2"
+"32.6.1"
+"32.7.1"
+"32.7.2"
+"35.1.0"
+"35.2.1"
+"35.3.1"
+)
 
 choose_bsp() {
-        if [[ -n ${selected_bsp} ]]; then
-                selection=${selected_bsp}
-        else
-                echo "------------------------------------------------------------"
-                echo "  Choose your board support package"
-                echo "    1: NVIDIA L4T 32.5.0 (https://developer.nvidia.com/embedded/linux-tegra-r325)"
-                echo "    2: NVIDIA L4T 32.5.1 (https://developer.nvidia.com/embedded/linux-tegra-r3251)"
-                echo "    3: NVIDIA L4T 32.5.2 (https://developer.nvidia.com/embedded/linux-tegra-r3251)"
-                echo "    4: NVIDIA L4T 32.6.1 (https://developer.nvidia.com/embedded/linux-tegra-r3261)"
-                echo "    5: NVIDIA L4T 32.7.1 (https://developer.nvidia.com/embedded/linux-tegra-r3271)"
-                echo "    6: NVIDIA L4T 32.7.2 (https://developer.nvidia.com/embedded/linux-tegra-r3272)"
-                echo "    7: NVIDIA L4T 35.1.0 (https://developer.nvidia.com/embedded/jetson-linux-r351)"
-                read_selection 1 7
-        fi
-        case ${selection} in
-        1) bsp=32.5.0 ;;
-        2) bsp=32.5.1 ;;
-        3) bsp=32.5.2 ;;
-        4) bsp=32.6.1 ;;
-        5) bsp=32.7.1 ;;
-        6) bsp=32.7.2 ;;
-        7) bsp=35.1.0 ;;
-        esac
-}
-
-choose_bsp_agx() {
-        if [[ -n ${selected_bsp} ]]; then
-                selection=${selected_bsp}
-        else
-                echo "------------------------------------------------------------"
-                echo "  Choose your board support package"
-                echo "    1: NVIDIA L4T 32.3.1 (https://developer.nvidia.com/l4t-3231-archive)"
-                echo "    2: NVIDIA L4T 32.5.0 (https://developer.nvidia.com/embedded/linux-tegra-r325)"
-                echo "    3: NVIDIA L4T 32.5.1 (https://developer.nvidia.com/embedded/linux-tegra-r3251)"
-                echo "    4: NVIDIA L4T 32.5.2 (https://developer.nvidia.com/embedded/linux-tegra-r3251)"
-                echo "    5: NVIDIA L4T 32.6.1 (https://developer.nvidia.com/embedded/linux-tegra-r3261)"
-                echo "    6: NVIDIA L4T 32.7.1 (https://developer.nvidia.com/embedded/linux-tegra-r3271)"
-                echo "    7: NVIDIA L4T 32.7.2 (https://developer.nvidia.com/embedded/linux-tegra-r3272)"
-                echo "    8: NVIDIA L4T 35.1.0 (https://developer.nvidia.com/embedded/jetson-linux-r351)"
-                read_selection 1 8
-        fi
-        case ${selection} in
-        1) bsp=32.3.1 ;;
-        2) bsp=32.5.0 ;;
-        3) bsp=32.5.1 ;;
-        4) bsp=32.5.2 ;;
-        5) bsp=32.6.1 ;;
-        6) bsp=32.7.1 ;;
-        7) bsp=32.7.2 ;;
-        8) bsp=35.1.0 ;;
-        esac
+        echo "------------------------------------------------------------"
+        echo "  Choose your board support package"
+        indices=("$@")
+        index=1
+        for i in "${indices[@]}"; do
+                echo "    $index: ${bsps[$i]}"
+                ((index=index+1))
+        done
+        read_selection 1 ${#indices[@]}
+        bsp=${bsps_keys[indices[selection-1]]}
 }
 
 check_configuration() {
@@ -212,27 +188,31 @@ write_configuration() {
 
 setup_driver() {
         print_title $1 $2
-        choose_som
+        choose_som 0 1 2 3 4 5 6 8
         case ${som} in
         Nano|NanoSD)
-                choose_board_nano
-                choose_bsp
+                choose_board 1 4
+                choose_bsp 1 2 3 4 5 6 
                 ;;
         Nano2GB)
-                choose_board_nano2GB
-                choose_bsp
+                choose_board 0
+                choose_bsp 1 2 3 4 5 6
                 ;;
         XavierNX|XavierNXSD) 
-                choose_board_xavier_nx
-                choose_bsp
+                choose_board 2 4
+                choose_bsp 1 2 3 4 5 6 7 8 9
                 ;;
         AGXXavier)
-                choose_board_agx_tx2
-                choose_bsp_agx
+                choose_board 5
+                choose_bsp 0 1 2 3 4 5 6 7 8 9
                 ;;
         TX2)
-                choose_board_agx_tx2
-                choose_bsp
+                choose_board 5
+                choose_bsp 1 2 3 4 5 6 
+                ;;
+        OrinNano)
+                choose_board 3
+                choose_bsp 9
                 ;;
         esac
         check_configuration $1 $2

@@ -131,6 +131,8 @@ setup_bsp() {
         sudo tar xjvf $RFS_FILE -C $BSP_DIR/Linux_for_Tegra/rootfs
 
         cd $BSP_DIR/Linux_for_Tegra
+        # NEW
+        # sudo ./tools/l4t_flash_prerequisites.sh
         sudo ./apply_binaries.sh
 }
 

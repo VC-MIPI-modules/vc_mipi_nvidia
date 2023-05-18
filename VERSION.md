@@ -1,10 +1,16 @@
 # Version History
 
+## v0.14.0 (Orin, L4T 35.2.1, 35.3.1)
+* New Features
+    * Added support for system on modules
+      * NVIDIA Jetson Orin NX
+    * Added support for board support packages
+      * NVIDIA L4T 35.2.1 *(only NVIDIA Jetson Xavier NX and AGX Xavier)*
+      * NVIDIA L4T 35.3.1 *(only NVIDIA Jetson Orin NX, Xavier NX and AGX Xavier)*
 ## v0.13.0 (L4T 35.1.0)
 * New Features
     * Added support for board support packages
-      * NVIDIA L4T 35.1.0 *(only NVIDIA Jetson Xavier NX and AGX Xavier)*
-      
+      * NVIDIA L4T 35.1.0 *(only NVIDIA Jetson Xavier NX and AGX Xavier)*     
 ## v0.12.3 (Bugfixes)
   * Bugfixes
     * Fixed an issue with the IMX183's self-triggering mode.
