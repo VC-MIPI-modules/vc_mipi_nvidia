@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022, NVIDIA CORPORATION.  All rights reserved.
+ * Copyright (c) 2023, Vision Components GmbH.  All rights reserved.
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,13 +14,14 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 #include <dt-bindings/media/camera.h>
 
 // ------------------------------------------------------------------------------------------------
 //  Driver Configuration for NVIDIA Jetson Orin Nano on NVIDIA Jetson Orin Nano Developer Kit
 // ------------------------------------------------------------------------------------------------
 #define VC_MIPI_CAM_0       1   // 1: Enabled, 0: Disabled  (serial_a => CSI Port 0 => VI Stream 0)
-#define VC_MIPI_CAM_1       1   // 1: Enabled, 0: Disabled  (serial_e => CSI Port 4 => VI Stream 4)
+#define VC_MIPI_CAM_1       1   // 1: Enabled, 0: Disabled  (serial_c => CSI Port 2 => VI Stream 2)
 // ------------------------------------------------------------------------------------------------
 //  Supported number of lanes
 // -----+------------------------------------------------------------------------------------------
@@ -30,6 +31,14 @@
 //      | IMX412, IMX415, IMX568
 // -----+------------------------------------------------------------------------------------------
 #define VC_MIPI_LANES       1   // 1, 2 Lanes
+// ------------------------------------------------------------------------------------------------
+//  Embedded Metadata Height
+// -----+------------------------------------------------------------------------------------------
+//  0   | IMX178, IMX183, IMX226, IMX250, IMX252, IMX264, IMX265, IMX273, IMX392, OV7251, OV9281
+//  1   | IMX290, IMX327, IMX335, IMX415, IMX568
+//  2   | IMX296, IMX297, IMX412
+// -----+------------------------------------------------------------------------------------------
+#define VC_MIPI_METADATA_H  "2" // "0", "1", "2" Lines of meta data
 // ------------------------------------------------------------------------------------------------
 //   Sensor Manufacturer
 // -----+------------------------------------------------------------------------------------------
@@ -45,8 +54,6 @@
 //  To find the correct parameter values please follow the instruction in the main README.md of 
 //  this repository https://github.com/VC-MIPI-modules/vc_mipi_nvidia#gstreamer-support
 // ------------------------------------------------------------------------------------------------
-
-#define VC_MIPI_METADATA_H  "0"
 
 #if VC_MIPI_LANES == 1
     #define BUS_WIDTH 1
@@ -67,83 +74,98 @@
 
 / {
 	tegra-capture-vi  {
-		num-channels = <2>;
+		num-channels = <VC_MIPI_CAMERAS>;
 		ports {
 			#address-cells = <1>;
 			#size-cells = <0>;
-			vi_port0: port@0 {
+#if VC_MIPI_CAM_0 == 1
+			vc_vi_port0: port@0 {
 				reg = <0>;
-				rbpcv2_imx219_vi_in0: endpoint {
+				vc_vi_in0: endpoint {
 					port-index = <0>;
 					bus-width = <BUS_WIDTH>;
-					remote-endpoint = <&rbpcv2_imx219_csi_out0>;
+					remote-endpoint = <&vc_csi_out0>;
 				};
 			};
-			vi_port1: port@1 {
+#endif
+#if VC_MIPI_CAM_1 == 1
+			vc_vi_port1: port@1 {
 				reg = <1>;
-				rbpcv2_imx219_vi_in1: endpoint {
+				vc_vi_in1: endpoint {
 					port-index = <2>;
 					bus-width = <BUS_WIDTH>;
-					remote-endpoint = <&rbpcv2_imx219_csi_out1>;
+					remote-endpoint = <&vc_csi_out1>;
 				};
 			};
-		};
+#endif
+		}; // ports
 	};
 
 	host1x@13e00000 {
 		nvcsi@15a00000 {
-			num-channels = <2>;
+			num-channels = <VC_MIPI_CAMERAS>;
 			#address-cells = <1>;
 			#size-cells = <0>;
-			csi_chan0: channel@0 {
+#if VC_MIPI_CAM_0 == 1
+			vc_csi_chan0: channel@0 {
 				reg = <0>;
 				ports {
 					#address-cells = <1>;
 					#size-cells = <0>;
-						csi_chan0_port0: port@0 {
+						vc_csi_chan0_port0: port@0 {
 						reg = <0>;
-						rbpcv2_imx219_csi_in0: endpoint@0 {
+						vc_csi_in0: endpoint@0 {
 							port-index = <0>;
 							bus-width = <BUS_WIDTH>;
-							remote-endpoint = <&rbpcv2_imx219_out0>;
+							remote-endpoint = <&vc_mipi_out0>;
 						};
 					};
-					csi_chan0_port1: port@1 {
+					vc_csi_chan0_port1: port@1 {
 						reg = <1>;
-						rbpcv2_imx219_csi_out0: endpoint@1 {
-							remote-endpoint = <&rbpcv2_imx219_vi_in0>;
+						vc_csi_out0: endpoint@1 {
+							remote-endpoint = <&vc_vi_in0>;
 						};
 					};
 				};
 			};
-			csi_chan1: channel@1 {
+#endif
+
+#if VC_MIPI_CAM_1 == 1
+			vc_csi_chan1: channel@1 {
 				reg = <1>;
 				ports {
 					#address-cells = <1>;
 					#size-cells = <0>;
-					csi_chan1_port0: port@0 {
+					vc_csi_chan1_port0: port@0 {
 						reg = <0>;
-						rbpcv2_imx219_csi_in1: endpoint@2 {
+						vc_csi_in1: endpoint@2 {
 							port-index = <2>;
 							bus-width = <BUS_WIDTH>;
-							remote-endpoint = <&rbpcv2_imx219_out1>;
+							remote-endpoint = <&vc_mipi_out1>;
 						};
 					};
-					csi_chan1_port1: port@1 {
+					vc_csi_chan1_port1: port@1 {
 						reg = <1>;
-						rbpcv2_imx219_csi_out1: endpoint@3 {
-							remote-endpoint = <&rbpcv2_imx219_vi_in1>;
+						vc_csi_out1: endpoint@3 {
+							remote-endpoint = <&vc_vi_in1>;
 						};
 					};
 				};
 			};
+#endif
 		};
 	};
 
 	cam_i2cmux {
-		i2c_0:i2c@0 {
-			imx219_cam0: rbpcv2_imx219_a@1a {
+#if VC_MIPI_CAM_0 == 1
+		i2c@0 {
+#if VC_MIPI_MANUFACTURER == 1
+			vc_mipi_cam0: vc_mipi@1a {
 				reg                     = <0x1a>;
+#else
+			vc_mipi_cam0: vc_mipi@60 {
+				reg                     = <0x60>;
+#endif
 				compatible              = "nvidia,vc_mipi";
 				devnode                 = "video0";
 				use_sensor_mode_id      = "false";
@@ -167,7 +189,7 @@
 					tegra_sinterface         = "serial_a";
 					embedded_metadata_height = VC_MIPI_METADATA_H;
 					readout_orientation      = "0";
-					// lane_polarity 		 = "6";
+					lane_polarity 		 = "6";
 
 					// ----------------------------------------------------
 					// If you want to use GStreamer with nvarguscamerasrc
@@ -190,7 +212,8 @@
 					step_exp_time            = "1";         // us
 					default_exp_time         = "10000";     // us
 
-					min_framerate            = "0";         // mHz
+					// For applications like argus_camera, there should be a minimal frame rate greater than zero!
+					min_framerate            = "100";       // mHz
 					max_framerate            = "60000";     // mHz
 					step_framerate           = "100";       // mHz
 					default_framerate        = "60000";     // mHz
@@ -207,7 +230,7 @@
 					phy_mode                 = "DPHY";
 					discontinuous_clk        = "no";
 					mclk_khz                 = "24000";
-					pix_clk_hz               = "800000000";
+					pix_clk_hz               = "74250000";
 					mclk_multiplier          = "9.33";
 					cil_settletime           = "0";
 					dpcm_enable              = "false";
@@ -218,18 +241,26 @@
 					#size-cells = <0>;
 					port@0 {
 						reg = <0>;
-						rbpcv2_imx219_out0: endpoint {
+						vc_mipi_out0: endpoint {
 							port-index = <0>;
 							bus-width = <BUS_WIDTH>;
-							remote-endpoint = <&rbpcv2_imx219_csi_in0>;
+							remote-endpoint = <&vc_csi_in0>;
 						};
 					};
 				};
 			};
 		};
-		i2c_1: i2c@1 {
-			imx219_cam1: rbpcv2_imx219_c@1a {
+#endif // VC_MIPI_CAM_0
+
+#if VC_MIPI_CAM_1 == 1
+		i2c@1 {
+#if VC_MIPI_MANUFACTURER == 1
+			vc_mipi_cam1: vc_mipi@1a {
 				reg                     = <0x1a>;
+#else
+			vc_mipi_cam1: vc_mipi@60 {
+				reg                     = <0x60>;
+#endif
 				compatible              = "nvidia,vc_mipi";
 				devnode                 = "video1";
 				use_sensor_mode_id      = "false";
@@ -250,10 +281,9 @@
 				// You don't have to change any settings if just want to use the V4L API.
 				mode0 {
 					num_lanes                = NUM_LANES;
-					tegra_sinterface         = "serial_e";
+					tegra_sinterface         = "serial_c";
 					embedded_metadata_height = VC_MIPI_METADATA_H;
 					readout_orientation      = "0";
-					// lane_polarity 		 = "6";
 
 					// ----------------------------------------------------
 					// If you want to use GStreamer with nvarguscamerasrc
@@ -276,7 +306,8 @@
 					step_exp_time            = "1";         // us
 					default_exp_time         = "10000";     // us
 
-					min_framerate            = "0";         // mHz
+					// For applications like argus_camera, there should be a minimal frame rate greater than zero!
+					min_framerate            = "100";       // mHz
 					max_framerate            = "60000";     // mHz
 					step_framerate           = "100";       // mHz
 					default_framerate        = "60000";     // mHz
@@ -293,7 +324,7 @@
 					phy_mode                 = "DPHY";
 					discontinuous_clk        = "no";
 					mclk_khz                 = "24000";
-					pix_clk_hz               = "800000000";
+					pix_clk_hz               = "74250000";
 					mclk_multiplier          = "9.33";
 					cil_settletime           = "0";
 					dpcm_enable              = "false";
@@ -304,56 +335,31 @@
 					#size-cells = <0>;
 					port@0 {
 						reg = <0>;
-						rbpcv2_imx219_out1: endpoint {
-							status = "okay";
+						vc_mipi_out1: endpoint {
 							port-index = <2>;
 							bus-width = <BUS_WIDTH>;
-							remote-endpoint = <&rbpcv2_imx219_csi_in1>;
+							remote-endpoint = <&vc_csi_in1>;
 						};
 					};
 				};
 			};
 		};
+#endif // VC_MIPI_CAM_1
 	};
 
-	lens_imx219@RBPCV2 {
-		min_focus_distance = "0.0";
-		hyper_focal = "0.0";
-		focal_length = "3.04";
-		f_number = "2.0";
-		aperture = "0.0";
+	lens@vc_mipi {
+		min_focus_distance  = "0.0";
+		hyper_focal         = "0.0";
+		focal_length        = "6.0";
+		f_number            = "2.0";
+		aperture            = "0.0";
 	};
 };
+
 / {
 	tcp: tegra-camera-platform {
 		compatible = "nvidia, tegra-camera-platform";
-		/**
-		* Physical settings to calculate max ISO BW
-		*
-		* num_csi_lanes = <>;
-		* Total number of CSI lanes when all cameras are active
-		*
-		* max_lane_speed = <>;
-		* Max lane speed in Kbit/s
-		*
-		* min_bits_per_pixel = <>;
-		* Min bits per pixel
-		*
-		* vi_peak_byte_per_pixel = <>;
-		* Max byte per pixel for the VI ISO case
-		*
-		* vi_bw_margin_pct = <>;
-		* Vi bandwidth margin in percentage
-		*
-		* max_pixel_rate = <>;
-		* Max pixel rate in Kpixel/s for the ISP ISO case
-		*
-		* isp_peak_byte_per_pixel = <>;
-		* Max byte per pixel for the ISP ISO case
-		*
-		* isp_bw_margin_pct = <>;
-		* Isp bandwidth margin in percentage
-		*/
+
 		num_csi_lanes = <NUM_CSI_LANES>;
 		max_lane_speed = <1500000>;
 		min_bits_per_pixel = <10>;
@@ -363,43 +369,50 @@
 		isp_peak_byte_per_pixel = <5>;
 		isp_bw_margin_pct = <25>;
 
-		/**
-		 * The general guideline for naming badge_info contains 3 parts, and is as follows,
-		 * The first part is the camera_board_id for the module; if the module is in a FFD
-		 * platform, then use the platform name for this part.
-		 * The second part contains the position of the module, ex. "rear" or "front".
-		 * The third part contains the last 6 characters of a part number which is found
-		 * in the module's specsheet from the vendor.
-		 */
 		modules {
+#if VC_MIPI_CAM_0 == 1
 			cam_module0: module0 {
-				badge = "jakku_front_RBP194";
+				badge = "jakku_front_vc_mipi";
 				position = "front";
 				orientation = "1";
 				cam_module0_drivernode0: drivernode0 {
 					pcl_id = "v4l2_sensor";
-					devname = "imx219 9-0010";
-					proc-device-tree = "/proc/device-tree/cam_i2cmux/i2c@0/rbpcv2_imx219_a@1a";
+#if VC_MIPI_MANUFACTURER == 1
+					devname = "vc_mipi 9-001a";
+					proc-device-tree = "/proc/device-tree/cam_i2cmux/i2c@0/vc_mipi@1a";
+#else
+					devname = "vc_mipi 9-0060";
+					proc-device-tree = "/proc/device-tree/cam_i2cmux/i2c@0/vc_mipi@60";
+#endif
 				};
 				cam_module0_drivernode1: drivernode1 {
 					pcl_id = "v4l2_lens";
-					proc-device-tree = "/proc/device-tree/lens_imx219@RBPCV2/";
+					proc-device-tree = "/proc/device-tree/lens@vc_mipi/";
 				};
 			};
+#endif // VC_MIPI_CAM_0
+			
+#if VC_MIPI_CAM_1 == 1
 			cam_module1: module1 {
-				badge = "jakku_rear_RBP194";
+				badge = "jakku_rear_vc_mipi";
 				position = "rear";
 				orientation = "1";
 				cam_module1_drivernode0: drivernode0 {
-					pcl_id = "v4l2_sensor";
-					devname = "imx219 10-0010";
-					proc-device-tree = "/proc/device-tree/cam_i2cmux/i2c@1/rbpcv2_imx219_c@1a";
+				pcl_id = "v4l2_sensor";
+#if VC_MIPI_MANUFACTURER == 1
+				devname = "vc_mipi 10-001a";
+				proc-device-tree = "/proc/device-tree/cam_i2cmux/i2c@1/vc_mipi@1a";
+#else
+				devname = "vc_mipi 10-0060";
+				proc-device-tree = "/proc/device-tree/cam_i2cmux/i2c@1/vc_mipi@60";
+#endif	
 				};
 				cam_module1_drivernode1: drivernode1 {
 					pcl_id = "v4l2_lens";
-					proc-device-tree = "/proc/device-tree/lens_imx219@RBPCV2/";
+					proc-device-tree = "/proc/device-tree/lens@vc_mipi/";
 				};
 			};
+#endif // VC_MIPI_CAM_1
 		};
 	};
 };
@@ -409,31 +422,43 @@
 #define CAM_I2C_MUX 	TEGRA234_AON_GPIO(CC, 3)
 
 / {
-	cam_i2cmux{
+	cam_i2cmux {
 		status = "okay";
 		compatible = "i2c-mux-gpio";
 		#address-cells = <1>;
 		#size-cells = <0>;
-		i2c-parent = <&cam_i2c>;
 		mux-gpios = <&tegra_aon_gpio CAM_I2C_MUX GPIO_ACTIVE_HIGH>;
+		i2c-parent = <&cam_i2c>;
+#if VC_MIPI_CAM_0 == 1
 		i2c@0 {
 			status = "okay";
 			reg = <0>;
 			#address-cells = <1>;
 			#size-cells = <0>;
-			rbpcv2_imx219_a@1a {
+#if VC_MIPI_MANUFACTURER == 1
+			vc_mipi@1a {
+#else
+			vc_mipi@60 {
+#endif
 				reset-gpios = <&tegra_main_gpio CAM0_PWDN GPIO_ACTIVE_HIGH>;
 			};
 		};
+#endif
+#if VC_MIPI_CAM_1 == 1
 		i2c@1 {
 			status = "okay";
 			reg = <1>;
 			#address-cells = <1>;
 			#size-cells = <0>;
-			rbpcv2_imx219_c@1a {
+#if VC_MIPI_MANUFACTURER == 1
+			vc_mipi@1a {
+#else
+            		vc_mipi@60 {
+#endif
 				reset-gpios = <&tegra_main_gpio CAM1_PWDN GPIO_ACTIVE_HIGH>;
 			};
 		};
+#endif
 	};
 
 	gpio@2200000 {
