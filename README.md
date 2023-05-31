@@ -83,9 +83,9 @@ The value of the property *pixel_t* lists the supported pixel formats. Here you 
 The property *max_framerate* is given for the number of lanes and the pixel format. For example, 4L10 stands for 4 lanes and the pixel format RAW10. Always set the *def_framerate* to the same value as *max_framerate*
 
 <details>
-  <summary>GStreamer properties for IMX296, IMX297, OV7281 (cameras with 1 lane support only)</summary>
+  <summary>GStreamer properties for IMX296, IMX297, OV7251 (cameras with 1 lane support only)</summary>
 
-| Property             | IMX296     | IMX297     | OV7281     |
+| Property             | IMX296     | IMX297     | OV7251     |
 | -------------------- | ---------: | ---------: | ---------: |
 | physical_w           |      4.968 |      4.968 |      1.920 |
 | physical_h           |      3.726 |      3.726 |      1.440 |
@@ -157,23 +157,23 @@ The property *max_framerate* is given for the number of lanes and the pixel form
 </details>
 
 <details>
-  <summary>GStreamer properties for IMX290, IMX327, IMX335, IMX412, IMX415, IMX568 (cameras with 2 and 4 lanes support)</summary>
+  <summary>GStreamer properties for IMX290, IMX327, IMX335, IMX412, IMX415, IMX462, IMX568 (cameras with 2 and 4 lanes support)</summary>
 
-| Property             | IMX290/327 | IMX335     | IMX412     | IMX415     | IMX568     |
-| -------------------- | ---------: | ---------: | ---------: | ---------: | ---------: |
-| physical_w           |      5.617 |      5.120 |      6.287 |      5.602 |      6.773 |
-| physical_h           |      3.181 |      3.928 |      4.712 |      3.155 |      5.655 |
-| active_w             |       1920 |       2560 |       4032 |       3840 |       2472 |
-| active_h             |       1080 |       1944 |       3040 |       2160 |       2048 |
-| pixel_t              |      RG 10 |   RG 10,12 |      RG 10 |      GB 10 | RG 8,10,12 |
-| max_gain_val         |         71 |         72 |         51 |         72 |         48 |
-| step_gain_val        |      0.300 |      0.300 |      0.050 |      0.300 |      0.100 |
-| max_framerate (2L08) |          - |          - |          - |          - |       49.8 |
-| max_framerate (2L10) |       60.0 |       15.0 |       20.0 |       31.7 |       41.3 |
-| max_framerate (2L12) |          - |       15.0 |          - |          - |       34.6 |
-| max_framerate (4L08) |          - |          - |          - |          - |       96.2 |
-| max_framerate (4L10) |       60.0 |       22.3 |       40.0 |       59.9 |       78.8 |
-| max_framerate (4L12) |          - |       22.3 |          - |          - |       66.7 |
+| Property             | IMX290/327 | IMX335     | IMX412     | IMX415     | IMX462     | IMX568     |
+| -------------------- | ---------: | ---------: | ---------: | ---------: | ---------: | ---------: |
+| physical_w           |      5.617 |      5.120 |      6.287 |      5.602 |      5.617 |      6.773 |
+| physical_h           |      3.181 |      3.928 |      4.712 |      3.155 |      3.181 |      5.655 |
+| active_w             |       1920 |       2560 |       4032 |       3840 |       1920 |       2472 |
+| active_h             |       1080 |       1944 |       3040 |       2160 |       1080 |       2048 |
+| pixel_t              |      RG 10 |   RG 10,12 |      RG 10 |      GB 10 |      RG 10 | RG 8,10,12 |
+| max_gain_val         |         71 |         72 |         51 |         72 |         71 |         48 |
+| step_gain_val        |      0.300 |      0.300 |      0.050 |      0.300 |      0.300 |      0.100 |
+| max_framerate (2L08) |          - |          - |          - |          - |          - |       49.8 |
+| max_framerate (2L10) |       60.0 |       15.0 |       20.0 |       31.7 |       60.0 |       41.3 |
+| max_framerate (2L12) |          - |       15.0 |          - |          - |          - |       34.6 |
+| max_framerate (4L08) |          - |          - |          - |          - |          - |       96.2 |
+| max_framerate (4L10) |       60.0 |       22.3 |       40.0 |       59.9 |      120.0 |       78.8 |
+| max_framerate (4L12) |          - |       22.3 |          - |          - |          - |       66.7 |
 </details>
 
 ### Example
