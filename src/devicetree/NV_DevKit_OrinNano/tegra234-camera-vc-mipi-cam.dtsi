@@ -82,7 +82,7 @@
 			vc_vi_port0: port@0 {
 				reg = <0>;
 				vc_vi_in0: endpoint {
-					port-index = <1>;
+					port-index = <0>;
 					bus-width = <BUS_WIDTH>;
 					remote-endpoint = <&vc_csi_out0>;
 				};
@@ -115,7 +115,7 @@
 						vc_csi_chan0_port0: port@0 {
 						reg = <0>;
 						vc_csi_in0: endpoint@0 {
-							port-index = <1>;
+							port-index = <0>;
 							bus-width = <BUS_WIDTH>;
 							remote-endpoint = <&vc_mipi_out0>;
 						};
@@ -186,10 +186,10 @@
 				// You don't have to change any settings if just want to use the V4L API.
 				mode0 {
 					num_lanes                = NUM_LANES;
-					tegra_sinterface         = "serial_b";
+					tegra_sinterface         = "serial_a";
 					embedded_metadata_height = VC_MIPI_METADATA_H;
 					readout_orientation      = "0";
-					lane_polarity            = "6";
+					lane_polarity            = "0";
 
 					// ----------------------------------------------------
 					// If you want to use GStreamer with nvarguscamerasrc
@@ -242,7 +242,7 @@
 					port@0 {
 						reg = <0>;
 						vc_mipi_out0: endpoint {
-							port-index = <1>;
+							port-index = <0>;
 							bus-width = <BUS_WIDTH>;
 							remote-endpoint = <&vc_csi_in0>;
 						};
