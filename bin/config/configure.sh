@@ -17,7 +17,7 @@ KERNEL_OUT=$KERNEL_SOURCE/build
 MODULES_OUT=$KERNEL_SOURCE/modules
 DRIVER_DST_DIR=$KERNEL_SOURCE/kernel/nvidia/drivers/media/i2c
 case $VC_MIPI_BSP in
-35.1.0|35.3.1)
+35.1.0|35.2.1|35.3.1)
         KERNEL_DIR=kernel/kernel-5.10/
         MODULES_BSP=$BSP_DIR/Linux_for_Tegra/rootfs/usr
         DTB_OUT=$KERNEL_OUT/arch/arm64/boot/dts/nvidia
@@ -110,7 +110,7 @@ XavierNX|XavierNXSD)
                 32.5.0|32.5.1|32.5.2|32.6.1|32.7.1|32.7.2)
                         PATCHES+=('dt_Auvidea_JNX30_XavierNX_32.5.0+')
                         ;;
-                35.1.0|35.3.1)
+                35.1.0|35.2.1|35.3.1)
 		;;
                 esac
                 ;;
@@ -130,7 +130,7 @@ XavierNX|XavierNXSD)
         35.1.0)
                 PATCHES+=('kernel_Xavier_35.1.0+' 'kernel_Xavier_35.1.0')
                 ;;
-        35.3.1)
+        35.2.1|35.3.1)
                 PATCHES+=('kernel_Xavier_35.1.0+' 'kernel_Xavier_35.3.1')
                 ;;
         esac
@@ -150,7 +150,7 @@ XavierNX|XavierNXSD)
         32.6.1|32.7.1|32.7.2)
                 PATCHES+=('dt_camera_XavierNX_32.6.1+')
                 ;;
-        35.1.0|35.3.1)
+        35.1.0|35.2.1|35.3.1)
                 PATCHES+=('dt_camera_XavierNX_35.1.0+')
                 ;;
         esac
@@ -162,7 +162,7 @@ AGXXavier)
         32.3.1)
                 PATCHES+=('dt_camera_AGXXavier_32.3.1+')
                 ;;
-        35.1.0|35.3.1)
+        35.1.0|35.2.1|35.3.1)
                 PATCHES+=('dt_camera_AGXXavier_35.1.0+')
                 ;;
         esac
@@ -180,7 +180,7 @@ AGXXavier)
         35.1.0)
                 PATCHES+=('kernel_Xavier_35.1.0+' 'kernel_Xavier_35.1.0')
                 ;;
-        35.3.1)
+        35.2.1|35.3.1)
                 PATCHES+=('kernel_Xavier_35.1.0+' 'kernel_Xavier_35.3.1')
                 ;;
         esac

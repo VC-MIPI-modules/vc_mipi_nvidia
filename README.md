@@ -22,6 +22,7 @@
   * [NVIDIA L4T 32.7.1](https://developer.nvidia.com/embedded/linux-tegra-r3271)
   * [NVIDIA L4T 32.7.2](https://developer.nvidia.com/embedded/linux-tegra-r3272)
   * [NVIDIA L4T 35.1.0](https://developer.nvidia.com/embedded/jetson-linux-r351) *(only NVIDIA Jetson Xavier NX and AGX Xavier, experimental)*
+  * [NVIDIA L4T 35.2.1](https://developer.nvidia.com/embedded/jetson-linux-r3521) *(only NVIDIA Jetson Xavier NX and AGX Xavier, experimental)*
   * [NVIDIA L4T 35.3.1](https://developer.nvidia.com/embedded/jetson-linux-r3531) *(only NVIDIA Orin NX, Jetson Xavier NX and AGX Xavier, experimental)*
 * Supported [VC MIPI Camera Modules](https://www.vision-components.com/fileadmin/external/documentation/hardware/VC_MIPI_Camera_Module/index.html) 
   * IMX178, IMX183, IMX226
