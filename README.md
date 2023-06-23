@@ -1,7 +1,7 @@
 # Vision Components MIPI CSI-2 driver for NVIDIA Jetson Nano, Xavier NX, AGX Xavier and TX2
-![VC MIPI camera](https://www.vision-components.com/fileadmin/external/documentation/hardware/VC_MIPI_Camera_Module/VC_MIPI_Camera_Module_Hardware_Operating_Manual-Dateien/mipi_sensor_front_back.png)
+![VC MIPI camera](https://www.vision-components.com/fileadmin/external/documentation/hardware/VC_MIPI_Camera_Module/VC_MIPI_Camera_Module-Dateien/mipi_sensor_front_back.png)
 
-## Version 0.13.0 ([History](VERSION.md))
+## Version 0.14.0 ([History](VERSION.md))
 * Supported system on modules
   * [NVIDIA Jetson Nano 4GB/2GB (production + devkit)](https://developer.nvidia.com/embedded/jetson-nano)
   * [NVIDIA Jetson Xavier NX (production + devkit)](https://developer.nvidia.com/embedded/jetson-xavier-nx)
@@ -11,7 +11,7 @@
   * [NVIDIA Jetson Nano Developer Kit B01](https://developer.nvidia.com/embedded/jetson-nano-developer-kit)
   * [NVIDIA Jetson Nano 2GB Developer Kit](https://developer.nvidia.com/embedded/jetson-nano-2gb-developer-kit)
   * [NVIDIA Jetson Xavier NX Developer Kit](https://developer.nvidia.com/embedded/jetson-xavier-nx-devkit)
-  * [Auvidea JNX30-LC-PD](https://auvidea.eu/product/70804)
+  * [Auvidea JNX30/JNX30D](https://auvidea.eu/product/70879)
   * [Auvidea J20 on Devkit Jetson AGX Xavier or TX2](https://auvidea.eu/j20/) *(only connector 2+3)*
 * Supported board support packages
   * [NVIDIA L4T 32.3.1](https://developer.nvidia.com/l4t-3231-archive) *(only NVIDIA Jetson AGX Xavier)*
@@ -21,9 +21,10 @@
   * [NVIDIA L4T 32.6.1](https://developer.nvidia.com/embedded/linux-tegra-r3261)
   * [NVIDIA L4T 32.7.1](https://developer.nvidia.com/embedded/linux-tegra-r3271)
   * [NVIDIA L4T 32.7.2](https://developer.nvidia.com/embedded/linux-tegra-r3272)
+  * [NVIDIA L4T 32.7.3](https://developer.nvidia.com/embedded/linux-tegra-r3273)
   * [NVIDIA L4T 35.1.0](https://developer.nvidia.com/embedded/jetson-linux-r351) *(only NVIDIA Jetson Xavier NX and AGX Xavier, experimental)*
   * [NVIDIA L4T 35.2.1](https://developer.nvidia.com/embedded/jetson-linux-r3521) *(only NVIDIA Jetson Xavier NX and AGX Xavier, experimental)*
-  * [NVIDIA L4T 35.3.1](https://developer.nvidia.com/embedded/jetson-linux-r3531) *(only NVIDIA Orin NX, Jetson Xavier NX and AGX Xavier, experimental)*
+  * [NVIDIA L4T 35.3.1](https://developer.nvidia.com/embedded/jetson-linux-r3531) *(only NVIDIA Jetson Xavier NX and AGX Xavier, experimental)*
 * Supported [VC MIPI Camera Modules](https://www.vision-components.com/fileadmin/external/documentation/hardware/VC_MIPI_Camera_Module/index.html) 
   * IMX178, IMX183, IMX226
   * IMX250, IMX252, IMX264, IMX265, IMX273, IMX392
@@ -235,9 +236,9 @@ If you want to change some settings of a camera in the device tree, please follo
    | system on module | carrier board | device tree file |
    | ---------------- | ------------- | ---------------- |
    | NVIDIA Jetson Nano | NVIDIA Jetson Nano Developer Kit | src/devicetree/NV_DevKit_Nano/tegra210-camera-vc-mipi-cam.dtsi |
-   | NVIDIA Jetson Nano | Auvidea JNX30-LC-PD | src/devicetree/Auvidea_JNX30_Nano/tegra210-camera-vc-mipi-cam.dtsi |
+   | NVIDIA Jetson Nano | Auvidea JNX30 | src/devicetree/Auvidea_JNX30_Nano/tegra210-camera-vc-mipi-cam.dtsi |
    | NVIDIA Jetson Xavier NX | NVIDIA Jetson Xavier NX Developer Kit | src/devicetree/NV_DevKit_XavierNX/tegra194-camera-vc-mipi-cam.dtsi |
-   | NVIDIA Jetson Xavier NX | Auvidea JNX30-LC-PD | src/devicetree/Auvidea_JNX30_XavierNX/tegra194-camera-vc-mipi-cam.dtsi |
+   | NVIDIA Jetson Xavier NX | Auvidea JNX30 | src/devicetree/Auvidea_JNX30_XavierNX/tegra194-camera-vc-mipi-cam.dtsi |
    | NVIDIA Jetson AGX Xavier | Auvidea J20 on DevKit | src/devicetree/Auvidea_J20_AGXXavier/tegra194-camera-vc-mipi-cam.dtsi |
    | NVIDIA Jetson TX2 | Auvidea J20 on DevKit | src/devicetree/Auvidea_J20_TX2/tegra186-camera-vc-mipi-cam.dtsi |
    
@@ -296,21 +297,24 @@ If you have your own BSP, you have to integrate the driver into it. Please follo
    | system on module         | carrier board | BSP             | all patches in folder patch/... |
    | ------------------------ | ------------- | --------------- | --------------------- |
    | NVIDIA Jetson Nano       | NVIDIA DevKit | 32.5.0 - 32.5.2 | dt_camera_Nano_32.5.0+ <br> kernel_Nano_32.5.0+  |
-   |                          |               | 32.6.1          | dt_camera_Nano_32.6.1+ <br> kernel_Nano_32.5.0+  |
+   |                          |               | 32.6.1 - 32.7.3 | dt_camera_Nano_32.6.1+ <br> kernel_Nano_32.5.0+  |
    |                          | Auvidea JNX30 | 32.5.0 - 32.5.2 | dt_Auvidea_JNX30_Nano_32.5.0+ <br> dt_camera_Nano_32.5.0+ <br> kernel_Nano_32.5.0+ |
-   |                          |               | 32.6.1          | dt_Auvidea_JNX30_Nano_32.5.0+ <br> dt_camera_Nano_32.6.1+ <br> kernel_Nano_32.5.0+ |
+   |                          |               | 32.6.1 - 32.7.3 | dt_Auvidea_JNX30_Nano_32.5.0+ <br> dt_camera_Nano_32.6.1+ <br> kernel_Nano_32.5.0+ |
    | NVIDIA Jetson Xavier NX  | NVIDIA DevKit | 32.5.0 - 32.5.2 | dt_camera_XavierNX_32.5.0+ <br> kernel_Xavier_32.5.0+  |
-   |                          |               | 32.6.1          | dt_camera_XavierNX_32.6.1+ <br> kernel_Xavier_32.6.1+  |
-   |                          |               | 35.1.0          | dt_camera_XavierNX_32.6.1+ <br> kernel_Xavier_35.1.0+  |
-   |                          | Auvidea JNX30 | 32.5.0 - 32.5.2 | dt_Auvidea_JNX30_XavierNX_32.5.0+ <br> dt_camera_XavierNX_32.5.0+ <br> kernel_Xavier_32.5.0+  |
-   |                          |               | 32.6.1          | dt_Auvidea_JNX30_XavierNX_32.5.0+ <br> dt_camera_XavierNX_32.6.1+ <br> kernel_Xavier_32.6.1+  |
+   |                          |               | 32.6.1 - 32.7.3 | dt_camera_XavierNX_32.6.1+ <br> kernel_Xavier_32.6.1+  |
    |                          |               | 35.1.0          | dt_camera_XavierNX_35.1.0+ <br> kernel_Xavier_35.1.0+  |
+   |                          |               | 35.2.1 - 35.3.1 | dt_camera_XavierNX_35.1.0+ <br> kernel_Xavier_35.2.1+  |
+   |                          | Auvidea JNX30 | 32.5.0 - 32.5.2 | dt_Auvidea_JNX30_XavierNX_32.5.0+ <br> dt_camera_XavierNX_32.5.0+ <br> kernel_Xavier_32.5.0+  |
+   |                          |               | 32.6.1 - 32.7.3 | dt_Auvidea_JNX30_XavierNX_32.5.0+ <br> dt_camera_XavierNX_32.6.1+ <br> kernel_Xavier_32.6.1+  |
+   |                          |               | 35.1.0          | dt_camera_XavierNX_35.1.0+ <br> kernel_Xavier_35.1.0+  |
+   |                          |               | 35.2.1 - 35.3.1 | dt_camera_XavierNX_35.1.0+ <br> kernel_Xavier_35.2.1+  |
    | NVIDIA Jetson AGX Xavier | DevKit + J20  | 32.3.1          | dt_camera_AGXXavier_32.3.1+ <br> kernel_Xavier_32.3.1+  |
    |                          |               | 32.5.0 - 32.5.2 | dt_camera_AGXXavier_32.3.1+ <br> kernel_Xavier_32.5.0+  |
-   |                          |               | 32.6.1          | dt_camera_AGXXavier_32.3.1+ <br> kernel_Xavier_32.6.1+  |
+   |                          |               | 32.6.1 - 32.7.3 | dt_camera_AGXXavier_32.3.1+ <br> kernel_Xavier_32.6.1+  |
    |                          |               | 35.1.0          | dt_camera_AGXXavier_35.1.0+ <br> kernel_Xavier_35.1.0+  |
+   |                          |               | 35.2.1 - 35.7.3 | dt_camera_AGXXavier_35.1.0+ <br> kernel_Xavier_35.2.1+  |
    | NVIDIA Jetson TX2        | DevKit + J20  | 32.5.0 - 32.5.2 | dt_camera_TX2_32.5.0+ <br> kernel_TX_32.5.0+  |
-   |                          |               | 32.6.1          | dt_camera_TX2_32.5.0+ <br> kernel_TX_32.6.1+  |
+   |                          |               | 32.6.1 - 32.7.3 | dt_camera_TX2_32.5.0+ <br> kernel_TX_32.6.1+  |
 
 2. Copy the camera device tree to the folder listed in the following table
 
@@ -329,7 +333,7 @@ If you have your own BSP, you have to integrate the driver into it. Please follo
 To test the camera you can use [Vision Components MIPI CSI-2 demo software](https://github.com/pmliquify/vc_mipi_demo)
 
 # Annotations
-For Jetpack 5 (L4T 35.1.0):
+For Jetpack 5 (L4T 35.1.0+):
 
 * When the test system has booted successfully, it is necessary to run the script max_speed.sh from the /target folder as superuser. It will read out the maximum frequencies and set them as the current ones. This is a recommendation from nvidia.
    ```
