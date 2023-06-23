@@ -10,7 +10,14 @@ if [[ ! -e $CONFIGURATION_FILE ]]; then
 fi
 . $CONFIGURATION_FILE
 
-BSP_DIR=$BUILD_DIR/$VC_MIPI_SOM\_$VC_MIPI_BSP
+case $VC_MIPI_SOM in
+Nano|NanoSD|Nano2GB|TX1)
+        BSP_DIR=$BUILD_DIR/Nano\_$VC_MIPI_BSP
+        ;;
+AGXXavier|XavierNX|XavierNXSD|TX2|TX2i)
+        BSP_DIR=$BUILD_DIR/Xavier\_$VC_MIPI_BSP
+        ;;
+esac
 DOWNLOAD_DIR=$BSP_DIR/downloads
 KERNEL_SOURCE=$BSP_DIR/Linux_for_Tegra/source/public
 KERNEL_OUT=$KERNEL_SOURCE/build
@@ -67,7 +74,7 @@ Nano|NanoSD|Nano2GB)
         Auvidea_JNX30)
                 DT_CAM_FILE=$DT_CAM_DIR/Auvidea_JNX30_Nano/tegra210-camera-vc-mipi-cam.dtsi
                 case $VC_MIPI_BSP in
-                32.5.0|32.5.1|32.5.2|32.6.1|32.7.1|32.7.2)
+                32.5.0|32.5.1|32.5.2|32.6.1|32.7.1|32.7.2|32.7.3)
                         PATCHES+=('dt_Auvidea_JNX30_Nano_32.5.0+')
                         ;;
                 esac
@@ -92,7 +99,7 @@ Nano|NanoSD|Nano2GB)
         32.5.0|32.5.1|32.5.2)
                 PATCHES+=('dt_camera_Nano_32.5.0+')
                 ;;
-        32.6.1|32.7.1|32.7.2)
+        32.6.1|32.7.1|32.7.2|32.7.3)
                 PATCHES+=('dt_camera_Nano_32.6.1+')
                 ;;
         esac
@@ -107,7 +114,7 @@ XavierNX|XavierNXSD)
         Auvidea_JNX30)
                 DT_CAM_FILE=$DT_CAM_DIR/Auvidea_JNX30_XavierNX/tegra194-camera-vc-mipi-cam.dtsi
                 case $VC_MIPI_BSP in
-                32.5.0|32.5.1|32.5.2|32.6.1|32.7.1|32.7.2)
+                32.5.0|32.5.1|32.5.2|32.6.1|32.7.1|32.7.2|32.7.3)
                         PATCHES+=('dt_Auvidea_JNX30_XavierNX_32.5.0+')
                         ;;
                 35.1.0|35.2.1|35.3.1)
@@ -124,14 +131,14 @@ XavierNX|XavierNXSD)
         32.5.0|32.5.1|32.5.2)
                 PATCHES+=('kernel_Xavier_32.5.0+')
                 ;;
-        32.6.1|32.7.1|32.7.2)
+        32.6.1|32.7.1|32.7.2|32.7.3)
                 PATCHES+=('kernel_Xavier_32.6.1+')
                 ;;
         35.1.0)
-                PATCHES+=('kernel_Xavier_35.1.0+' 'kernel_Xavier_35.1.0')
+                PATCHES+=('kernel_Xavier_35.1.0+')
                 ;;
         35.2.1|35.3.1)
-                PATCHES+=('kernel_Xavier_35.1.0+' 'kernel_Xavier_35.3.1')
+                PATCHES+=('kernel_Xavier_35.2.1+')
                 ;;
         esac
         DT_CAM_FILE_DST_DIR=$KERNEL_SOURCE/hardware/nvidia/platform/t19x/jakku/kernel-dts/common/
@@ -147,7 +154,7 @@ XavierNX|XavierNXSD)
         32.5.0|32.5.1|32.5.2)
                 PATCHES+=('dt_camera_XavierNX_32.5.0+')
                 ;;
-        32.6.1|32.7.1|32.7.2)
+        32.6.1|32.7.1|32.7.2|32.7.3)
                 PATCHES+=('dt_camera_XavierNX_32.6.1+')
                 ;;
         35.1.0|35.2.1|35.3.1)
@@ -159,7 +166,7 @@ XavierNX|XavierNXSD)
 AGXXavier)
 	echo "checking dt_cam_ versions"
         case $VC_MIPI_BSP in
-        32.3.1)
+        32.3.1|32.5.0|32.5.1|32.5.2|32.6.1|32.7.1|32.7.2|32.7.3)
                 PATCHES+=('dt_camera_AGXXavier_32.3.1+')
                 ;;
         35.1.0|35.2.1|35.3.1)
@@ -174,14 +181,14 @@ AGXXavier)
         32.5.0|32.5.1|32.5.2)
                 PATCHES+=('kernel_Xavier_32.5.0+')
                 ;;
-        32.6.1|32.7.1|32.7.2)
+        32.6.1|32.7.1|32.7.2|32.7.3)
                 PATCHES+=('kernel_Xavier_32.6.1+')
                 ;;
         35.1.0)
-                PATCHES+=('kernel_Xavier_35.1.0+' 'kernel_Xavier_35.1.0')
+                PATCHES+=('kernel_Xavier_35.1.0+')
                 ;;
         35.2.1|35.3.1)
-                PATCHES+=('kernel_Xavier_35.1.0+' 'kernel_Xavier_35.3.1')
+                PATCHES+=('kernel_Xavier_35.2.1+')
                 ;;
         esac
         DT_CAM_FILE=$DT_CAM_DIR/Auvidea_J20_AGXXavier/tegra194-camera-vc-mipi-cam.dtsi
@@ -197,7 +204,7 @@ TX2)
         32.5.0|32.5.1|32.5.2)
                 PATCHES+=('kernel_TX2_32.5.0+')
                 ;;
-        32.6.1|32.7.1|32.7.2)
+        32.6.1|32.7.1|32.7.2|32.7.3)
                 PATCHES+=('kernel_TX2_32.6.1+')
                 ;;
         esac
@@ -222,7 +229,7 @@ OrinNano)
         # Carrier board independant settings
         case $VC_MIPI_BSP in
         35.3.1)
-                PATCHES+=('kernel_Xavier_35.1.0+' 'kernel_Xavier_35.3.1')
+                PATCHES+=('kernel_Xavier_35.2.1+')
                 ;;
         esac
         DT_CAM_FILE_DST_DIR=$KERNEL_SOURCE/hardware/nvidia/platform/t23x/p3768/kernel-dts/cvb/
@@ -235,7 +242,7 @@ OrinNano)
         FLASH_PARTITION='nvme0n1p1'
 
         case $VC_MIPI_BSP in
-        35.1.0|35.3.1)
+        35.3.1)
                 PATCHES+=('dt_camera_OrinNano_35.3.1+')
                 ;;
         esac

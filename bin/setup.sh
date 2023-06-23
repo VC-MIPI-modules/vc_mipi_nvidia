@@ -40,18 +40,14 @@ install_system_tools() {
 setup_toolchain() {
         echo "Setup tool chain ..."
         mkdir -p $BUILD_DIR
-        mkdir -p $DOWNLOAD_DIR
 
-        cd $DOWNLOAD_DIR
-        if [[ ! -e $GCC_FILE ]]; then
+        if [[ ! -e $GCC_DIR ]]; then
+                mkdir -p $GCC_DIR
+                cd $GCC_DIR
                 wget $GCC_URL/$GCC_FILE
+                tar xvf $GCC_FILE -C $GCC_DIR
+                rm $GCC_FILE
         fi
-
-        cd $BUILD_DIR
-        rm -Rf $GCC_DIR
-        mkdir -p $GCC_DIR
-        cd $DOWNLOAD_DIR
-        tar xvf $GCC_FILE -C $GCC_DIR
 }
 
 setup_kernel() {
@@ -61,7 +57,11 @@ setup_kernel() {
 
         cd $DOWNLOAD_DIR
         if [[ ! -e $SRC_FILE ]]; then 
-                wget $SRC_URL/$SRC_FILE
+                if [[ -z $SRC_URL_UNRESOLVED ]]; then
+                        wget $SRC_URL/$SRC_FILE
+                else
+                        wget -O $SRC_FILE $SRC_URL_UNRESOLVED
+                fi
         fi
 
         cd $BSP_DIR
@@ -101,12 +101,14 @@ repatch_kernel() {
         FIRST_COMMIT=$(git rev-list --max-parents=0 --abbrev-commit HEAD)
         git reset --hard $FIRST_COMMIT
 
+        git config gc.auto 0
         for patch in ${PATCHES[@]}; do
                 echo "Applying patches from ${PATCH_DIR}/${patch}"
                 for patchfile in $PATCH_DIR/${patch}/*.patch; do
                         git am -3 --whitespace=fix --ignore-whitespace < ${patchfile}
                 done
         done
+        git config gc.auto 1
 }
 
 setup_bsp() {
@@ -116,7 +118,11 @@ setup_bsp() {
 
         cd $DOWNLOAD_DIR
         if [[ ! -e $BSP_FILE ]]; then 
-                wget $BSP_URL/$BSP_FILE
+                if [[ -z $BSP_URL_UNRESOLVED ]]; then
+                        wget $BSP_URL/$BSP_FILE
+                else
+                        wget -O $BSP_FILE $BSP_URL_UNRESOLVED
+                fi
         fi
 
         cd $BUILD_DIR
@@ -126,13 +132,15 @@ setup_bsp() {
 
         cd $DOWNLOAD_DIR
         if [[ ! -e $RFS_FILE ]]; then 
-                wget $RFS_URL/$RFS_FILE
+                if [[ -z $RFS_URL_UNRESOLVED ]]; then
+                        wget $RFS_URL/$RFS_FILE
+                else
+                        wget -O $RFS_FILE $RFS_URL_UNRESOLVED
+                fi
         fi
         sudo tar xjvf $RFS_FILE -C $BSP_DIR/Linux_for_Tegra/rootfs
 
         cd $BSP_DIR/Linux_for_Tegra
-        # NEW
-        # sudo ./tools/l4t_flash_prerequisites.sh
         sudo ./apply_binaries.sh
 }
 
