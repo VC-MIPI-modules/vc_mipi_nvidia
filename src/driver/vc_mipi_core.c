@@ -35,6 +35,7 @@
 
 #define REG_IO_DISABLE           0x00
 #define REG_IO_FLASH_ENABLE      0x01
+#define REG_IO_XTRIG_ENABLE      0x08
 #define REG_IO_FLASH_ACTIVE_LOW  0x10
 #define REG_IO_TRIG_ACTIVE_LOW   0x40
 
@@ -210,7 +211,7 @@ static void vc_core_print_desc(struct device *dev, struct vc_desc *desc)
         vc_notice(dev, "+--- VC MIPI Camera -----------------------------------+\n");
         vc_notice(dev, "| MANUF. | %s               MID: 0x%04x |\n", desc->manuf, desc->manuf_id);
         vc_notice(dev, "| MODULE | ID:  0x%04x                     REV:   %04u |\n", desc->mod_id, desc->mod_rev);
-        vc_notice(dev, "| SENSOR | %s %s%s                                |\n", desc->sen_manuf, desc->sen_type, is_color ? "" : " ");
+        vc_notice(dev, "| SENSOR | %s%s %s%s                                |\n", desc->sen_manuf, (0 == strcmp("OM", desc->sen_manuf)) ? "  ":"", desc->sen_type, is_color ? "" : " ");
         vc_notice(dev, "+--------+---------------------------------------------+\n");
 }
 
@@ -1105,7 +1106,7 @@ int vc_mod_set_io_mode(struct vc_cam *cam, int mode)
                 switch (mode) {
                 case 1:
                         mode_desc = "FLASH ACTIVE HIGH";
-                state->io_mode = REG_IO_FLASH_ENABLE;
+                        state->io_mode = REG_IO_FLASH_ENABLE;
                         break;
                 case 2:
                         mode_desc = "FLASH ACTIVE LOW";
@@ -1123,6 +1124,9 @@ int vc_mod_set_io_mode(struct vc_cam *cam, int mode)
                         mode_desc = "TRIGGER AND FLASH ACTIVE LOW";
                         state->io_mode = REG_IO_FLASH_ENABLE | REG_IO_FLASH_ACTIVE_LOW | REG_IO_TRIG_ACTIVE_LOW;
                         break;
+                }
+                if (ctrl->flags & FLAG_EXPOSURE_OMNIVISION) {
+                        state->io_mode |= REG_IO_XTRIG_ENABLE;
                 }
         }
 
@@ -1360,9 +1364,12 @@ int vc_sen_start_stream(struct vc_cam *cam)
                 vc_sen_stop_stream(cam);
         }
 
-        ret |= vc_sen_write_mode(ctrl, ctrl->csr.sen.mode_operating);
-        if (ret)
-                vc_err(dev, "%s(): Unable to start streaming (error: %d)\n", __FUNCTION__, ret);
+        if ((ctrl->flags & FLAG_EXPOSURE_SONY || ctrl->flags & FLAG_EXPOSURE_NORMAL) || 
+            (ctrl->flags & FLAG_EXPOSURE_OMNIVISION && !vc_mod_is_trigger_enabled(cam))) {
+                ret |= vc_sen_write_mode(ctrl, ctrl->csr.sen.mode_operating);
+                if (ret)
+                        vc_err(dev, "%s(): Unable to start streaming (error: %d)\n", __FUNCTION__, ret);
+        }
 
         ret |= vc_mod_write_io_mode(client_mod, state->io_mode);
         ret |= vc_mod_write_trigger_mode(client_mod, state->trigger_mode);
@@ -1520,7 +1527,7 @@ static void vc_calculate_exposure(struct vc_cam *cam, __u32 exposure_us)
         if (ctrl->flags & FLAG_EXPOSURE_SONY) {
                 vc_calculate_exposure_sony(cam, exposure_1H);
 
-        } else if (ctrl->flags & FLAG_EXPOSURE_NORMAL) {
+        } else if (ctrl->flags & FLAG_EXPOSURE_NORMAL || ctrl->flags & FLAG_EXPOSURE_OMNIVISION) {
                 vc_calculate_exposure_normal(cam, exposure_1H);
         }
 
@@ -1596,32 +1603,37 @@ int vc_sen_set_exposure(struct vc_cam *cam, int exposure_us)
         state->exposure_cnt = 0;
         state->retrigger_cnt = 0;
 
-        switch (state->trigger_mode) {
-        case REG_TRIGGER_EXTERNAL:
-        case REG_TRIGGER_SINGLE:
-        case REG_TRIGGER_SELF:
-                vc_calculate_trig_exposure(cam, exposure_us);
-                ret |= vc_mod_write_exposure(client_mod, state->exposure_cnt);
-                // NOTE for FLAG_TRIGGER_SELF
-                // - Changing retrigger from bigger to smaller values leads to a hang up of the camera. 
-                // - Changing exposure isn't applied sometimes
-                if (!state->streaming || ctrl->flags & FLAG_TRIGGER_SELF_V2) {
-                        ret |= vc_mod_write_retrigger(client_mod, state->retrigger_cnt);
+        if (ctrl->flags & FLAG_EXPOSURE_SONY || ctrl->flags & FLAG_EXPOSURE_NORMAL) {
+                switch (state->trigger_mode) {
+                case REG_TRIGGER_EXTERNAL:
+                case REG_TRIGGER_SINGLE:
+                case REG_TRIGGER_SELF:	
+                        vc_calculate_trig_exposure(cam, exposure_us);
+                        ret |= vc_mod_write_exposure(client_mod, state->exposure_cnt);
+                        // NOTE for FLAG_TRIGGER_SELF
+                        // - Changing retrigger from bigger to smaller values leads to a hang up of the camera. 
+                        // - Changing exposure isn't applied sometimes
+                        if (!state->streaming || ctrl->flags & FLAG_TRIGGER_SELF_V2) {
+                                ret |= vc_mod_write_retrigger(client_mod, state->retrigger_cnt);
+                        }
+                        break;
+                case REG_TRIGGER_PULSEWIDTH:
+                        break;
+                case REG_TRIGGER_DISABLE:
+                case REG_TRIGGER_SYNC:
+                case REG_TRIGGER_STREAM_EDGE:
+                case REG_TRIGGER_STREAM_LEVEL:
+                        vc_calculate_exposure(cam, exposure_us);
+                        ret |= vc_sen_write_shs(ctrl, state->shs);
+                        ret |= vc_sen_write_vmax(ctrl, state->vmax);
                 }
-                break;
-        case REG_TRIGGER_PULSEWIDTH:
-                break;
-        case REG_TRIGGER_DISABLE:
-        case REG_TRIGGER_SYNC:
-        case REG_TRIGGER_STREAM_EDGE:
-        case REG_TRIGGER_STREAM_LEVEL:
+        
+        } else if (ctrl->flags & FLAG_EXPOSURE_OMNIVISION) {
+                __u32 duration = (((__u64)exposure_us)*ctrl->flash_factor)/1000000;
+
                 vc_calculate_exposure(cam, exposure_us);
                 ret |= vc_sen_write_shs(ctrl, state->shs);
                 ret |= vc_sen_write_vmax(ctrl, state->vmax);
-        }
-
-        if (ctrl->flags & FLAG_SET_FLASH_DURATION) {
-                __u32 duration = (((__u64)exposure_us)*ctrl->flash_factor)/1000000;
                 ret |= vc_sen_write_flash_duration(ctrl, duration);
                 ret |= vc_sen_write_flash_offset(ctrl, ctrl->flash_toffset);
         }
