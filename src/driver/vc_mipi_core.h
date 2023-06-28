@@ -16,7 +16,7 @@
 #define FLAG_RESET_ALWAYS               (1 <<  0)
 #define FLAG_EXPOSURE_SONY              (1 <<  1)
 #define FLAG_EXPOSURE_NORMAL            (1 <<  2)
-#define FLAG_SET_FLASH_DURATION         (1 <<  3)
+#define FLAG_EXPOSURE_OMNIVISION        (1 <<  3)
 
 #define FLAG_IO_ENABLED                 (1 <<  4)
 #define FLAG_FORMAT_GBRG                (1 <<  5)

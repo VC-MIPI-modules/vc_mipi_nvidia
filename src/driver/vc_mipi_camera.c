@@ -6,7 +6,7 @@
 #include "vc_mipi_core.h"
 #include "vc_mipi_modules.h"
 
-#define VERSION "0.15.0"
+#define VERSION "0.14.0"
 // #define VC_CTRL_VALUE
 
 
@@ -447,7 +447,7 @@ static struct camera_common_pdata *vc_parse_dt(struct tegracam_device *tc_dev)
 }
 
 static struct camera_common_sensor_ops vc_sensor_ops = {
-            .frmfmt_table = NULL,
+        .frmfmt_table = NULL,
         .read_reg = vc_read_reg,
         .write_reg = vc_write_reg,
         .set_mode = vc_set_mode,

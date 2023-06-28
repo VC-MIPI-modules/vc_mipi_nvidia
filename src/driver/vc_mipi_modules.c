@@ -675,16 +675,12 @@ static void vc_init_ctrl_ov7251(struct vc_ctrl *ctrl, struct vc_desc* desc)
         ctrl->flash_factor              = 1758241 >> 4; // (1000 << 4)/9100 >> 4
         ctrl->flash_toffset             = 4;
 
-        ctrl->flags                     = FLAG_EXPOSURE_NORMAL;
-        ctrl->flags                    |= FLAG_IO_ENABLED | FLAG_SET_FLASH_DURATION;
+        ctrl->flags                     = FLAG_EXPOSURE_OMNIVISION;
+        ctrl->flags                    |= FLAG_IO_ENABLED;
 }
 
 // ------------------------------------------------------------------------------------------------
 //  Settings for OV9281 (Rev.02)
-//
-//  TODO: 
-//  - Trigger mode could not be activated. 
-//  - Additionally: When 0x0108 = 0x01 => exposure time has no effect.
 
 static void vc_init_ctrl_ov9281(struct vc_ctrl *ctrl, struct vc_desc* desc)
 {
@@ -716,8 +712,8 @@ static void vc_init_ctrl_ov9281(struct vc_ctrl *ctrl, struct vc_desc* desc)
         ctrl->flash_factor              = 1758241 >> 4; // (1000 << 4)/9100 >> 4
         ctrl->flash_toffset             = 4;
 
-        ctrl->flags                     = FLAG_EXPOSURE_NORMAL;
-        ctrl->flags                    |= FLAG_IO_ENABLED | FLAG_SET_FLASH_DURATION;
+        ctrl->flags                     = FLAG_EXPOSURE_OMNIVISION;
+        ctrl->flags                    |= FLAG_IO_ENABLED;
         ctrl->flags                    |= FLAG_TRIGGER_EXTERNAL;
 }
 
