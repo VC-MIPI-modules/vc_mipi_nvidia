@@ -13,190 +13,190 @@
 #define vc_warn(dev, fmt, ...) dev_warn(dev, fmt, ##__VA_ARGS__)
 #define vc_err(dev, fmt, ...) dev_err(dev, fmt, ##__VA_ARGS__)
 
-#define FLAG_RESET_ALWAYS		(1 <<  0)
-#define FLAG_EXPOSURE_SONY      	(1 <<  1)
-#define FLAG_EXPOSURE_NORMAL    	(1 <<  2)
-#define FLAG_SET_FLASH_DURATION		(1 <<  3)
+#define FLAG_RESET_ALWAYS               (1 <<  0)
+#define FLAG_EXPOSURE_SONY              (1 <<  1)
+#define FLAG_EXPOSURE_NORMAL            (1 <<  2)
+#define FLAG_SET_FLASH_DURATION         (1 <<  3)
 
-#define FLAG_IO_ENABLED           	(1 <<  4)
-#define FLAG_FORMAT_GBRG		(1 <<  5)
-#define FLAG_DOUBLE_HEIGHT        	(1 <<  6)
-#define FLAG_INCREASE_FRAME_RATE       	(1 <<  7)
+#define FLAG_IO_ENABLED                 (1 <<  4)
+#define FLAG_FORMAT_GBRG                (1 <<  5)
+#define FLAG_DOUBLE_HEIGHT              (1 <<  6)
+#define FLAG_INCREASE_FRAME_RATE        (1 <<  7)
 
-#define FLAG_TRIGGER_DISABLE      	(1 <<  8)
-#define FLAG_TRIGGER_EXTERNAL     	(1 <<  9)
-#define FLAG_TRIGGER_PULSEWIDTH   	(1 << 10)
-#define FLAG_TRIGGER_SELF         	(1 << 11)
-#define FLAG_TRIGGER_SELF_V2         	(1 << 12)
-#define FLAG_TRIGGER_SINGLE  	  	(1 << 13)
-#define FLAG_TRIGGER_SYNC         	(1 << 14)
-#define FLAG_TRIGGER_STREAM_EDGE  	(1 << 15)
-#define FLAG_TRIGGER_STREAM_LEVEL 	(1 << 16)
-#define FLAG_TRIGGER_SLAVE       	(1 << 17)
+#define FLAG_TRIGGER_DISABLE            (1 <<  8)
+#define FLAG_TRIGGER_EXTERNAL           (1 <<  9)
+#define FLAG_TRIGGER_PULSEWIDTH         (1 << 10)
+#define FLAG_TRIGGER_SELF               (1 << 11)
+#define FLAG_TRIGGER_SELF_V2            (1 << 12)
+#define FLAG_TRIGGER_SINGLE             (1 << 13)
+#define FLAG_TRIGGER_SYNC               (1 << 14)
+#define FLAG_TRIGGER_STREAM_EDGE        (1 << 15)
+#define FLAG_TRIGGER_STREAM_LEVEL       (1 << 16)
+#define FLAG_TRIGGER_SLAVE              (1 << 17)
 
-#define FORMAT_RAW08			0x2a
-#define FORMAT_RAW10			0x2b
-#define FORMAT_RAW12			0x2c
-#define FORMAT_RAW14			0x2d
+#define FORMAT_RAW08                    0x2a
+#define FORMAT_RAW10                    0x2b
+#define FORMAT_RAW12                    0x2c
+#define FORMAT_RAW14                    0x2d
 
 
 struct vc_desc_mode {
-	__u8 data_rate[4];
-	__u8 num_lanes;
-	__u8 format;
-	__u8 type;
-	__u8 binning;
-	__u8 reserved2[8];
+        __u8 data_rate[4];
+        __u8 num_lanes;
+        __u8 format;
+        __u8 type;
+        __u8 binning;
+        __u8 reserved2[8];
 };
 
 struct vc_desc {
-	// Module description
-	__u8 magic[12];
-	__u8 manuf[32];
-	__u16 manuf_id;
-	__u8 sen_manuf[8];
-	__u8 sen_type[16];
-	__u16 mod_id;
-	__u16 mod_rev;
-	__u16 chip_id_high;
-	__u16 chip_id_low;
-	__u16 chip_rev;
-	// Sensor registers
-	__u16 csr_mode;
-	__u16 csr_h_start_h;
-	__u16 csr_h_start_l;
-	__u16 csr_v_start_h;
-	__u16 csr_v_start_l;
-	__u16 csr_h_end_h;
-	__u16 csr_h_end_l;
-	__u16 csr_v_end_h;
-	__u16 csr_v_end_l;
-	__u16 csr_o_width_h;
-	__u16 csr_o_width_l;
-	__u16 csr_o_height_h;
-	__u16 csr_o_height_l;
-	__u16 csr_exposure_h;
-	__u16 csr_exposure_m;
-	__u16 csr_exposure_l;
-	__u16 csr_gain_h;
-	__u16 csr_gain_l;
-	// Exposure Settings
-	__u32 clk_ext_trigger;
-	__u32 clk_pixel;
-	__u16 shutter_offset;
-	// Reserved
-	__u8 reserved[4];
-	// Modes
-	__u16 num_modes;
-	__u16 bytes_per_mode;
-	struct vc_desc_mode modes[24];
+        // Module description
+        __u8 magic[12];
+        __u8 manuf[32];
+        __u16 manuf_id;
+        __u8 sen_manuf[8];
+        __u8 sen_type[16];
+        __u16 mod_id;
+        __u16 mod_rev;
+        __u16 chip_id_high;
+        __u16 chip_id_low;
+        __u16 chip_rev;
+        // Sensor registers
+        __u16 csr_mode;
+        __u16 csr_h_start_h;
+        __u16 csr_h_start_l;
+        __u16 csr_v_start_h;
+        __u16 csr_v_start_l;
+        __u16 csr_h_end_h;
+        __u16 csr_h_end_l;
+        __u16 csr_v_end_h;
+        __u16 csr_v_end_l;
+        __u16 csr_o_width_h;
+        __u16 csr_o_width_l;
+        __u16 csr_o_height_h;
+        __u16 csr_o_height_l;
+        __u16 csr_exposure_h;
+        __u16 csr_exposure_m;
+        __u16 csr_exposure_l;
+        __u16 csr_gain_h;
+        __u16 csr_gain_l;
+        // Exposure Settings
+        __u32 clk_ext_trigger;
+        __u32 clk_pixel;
+        __u16 shutter_offset;
+        // Reserved
+        __u8 reserved[4];
+        // Modes
+        __u16 num_modes;
+        __u16 bytes_per_mode;
+        struct vc_desc_mode modes[24];
 };
 
 typedef struct vc_control {
-	__u32 min;
-	__u32 max;
-	__u32 def;
+        __u32 min;
+        __u32 max;
+        __u32 def;
 } vc_control;
 
 typedef struct vc_frame {
-	__u32 left;
-	__u32 top;
-	__u32 width;
-	__u32 height;
+        __u32 left;
+        __u32 top;
+        __u32 width;
+        __u32 height;
 } vc_frame;
 
 typedef struct vc_csr2 {
-	__u32 l;
-	__u32 m;
+        __u32 l;
+        __u32 m;
 } vc_csr2;
 
 typedef struct vc_csr4 {
-	__u32 l;
-	__u32 m;
-	__u32 h;
-	__u32 u;
+        __u32 l;
+        __u32 m;
+        __u32 h;
+        __u32 u;
 } vc_csr4;
 
 struct vc_sen_csr {
-	struct vc_csr2 mode;
-	__u8 mode_standby;
-	__u8 mode_operating;
-	struct vc_csr4 vmax;
-	struct vc_csr4 hmax;
-	struct vc_csr4 shs;
-	struct vc_csr2 gain;
-	struct vc_csr2 blacklevel;
-	struct vc_csr2 h_start;
-	struct vc_csr2 v_start;
-	struct vc_csr2 h_end;
-	struct vc_csr2 v_end;
-	struct vc_csr2 o_width;
-	struct vc_csr2 o_height;
-	struct vc_csr4 flash_duration;
-	struct vc_csr4 flash_offset;
+        struct vc_csr2 mode;
+        __u8 mode_standby;
+        __u8 mode_operating;
+        struct vc_csr4 vmax;
+        struct vc_csr4 hmax;
+        struct vc_csr4 shs;
+        struct vc_csr2 gain;
+        struct vc_csr2 blacklevel;
+        struct vc_csr2 h_start;
+        struct vc_csr2 v_start;
+        struct vc_csr2 h_end;
+        struct vc_csr2 v_end;
+        struct vc_csr2 o_width;
+        struct vc_csr2 o_height;
+        struct vc_csr4 flash_duration;
+        struct vc_csr4 flash_offset;
 };
 
 struct vc_csr {
-	struct vc_sen_csr sen;
+        struct vc_sen_csr sen;
 };
 
 typedef struct vc_timing {
-	__u8 num_lanes;
-	__u8 format;
-	__u32 hmax;
+        __u8 num_lanes;
+        __u8 format;
+        __u32 hmax;
 } vc_timing;
 
 struct vc_ctrl {
-	// Communication
-	int mod_i2c_addr;
-	struct i2c_client *client_sen;
-	struct i2c_client *client_mod;
-	// Controls
-	struct vc_control vmax;
-	struct vc_control exposure;
-	struct vc_control gain;
-	struct vc_control framerate;
-	struct vc_control blacklevel;
-	// Modes & Frame Formats
-	struct vc_frame frame;		// Pixel
-	// Control and status registers
-	struct vc_csr csr;
-	// Exposure
-	struct vc_timing expo_timing[8];
-	__u32 clk_ext_trigger;		// Hz
-	__u32 clk_pixel;		// Hz
-	__u32 retrigger_min;
-	// Flash
-	__u32 flash_factor;
-	__s32 flash_toffset;
-	// Special features
-	__u32 flags;
+        // Communication
+        int mod_i2c_addr;
+        struct i2c_client *client_sen;
+        struct i2c_client *client_mod;
+        // Controls
+        struct vc_control vmax;
+        struct vc_control exposure;
+        struct vc_control gain;
+        struct vc_control framerate;
+        struct vc_control blacklevel;
+        // Modes & Frame Formats
+        struct vc_frame frame;          // Pixel
+        // Control and status registers
+        struct vc_csr csr;
+        // Exposure
+        struct vc_timing expo_timing[8];
+        __u32 clk_ext_trigger;          // Hz
+        __u32 clk_pixel;                // Hz
+        __u32 retrigger_min;
+        // Flash
+        __u32 flash_factor;
+        __s32 flash_toffset;
+        // Special features
+        __u32 flags;
 };
 
 struct vc_state {
-	__u8 mode;
-	__u32 vmax;
-	__u32 shs;
-	__u32 exposure;			// µs
-	__u32 gain;
-	__u32 blacklevel;
-	__u32 exposure_cnt;
-	__u32 retrigger_cnt;
-	__u32 framerate;
-	__u32 format_code;
-	struct vc_frame frame;		// Pixel
-	__u8 num_lanes;
-	__u8 io_mode;
-	__u8 trigger_mode;
-	int power_on;
-	int streaming;
-	__u8 flags;
+        __u8 mode;
+        __u32 vmax;
+        __u32 shs;
+        __u32 exposure;                 // µs
+        __u32 gain;
+        __u32 blacklevel;
+        __u32 exposure_cnt;
+        __u32 retrigger_cnt;
+        __u32 framerate;
+        __u32 format_code;
+        struct vc_frame frame;          // Pixel
+        __u8 num_lanes;
+        __u8 io_mode;
+        __u8 trigger_mode;
+        int power_on;
+        int streaming;
+        __u8 flags;
 };
 
 struct vc_cam {
-	struct vc_desc desc;
-	struct vc_ctrl ctrl;
-	struct vc_state state;
+        struct vc_desc desc;
+        struct vc_ctrl ctrl;
+        struct vc_state state;
 };
 
 // --- Helper functions to allow i2c communication for customization ----------

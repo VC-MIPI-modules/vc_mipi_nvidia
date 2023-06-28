@@ -2,6 +2,8 @@
 
 ## v0.14.0 (L4T 32.7.3, L4T 35.2.1, 35.3.1)
 * New Features
+    * Added support for VC MIPI Camera Modules 
+      * IMX565
     * Added support for board support packages
       * NVIDIA L4T 32.7.3
       * NVIDIA L4T 35.2.1 *(only NVIDIA Jetson Xavier NX and AGX Xavier)*
