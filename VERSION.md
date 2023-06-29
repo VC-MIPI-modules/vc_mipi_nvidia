@@ -1,5 +1,10 @@
 # Version History
 
+## v0.14.0 (L4T 32.7.3, L4T 35.2.1, 35.3.1)
+* New Features
+    * Added support for VC MIPI Camera Modules 
+      * IMX462
+
 ## v0.13.0 (L4T 35.1.0)
 * New Features
     * Added support for board support packages

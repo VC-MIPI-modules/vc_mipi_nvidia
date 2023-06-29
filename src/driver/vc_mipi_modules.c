@@ -705,16 +705,16 @@ int vc_mod_ctrl_init(struct vc_ctrl* ctrl, struct vc_desc* desc)
 	case MOD_ID_IMX273: vc_init_ctrl_imx273(ctrl, desc); break;
 	case MOD_ID_IMX290: vc_init_ctrl_imx290(ctrl, desc); break;
 	case MOD_ID_IMX296: vc_init_ctrl_imx296(ctrl, desc); break;
-    case MOD_ID_IMX297: vc_init_ctrl_imx297(ctrl, desc); break;
+	case MOD_ID_IMX297: vc_init_ctrl_imx297(ctrl, desc); break;
 	case MOD_ID_IMX327: vc_init_ctrl_imx327(ctrl, desc); break;
-    case MOD_ID_IMX335: vc_init_ctrl_imx335(ctrl, desc); break;
+	case MOD_ID_IMX335: vc_init_ctrl_imx335(ctrl, desc); break;
 	case MOD_ID_IMX392: vc_init_ctrl_imx392(ctrl, desc); break;
 	case MOD_ID_IMX412: vc_init_ctrl_imx412(ctrl, desc); break;
 	case MOD_ID_IMX415: vc_init_ctrl_imx415(ctrl, desc); break;
 	case MOD_ID_IMX462: vc_init_ctrl_imx462(ctrl, desc); break;
 	case MOD_ID_IMX568: vc_init_ctrl_imx568(ctrl, desc); break;
 	case MOD_ID_OV7251: vc_init_ctrl_ov7251(ctrl, desc); break;
-    case MOD_ID_OV9281: vc_init_ctrl_ov9281(ctrl, desc); break;
+	case MOD_ID_OV9281: vc_init_ctrl_ov9281(ctrl, desc); break;
 	default:
 		vc_err(dev, "%s(): Detected module not supported!\n", __FUNCTION__);
 		return 1;

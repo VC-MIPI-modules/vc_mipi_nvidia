@@ -1,7 +1,7 @@
 # Vision Components MIPI CSI-2 driver for NVIDIA Jetson Nano, Xavier NX, AGX Xavier and TX2
 ![VC MIPI camera](https://www.vision-components.com/fileadmin/external/documentation/hardware/VC_MIPI_Camera_Module/VC_MIPI_Camera_Module_Hardware_Operating_Manual-Dateien/mipi_sensor_front_back.png)
 
-## Version 0.13.0 ([History](VERSION.md))
+## Version 0.14.0 ([History](VERSION.md))
 * Supported system on modules
   * [NVIDIA Jetson Nano 4GB/2GB (production + devkit)](https://developer.nvidia.com/embedded/jetson-nano)
   * [NVIDIA Jetson Xavier NX (production + devkit)](https://developer.nvidia.com/embedded/jetson-xavier-nx)
@@ -25,7 +25,7 @@
 * Supported [VC MIPI Camera Modules](https://www.vision-components.com/fileadmin/external/documentation/hardware/VC_MIPI_Camera_Module/index.html) 
   * IMX178, IMX183, IMX226
   * IMX250, IMX252, IMX264, IMX265, IMX273, IMX392
-  * IMX290, IMX327
+  * IMX290, IMX327, IMX462
   * IMX296, IMX297
   * IMX335
   * IMX412
@@ -42,7 +42,7 @@
     * **Software trigger** can be executed by V4L2 control 'single_trigger'
   * **[IO mode](doc/IO_MODE.md)** '0: disabled', '1: flash active high', '2: flash active low', '3: trigger active low', '4: trigger active low and flash active high', '5: trigger and flash active low' can be set via device tree or V4L2 control 'flash_mode'
   * **Frame rate** can be set via V4L2 control 'frame_rate' *(except IMX412 and OV9281)*
-  * **Black level** can be set via V4L2 control 'black_level' *(except IMX290, IMX327, IMX412, IMX415, OV7251 and OV9281)*
+  * **Black level** can be set via V4L2 control 'black_level' *(except IMX412, IMX415, OV7251 and OV9281)*
   * **[ROI cropping](doc/ROI_CROPPING.md)** can be set via device tree properties active_l, active_t, active_w and active_h or v4l2-ctl.
 
 ## Prerequisites for cross-compiling
@@ -272,6 +272,7 @@ If you want to use your camera in an application with long exposure times or ext
   * IMX335 (Rev.00)
   * IMX412 (Rev.02)
   * IMX415 (Rev.01)
+  * IMX462 (Rev.01)
   * IMX568 (Rev.01)
   * OV7251 (Rev.01), OV9281 (Rev.02)
 
