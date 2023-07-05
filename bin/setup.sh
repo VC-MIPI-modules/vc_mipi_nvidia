@@ -91,7 +91,9 @@ setup_kernel() {
         git config gc.auto 1
 
         cp -R $DRIVER_DIR/* $DRIVER_DST_DIR
-        cp -R $DT_CAM_FILE $DT_CAM_FILE_DST_DIR
+        for ((i = 0; i < ${#DT_CAM_FILE[@]}; i++)); do
+                cp -R "${DT_CAM_FILE[$i]}" "${DT_CAM_FILE_DST_DIR[$i]}"
+        done
 }
 
 repatch_kernel() {
@@ -142,6 +144,12 @@ setup_bsp() {
 
         cd $BSP_DIR/Linux_for_Tegra
         sudo ./apply_binaries.sh
+        case $VC_MIPI_BSP in
+        32.6.1|32.7.1|32.7.2|32.7.3|35.1.0|35.2.1|35.3.1)
+                sudo ./tools/l4t_create_default_user.sh --username vc --password vc \
+                        --hostname $VC_MIPI_SOM --autologin --accept-license
+                ;;
+        esac
 }
 
 setup_camera() {
@@ -149,7 +157,13 @@ setup_camera() {
 }
 
 setup_target() {
-        . $BIN_DIR/config/setup.sh --target
+        echo $1 $2
+        if [[ -z $1 ]]; then
+                . $BIN_DIR/config/setup.sh --target                
+        else
+                TARGET_USER=$1
+                TARGET_IP=$2
+        fi
 
         rm ~/.ssh/known_hosts
         ssh-copy-id -i ~/.ssh/id_rsa.pub $TARGET_USER@$TARGET_IP
@@ -193,7 +207,7 @@ while [ $# != 0 ] ; do
                 ;;
         -t|--target)
                 configure
-                setup_target
+                setup_target $1 $2
                 exit 0
                 ;;
         -o|--host)

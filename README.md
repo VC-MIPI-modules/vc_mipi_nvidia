@@ -299,25 +299,31 @@ If you have your own BSP, you have to integrate the driver into it. Please follo
    
    | system on module         | carrier board | BSP             | all patches in folder patch/... |
    | ------------------------ | ------------- | --------------- | --------------------- |
-   | NVIDIA Jetson Nano       | NVIDIA DevKit | 32.5.0 - 32.5.2 | dt_camera_Nano_32.5.0+ <br> kernel_Nano_32.5.0+  |
-   |                          |               | 32.6.1 - 32.7.3 | dt_camera_Nano_32.6.1+ <br> kernel_Nano_32.5.0+  |
-   |                          | Auvidea JNX30 | 32.5.0 - 32.5.2 | dt_Auvidea_JNX30_Nano_32.5.0+ <br> dt_camera_Nano_32.5.0+ <br> kernel_Nano_32.5.0+ |
-   |                          |               | 32.6.1 - 32.7.3 | dt_Auvidea_JNX30_Nano_32.5.0+ <br> dt_camera_Nano_32.6.1+ <br> kernel_Nano_32.5.0+ |
-   | NVIDIA Jetson Xavier NX  | NVIDIA DevKit | 32.5.0 - 32.5.2 | dt_camera_XavierNX_32.5.0+ <br> kernel_Xavier_32.5.0+  |
-   |                          |               | 32.6.1 - 32.7.3 | dt_camera_XavierNX_32.6.1+ <br> kernel_Xavier_32.6.1+  |
-   |                          |               | 35.1.0          | dt_camera_XavierNX_35.1.0+ <br> kernel_Xavier_35.1.0+  |
-   |                          |               | 35.2.1 - 35.3.1 | dt_camera_XavierNX_35.1.0+ <br> kernel_Xavier_35.2.1+  |
-   |                          | Auvidea JNX30 | 32.5.0 - 32.5.2 | dt_Auvidea_JNX30_XavierNX_32.5.0+ <br> dt_camera_XavierNX_32.5.0+ <br> kernel_Xavier_32.5.0+  |
-   |                          |               | 32.6.1 - 32.7.3 | dt_Auvidea_JNX30_XavierNX_32.5.0+ <br> dt_camera_XavierNX_32.6.1+ <br> kernel_Xavier_32.6.1+  |
-   |                          |               | 35.1.0          | dt_camera_XavierNX_35.1.0+ <br> kernel_Xavier_35.1.0+  |
-   |                          |               | 35.2.1 - 35.3.1 | dt_camera_XavierNX_35.1.0+ <br> kernel_Xavier_35.2.1+  |
-   | NVIDIA Jetson AGX Xavier | DevKit + J20  | 32.3.1          | dt_camera_AGXXavier_32.3.1+ <br> kernel_Xavier_32.3.1+  |
-   |                          |               | 32.5.0 - 32.5.2 | dt_camera_AGXXavier_32.3.1+ <br> kernel_Xavier_32.5.0+  |
-   |                          |               | 32.6.1 - 32.7.3 | dt_camera_AGXXavier_32.3.1+ <br> kernel_Xavier_32.6.1+  |
-   |                          |               | 35.1.0          | dt_camera_AGXXavier_35.1.0+ <br> kernel_Xavier_35.1.0+  |
-   |                          |               | 35.2.1 - 35.7.3 | dt_camera_AGXXavier_35.1.0+ <br> kernel_Xavier_35.2.1+  |
-   | NVIDIA Jetson TX2        | DevKit + J20  | 32.5.0 - 32.5.2 | dt_camera_TX2_32.5.0+ <br> kernel_TX_32.5.0+  |
-   |                          |               | 32.6.1 - 32.7.3 | dt_camera_TX2_32.5.0+ <br> kernel_TX_32.6.1+  |
+   | NVIDIA Jetson Nano       | NVIDIA DevKit | 32.5.0 - 32.5.2 | kernel_Nano_32.5.0+  |
+   |                          |               | 32.6.1 - 32.7.3 | kernel_Nano_32.6.1+  |
+   |                          | Auvidea JNX30 | 32.5.0 - 32.5.2 | kernel_Nano_32.5.0+ <br> dt_Auvidea_JNX30_Nano_32.5.0+ |
+   |                          |               | 32.6.1 - 32.7.3 | kernel_Nano_32.6.1+ <br> dt_Auvidea_JNX30_Nano_32.5.0+ |
+   | NVIDIA Jetson Xavier NX  | NVIDIA DevKit | 32.5.0 - 32.5.2 | kernel_Xavier_32.5.0+  |
+   |                          |               | 32.6.1 - 32.7.2 | kernel_Xavier_32.6.1+  |
+   |                          |               | 32.7.3          | kernel_Xavier_35.7.3+  |
+   |                          |               | 35.1.0          | kernel_Xavier_35.1.0+  |
+   |                          |               | 35.2.1          | kernel_Xavier_35.2.1+  |
+   |                          |               | 35.3.1          | kernel_Xavier_35.3.1+  |
+   |                          | Auvidea JNX30 | 32.5.0 - 32.5.2 | kernel_Xavier_32.5.0+ <br> dt_Auvidea_JNX30_XavierNX_32.5.0+ |
+   |                          |               | 32.6.1 - 32.7.2 | kernel_Xavier_32.6.1+ <br> dt_Auvidea_JNX30_XavierNX_32.5.0+ |
+   |                          |               | 32.7.3          | kernel_Xavier_32.7.3+ <br> dt_Auvidea_JNX30_XavierNX_32.5.0+ |
+   |                          |               | 35.1.0          | kernel_Xavier_35.1.0+ <br> dt_Auvidea_JNX30_XavierNX_32.5.0+ |
+   |                          |               | 35.2.1          | kernel_Xavier_35.2.1+ <br> dt_Auvidea_JNX30_XavierNX_32.5.0+ |
+   |                          |               | 35.3.1          | kernel_Xavier_35.3.1+ <br> dt_Auvidea_JNX30_XavierNX_32.5.0+ |
+   | NVIDIA Jetson AGX Xavier | DevKit + J20  | 32.5.0 - 32.5.2 | kernel_Xavier_32.5.0+  |
+   |                          |               | 32.6.1 - 32.7.2 | kernel_Xavier_32.6.1+  |
+   |                          |               | 32.7.3          | kernel_Xavier_35.7.3+  |
+   |                          |               | 35.1.0          | kernel_Xavier_35.1.0+  |
+   |                          |               | 35.2.1          | kernel_Xavier_35.2.1+  |
+   |                          |               | 35.3.1          | kernel_Xavier_35.3.1+  |
+   | NVIDIA Jetson TX2        | DevKit + J20  | 32.5.0 - 32.5.2 | kernel_Xavier_32.5.0+  |
+   |                          |               | 32.6.1 - 32.7.2 | kernel_Xavier_32.6.1+  |
+   |                          |               | 32.7.3          | kernel_Xavier_35.7.3+  |
 
 2. Copy the camera device tree to the folder listed in the following table
 
@@ -336,7 +342,7 @@ If you have your own BSP, you have to integrate the driver into it. Please follo
 To test the camera you can use [Vision Components MIPI CSI-2 demo software](https://github.com/pmliquify/vc_mipi_demo)
 
 # Annotations
-For Jetpack 5 (L4T 35.1.0+):
+For Jetpack 5 (L4T 35.1.0, 35.2.1, 35.3.1):
 
 * When the test system has booted successfully, it is necessary to run the script max_speed.sh from the /target folder as superuser. It will read out the maximum frequencies and set them as the current ones. This is a recommendation from nvidia.
    ```

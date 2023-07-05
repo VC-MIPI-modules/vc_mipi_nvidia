@@ -1,0 +1,52 @@
+From f12021f695dba1bc4c91ff3c5ac06dba46846605 Mon Sep 17 00:00:00 2001
+From: "/setup.sh" <support@vision-components.com>
+Date: Tue, 14 Dec 2021 19:34:57 +0100
+Subject: [PATCH] Modified tegra186-quill-p3310-1000-a00-00-base.dts to
+ integrate VC MIPI Driver.
+
+---
+ .../tegra186-quill-p3310-1000-a00-00-base.dts      | 14 ++++++++++++--
+ 1 file changed, 12 insertions(+), 2 deletions(-)
+
+diff --git a/hardware/nvidia/platform/t18x/quill/kernel-dts/tegra186-quill-p3310-1000-a00-00-base.dts b/hardware/nvidia/platform/t18x/quill/kernel-dts/tegra186-quill-p3310-1000-a00-00-base.dts
+index b8fad4c08..f2bd94a13 100644
+--- a/hardware/nvidia/platform/t18x/quill/kernel-dts/tegra186-quill-p3310-1000-a00-00-base.dts
++++ b/hardware/nvidia/platform/t18x/quill/kernel-dts/tegra186-quill-p3310-1000-a00-00-base.dts
+@@ -13,9 +13,13 @@
+  * more details.
+  */
+ 
++#define VC_MIPI 1
++
+ #include <t18x-common-platforms/tegra186-quill-common-p3310-1000-a00.dtsi>
+ #include <t18x-common-platforms/tegra186-quill-power-tree-p3310-1000-a00-00.dtsi>
+-#include <t18x-common-platforms/tegra186-quill-camera-modules.dtsi>
++#if !VC_MIPI
++    #include <t18x-common-platforms/tegra186-quill-camera-modules.dtsi>
++#endif
+ #include <t18x-common-modules/tegra186-display-e3320-1000-a00.dtsi>
+ 
+ /* comms dtsi file should be included after gpio dtsi file */
+@@ -24,7 +28,9 @@
+ #include <t18x-common-modules/tegra186-super-module-e2614-p2597-1000-a00.dtsi>
+ #include <t18x-common-plugin-manager/tegra186-quill-display-plugin-manager.dtsi>
+ #include <t18x-common-prod/tegra186-priv-quill-p3310-1000-a00-prod.dtsi>
+-#include <t18x-common-plugin-manager/tegra186-quill-camera-plugin-manager.dtsi>
++#if !VC_MIPI
++    #include <t18x-common-plugin-manager/tegra186-quill-camera-plugin-manager.dtsi>
++#endif
+ 
+ / {
+ 	model = "quill";
+@@ -350,3 +356,7 @@
+ #if LINUX_VERSION >= 414
+ #include <tegra186-linux-4.14.dtsi>
+ #endif
++
++#if VC_MIPI
++  #include <t18x-common-modules/tegra186-camera-vc-mipi-cam.dtsi>
++#endif
+\ No newline at end of file
+-- 
+2.25.1
+

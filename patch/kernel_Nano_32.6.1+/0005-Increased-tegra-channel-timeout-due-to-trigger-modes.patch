@@ -1,0 +1,30 @@
+From 18892daac69a6054a833492bd030aae201f0efd2 Mon Sep 17 00:00:00 2001
+From: Peter Martienssen <peter.martienssen@liquify-consulting.de>
+Date: Fri, 13 Aug 2021 17:03:59 +0200
+Subject: [PATCH 5/9] Increased tegra channel timeout.
+
+Signed-off-by: Peter Martienssen <peter.martienssen@liquify-consulting.de>
+---
+ .../nvidia/drivers/media/platform/tegra/camera/vi/vi2_fops.c | 5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
+
+diff --git a/kernel/nvidia/drivers/media/platform/tegra/camera/vi/vi2_fops.c b/kernel/nvidia/drivers/media/platform/tegra/camera/vi/vi2_fops.c
+index 881211d4b..b04efda3f 100644
+--- a/kernel/nvidia/drivers/media/platform/tegra/camera/vi/vi2_fops.c
++++ b/kernel/nvidia/drivers/media/platform/tegra/camera/vi/vi2_fops.c
+@@ -225,8 +225,11 @@ static void tegra_channel_ec_init(struct tegra_channel *chan)
+ 	 * set timeout as 200 ms, use default if fps not available
+ 	 * Time limit allow CSI to capture good frames and drop error frames
+ 	 * TODO: Get frame rate from sub-device and adopt timeout
++	 *
++	 * VC_MIPI: Timeout changed to a much longer time due to the need of
++	 *          external trigger modes.
+ 	 */
+-	chan->timeout = msecs_to_jiffies(200);
++	chan->timeout = msecs_to_jiffies(5000);
+ 
+ 	/*
+ 	 * Sync point FIFO full blocks host interface
+-- 
+2.25.1
+

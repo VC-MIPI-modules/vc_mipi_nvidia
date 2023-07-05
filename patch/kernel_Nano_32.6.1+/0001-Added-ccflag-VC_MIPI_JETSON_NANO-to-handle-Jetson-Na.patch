@@ -1,0 +1,25 @@
+From 55f16606c2f06b8fa4f90a38164f61669d096662 Mon Sep 17 00:00:00 2001
+From: "/setup.sh" <support@vision-components.com>
+Date: Wed, 1 Dec 2021 17:47:45 +0100
+Subject: [PATCH] Added ccflag VC_MIPI_JETSON_NANO to handle Jetson Nano
+ specific driver code.
+
+---
+ kernel/nvidia/drivers/media/i2c/Makefile | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/kernel/nvidia/drivers/media/i2c/Makefile b/kernel/nvidia/drivers/media/i2c/Makefile
+index 579d3f6..38f400a 100644
+--- a/kernel/nvidia/drivers/media/i2c/Makefile
++++ b/kernel/nvidia/drivers/media/i2c/Makefile
+@@ -2,6 +2,7 @@ subdir-ccflags-y += -Werror
+ 
+ ccflags-y += -I$(srctree)/drivers/media/platform/tegra
+ ccflags-y += -I$(srctree)/drivers/video/tegra/camera
++ccflags-y += -D VC_MIPI_JETSON_NANO
+ 
+ obj-$(CONFIG_VIDEO_IMX185) += imx185.o
+ obj-$(CONFIG_VIDEO_IMX185) += imx185_v1.o
+-- 
+2.25.1
+

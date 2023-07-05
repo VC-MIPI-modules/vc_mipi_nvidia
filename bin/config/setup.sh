@@ -49,7 +49,7 @@ soms=(
 "NVIDIA Jetson Xavier NX (production) (https://developer.nvidia.com/embedded/jetson-xavier-nx)"
 "NVIDIA Jetson Xavier NX (devkit) (https://developer.nvidia.com/embedded/jetson-xavier-nx)"
 "NVIDIA Jetson AGX Xavier (devkit) (https://developer.nvidia.com/embedded/jetson-agx-xavier-developer-kit)"
-"NVIDIA Jetson TX2 (devkit) (https://developer.nvidia.com/embedded/jetson-tx2-developer-kit)"
+"NVIDIA Jetson TX2/TX2i (devkit) (https://developer.nvidia.com/embedded/jetson-tx2-developer-kit)"
 "NVIDIA Jetson Orin NX (devkit) (https://developer.nvidia.com/embedded/jetson-tx2-developer-kit)"
 "NVIDIA Jetson Orin Nano (devkit) (https://developer.nvidia.com/embedded/jetson-tx2-developer-kit)"        
 )
@@ -71,6 +71,8 @@ choose_som() {
         if [[ -n ${selected_som} ]]; then
                 selection=${selected_som}
         else
+                echo "------------------------------------------------------------"
+                echo "  Choose your system on module"
                 index=1
                 for i in "${indices[@]}"; do
                         echo "    $index: ${soms[$i]}"
@@ -105,6 +107,8 @@ choose_board() {
         if [[ -n ${selected_board} ]]; then
                 selection=${selected_board}
         else
+                echo "------------------------------------------------------------"
+                echo "  Choose your carrier board"
                 index=1
                 for i in "${indices[@]}"; do
                         echo "    $index: ${boards[$i]}"
@@ -145,15 +149,19 @@ bsps_keys=(
 )
 
 choose_bsp() {
-        echo "------------------------------------------------------------"
-        echo "  Choose your board support package"
         indices=("$@")
-        index=1
-        for i in "${indices[@]}"; do
-                echo "    $index: ${bsps[$i]}"
-                ((index=index+1))
-        done
-        read_selection 1 ${#indices[@]}
+        if [[ -n ${selected_bsp} ]]; then
+                selection=${selected_bsp}
+        else
+                echo "------------------------------------------------------------"
+                echo "  Choose your board support package"
+                index=1
+                for i in "${indices[@]}"; do
+                        echo "    $index: ${bsps[$i]}"
+                        ((index=index+1))
+                done
+                read_selection 1 ${#indices[@]}
+        fi
         bsp=${bsps_keys[indices[selection-1]]}
 }
 
