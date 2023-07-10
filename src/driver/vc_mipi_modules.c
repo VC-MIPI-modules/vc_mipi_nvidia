@@ -513,9 +513,9 @@ static void vc_init_ctrl_imx412(struct vc_ctrl *ctrl, struct vc_desc* desc)
         ctrl->clk_pixel                 = 27000000;
 
         ctrl->flags                     = FLAG_RESET_ALWAYS;
-        ctrl->flags                     |= FLAG_EXPOSURE_NORMAL;
+        ctrl->flags                    |= FLAG_EXPOSURE_NORMAL;
         ctrl->flags                    |= FLAG_INCREASE_FRAME_RATE;
-        ctrl->flags                     |= FLAG_IO_ENABLED;
+        ctrl->flags                    |= FLAG_IO_ENABLED;
         ctrl->flags                    |= FLAG_TRIGGER_SLAVE;
 }
 
@@ -561,19 +561,15 @@ static void vc_init_ctrl_imx565(struct vc_ctrl *ctrl, struct vc_desc *desc)
 
         vc_notice(dev, "%s(): Initialising module control for IMX565 \n", __FUNCTION__);
 
-        ctrl->csr.sen.gain              = (vc_csr2) { .l = 0x3514, .m = 0x3515 };
         ctrl->gain                      = (vc_control) { .min =   0, .max =       480, .def =      0 };
-
-        ctrl->csr.sen.blacklevel        = (vc_csr2) { .l = 0x35b4, .m = 0x35b5 };
         ctrl->blacklevel                = (vc_control) { .min =   0, .max =     0xfff, .def =   0x3c };
-
+        ctrl->vmax                      = (vc_control) { .min =  27, .max =   0xfffff, .def =  0xcd4 };
+        
+        ctrl->csr.sen.gain              = (vc_csr2) { .l = 0x3514, .m = 0x3515 };
+        ctrl->csr.sen.blacklevel        = (vc_csr2) { .l = 0x35b4, .m = 0x35b5 };
         ctrl->csr.sen.vmax              = (vc_csr4) { .l = 0x30d4, .m = 0x30d5, .h = 0x30d6, .u = 0x0000 };
-        ctrl->vmax                      = (vc_control) { .min =   27, .max =   0xfffff, .def =   0xcd4 };
-
         ctrl->csr.sen.hmax              = (vc_csr4) { .l = 0x30d8, .m = 0x30d9, .h = 0x0000, .u = 0x0000 };
-
         ctrl->csr.sen.mode              = (vc_csr2) { .l = 0x3000, .m = 0x3010 };
-
         ctrl->csr.sen.mode_standby      = 0x01;
         ctrl->csr.sen.mode_operating    = 0x00;
 
@@ -584,14 +580,12 @@ static void vc_init_ctrl_imx565(struct vc_ctrl *ctrl, struct vc_desc *desc)
         ctrl->expo_timing[0]            = (vc_timing) { 2, FORMAT_RAW08, .hmax =  1071 };
         ctrl->expo_timing[1]            = (vc_timing) { 2, FORMAT_RAW10, .hmax =  1329 };
         ctrl->expo_timing[2]            = (vc_timing) { 2, FORMAT_RAW12, .hmax =  1587 };
-
         ctrl->expo_timing[3]            = (vc_timing) { 4, FORMAT_RAW08, .hmax =  555 };
-
-//      ctrl->expo_timing[4]            = (vc_timing) { 4, FORMAT_RAW10, .hmax =  684 };        // not exceeding 20 fps!
-// unfortunatelly we have to downcast the theoretical fps to the maximal value, which can be achieved by this revision of the fpga (REV 1)
-// otherwise there would be an issue regarding to exposure during self trigger mode
+        // ---------------------------------------------------------------
+        // Workaround for Rev.01. This limits the fps to 18.8 fps!
+        // The theoretically correct value for Rev.02 is .hmax = 684
         ctrl->expo_timing[4]            = (vc_timing) { 4, FORMAT_RAW10, .hmax =  1197 };
-
+        // ---------------------------------------------------------------
         ctrl->expo_timing[5]            = (vc_timing) { 4, FORMAT_RAW12, .hmax =  813 };
 
         ctrl->retrigger_min             = 0x0011A7F8;
@@ -603,7 +597,6 @@ static void vc_init_ctrl_imx565(struct vc_ctrl *ctrl, struct vc_desc *desc)
         ctrl->flags                    |= FLAG_TRIGGER_PULSEWIDTH;
         ctrl->flags                    |= FLAG_TRIGGER_SELF;
         ctrl->flags                    |= FLAG_TRIGGER_SINGLE;
-
 }
 
 // ------------------------------------------------------------------------------------------------
@@ -639,7 +632,7 @@ static void vc_init_ctrl_imx568(struct vc_ctrl *ctrl, struct vc_desc* desc)
         ctrl->flags                    |= FLAG_INCREASE_FRAME_RATE;
         ctrl->flags                    |= FLAG_IO_ENABLED;
         ctrl->flags                    |= FLAG_TRIGGER_EXTERNAL | FLAG_TRIGGER_PULSEWIDTH |
-                                        FLAG_TRIGGER_SELF | FLAG_TRIGGER_SINGLE;
+                                          FLAG_TRIGGER_SELF | FLAG_TRIGGER_SINGLE;
 }
 
 // ------------------------------------------------------------------------------------------------
