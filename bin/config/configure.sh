@@ -141,7 +141,7 @@ AGXXavier|XavierNX|XavierNXSD|TX2|TX2i)
                 DT_CAM_FILE_DST_DIR+=(
                         "$KERNEL_SOURCE/hardware/nvidia/platform/t19x/jakku/kernel-dts/common")
                 ;;
-        Auvidea_JNX30)
+        Auvidea_JNX30|Auvidea_J20)
                 DT_CAM_FILE+=(
                         "$DT_CAM_DIR/Auvidea_JNX30_XavierNX/tegra194-camera-vc-mipi-cam.dtsi")
                 DT_CAM_FILE_DST_DIR+=(
