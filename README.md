@@ -306,7 +306,7 @@ If you have your own BSP, you have to integrate the driver into it. Please follo
    |                          |               | 32.6.1 - 32.7.3 | kernel_Nano_32.6.1+ <br> dt_Auvidea_JNX30_Nano_32.5.0+ |
    | NVIDIA Jetson Xavier NX  | NVIDIA DevKit | 32.5.0 - 32.5.2 | kernel_Xavier_32.5.0+  |
    |                          |               | 32.6.1 - 32.7.2 | kernel_Xavier_32.6.1+  |
-   |                          |               | 32.7.3          | kernel_Xavier_35.7.3+  |
+   |                          |               | 32.7.3          | kernel_Xavier_32.7.3+  |
    |                          |               | 35.1.0          | kernel_Xavier_35.1.0+  |
    |                          |               | 35.2.1          | kernel_Xavier_35.2.1+  |
    |                          |               | 35.3.1          | kernel_Xavier_35.3.1+  |
@@ -318,13 +318,13 @@ If you have your own BSP, you have to integrate the driver into it. Please follo
    |                          |               | 35.3.1          | kernel_Xavier_35.3.1+ <br> dt_Auvidea_JNX30_XavierNX_32.5.0+ |
    | NVIDIA Jetson AGX Xavier | DevKit + J20  | 32.5.0 - 32.5.2 | kernel_Xavier_32.5.0+  |
    |                          |               | 32.6.1 - 32.7.2 | kernel_Xavier_32.6.1+  |
-   |                          |               | 32.7.3          | kernel_Xavier_35.7.3+  |
+   |                          |               | 32.7.3          | kernel_Xavier_32.7.3+  |
    |                          |               | 35.1.0          | kernel_Xavier_35.1.0+  |
    |                          |               | 35.2.1          | kernel_Xavier_35.2.1+  |
    |                          |               | 35.3.1          | kernel_Xavier_35.3.1+  |
    | NVIDIA Jetson TX2        | DevKit + J20  | 32.5.0 - 32.5.2 | kernel_Xavier_32.5.0+  |
    |                          |               | 32.6.1 - 32.7.2 | kernel_Xavier_32.6.1+  |
-   |                          |               | 32.7.3          | kernel_Xavier_35.7.3+  |
+   |                          |               | 32.7.3          | kernel_Xavier_32.7.3+  |
 
 2. Copy the camera device tree to the folder listed in the following table
 
