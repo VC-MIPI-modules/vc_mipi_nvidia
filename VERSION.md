@@ -1,18 +1,24 @@
 # Version History
 
+## v0.14.1 (Bugfixes)
+  * Bugfixes
+    * Corrected the documentation in README.md and VERSION.md.
+    * Fixed a bug in configure.sh with a missing DT file for AGX Xavier SoMs.
 ## v0.14.0 (L4T 32.7.3, L4T 35.2.1, 35.3.1)
-* New Features
-    * Added support for VC MIPI Camera Modules 
-      * IMX462
-      * IMX565
-    * Bugfix
-      * Added trigger support for OV9281
+  * New Features
+    * Added support for carrier boards
+      * Auvidea JNX30D with NVIDIA Jetson Nano and Xavier NX
     * Added support for board support packages
       * NVIDIA L4T 32.7.3
       * NVIDIA L4T 35.2.1 *(only NVIDIA Jetson Xavier NX and AGX Xavier)*
       * NVIDIA L4T 35.3.1 *(only NVIDIA Jetson Xavier NX and AGX Xavier)*
+    * Added support for VC MIPI Camera Modules 
+      * IMX462
+      * IMX565
+    * Bugfix
+      * Added trigger support for OV9281.
 ## v0.13.0 (L4T 35.1.0)
-* New Features
+  * New Features
     * Added support for board support packages
       * NVIDIA L4T 35.1.0 *(only NVIDIA Jetson Xavier NX and AGX Xavier)*     
 ## v0.12.3 (Bugfixes)
