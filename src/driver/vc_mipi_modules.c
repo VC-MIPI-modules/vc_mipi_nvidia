@@ -552,6 +552,24 @@ static void vc_init_ctrl_imx415(struct vc_ctrl *ctrl, struct vc_desc* desc)
         ctrl->flags                    |= FLAG_IO_ENABLED;
 }
 
+// -------------------------------------------------------------
+//  Settings for IMX462 (Rev.01)
+
+static void vc_init_ctrl_imx462(struct vc_ctrl *ctrl, struct vc_desc *desc)
+{
+        struct device *dev = &ctrl->client_mod->dev;
+
+        vc_notice(dev, "%s(): Initialising module control for IMX462\n", __FUNCTION__);
+
+        vc_init_ctrl_imx290_base(ctrl, desc);
+
+        ctrl->gain    = (vc_control) { .min = 0, .max = 238,     .def = 0 };
+        ctrl->vmax    = (vc_control) { .min = 1, .max = 0x3ffff, .def = 0x465 };
+
+        ctrl->expo_timing[0] = (vc_timing){2, FORMAT_RAW10, .hmax = 1100};
+        ctrl->expo_timing[1] = (vc_timing){4, FORMAT_RAW10, .hmax = 550};
+}
+
 // ------------------------------------------------------------------------------------------------
 //  Settings for IMX565 (Rev.01)
 
@@ -734,6 +752,7 @@ int vc_mod_ctrl_init(struct vc_ctrl* ctrl, struct vc_desc* desc)
         case MOD_ID_IMX392: vc_init_ctrl_imx392(ctrl, desc); break;
         case MOD_ID_IMX412: vc_init_ctrl_imx412(ctrl, desc); break;
         case MOD_ID_IMX415: vc_init_ctrl_imx415(ctrl, desc); break;
+        case MOD_ID_IMX462: vc_init_ctrl_imx462(ctrl, desc); break;
         case MOD_ID_IMX565: vc_init_ctrl_imx565(ctrl, desc); break;
         case MOD_ID_IMX568: vc_init_ctrl_imx568(ctrl, desc); break;
         case MOD_ID_OV7251: vc_init_ctrl_ov7251(ctrl, desc); break;

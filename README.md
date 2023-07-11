@@ -28,7 +28,7 @@
 * Supported [VC MIPI Camera Modules](https://www.vision-components.com/fileadmin/external/documentation/hardware/VC_MIPI_Camera_Module/index.html) 
   * IMX178, IMX183, IMX226
   * IMX250, IMX252, IMX264, IMX265, IMX273, IMX392
-  * IMX290, IMX327
+  * IMX290, IMX327, IMX462
   * IMX296, IMX297
   * IMX335
   * IMX412
@@ -45,7 +45,7 @@
     * **Software trigger** can be executed by V4L2 control 'single_trigger'
   * **[IO mode](doc/IO_MODE.md)** '0: disabled', '1: flash active high', '2: flash active low', '3: trigger active low', '4: trigger active low and flash active high', '5: trigger and flash active low' can be set via device tree or V4L2 control 'flash_mode'
   * **Frame rate** can be set via V4L2 control 'frame_rate' *(except IMX412 and OV9281)*
-  * **Black level** can be set via V4L2 control 'black_level' *(except IMX290, IMX327, IMX412, IMX415, OV7251 and OV9281)*
+  * **Black level** can be set via V4L2 control 'black_level' *(except IMX412, IMX415, OV7251 and OV9281)*
   * **[ROI cropping](doc/ROI_CROPPING.md)** can be set via device tree properties active_l, active_t, active_w and active_h or v4l2-ctl.
 
 ## Prerequisites for cross-compiling
@@ -86,9 +86,9 @@ The value of the property *pixel_t* lists the supported pixel formats. Here you 
 The property *max_framerate* is given for the number of lanes and the pixel format. For example, 4L10 stands for 4 lanes and the pixel format RAW10. Always set the *def_framerate* to the same value as *max_framerate*
 
 <details>
-  <summary>GStreamer properties for IMX296, IMX297, OV7281 (cameras with 1 lane support only)</summary>
+  <summary>GStreamer properties for IMX296, IMX297, OV7251 (cameras with 1 lane support only)</summary>
 
-| Property             | IMX296     | IMX297     | OV7281     |
+| Property             | IMX296     | IMX297     | OV7251     |
 | -------------------- | ---------: | ---------: | ---------: |
 | physical_w           |      4.968 |      4.968 |      1.920 |
 | physical_h           |      3.726 |      3.726 |      1.440 |
@@ -160,23 +160,23 @@ The property *max_framerate* is given for the number of lanes and the pixel form
 </details>
 
 <details>
-  <summary>GStreamer properties for IMX290, IMX327, IMX335, IMX412, IMX415, IMX565, IMX568 (cameras with 2 and 4 lanes support)</summary>
+  <summary>GStreamer properties for IMX290, IMX327, IMX335, IMX412, IMX415, IMX462, IMX565, IMX568 (cameras with 2 and 4 lanes support)</summary>
 
-| Property             | IMX290/327 | IMX335     | IMX412     | IMX415     | IMX565     | IMX568     |
-| -------------------- | ---------: | ---------: | ---------: | ---------: | ---------: | ---------: |
-| physical_w           |      5.617 |      5.120 |      6.287 |      5.602 |     11.311 |      6.773 |
-| physical_h           |      3.181 |      3.928 |      4.712 |      3.155 |      8.220 |      5.655 |
-| active_w             |       1920 |       2560 |       4032 |       3840 |       4128 |       2472 |
-| active_h             |       1080 |       1944 |       3040 |       2160 |       3000 |       2048 |
-| pixel_t              |      RG 10 |   RG 10,12 |      RG 10 |      GB 10 | RG 8,10,12 | RG 8,10,12 |
-| max_gain_val         |         71 |         72 |         51 |         72 |         48 |         48 |
-| step_gain_val        |      0.300 |      0.300 |      0.050 |      0.300 |      0.100 |      0.100 |
-| max_framerate (2L08) |          - |          - |          - |          - |       21.1 |       49.8 |
-| max_framerate (2L10) |       60.0 |       15.0 |       20.0 |       31.7 |       17.0 |       41.3 |
-| max_framerate (2L12) |          - |       15.0 |          - |          - |       14.2 |       34.6 |
-| max_framerate (4L08) |          - |          - |          - |          - |       40.7 |       96.2 |
-| max_framerate (4L10) |       60.0 |       22.3 |       40.0 |       59.9 |       18.8*|       78.8 |
-| max_framerate (4L12) |          - |       22.3 |          - |          - |       27.8 |       66.7 |
+| Property             | IMX290/327 | IMX335     | IMX412     | IMX415     | IMX462     | IMX565     | IMX568     |
+| -------------------- | ---------: | ---------: | ---------: | ---------: | ---------: | ---------: | ---------: |
+| physical_w           |      5.617 |      5.120 |      6.287 |      5.602 |      5.617 |     11.311 |      6.773 |
+| physical_h           |      3.181 |      3.928 |      4.712 |      3.155 |      3.181 |      8.220 |      5.655 |
+| active_w             |       1920 |       2560 |       4032 |       3840 |       1920 |       4128 |       2472 |
+| active_h             |       1080 |       1944 |       3040 |       2160 |       1080 |       3000 |       2048 |
+| pixel_t              |      RG 10 |   RG 10,12 |      RG 10 |      GB 10 |      RG 10 | RG 8,10,12 | RG 8,10,12 |
+| max_gain_val         |         71 |         72 |         51 |         72 |         71 |         48 |         48 |
+| step_gain_val        |      0.300 |      0.300 |      0.050 |      0.300 |      0.300 |      0.100 |      0.100 |
+| max_framerate (2L08) |          - |          - |          - |          - |          - |       21.1 |       49.8 |
+| max_framerate (2L10) |       60.0 |       15.0 |       20.0 |       31.7 |       60.0 |       17.0 |       41.3 |
+| max_framerate (2L12) |          - |       15.0 |          - |          - |          - |       14.2 |       34.6 |
+| max_framerate (4L08) |          - |          - |          - |          - |          - |       40.7 |       96.2 |
+| max_framerate (4L10) |       60.0 |       22.3 |       40.0 |       59.9 |      120.0 |       18.8*|       78.8 |
+| max_framerate (4L12) |          - |       22.3 |          - |          - |          - |       27.8 |       66.7 |
 
 *) max_framerate (4L10) will be increased with next sensor revision
 </details>
@@ -277,6 +277,7 @@ If you want to use your camera in an application with long exposure times or ext
   * IMX335 (Rev.00)
   * IMX412 (Rev.02)
   * IMX415 (Rev.01)
+  * IMX462 (Rev.01)
   * IMX565 (Rev.01)
   * IMX568 (Rev.01)
   * OV7251 (Rev.01), OV9281 (Rev.02)

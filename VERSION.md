@@ -3,6 +3,7 @@
 ## v0.14.0 (L4T 32.7.3, L4T 35.2.1, 35.3.1)
 * New Features
     * Added support for VC MIPI Camera Modules 
+      * IMX462
       * IMX565
     * Bugfix
       * Added trigger support for OV9281
