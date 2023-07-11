@@ -3,7 +3,7 @@
 DEV_URL=https://developer.nvidia.com/embedded/l4t/r35_release_v1.0
 
 case $VC_MIPI_SOM in
-        AGXXavier|XavierNX|XavierNXSD)
+        AGXXavier|XavierNX|XavierNXSD|AGXOrin)
                 BSP_FILE=jetson_linux_r35.1.0_aarch64.tbz2
                 ;;
 esac

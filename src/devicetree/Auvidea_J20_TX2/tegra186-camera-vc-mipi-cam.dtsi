@@ -74,7 +74,7 @@
 
 / {
     host1x {
-        vc_vi_base: vi@15700000 {
+        vi_base: vi@15700000 {
             num-channels = <VC_MIPI_CAMERAS>;
             ports {
                 #address-cells = <1>;

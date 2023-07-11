@@ -1,5 +1,5 @@
 # Vision Components MIPI CSI-2 driver for NVIDIA Jetson Nano, Xavier NX, AGX Xavier and TX2
-![VC MIPI camera](https://www.vision-components.com/fileadmin/external/documentation/hardware/VC_MIPI_Camera_Module/VC_MIPI_Camera_Module_Hardware_Operating_Manual-Dateien/mipi_sensor_front_back.png)
+![VC MIPI camera](https://www.vision-components.com/fileadmin/external/documentation/hardware/VC_MIPI_Camera_Module/VC_MIPI_Camera_Module-Dateien/mipi_sensor_front_back.png)
 
 ## Version 0.14.0 ([History](VERSION.md))
 * Supported system on modules
@@ -11,7 +11,7 @@
   * [NVIDIA Jetson Nano Developer Kit B01](https://developer.nvidia.com/embedded/jetson-nano-developer-kit)
   * [NVIDIA Jetson Nano 2GB Developer Kit](https://developer.nvidia.com/embedded/jetson-nano-2gb-developer-kit)
   * [NVIDIA Jetson Xavier NX Developer Kit](https://developer.nvidia.com/embedded/jetson-xavier-nx-devkit)
-  * [Auvidea JNX30-LC-PD](https://auvidea.eu/product/70804)
+  * [Auvidea JNX30/JNX30D](https://auvidea.eu/product/70879)
   * [Auvidea J20 on Devkit Jetson AGX Xavier or TX2](https://auvidea.eu/j20/) *(only connector 2+3)*
 * Supported board support packages
   * [NVIDIA L4T 32.3.1](https://developer.nvidia.com/l4t-3231-archive) *(only NVIDIA Jetson AGX Xavier)*
@@ -19,9 +19,12 @@
   * [NVIDIA L4T 32.5.1](https://developer.nvidia.com/embedded/linux-tegra-r3251)
   * [NVIDIA L4T 32.5.2](https://developer.nvidia.com/embedded/linux-tegra-r3251)
   * [NVIDIA L4T 32.6.1](https://developer.nvidia.com/embedded/linux-tegra-r3261)
-  * [NVIDIA L4T 32.7.1](https://developer.nvidia.com/embedded/linux-tegra-r3271) *(experimental)*
-  * [NVIDIA L4T 32.7.2](https://developer.nvidia.com/embedded/linux-tegra-r3272) *(experimental)*
+  * [NVIDIA L4T 32.7.1](https://developer.nvidia.com/embedded/linux-tegra-r3271)
+  * [NVIDIA L4T 32.7.2](https://developer.nvidia.com/embedded/linux-tegra-r3272)
+  * [NVIDIA L4T 32.7.3](https://developer.nvidia.com/embedded/linux-tegra-r3273)
   * [NVIDIA L4T 35.1.0](https://developer.nvidia.com/embedded/jetson-linux-r351) *(only NVIDIA Jetson Xavier NX and AGX Xavier, experimental)*
+  * [NVIDIA L4T 35.2.1](https://developer.nvidia.com/embedded/jetson-linux-r3521) *(only NVIDIA Jetson Xavier NX and AGX Xavier, experimental)*
+  * [NVIDIA L4T 35.3.1](https://developer.nvidia.com/embedded/jetson-linux-r3531) *(only NVIDIA Jetson Xavier NX and AGX Xavier, experimental)*
 * Supported [VC MIPI Camera Modules](https://www.vision-components.com/fileadmin/external/documentation/hardware/VC_MIPI_Camera_Module/index.html) 
   * IMX178, IMX183, IMX226
   * IMX250, IMX252, IMX264, IMX265, IMX273, IMX392
@@ -30,7 +33,7 @@
   * IMX335
   * IMX412
   * IMX415
-  * IMX568
+  * IMX565, IMX568
   * OV7251, OV9281
 * Features
   * Quickstart script for an easier installation process
@@ -157,23 +160,25 @@ The property *max_framerate* is given for the number of lanes and the pixel form
 </details>
 
 <details>
-  <summary>GStreamer properties for IMX290, IMX327, IMX335, IMX412, IMX415, IMX462, IMX568 (cameras with 2 and 4 lanes support)</summary>
+  <summary>GStreamer properties for IMX290, IMX327, IMX335, IMX412, IMX415, IMX462, IMX565, IMX568 (cameras with 2 and 4 lanes support)</summary>
 
-| Property             | IMX290/327 | IMX335     | IMX412     | IMX415     | IMX462     | IMX568     |
-| -------------------- | ---------: | ---------: | ---------: | ---------: | ---------: | ---------: |
-| physical_w           |      5.617 |      5.120 |      6.287 |      5.602 |      5.617 |      6.773 |
-| physical_h           |      3.181 |      3.928 |      4.712 |      3.155 |      3.181 |      5.655 |
-| active_w             |       1920 |       2560 |       4032 |       3840 |       1920 |       2472 |
-| active_h             |       1080 |       1944 |       3040 |       2160 |       1080 |       2048 |
-| pixel_t              |      RG 10 |   RG 10,12 |      RG 10 |      GB 10 |      RG 10 | RG 8,10,12 |
-| max_gain_val         |         71 |         72 |         51 |         72 |         71 |         48 |
-| step_gain_val        |      0.300 |      0.300 |      0.050 |      0.300 |      0.300 |      0.100 |
-| max_framerate (2L08) |          - |          - |          - |          - |          - |       49.8 |
-| max_framerate (2L10) |       60.0 |       15.0 |       20.0 |       31.7 |       60.0 |       41.3 |
-| max_framerate (2L12) |          - |       15.0 |          - |          - |          - |       34.6 |
-| max_framerate (4L08) |          - |          - |          - |          - |          - |       96.2 |
-| max_framerate (4L10) |       60.0 |       22.3 |       40.0 |       59.9 |      120.0 |       78.8 |
-| max_framerate (4L12) |          - |       22.3 |          - |          - |          - |       66.7 |
+| Property             | IMX290/327 | IMX335     | IMX412     | IMX415     | IMX462     | IMX565     | IMX568     |
+| -------------------- | ---------: | ---------: | ---------: | ---------: | ---------: | ---------: | ---------: |
+| physical_w           |      5.617 |      5.120 |      6.287 |      5.602 |      5.617 |     11.311 |      6.773 |
+| physical_h           |      3.181 |      3.928 |      4.712 |      3.155 |      3.181 |      8.220 |      5.655 |
+| active_w             |       1920 |       2560 |       4032 |       3840 |       1920 |       4128 |       2472 |
+| active_h             |       1080 |       1944 |       3040 |       2160 |       1080 |       3000 |       2048 |
+| pixel_t              |      RG 10 |   RG 10,12 |      RG 10 |      GB 10 |      RG 10 | RG 8,10,12 | RG 8,10,12 |
+| max_gain_val         |         71 |         72 |         51 |         72 |         71 |         48 |         48 |
+| step_gain_val        |      0.300 |      0.300 |      0.050 |      0.300 |      0.300 |      0.100 |      0.100 |
+| max_framerate (2L08) |          - |          - |          - |          - |          - |       21.1 |       49.8 |
+| max_framerate (2L10) |       60.0 |       15.0 |       20.0 |       31.7 |       60.0 |       17.0 |       41.3 |
+| max_framerate (2L12) |          - |       15.0 |          - |          - |          - |       14.2 |       34.6 |
+| max_framerate (4L08) |          - |          - |          - |          - |          - |       40.7 |       96.2 |
+| max_framerate (4L10) |       60.0 |       22.3 |       40.0 |       59.9 |      120.0 |       18.8*|       78.8 |
+| max_framerate (4L12) |          - |       22.3 |          - |          - |          - |       27.8 |       66.7 |
+
+*) max_framerate (4L10) will be increased with next sensor revision
 </details>
 
 ### Example
@@ -202,9 +207,9 @@ As an example the device tree for the IMX226 with 4 lanes and pixel format RAW10
 #if LINUX_VERSION < 500
       pixel_t                  = "bayer_rggb";
 #else
-      mode_type		             = "bayer";
-      pixel_phase		           = "rggb";
-      csi_pixel_bit_depth	     = "10";
+      mode_type                = "bayer";
+      pixel_phase              = "rggb";
+      csi_pixel_bit_depth      = "10";
 #endif
 
       min_gain_val             = "0";         //     0.0 dB
@@ -233,9 +238,9 @@ If you want to change some settings of a camera in the device tree, please follo
    | system on module | carrier board | device tree file |
    | ---------------- | ------------- | ---------------- |
    | NVIDIA Jetson Nano | NVIDIA Jetson Nano Developer Kit | src/devicetree/NV_DevKit_Nano/tegra210-camera-vc-mipi-cam.dtsi |
-   | NVIDIA Jetson Nano | Auvidea JNX30-LC-PD | src/devicetree/Auvidea_JNX30_Nano/tegra210-camera-vc-mipi-cam.dtsi |
+   | NVIDIA Jetson Nano | Auvidea JNX30 | src/devicetree/Auvidea_JNX30_Nano/tegra210-camera-vc-mipi-cam.dtsi |
    | NVIDIA Jetson Xavier NX | NVIDIA Jetson Xavier NX Developer Kit | src/devicetree/NV_DevKit_XavierNX/tegra194-camera-vc-mipi-cam.dtsi |
-   | NVIDIA Jetson Xavier NX | Auvidea JNX30-LC-PD | src/devicetree/Auvidea_JNX30_XavierNX/tegra194-camera-vc-mipi-cam.dtsi |
+   | NVIDIA Jetson Xavier NX | Auvidea JNX30 | src/devicetree/Auvidea_JNX30_XavierNX/tegra194-camera-vc-mipi-cam.dtsi |
    | NVIDIA Jetson AGX Xavier | Auvidea J20 on DevKit | src/devicetree/Auvidea_J20_AGXXavier/tegra194-camera-vc-mipi-cam.dtsi |
    | NVIDIA Jetson TX2 | Auvidea J20 on DevKit | src/devicetree/Auvidea_J20_TX2/tegra186-camera-vc-mipi-cam.dtsi |
    
@@ -273,6 +278,7 @@ If you want to use your camera in an application with long exposure times or ext
   * IMX412 (Rev.02)
   * IMX415 (Rev.01)
   * IMX462 (Rev.01)
+  * IMX565 (Rev.01)
   * IMX568 (Rev.01)
   * OV7251 (Rev.01), OV9281 (Rev.02)
 
@@ -294,22 +300,31 @@ If you have your own BSP, you have to integrate the driver into it. Please follo
    
    | system on module         | carrier board | BSP             | all patches in folder patch/... |
    | ------------------------ | ------------- | --------------- | --------------------- |
-   | NVIDIA Jetson Nano       | NVIDIA DevKit | 32.5.0 - 32.5.2 | dt_camera_Nano_32.5.0+ <br> kernel_Nano_32.5.0+  |
-   |                          |               | 32.6.1          | dt_camera_Nano_32.6.1+ <br> kernel_Nano_32.5.0+  |
-   |                          | Auvidea JNX30 | 32.5.0 - 32.5.2 | dt_Auvidea_JNX30_Nano_32.5.0+ <br> dt_camera_Nano_32.5.0+ <br> kernel_Nano_32.5.0+ |
-   |                          |               | 32.6.1          | dt_Auvidea_JNX30_Nano_32.5.0+ <br> dt_camera_Nano_32.6.1+ <br> kernel_Nano_32.5.0+ |
-   | NVIDIA Jetson Xavier NX  | NVIDIA DevKit | 32.5.0 - 32.5.2 | dt_camera_XavierNX_32.5.0+ <br> kernel_Xavier_32.5.0+  |
-   |                          |               | 32.6.1          | dt_camera_XavierNX_32.6.1+ <br> kernel_Xavier_32.6.1+  |
-   |                          |               | 35.1.0          | dt_camera_XavierNX_32.6.1+ <br> kernel_Xavier_35.1.0+  |
-   |                          | Auvidea JNX30 | 32.5.0 - 32.5.2 | dt_Auvidea_JNX30_XavierNX_32.5.0+ <br> dt_camera_XavierNX_32.5.0+ <br> kernel_Xavier_32.5.0+  |
-   |                          |               | 32.6.1          | dt_Auvidea_JNX30_XavierNX_32.5.0+ <br> dt_camera_XavierNX_32.6.1+ <br> kernel_Xavier_32.6.1+  |
-   |                          |               | 35.1.0          | dt_camera_XavierNX_35.1.0+ <br> kernel_Xavier_35.1.0+  |
-   | NVIDIA Jetson AGX Xavier | DevKit + J20  | 32.3.1          | dt_camera_AGXXavier_32.3.1+ <br> kernel_Xavier_32.3.1+  |
-   |                          |               | 32.5.0 - 32.5.2 | dt_camera_AGXXavier_32.3.1+ <br> kernel_Xavier_32.5.0+  |
-   |                          |               | 32.6.1          | dt_camera_AGXXavier_32.3.1+ <br> kernel_Xavier_32.6.1+  |
-   |                          |               | 35.1.0          | dt_camera_AGXXavier_35.1.0+ <br> kernel_Xavier_35.1.0+  |
-   | NVIDIA Jetson TX2        | DevKit + J20  | 32.5.0 - 32.5.2 | dt_camera_TX2_32.5.0+ <br> kernel_TX_32.5.0+  |
-   |                          |               | 32.6.1          | dt_camera_TX2_32.5.0+ <br> kernel_TX_32.6.1+  |
+   | NVIDIA Jetson Nano       | NVIDIA DevKit | 32.5.0 - 32.5.2 | kernel_Nano_32.5.0+  |
+   |                          |               | 32.6.1 - 32.7.3 | kernel_Nano_32.6.1+  |
+   |                          | Auvidea JNX30 | 32.5.0 - 32.5.2 | kernel_Nano_32.5.0+ <br> dt_Auvidea_JNX30_Nano_32.5.0+ |
+   |                          |               | 32.6.1 - 32.7.3 | kernel_Nano_32.6.1+ <br> dt_Auvidea_JNX30_Nano_32.5.0+ |
+   | NVIDIA Jetson Xavier NX  | NVIDIA DevKit | 32.5.0 - 32.5.2 | kernel_Xavier_32.5.0+  |
+   |                          |               | 32.6.1 - 32.7.2 | kernel_Xavier_32.6.1+  |
+   |                          |               | 32.7.3          | kernel_Xavier_35.7.3+  |
+   |                          |               | 35.1.0          | kernel_Xavier_35.1.0+  |
+   |                          |               | 35.2.1          | kernel_Xavier_35.2.1+  |
+   |                          |               | 35.3.1          | kernel_Xavier_35.3.1+  |
+   |                          | Auvidea JNX30 | 32.5.0 - 32.5.2 | kernel_Xavier_32.5.0+ <br> dt_Auvidea_JNX30_XavierNX_32.5.0+ |
+   |                          |               | 32.6.1 - 32.7.2 | kernel_Xavier_32.6.1+ <br> dt_Auvidea_JNX30_XavierNX_32.5.0+ |
+   |                          |               | 32.7.3          | kernel_Xavier_32.7.3+ <br> dt_Auvidea_JNX30_XavierNX_32.5.0+ |
+   |                          |               | 35.1.0          | kernel_Xavier_35.1.0+ <br> dt_Auvidea_JNX30_XavierNX_32.5.0+ |
+   |                          |               | 35.2.1          | kernel_Xavier_35.2.1+ <br> dt_Auvidea_JNX30_XavierNX_32.5.0+ |
+   |                          |               | 35.3.1          | kernel_Xavier_35.3.1+ <br> dt_Auvidea_JNX30_XavierNX_32.5.0+ |
+   | NVIDIA Jetson AGX Xavier | DevKit + J20  | 32.5.0 - 32.5.2 | kernel_Xavier_32.5.0+  |
+   |                          |               | 32.6.1 - 32.7.2 | kernel_Xavier_32.6.1+  |
+   |                          |               | 32.7.3          | kernel_Xavier_35.7.3+  |
+   |                          |               | 35.1.0          | kernel_Xavier_35.1.0+  |
+   |                          |               | 35.2.1          | kernel_Xavier_35.2.1+  |
+   |                          |               | 35.3.1          | kernel_Xavier_35.3.1+  |
+   | NVIDIA Jetson TX2        | DevKit + J20  | 32.5.0 - 32.5.2 | kernel_Xavier_32.5.0+  |
+   |                          |               | 32.6.1 - 32.7.2 | kernel_Xavier_32.6.1+  |
+   |                          |               | 32.7.3          | kernel_Xavier_35.7.3+  |
 
 2. Copy the camera device tree to the folder listed in the following table
 
@@ -328,11 +343,10 @@ If you have your own BSP, you have to integrate the driver into it. Please follo
 To test the camera you can use [Vision Components MIPI CSI-2 demo software](https://github.com/pmliquify/vc_mipi_demo)
 
 # Annotations
-For Jetpack 5 (L4T 35.1.0):
+For Jetpack 5 (L4T 35.1.0, 35.2.1, 35.3.1):
 
 * When the test system has booted successfully, it is necessary to run the script max_speed.sh from the /target folder as superuser. It will read out the maximum frequencies and set them as the current ones. This is a recommendation from nvidia.
    ```
      $ sudo ./max_speed.sh
    ```
-
 * For changing device trees only (./build.sh -d and ./flash.sh -d), you will have to modify your /boot/extlinux/extlinux.conf on your target machine by removing the FDT entry or by commenting out with '#'. Otherwise you will have to flash your complete linux image for every device tree change to take effect.

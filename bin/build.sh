@@ -20,7 +20,9 @@ configure() {
 patch_kernel() {
         echo "Copying driver sources into kernel sources ..."
         cp -Ruv $DRIVER_DIR/* $DRIVER_DST_DIR
-        cp -Ruv $DT_CAM_FILE $DT_CAM_FILE_DST_DIR
+        for ((i = 0; i < ${#DT_CAM_FILE[@]}; i++)); do
+                cp -Ruv "${DT_CAM_FILE[$i]}" "${DT_CAM_FILE_DST_DIR[$i]}"
+        done
 }
 
 configure_kernel() {
