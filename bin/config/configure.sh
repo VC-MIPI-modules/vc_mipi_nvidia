@@ -62,6 +62,27 @@ else
         exit 1
 fi
 
+if [[ "1" == $CHECK4MD5 ]]
+then
+        if [[ -z "$BSP_FILE_CHECKSUM" ]]
+        then
+                echo "BSP Checksum not found!"
+                exit 1
+        fi
+
+        if [[ -z "$RFS_FILE_CHECKSUM" ]]
+        then
+                echo "RFS Checksum not found!"
+                exit 1
+        fi
+
+        if [[ -z "$SRC_FILE_CHECKSUM" ]]
+        then
+                echo "SRC Checksum not found!"
+                exit 1
+        fi
+fi
+
 PATCHES=('kernel_common_32.3.1+')
 DT_CAM_FILE=()
 DT_CAM_FILE_DST_DIR=()
@@ -141,11 +162,19 @@ AGXXavier|XavierNX|XavierNXSD|TX2|TX2i)
                 DT_CAM_FILE_DST_DIR+=(
                         "$KERNEL_SOURCE/hardware/nvidia/platform/t19x/jakku/kernel-dts/common")
                 ;;
-        Auvidea_JNX30)
-                DT_CAM_FILE+=(
-                        "$DT_CAM_DIR/Auvidea_JNX30_XavierNX/tegra194-camera-vc-mipi-cam.dtsi")
-                DT_CAM_FILE_DST_DIR+=(
-                        "$KERNEL_SOURCE/hardware/nvidia/platform/t19x/jakku/kernel-dts/common")
+        Auvidea_JNX30|Auvidea_J20)
+                if [[ "32.3.1" != $VC_MIPI_BSP ]]; then
+                        DT_CAM_FILE+=(
+                                "$DT_CAM_DIR/Auvidea_JNX30_XavierNX/tegra194-camera-vc-mipi-cam.dtsi")
+                        DT_CAM_FILE_DST_DIR+=(
+                                "$KERNEL_SOURCE/hardware/nvidia/platform/t19x/jakku/kernel-dts/common")
+                else
+                        #don't copy the jakku file, but the galen one
+                        DT_CAM_FILE=(
+                                "$DT_CAM_DIR/Auvidea_J20_AGXXavier/tegra194-camera-vc-mipi-cam.dtsi")
+                        DT_CAM_FILE_DST_DIR=(
+                                "$KERNEL_SOURCE/hardware/nvidia/platform/t19x/common/kernel-dts/t19x-common-modules")
+                fi
                 ;;
         esac
 
