@@ -147,7 +147,7 @@ setup_bsp() {
         case $VC_MIPI_BSP in
         32.6.1|32.7.1|32.7.2|32.7.3|35.1.0|35.2.1|35.3.1)
                 sudo ./tools/l4t_create_default_user.sh --username vc --password vc \
-                        --hostname $VC_MIPI_SOM --autologin --accept-license
+                        --hostname nvidia --autologin --accept-license
                 ;;
         esac
 }

@@ -1,5 +1,10 @@
 # Version History
 
+## v0.15.0 (TX2 NX)
+  * New Features
+    * Added support for system on modules
+      * NVIDIA Jetson TX2 NX
+
 ## v0.14.1 (Bugfixes)
   * Bugfixes
     * Corrected the documentation in README.md and VERSION.md.

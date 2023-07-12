@@ -50,6 +50,7 @@ soms=(
 "NVIDIA Jetson Xavier NX (devkit) (https://developer.nvidia.com/embedded/jetson-xavier-nx)"
 "NVIDIA Jetson AGX Xavier (devkit) (https://developer.nvidia.com/embedded/jetson-agx-xavier-developer-kit)"
 "NVIDIA Jetson TX2/TX2i (devkit) (https://developer.nvidia.com/embedded/jetson-tx2-developer-kit)"
+"NVIDIA Jetson TX2 NX (production) (https://developer.nvidia.com/embedded/jetson-tx2-nx)"
 "NVIDIA Jetson Orin NX (devkit) (https://developer.nvidia.com/embedded/jetson-tx2-developer-kit)"
 "NVIDIA Jetson Orin Nano (devkit) (https://developer.nvidia.com/embedded/jetson-tx2-developer-kit)"        
 )
@@ -62,6 +63,7 @@ som_keys=(
 "XavierNXSD"
 "AGXXavier"
 "TX2"
+"TX2NX"
 "OrinNX"
 "OrinNano"
 )
@@ -196,7 +198,7 @@ write_configuration() {
 
 setup_driver() {
         print_title $1 $2
-        choose_som 0 1 2 3 4 5 6
+        choose_som 0 1 2 3 4 5 6 7
         case ${som} in
         Nano2GB)
                 choose_board 0
@@ -214,9 +216,13 @@ setup_driver() {
                 choose_board 5
                 choose_bsp 0 1 2 3 4 5 6 7 8 9 10
                 ;;
-        TX2)
+        TX2|TX2i)
                 choose_board 5
                 choose_bsp 1 2 3 4 5 6 7
+                ;;
+        TX2NX)
+                choose_board 4
+                choose_bsp 2 3 4 5 6 7
                 ;;
         OrinNano)
                 choose_board 3

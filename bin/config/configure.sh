@@ -14,7 +14,7 @@ case $VC_MIPI_SOM in
 Nano|NanoSD|Nano2GB|TX1)
         BSP_DIR=$BUILD_DIR/Nano\_$VC_MIPI_BSP
         ;;
-AGXXavier|XavierNX|XavierNXSD|TX2|TX2i)
+AGXXavier|XavierNX|XavierNXSD|TX2|TX2i|TX2NX)
         BSP_DIR=$BUILD_DIR/Xavier\_$VC_MIPI_BSP
         ;;
 esac
@@ -92,13 +92,16 @@ Nano|NanoSD|Nano2GB)
         esac
         ;;
 
-AGXXavier|XavierNX|XavierNXSD|TX2|TX2i)
+AGXXavier|XavierNX|XavierNXSD|TX2|TX2i|TX2NX)
         case $VC_MIPI_BSP in
         32.3.1)
                 PATCHES+=('kernel_Xavier_32.3.1+')
                 ;;
-        32.5.0|32.5.1|32.5.2)
+        32.5.0)
                 PATCHES+=('kernel_Xavier_32.5.0+')
+                ;;
+        32.5.1|32.5.2)
+                PATCHES+=('kernel_Xavier_32.5.1+')
                 ;;
         32.6.1|32.7.1|32.7.2)
                 PATCHES+=('kernel_Xavier_32.6.1+')
@@ -121,10 +124,12 @@ AGXXavier|XavierNX|XavierNXSD|TX2|TX2i)
         32.5.0|32.5.1|32.5.2|32.6.1|32.7.1|32.7.2|32.7.3)
                 DT_CAM_FILE=(
                         "$DT_CAM_DIR/Auvidea_J20_AGXXavier/tegra194-camera-vc-mipi-cam.dtsi" \
-                        "$DT_CAM_DIR/Auvidea_J20_TX2/tegra186-camera-vc-mipi-cam.dtsi")
+                        "$DT_CAM_DIR/Auvidea_J20_TX2/tegra186-camera-vc-mipi-cam.dtsi" \
+                        "$DT_CAM_DIR/Auvidea_JNX30D_TX2NX/tegra186-camera-vc-mipi-cam.dtsi")
                 DT_CAM_FILE_DST_DIR=(
                         "$KERNEL_SOURCE/hardware/nvidia/platform/t19x/common/kernel-dts/t19x-common-modules" \
-                        "$KERNEL_SOURCE/hardware/nvidia/platform/t18x/common/kernel-dts/t18x-common-modules")
+                        "$KERNEL_SOURCE/hardware/nvidia/platform/t18x/common/kernel-dts/t18x-common-modules" \
+                        "$KERNEL_SOURCE/hardware/nvidia/platform/t18x/lanai/kernel-dts/common")
                 ;;
         35.1.0|35.2.1|35.3.1)
                 DT_CAM_FILE=(
@@ -215,10 +220,24 @@ XavierNX|XavierNXSD)
         FLASH_PARTITION='mmcblk0p1'
         ;;
 
-TX2|TX2i)
+TX2)
         # Carrier board independant settings
         FLASH_DT='kernel-dtb'
         FLASH_BOARD='jetson-tx2'
+        FLASH_PARTITION='mmcblk0p1'
+        ;;
+
+TX2i)
+        # Carrier board independant settings
+        FLASH_DT='kernel-dtb'
+        FLASH_BOARD='jetson-tx2i'
+        FLASH_PARTITION='mmcblk0p1'
+        ;;
+
+TX2NX)
+        # Carrier board independant settings
+        FLASH_DT='kernel-dtb'
+        FLASH_BOARD='jetson-xavier-nx-devkit-tx2-nx'
         FLASH_PARTITION='mmcblk0p1'
         ;;
 
