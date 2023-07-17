@@ -69,7 +69,7 @@ download_and_check_file () {
                 ;;
         esac
 
-        while [[ $DL_STRIKE -lt $DL_AUTO_RETRY || $user_retry_input == "y" || $user_retry_input == "Y" ]] 
+        while [[ $DL_STRIKE -lt $DL_AUTO_RETRY || $user_retry_input == "y" ]] 
         do
                 if [[ -e $FILE_VAR ]]; then 
                         rm -f $FILE_VAR
@@ -95,7 +95,7 @@ download_and_check_file () {
                         echo ""
                         if [[ $TEST_COMMAND != $PARENT_COMMAND ]]
                         then
-                                echo "Retry (y/Y)?"
+                                echo "Retry download (y)?"
                                 read user_retry_input
                         fi
                 else
