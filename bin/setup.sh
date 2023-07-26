@@ -91,9 +91,7 @@ setup_kernel() {
         git config gc.auto 1
 
         cp -R $DRIVER_DIR/* $DRIVER_DST_DIR
-        for ((i = 0; i < ${#DT_CAM_FILE[@]}; i++)); do
-                cp -R "${DT_CAM_FILE[$i]}" "${DT_CAM_FILE_DST_DIR[$i]}"
-        done
+        copy_dtsi_files
 }
 
 repatch_kernel() {

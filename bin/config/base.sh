@@ -9,3 +9,6 @@ DT_CAM_DIR=$WORKING_DIR/src/devicetree
 DRIVER_DIR=$WORKING_DIR/src/driver
 TARGET_FILE=$BUILD_DIR/target.sh
 CONFIGURATION_FILE=$BUILD_DIR/configuration.sh
+
+declare -A -g DTSI_FILE_DICT
+declare -A -g DTSI_DEST_DICT

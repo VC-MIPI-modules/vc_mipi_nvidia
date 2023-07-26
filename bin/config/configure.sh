@@ -1,6 +1,7 @@
 #!/bin/bash
 
 . config/base.sh
+. helper.sh
 
 if [[ $1 == 'driver' ]]; then
         rm -Rf $CONFIGURATION_FILE
@@ -62,9 +63,38 @@ else
         exit 1
 fi
 
+DTSI_FILE_DICT=( 
+          ["Auvidea_J20_AGXXavier"]="tegra194-camera-vc-mipi-cam.dtsi" 
+                ["Auvidea_J20_TX2"]="tegra186-camera-vc-mipi-cam.dtsi"
+             ["Auvidea_JNX30_Nano"]="tegra210-camera-vc-mipi-cam.dtsi"
+         ["Auvidea_JNX30_XavierNX"]="tegra194-camera-vc-mipi-cam.dtsi"
+                 ["NV_DevKit_Nano"]="tegra210-camera-vc-mipi-cam.dtsi" 
+             ["NV_DevKit_OrinNano"]="tegra234-p3768-camera-vc-mipi-cam.dtsi"
+             ["NV_DevKit_XavierNX"]="tegra194-camera-vc-mipi-cam.dtsi"
+)
+
+DTSI_DEST_DICT=( 
+          ["Auvidea_J20_AGXXavier"]="$KERNEL_SOURCE/hardware/nvidia/platform/t19x/common/kernel-dts/t19x-common-modules" 
+                ["Auvidea_J20_TX2"]="$KERNEL_SOURCE/hardware/nvidia/platform/t18x/common/kernel-dts/t18x-common-modules"
+             ["Auvidea_JNX30_Nano"]="$KERNEL_SOURCE/hardware/nvidia/platform/t210/porg/kernel-dts/porg-platforms"
+         ["Auvidea_JNX30_XavierNX"]="$KERNEL_SOURCE/hardware/nvidia/platform/t19x/jakku/kernel-dts/common"
+                 ["NV_DevKit_Nano"]="$KERNEL_SOURCE/hardware/nvidia/platform/t210/porg/kernel-dts/porg-platforms" 
+             ["NV_DevKit_OrinNano"]="$KERNEL_SOURCE/hardware/nvidia/platform/t23x/p3768/kernel-dts/cvb"
+             ["NV_DevKit_XavierNX"]="$KERNEL_SOURCE/hardware/nvidia/platform/t19x/jakku/kernel-dts/common"
+)
+
+# todo: better integrity check!
+
+if [[ ${!DTSI_FILE_DICT[@]} != ${!DTSI_DEST_DICT[@]} ]]
+then
+        echo "There is something wrong with the dtsi dictionaries. Exiting."
+        exit 1
+fi
+
+extract_and_set_key_from_config
+DT_CAM_FILE="${DT_CAM_DIR}/${DTSI_KEY}/${DTSI_FILE_DICT[$DTSI_KEY]}"
+
 PATCHES=('kernel_common_32.3.1+')
-DT_CAM_FILE=()
-DT_CAM_FILE_DST_DIR=()
 case $VC_MIPI_SOM in
 Nano|NanoSD|Nano2GB)
         case $VC_MIPI_BSP in
@@ -73,21 +103,6 @@ Nano|NanoSD|Nano2GB)
                 ;;
         32.6.1|32.7.1|32.7.2|32.7.3)
                 PATCHES+=('kernel_Nano_32.6.1+')
-                ;;
-        esac
-
-        case $VC_MIPI_BOARD in
-        NV_DevKit_Nano)
-                DT_CAM_FILE=(
-                        "$DT_CAM_DIR/NV_DevKit_Nano/tegra210-camera-vc-mipi-cam.dtsi")
-                DT_CAM_FILE_DST_DIR=(
-                        "$KERNEL_SOURCE/hardware/nvidia/platform/t210/porg/kernel-dts/porg-platforms")
-                ;;
-        Auvidea_JNX30)
-                DT_CAM_FILE=(
-                        "$DT_CAM_DIR/Auvidea_JNX30_Nano/tegra210-camera-vc-mipi-cam.dtsi")
-                DT_CAM_FILE_DST_DIR=(
-                        "$KERNEL_SOURCE/hardware/nvidia/platform/t210/porg/kernel-dts/porg-platforms")
                 ;;
         esac
         ;;
@@ -117,47 +132,6 @@ AGXXavier|XavierNX|XavierNXSD|TX2|TX2i)
                 ;;
         esac
         
-        case $VC_MIPI_BSP in
-        32.5.0|32.5.1|32.5.2|32.6.1|32.7.1|32.7.2|32.7.3)
-                DT_CAM_FILE=(
-                        "$DT_CAM_DIR/Auvidea_J20_AGXXavier/tegra194-camera-vc-mipi-cam.dtsi" \
-                        "$DT_CAM_DIR/Auvidea_J20_TX2/tegra186-camera-vc-mipi-cam.dtsi")
-                DT_CAM_FILE_DST_DIR=(
-                        "$KERNEL_SOURCE/hardware/nvidia/platform/t19x/common/kernel-dts/t19x-common-modules" \
-                        "$KERNEL_SOURCE/hardware/nvidia/platform/t18x/common/kernel-dts/t18x-common-modules")
-                ;;
-        35.1.0|35.2.1|35.3.1)
-                DT_CAM_FILE=(
-                        "$DT_CAM_DIR/Auvidea_J20_AGXXavier/tegra194-camera-vc-mipi-cam.dtsi")
-                DT_CAM_FILE_DST_DIR=(
-                        "$KERNEL_SOURCE/hardware/nvidia/platform/t19x/common/kernel-dts/t19x-common-modules")
-                ;;
-        esac
-
-        case $VC_MIPI_BOARD in
-        NV_DevKit_XavierNX)
-                DT_CAM_FILE+=(
-                        "$DT_CAM_DIR/NV_DevKit_XavierNX/tegra194-camera-vc-mipi-cam.dtsi")
-                DT_CAM_FILE_DST_DIR+=(
-                        "$KERNEL_SOURCE/hardware/nvidia/platform/t19x/jakku/kernel-dts/common")
-                ;;
-        Auvidea_JNX30|Auvidea_J20)
-                DT_CAM_FILE+=(
-                        "$DT_CAM_DIR/Auvidea_JNX30_XavierNX/tegra194-camera-vc-mipi-cam.dtsi")
-                DT_CAM_FILE_DST_DIR+=(
-                        "$KERNEL_SOURCE/hardware/nvidia/platform/t19x/jakku/kernel-dts/common")
-                ;;
-        esac
-
-        case $VC_MIPI_BSP in
-        35.3.1)
-                DT_CAM_FILE+=(
-                        "$DT_CAM_DIR/NV_DevKit_OrinNano/tegra234-p3768-camera-vc-mipi-cam.dtsi")
-                DT_CAM_FILE_DST_DIR+=(
-                        "$KERNEL_SOURCE/hardware/nvidia/platform/t23x/p3768/kernel-dts/cvb")
-                ;;
-        esac
-        ;;
 esac
 
 case $VC_MIPI_SOM in
@@ -201,7 +175,7 @@ XavierNX|XavierNXSD)
                         ;;
                 35.1.0|35.2.1|35.3.1)
                         # Comment
-		;;
+                ;;
                 esac
                 ;;
         esac

@@ -22,7 +22,7 @@
 //  Driver Configuration for NVIDIA Jetson Xavier NX on Auvidea JNX30-LC-PD
 // ------------------------------------------------------------------------------------------------
 #define VC_MIPI_CAM_AB      1   // 1: Enabled, 0: Disabled  (serial_a => CSI Port 0 => VI Stream 0)
-#define VC_MIPI_CAM_CD      1   // 1: Enabled, 0: Disabled  (serial_e => CSI Port 4 => VI Stream 4)
+#define VC_MIPI_CAM_CD      0   // 1: Enabled, 0: Disabled  (serial_e => CSI Port 4 => VI Stream 4)
 #define VC_MIPI_CAM_E       0   // 1: Enabled, 0: Disabled  (serial_c => CSI Port 2 => VI Stream 2)
 #define VC_MIPI_CAM_F       0   // 1: Enabled, 0: Disabled  (serial_d => CSI Port 3 => VI Stream 3)
 // ------------------------------------------------------------------------------------------------
@@ -33,7 +33,7 @@
 //  2,4 | IMX178, IMX183, IMX226, IMX250, IMX252, IMX273, IMX290, IMX327, IMX335, IMX392, 
 //      | IMX412, IMX415, IMX462, IMX565, IMX568
 // -----+------------------------------------------------------------------------------------------
-#define VC_MIPI_LANES       2   // 1, 2, 4 Lanes
+#define VC_MIPI_LANES       4   // 1, 2, 4 Lanes
 // ------------------------------------------------------------------------------------------------
 //  Embedded Metadata Height
 // -----+------------------------------------------------------------------------------------------
@@ -41,7 +41,7 @@
 //  1   | IMX290, IMX327, IMX335, IMX415, IMX462, IMX565, IMX568
 //  2   | IMX296, IMX297, IMX412
 // -----+------------------------------------------------------------------------------------------
-#define VC_MIPI_METADATA_H  "1" // "0", "1", "2" Lines of meta data
+#define VC_MIPI_METADATA_H  "0" // "0", "1", "2" Lines of meta data
 // ------------------------------------------------------------------------------------------------
 //   Sensor Manufacturer
 // -----+------------------------------------------------------------------------------------------
@@ -272,8 +272,8 @@
 			// ----------------------------------------------------
 			// If you want to use GStreamer with nvarguscamerasrc
 			// you have to adjust this settings
-			physical_w              = "1.000";
-			physical_h              = "1.000";
+			physical_w              = "7.066";
+			physical_h              = "5.299";
 			// ----------------------------------------------------
 
 			// This node is needed by the Tegra framework.
@@ -289,8 +289,8 @@
 				// you have to adjust this settings. 
 				active_l                 = "0";
 				active_t                 = "0";
-				active_w                 = "0";
-				active_h                 = "0";
+				active_w                 = "2048";
+				active_h                 = "1536";
 
 #if LINUX_VERSION < 500
 				pixel_t                  = "bayer_rggb";
@@ -311,9 +311,9 @@
 
 				// For applications like argus_camera, there should be a minimal frame rate greater than zero!
 				min_framerate            = "100";       // mHz
-				max_framerate            = "60000";     // mHz
+				max_framerate            = "123500";     // mHz
 				step_framerate           = "100";       // mHz
-				default_framerate        = "60000";     // mHz
+				default_framerate        = "123500";     // mHz
 				// ----------------------------------------------------
 
 				gain_factor              = "1000";

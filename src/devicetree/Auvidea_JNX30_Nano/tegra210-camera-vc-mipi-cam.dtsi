@@ -243,8 +243,8 @@
                 // ----------------------------------------------------
                 // If you want to use GStreamer with nvarguscamerasrc
                 // you have to adjust this settings
-                physical_w              = "1.000";
-                physical_h              = "1.000";
+                physical_w              = "7.066";
+                physical_h              = "5.299";
                 // ----------------------------------------------------
 
                 // This node is needed by the Tegra framework.
@@ -260,8 +260,8 @@
                     // you have to adjust this settings. 
                     active_l                 = "0";
                     active_t                 = "0";
-                    active_w                 = "0";
-                    active_h                 = "0";
+                    active_w                 = "2048";
+                    active_h                 = "1536";
                     pixel_t                  = "bayer_rggb";
 
                     min_gain_val             = "0";         // mdB
@@ -275,9 +275,9 @@
                     default_exp_time         = "10000";     // us
 
                     min_framerate            = "0";         // mHz
-                    max_framerate            = "60000";     // mHz
+                    max_framerate            = "123500";     // mHz
                     step_framerate           = "100";       // mHz
-                    default_framerate        = "60000";     // mHz
+                    default_framerate        = "123500";     // mHz
                     // ----------------------------------------------------
 
                     gain_factor              = "1000";
