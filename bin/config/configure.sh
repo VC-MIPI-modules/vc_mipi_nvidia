@@ -1,7 +1,7 @@
 #!/bin/bash
 
 . config/base.sh
-. helper.sh
+. helper/dtsi_helper.sh
 
 if [[ $1 == 'driver' ]]; then
         rm -Rf $CONFIGURATION_FILE
@@ -83,11 +83,9 @@ DTSI_DEST_DICT=(
              ["NV_DevKit_XavierNX"]="$KERNEL_SOURCE/hardware/nvidia/platform/t19x/jakku/kernel-dts/common"
 )
 
-# todo: better integrity check!
-
 if [[ ${!DTSI_FILE_DICT[@]} != ${!DTSI_DEST_DICT[@]} ]]
 then
-        echo "There is something wrong with the dtsi dictionaries. Exiting."
+        echo "Integrity check of the dtsi dictionaries failed. Key list seems to be not consistend. Exiting."
         exit 1
 fi
 
