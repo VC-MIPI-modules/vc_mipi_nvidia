@@ -23,7 +23,8 @@ usage() {
 install_dependencies() {
         if [[ -z $(which v4l2-ctl) ]]; then
                 sudo apt update
-                sudo apt install -y v4l-utils
+                sudo apt install -y v4l-utils python3-pip
+                sudo pip3 install -U jetson-stats
         fi
         if [[ -e vcmipidemo ]]; then
                 chmod +x vcmipidemo

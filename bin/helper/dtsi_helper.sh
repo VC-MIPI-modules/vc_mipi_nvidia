@@ -23,6 +23,7 @@ function extract_and_set_key_from_config {
         then
                 DTSI_KEY=$VC_MIPI_BOARD
         else
+                part_str_board=$VC_MIPI_BOARD
                 part_str_som=""
                 case "$VC_MIPI_SOM" in 
                 Nano|NanoSD|Nano2GB)
@@ -34,17 +35,17 @@ function extract_and_set_key_from_config {
                 AGXXavier|TX2)
                         part_str_som=$VC_MIPI_SOM
                         ;;
-#eigene unterscheidung
-#                TX2NX)
-#                        part_str_som=$VC_MIPI_SOM
-#                        ;;
+                TX2NX) 
+                        part_str_som=$VC_MIPI_SOM
+                        part_str_board="${part_str_board}D"
+                        ;;
                 *)
                         echo "Unknown som detected! Exiting."
                         exit 1
                         ;;
                 esac
 
-                DTSI_KEY="${VC_MIPI_BOARD}_${part_str_som}"
+                DTSI_KEY="${part_str_board}_${part_str_som}"
         fi
 
         found=0
@@ -122,8 +123,8 @@ function copy_dtsi_files {
                 copy_dtsi_if_dest_exists $src_file $dest_dir
         done
 
-        # ... copy the actual dtsi file as the last entry,
-        # otherwise it might be overridden by another dtsi file with the same name from another board.
+        # ... and copy the actual dtsi file as the last entry.
+        # Otherwise it might be overridden by another dtsi file with the same name from another board.
         src_file="$DT_CAM_DIR/$DTSI_KEY/${DTSI_FILE_DICT[$DTSI_KEY]}"
         dest_dir="${DTSI_DEST_DICT[$DTSI_KEY]}"
         
