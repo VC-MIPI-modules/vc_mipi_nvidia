@@ -92,6 +92,7 @@ boards=(
 "NVIDIA Jetson Xavier NX Developer Kit (https://developer.nvidia.com/embedded/jetson-xavier-nx-devkit)"
 "NVIDIA Jetson Orin Nano Developer Kit (...)"
 "Auvidea JNX30/JNX30D (https://auvidea.eu/product/70879)"
+"Auvidea JNX42 LM (https://auvidea.eu/product/70784)"
 "Auvidea J20 on Devkit Jetson AGX Xavier or TX2 (https://auvidea.eu/j20)"
 )
 
@@ -101,6 +102,7 @@ board_keys=(
 "NV_DevKit_XavierNX"
 "NV_DevKit_OrinNano"
 "Auvidea_JNX30"
+"Auvidea_JNX42"
 "Auvidea_J20"
 )
 
@@ -205,19 +207,19 @@ setup_driver() {
                 choose_bsp 1 2 3 4 5 6 7
                 ;;
         Nano|NanoSD)
-                choose_board 1 4
+                choose_board 1 4 5
                 choose_bsp 1 2 3 4 5 6 7
                 ;;
         XavierNX|XavierNXSD) 
-                choose_board 2 4
+                choose_board 2 4 5
                 choose_bsp 1 2 3 4 5 6 7 8 9 10
                 ;;
         AGXXavier)
-                choose_board 5
+                choose_board 6
                 choose_bsp 0 1 2 3 4 5 6 7 8 9 10
                 ;;
         TX2|TX2i)
-                choose_board 5
+                choose_board 6
                 choose_bsp 1 2 3 4 5 6 7
                 ;;
         TX2NX)

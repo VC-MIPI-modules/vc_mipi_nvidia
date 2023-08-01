@@ -64,30 +64,34 @@ else
 fi
 
 DTSI_FILE_DICT=( 
-          ["Auvidea_J20_AGXXavier"]="tegra194-camera-vc-mipi-cam.dtsi" 
-                ["Auvidea_J20_TX2"]="tegra186-camera-vc-mipi-cam.dtsi"
-             ["Auvidea_JNX30_Nano"]="tegra210-camera-vc-mipi-cam.dtsi"
-         ["Auvidea_JNX30_XavierNX"]="tegra194-camera-vc-mipi-cam.dtsi"
-                 ["NV_DevKit_Nano"]="tegra210-camera-vc-mipi-cam.dtsi" 
-             ["NV_DevKit_OrinNano"]="tegra234-p3768-camera-vc-mipi-cam.dtsi"
-             ["NV_DevKit_XavierNX"]="tegra194-camera-vc-mipi-cam.dtsi"
-           ["Auvidea_JNX30D_TX2NX"]="tegra186-camera-vc-mipi-cam.dtsi"
+         ["Auvidea_J20_AGXXavier"]="tegra194-camera-vc-mipi-cam.dtsi" 
+               ["Auvidea_J20_TX2"]="tegra186-camera-vc-mipi-cam.dtsi"
+            ["Auvidea_JNX30_Nano"]="tegra210-camera-vc-mipi-cam.dtsi"
+            ["Auvidea_JNX42_Nano"]="tegra210-camera-vc-mipi-cam.dtsi"
+        ["Auvidea_JNX30_XavierNX"]="tegra194-camera-vc-mipi-cam.dtsi"
+        ["Auvidea_JNX42_XavierNX"]="tegra194-camera-vc-mipi-cam.dtsi"
+                ["NV_DevKit_Nano"]="tegra210-camera-vc-mipi-cam.dtsi" 
+            ["NV_DevKit_OrinNano"]="tegra234-p3768-camera-vc-mipi-cam.dtsi"
+            ["NV_DevKit_XavierNX"]="tegra194-camera-vc-mipi-cam.dtsi"
+          ["Auvidea_JNX30D_TX2NX"]="tegra186-camera-vc-mipi-cam.dtsi"
 )
 
 DTSI_DEST_DICT=( 
-          ["Auvidea_J20_AGXXavier"]="$KERNEL_SOURCE/hardware/nvidia/platform/t19x/common/kernel-dts/t19x-common-modules" 
-                ["Auvidea_J20_TX2"]="$KERNEL_SOURCE/hardware/nvidia/platform/t18x/common/kernel-dts/t18x-common-modules"
-             ["Auvidea_JNX30_Nano"]="$KERNEL_SOURCE/hardware/nvidia/platform/t210/porg/kernel-dts/porg-platforms"
-         ["Auvidea_JNX30_XavierNX"]="$KERNEL_SOURCE/hardware/nvidia/platform/t19x/jakku/kernel-dts/common"
-                 ["NV_DevKit_Nano"]="$KERNEL_SOURCE/hardware/nvidia/platform/t210/porg/kernel-dts/porg-platforms" 
-             ["NV_DevKit_OrinNano"]="$KERNEL_SOURCE/hardware/nvidia/platform/t23x/p3768/kernel-dts/cvb"
-             ["NV_DevKit_XavierNX"]="$KERNEL_SOURCE/hardware/nvidia/platform/t19x/jakku/kernel-dts/common"
-           ["Auvidea_JNX30D_TX2NX"]="$KERNEL_SOURCE/hardware/nvidia/platform/t18x/lanai/kernel-dts/common"
+         ["Auvidea_J20_AGXXavier"]="$KERNEL_SOURCE/hardware/nvidia/platform/t19x/common/kernel-dts/t19x-common-modules" 
+               ["Auvidea_J20_TX2"]="$KERNEL_SOURCE/hardware/nvidia/platform/t18x/common/kernel-dts/t18x-common-modules"
+            ["Auvidea_JNX30_Nano"]="$KERNEL_SOURCE/hardware/nvidia/platform/t210/porg/kernel-dts/porg-platforms"
+            ["Auvidea_JNX42_Nano"]="$KERNEL_SOURCE/hardware/nvidia/platform/t210/porg/kernel-dts/porg-platforms"
+        ["Auvidea_JNX30_XavierNX"]="$KERNEL_SOURCE/hardware/nvidia/platform/t19x/jakku/kernel-dts/common"
+        ["Auvidea_JNX42_XavierNX"]="$KERNEL_SOURCE/hardware/nvidia/platform/t19x/jakku/kernel-dts/common"
+                ["NV_DevKit_Nano"]="$KERNEL_SOURCE/hardware/nvidia/platform/t210/porg/kernel-dts/porg-platforms" 
+            ["NV_DevKit_OrinNano"]="$KERNEL_SOURCE/hardware/nvidia/platform/t23x/p3768/kernel-dts/cvb"
+            ["NV_DevKit_XavierNX"]="$KERNEL_SOURCE/hardware/nvidia/platform/t19x/jakku/kernel-dts/common"
+          ["Auvidea_JNX30D_TX2NX"]="$KERNEL_SOURCE/hardware/nvidia/platform/t18x/lanai/kernel-dts/common"
 )
 
 if [[ ${!DTSI_FILE_DICT[@]} != ${!DTSI_DEST_DICT[@]} ]]
 then
-        echo "Integrity check of the dtsi dictionaries failed. Key list seems to be not consistend. Exiting."
+        echo "Integrity check of the dtsi dictionaries failed. Key list seems to be not consistent. Exiting."
         exit 1
 fi
 
@@ -141,7 +145,7 @@ case $VC_MIPI_SOM in
 Nano|NanoSD|Nano2GB)
         # Carrier board dependant settings
         case $VC_MIPI_BOARD in
-        Auvidea_JNX30)
+        Auvidea_JNX30|Auvidea_JNX42)
                 case $VC_MIPI_BSP in
                 32.3.1)
                         PATCHES+=('dt_Auvidea_JNX30_Nano_32.3.1+')
@@ -171,7 +175,7 @@ AGXXavier)
 XavierNX|XavierNXSD)
         # Carrier board dependant settings
         case $VC_MIPI_BOARD in
-        Auvidea_JNX30)
+        Auvidea_JNX30|Auvidea_JNX42)
                 case $VC_MIPI_BSP in
                 32.5.0|32.5.1|32.5.2|32.6.1|32.7.1|32.7.2|32.7.3)
                         PATCHES+=('dt_Auvidea_JNX30_XavierNX_32.5.0+')
