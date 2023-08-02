@@ -20,7 +20,7 @@
 
 // ------------------------------------------------------------------------------------------------
 //  Driver Configuration for NVIDIA Jetson Xavier NX on Auvidea JNX42-LM
-//  On JNX42 carrier board, only one camera is supported for Nano, XavierNX and TX2NX
+//  On JNX42 carrier board, only one camera (Cam0) is supported for Nano, XavierNX and TX2NX
 // ------------------------------------------------------------------------------------------------
 //  Supported number of lanes
 // -----+------------------------------------------------------------------------------------------
@@ -283,11 +283,11 @@
         };
 };
 
-#define CAM0_PWDN	TEGRA194_MAIN_GPIO(P, 5)
-#define CAM1_PWDN	TEGRA194_MAIN_GPIO(P, 4)
-#define CAM2_PWDN	TEGRA194_MAIN_GPIO(Q, 5)
-#define CAM3_PWDN	TEGRA194_MAIN_GPIO(Q, 6)
-#define CAM_TRIGGER	TEGRA194_MAIN_GPIO(R, 0)
+#define CAM0_PWDN       TEGRA194_MAIN_GPIO(P, 5)
+#define CAM1_PWDN       TEGRA194_MAIN_GPIO(P, 4)
+#define CAM2_PWDN       TEGRA194_MAIN_GPIO(Q, 5)
+#define CAM3_PWDN       TEGRA194_MAIN_GPIO(Q, 6)
+#define CAM_TRIGGER     TEGRA194_MAIN_GPIO(R, 0)
 
 / {
         /delete-node/ cam_i2cmux;

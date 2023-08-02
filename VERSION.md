@@ -5,7 +5,7 @@
     * Added support for system on modules
       * NVIDIA Jetson TX2 NX
     * Added support for carrier boards
-      * Auvidea JNX42 with NVIDIA Jetson Nano and Xavier NX *(JNX42 supports only one camera for Jetson Nano, TX2 NX and Xavier NX)*
+      * Auvidea JNX42 with NVIDIA Jetson Nano and Xavier NX *(JNX42 supports only one camera - Cam0 for Jetson Nano, TX2 NX and Xavier NX)*
   * Bugfix
     * Fixed an issue with ./setup.sh -c (It did not load the correct DT file in every case.)
   * Improvement

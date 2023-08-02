@@ -20,7 +20,7 @@
 
 // ------------------------------------------------------------------------------------------------
 //  Driver Configuration for NVIDIA Jetson Nano on Auvidea JNX42-LM
-//  On JNX42 carrier board, only one camera is supported for Nano, XavierNX and TX2NX
+//  On JNX42 carrier board, only one camera (Cam0) is supported for Nano, XavierNX and TX2NX
 // ------------------------------------------------------------------------------------------------
 //  Supported number of lanes
 // -----+------------------------------------------------------------------------------------------
@@ -160,7 +160,8 @@
                                         step_exp_time            = "1";         // us
                                         default_exp_time         = "10000";     // us
 
-                                        min_framerate            = "100";         // mHz
+                                        // For applications like argus_camera, there should be a minimal frame rate greater than zero!
+                                        min_framerate            = "100";       // mHz
                                         max_framerate            = "60000";     // mHz
                                         step_framerate           = "100";       // mHz
                                         default_framerate        = "60000";     // mHz
@@ -252,7 +253,7 @@
 #define CAM2_PWDN       TEGRA_GPIO(T, 0)
 #define CAM3_PWDN       TEGRA_GPIO(S, 5)
 #define CAM4_PWDN       TEGRA_GPIO(T, 1)
-#define CAM_TRIGGER	    TEGRA_GPIO(V, 0)
+#define CAM_TRIGGER     TEGRA_GPIO(V, 0)
 
 / {
         host1x {
