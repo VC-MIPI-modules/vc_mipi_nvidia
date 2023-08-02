@@ -9,7 +9,7 @@
   * Bugfix
     * Fixed an issue with ./setup.sh -c (It did not load the correct DT file in every case.)
   * Improvement
-    * Build pipe line simplyfied by copying all DT files automatically as long the destination path of the given L4T is present.
+    * Build pipe line simplyfied by copying all DT files automatically as long as the destination path of the given L4T is present.
 ## v0.14.1 (Bugfixes)
   * Bugfixes
     * Corrected the documentation in README.md and VERSION.md.
