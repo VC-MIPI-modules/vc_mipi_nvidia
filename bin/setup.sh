@@ -1,5 +1,8 @@
 #!/bin/bash
 
+PARENT_COMMAND=$(ps -o comm= $PPID)
+TEST_COMMAND="test.sh"
+
 usage() {
         echo "Usage: $0 [options]"
         echo ""
@@ -21,6 +24,93 @@ configure() {
 
 reconfigure() {
         . config/configure.sh driver
+}
+
+download_and_check_file () {
+        # first argument should be a string BSP|RFS|SRC ...
+        if [[ -z $1 ]]
+        then 
+                echo "Variable name as parameter missing ..."
+                echo "Expected BSP, RFS or SRC"
+                exit 1
+        fi
+
+        DL_STRIKE=0
+        DL_RESULT=0
+        DL_AUTO_RETRY=3
+
+        # ... creating variables (e.g. BSP_URL_UNRESOLVED, BSP_URL, BSP_FILE, BSP_FILE_CHECKSUM)
+        URL_UNRESOLVED_VAR="$1_URL_UNRESOLVED"
+        URL_UNRESOLVED_VAR=${!URL_UNRESOLVED_VAR}
+        URL_VAR="$1_URL"
+        URL_VAR=${!URL_VAR}
+        FILE_VAR="$1_FILE"
+        FILE_VAR=${!FILE_VAR}
+        CHECKSUM_VAR="$1_FILE_CHECKSUM"
+        CHECKSUM_VAR=${!CHECKSUM_VAR}
+        user_retry_input=
+
+        echo ""
+        case $1 in
+        BSP|RFS|SRC)
+                echo "  Trying to download $1 file $FILE_VAR..."
+                if [[ $TEST_COMMAND == $PARENT_COMMAND ]]
+                then
+                        echo "  ($DL_AUTO_RETRY attempts will be made)"
+                else
+                        user_retry_input="y"
+                        DL_AUTO_RETRY=0
+                fi
+                echo ""
+        ;;
+        *)
+                echo "Unknown option $1"
+                exit 1
+                ;;
+        esac
+
+        while [[ $DL_STRIKE -lt $DL_AUTO_RETRY || $user_retry_input == "y" ]] 
+        do
+                if [[ -e $FILE_VAR ]]; then 
+                        rm -f $FILE_VAR
+                fi
+
+                if [[ -z $URL_UNRESOLVED_VAR ]]; then
+                        wget $URL_VAR/$FILE_VAR
+                else
+                        wget -O $FILE_VAR $URL_UNRESOLVED_VAR
+                fi
+
+                DL_STRIKE=$((DL_STRIKE+1))
+                
+                echo "$CHECKSUM_VAR $FILE_VAR" | md5sum -c
+                DL_RESULT=$?
+                if [[ 0 != $DL_RESULT ]]
+                then 
+                        echo ""
+                        echo "Something is wrong with downloaded file ${FILE_VAR}!"
+                        CHECKSUM_TMP=`eval md5sum ${FILE_VAR} | cut -d " " -f 1`
+                        echo "Checksum of downloaded file is:            ${CHECKSUM_TMP} ($DL_STRIKE. try)" 
+                        echo "Checksum of downloaded file should be:     ${CHECKSUM_VAR}"
+                        echo ""
+                        if [[ $TEST_COMMAND != $PARENT_COMMAND ]]
+                        then
+                                echo "Retry download (y)?"
+                                read user_retry_input
+                        fi
+                else
+                        echo ""
+                        echo "${CHECKSUM_VAR} seems to be ok."
+                        echo ""
+                        break
+                fi
+        done
+
+        if [[ $DL_RESULT != 0 ]] 
+        then
+                echo "Could not download $1 file $FILE_VAR!"
+                exit 1
+        fi
 }
 
 install_system_tools() {
@@ -56,13 +146,8 @@ setup_kernel() {
         mkdir -p $DOWNLOAD_DIR
 
         cd $DOWNLOAD_DIR
-        if [[ ! -e $SRC_FILE ]]; then 
-                if [[ -z $SRC_URL_UNRESOLVED ]]; then
-                        wget $SRC_URL/$SRC_FILE
-                else
-                        wget -O $SRC_FILE $SRC_URL_UNRESOLVED
-                fi
-        fi
+
+        download_and_check_file SRC
 
         cd $BSP_DIR
         rm -Rf $BSP_DIR/Linux_for_Tegra/source/public
@@ -117,13 +202,8 @@ setup_bsp() {
         mkdir -p $DOWNLOAD_DIR
 
         cd $DOWNLOAD_DIR
-        if [[ ! -e $BSP_FILE ]]; then 
-                if [[ -z $BSP_URL_UNRESOLVED ]]; then
-                        wget $BSP_URL/$BSP_FILE
-                else
-                        wget -O $BSP_FILE $BSP_URL_UNRESOLVED
-                fi
-        fi
+
+        download_and_check_file BSP
 
         cd $BUILD_DIR
         sudo rm -Rf Linux_for_Tegra
@@ -131,13 +211,9 @@ setup_bsp() {
         tar xjvf $BSP_FILE -C $BSP_DIR
 
         cd $DOWNLOAD_DIR
-        if [[ ! -e $RFS_FILE ]]; then 
-                if [[ -z $RFS_URL_UNRESOLVED ]]; then
-                        wget $RFS_URL/$RFS_FILE
-                else
-                        wget -O $RFS_FILE $RFS_URL_UNRESOLVED
-                fi
-        fi
+
+        download_and_check_file RFS
+
         sudo tar xjvf $RFS_FILE -C $BSP_DIR/Linux_for_Tegra/rootfs
 
         cd $BSP_DIR/Linux_for_Tegra
