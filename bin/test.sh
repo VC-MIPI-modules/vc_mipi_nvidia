@@ -10,6 +10,7 @@ usage() {
         echo "-h, --help                Show this help text."
         echo "-o, --host                Installs system tools, toolchain and board support package."
         echo "-p, --repatch             Repatches kernel sources."
+        echo "-s, --som                 Preselect system on module (NanoSD, XavierNXSD, AGXXavier, TX2NX)"
 }
 
 setup() {
@@ -36,15 +37,34 @@ run() {
 }
 
 test() {
-        # NanoSD, Auvidea_JNX30
-        for bsp in {1..7}; do # 32.5.0 .. 32.7.3
-                run $1 2 2 $bsp 
-        done
+        action=$1
+        case "$2" in
+        NanoSD) # + Auvidea_JNX30
+                for bsp in {1..7}; do # 32.5.0 .. 32.7.3
+                        run $action 2 2 $bsp 
+                done
+                ;;
 
-        # XavierNXSD, Auvidea_JNX30
-        for bsp in {1..10}; do # 32.5.0 .. 35.3.1
-                run $1 5 2 $bsp
-        done
+        XavierNXSD) # + Auvidea_JNX30
+                for bsp in {1..10}; do # 32.5.0 .. 35.3.1
+                        run $action 5 2 $bsp
+                done
+                ;;
+
+        AGXXavier) # + Auvidea_J20
+                for bsp in {1..11}; do # 32.3.1 .. 35.3.1
+                        run $action 6 1 $bsp
+                done
+                ;;
+
+        TX2NX) # + Auvidea_JNX30D
+                for bsp in {1..6}; do # 32.5.1 .. 32.7.3
+                        run $action 8 1 $bsp
+                done
+                ;;
+        *)
+                echo "Please select a SoM with -s|--som option."
+        esac
 
         echo
         echo "============================================="
@@ -70,7 +90,8 @@ flash_and_setup() {
         ./setup.sh --target vc XavierNXSD
 }
 
-set -e 
+set -e
+selected_som=
 
 while [ $# != 0 ] ; do
         option="$1"
@@ -78,8 +99,8 @@ while [ $# != 0 ] ; do
 
         case "${option}" in
         -b|--rebuild)
-                test --repatch
-                test --rebuild
+                test --repatch $selected_som
+                test --rebuild $selected_som
                 exit 0
                 ;;
         -f|--flash)
@@ -90,12 +111,16 @@ while [ $# != 0 ] ; do
                 exit 0
                 ;;
         -o|--host)
-                test --setup
+                test --setup $selected_som
                 exit 0
                 ;;
         -p|--repatch)
-                test --repatch
+                test --repatch $selected_som
                 exit 
+                ;;
+        -s|--som)
+                selected_som=$1
+                shift
                 ;;
         *)
                 echo "Unknown option ${option}"

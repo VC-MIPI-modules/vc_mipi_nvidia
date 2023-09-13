@@ -1,5 +1,8 @@
 #!/bin/bash
 
+PARENT_COMMAND=$(ps -o comm= $PPID)
+TEST_COMMAND="test.sh"
+
 usage() {
         echo "Usage: $0 [options]"
         echo ""
@@ -56,13 +59,8 @@ setup_kernel() {
         mkdir -p $DOWNLOAD_DIR
 
         cd $DOWNLOAD_DIR
-        if [[ ! -e $SRC_FILE ]]; then 
-                if [[ -z $SRC_URL_UNRESOLVED ]]; then
-                        wget $SRC_URL/$SRC_FILE
-                else
-                        wget -O $SRC_FILE $SRC_URL_UNRESOLVED
-                fi
-        fi
+
+        download_and_check_file SRC
 
         cd $BSP_DIR
         rm -Rf $BSP_DIR/Linux_for_Tegra/source/public
@@ -91,9 +89,7 @@ setup_kernel() {
         git config gc.auto 1
 
         cp -R $DRIVER_DIR/* $DRIVER_DST_DIR
-        for ((i = 0; i < ${#DT_CAM_FILE[@]}; i++)); do
-                cp -R "${DT_CAM_FILE[$i]}" "${DT_CAM_FILE_DST_DIR[$i]}"
-        done
+        copy_dtsi_files
 }
 
 repatch_kernel() {
@@ -119,13 +115,8 @@ setup_bsp() {
         mkdir -p $DOWNLOAD_DIR
 
         cd $DOWNLOAD_DIR
-        if [[ ! -e $BSP_FILE ]]; then 
-                if [[ -z $BSP_URL_UNRESOLVED ]]; then
-                        wget $BSP_URL/$BSP_FILE
-                else
-                        wget -O $BSP_FILE $BSP_URL_UNRESOLVED
-                fi
-        fi
+
+        download_and_check_file BSP
 
         cd $BUILD_DIR
         sudo rm -Rf Linux_for_Tegra
@@ -133,13 +124,9 @@ setup_bsp() {
         tar xjvf $BSP_FILE -C $BSP_DIR
 
         cd $DOWNLOAD_DIR
-        if [[ ! -e $RFS_FILE ]]; then 
-                if [[ -z $RFS_URL_UNRESOLVED ]]; then
-                        wget $RFS_URL/$RFS_FILE
-                else
-                        wget -O $RFS_FILE $RFS_URL_UNRESOLVED
-                fi
-        fi
+
+        download_and_check_file RFS
+
         sudo tar xjvf $RFS_FILE -C $BSP_DIR/Linux_for_Tegra/rootfs
 
         cd $BSP_DIR/Linux_for_Tegra
@@ -147,7 +134,7 @@ setup_bsp() {
         case $VC_MIPI_BSP in
         32.6.1|32.7.1|32.7.2|32.7.3|35.1.0|35.2.1|35.3.1)
                 sudo ./tools/l4t_create_default_user.sh --username vc --password vc \
-                        --hostname $VC_MIPI_SOM --autologin --accept-license
+                        --hostname nvidia --autologin --accept-license
                 ;;
         esac
 }

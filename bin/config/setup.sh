@@ -50,6 +50,7 @@ soms=(
 "NVIDIA Jetson Xavier NX (devkit) (https://developer.nvidia.com/embedded/jetson-xavier-nx)"
 "NVIDIA Jetson AGX Xavier (devkit) (https://developer.nvidia.com/embedded/jetson-agx-xavier-developer-kit)"
 "NVIDIA Jetson TX2/TX2i (devkit) (https://developer.nvidia.com/embedded/jetson-tx2-developer-kit)"
+"NVIDIA Jetson TX2 NX (production) (https://developer.nvidia.com/embedded/jetson-tx2-nx)"
 "NVIDIA Jetson Orin NX (devkit) (https://developer.nvidia.com/embedded/jetson-tx2-developer-kit)"
 "NVIDIA Jetson Orin Nano (devkit) (https://developer.nvidia.com/embedded/jetson-tx2-developer-kit)"        
 )
@@ -62,6 +63,7 @@ som_keys=(
 "XavierNXSD"
 "AGXXavier"
 "TX2"
+"TX2NX"
 "OrinNX"
 "OrinNano"
 )
@@ -90,6 +92,7 @@ boards=(
 "NVIDIA Jetson Xavier NX Developer Kit (https://developer.nvidia.com/embedded/jetson-xavier-nx-devkit)"
 "NVIDIA Jetson Orin Nano Developer Kit (...)"
 "Auvidea JNX30/JNX30D (https://auvidea.eu/product/70879)"
+"Auvidea JNX42 LM (https://auvidea.eu/product/70784)"
 "Auvidea J20 on Devkit Jetson AGX Xavier or TX2 (https://auvidea.eu/j20)"
 )
 
@@ -99,6 +102,7 @@ board_keys=(
 "NV_DevKit_XavierNX"
 "NV_DevKit_OrinNano"
 "Auvidea_JNX30"
+"Auvidea_JNX42"
 "Auvidea_J20"
 )
 
@@ -196,27 +200,31 @@ write_configuration() {
 
 setup_driver() {
         print_title $1 $2
-        choose_som 0 1 2 3 4 5 6
+        choose_som 0 1 2 3 4 5 6 7
         case ${som} in
         Nano2GB)
                 choose_board 0
                 choose_bsp 1 2 3 4 5 6 7
                 ;;
         Nano|NanoSD)
-                choose_board 1 4
+                choose_board 1 4 5
                 choose_bsp 1 2 3 4 5 6 7
                 ;;
         XavierNX|XavierNXSD) 
-                choose_board 2 4
+                choose_board 2 4 5
                 choose_bsp 1 2 3 4 5 6 7 8 9 10
                 ;;
         AGXXavier)
-                choose_board 5
+                choose_board 6
                 choose_bsp 0 1 2 3 4 5 6 7 8 9 10
                 ;;
-        TX2)
-                choose_board 5
+        TX2|TX2i)
+                choose_board 6
                 choose_bsp 1 2 3 4 5 6 7
+                ;;
+        TX2NX)
+                choose_board 4
+                choose_bsp 2 3 4 5 6 7
                 ;;
         OrinNano)
                 choose_board 3
