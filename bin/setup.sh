@@ -1,5 +1,8 @@
 #!/bin/bash
 
+PARENT_COMMAND=$(ps -o comm= $PPID)
+TEST_COMMAND="test.sh"
+
 usage() {
         echo "Usage: $0 [options]"
         echo ""
@@ -56,13 +59,8 @@ setup_kernel() {
         mkdir -p $DOWNLOAD_DIR
 
         cd $DOWNLOAD_DIR
-        if [[ ! -e $SRC_FILE ]]; then 
-                if [[ -z $SRC_URL_UNRESOLVED ]]; then
-                        wget $SRC_URL/$SRC_FILE
-                else
-                        wget -O $SRC_FILE $SRC_URL_UNRESOLVED
-                fi
-        fi
+
+        download_and_check_file SRC
 
         cd $BSP_DIR
         rm -Rf $BSP_DIR/Linux_for_Tegra/source/public
@@ -117,13 +115,8 @@ setup_bsp() {
         mkdir -p $DOWNLOAD_DIR
 
         cd $DOWNLOAD_DIR
-        if [[ ! -e $BSP_FILE ]]; then 
-                if [[ -z $BSP_URL_UNRESOLVED ]]; then
-                        wget $BSP_URL/$BSP_FILE
-                else
-                        wget -O $BSP_FILE $BSP_URL_UNRESOLVED
-                fi
-        fi
+
+        download_and_check_file BSP
 
         cd $BUILD_DIR
         sudo rm -Rf Linux_for_Tegra
@@ -131,13 +124,9 @@ setup_bsp() {
         tar xjvf $BSP_FILE -C $BSP_DIR
 
         cd $DOWNLOAD_DIR
-        if [[ ! -e $RFS_FILE ]]; then 
-                if [[ -z $RFS_URL_UNRESOLVED ]]; then
-                        wget $RFS_URL/$RFS_FILE
-                else
-                        wget -O $RFS_FILE $RFS_URL_UNRESOLVED
-                fi
-        fi
+
+        download_and_check_file RFS
+
         sudo tar xjvf $RFS_FILE -C $BSP_DIR/Linux_for_Tegra/rootfs
 
         cd $BSP_DIR/Linux_for_Tegra

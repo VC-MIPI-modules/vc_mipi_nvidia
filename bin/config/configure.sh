@@ -2,6 +2,7 @@
 
 . config/base.sh
 . helper/dtsi_helper.sh
+. helper/setup_helper.sh
 
 if [[ $1 == 'driver' ]]; then
         rm -Rf $CONFIGURATION_FILE
@@ -97,6 +98,27 @@ fi
 
 extract_and_set_key_from_config
 DT_CAM_FILE="${DT_CAM_DIR}/${DTSI_KEY}/${DTSI_FILE_DICT[$DTSI_KEY]}"
+
+if [[ "1" == $CHECK4MD5 ]]
+then
+        if [[ -z "$BSP_FILE_CHECKSUM" ]]
+        then
+                echo "BSP Checksum not found!"
+                exit 1
+        fi
+
+        if [[ -z "$RFS_FILE_CHECKSUM" ]]
+        then
+                echo "RFS Checksum not found!"
+                exit 1
+        fi
+
+        if [[ -z "$SRC_FILE_CHECKSUM" ]]
+        then
+                echo "SRC Checksum not found!"
+                exit 1
+        fi
+fi
 
 PATCHES=('kernel_common_32.3.1+')
 case $VC_MIPI_SOM in

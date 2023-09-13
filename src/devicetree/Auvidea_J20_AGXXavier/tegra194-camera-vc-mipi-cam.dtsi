@@ -218,8 +218,8 @@
 #if LINUX_VERSION < 500
                 pixel_t                  = "bayer_rggb";
 #else
-                mode_type		         = "bayer";
-                pixel_phase		         = "rggb";
+                mode_type                = "bayer";
+                pixel_phase              = "rggb";
                 csi_pixel_bit_depth	     = "10";
 #endif
 

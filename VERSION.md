@@ -1,6 +1,6 @@
 # Version History
 
-## v0.15.0 (TX2 NX, Bugfix & Improvement)
+## v0.15.0 (TX2 NX, JNX42, Bugfix & Improvements)
   * New Features
     * Added support for system on modules
       * NVIDIA Jetson TX2 NX
@@ -11,6 +11,7 @@
     * Added the documentation in README.md.
   * Improvement
     * Build pipe line simplyfied by copying all DT files automatically as long as the destination path of the given L4T is present.
+    * Build pipe line is checking the integrity of the downloaded files.
 ## v0.14.1 (Bugfixes)
   * Bugfixes
     * Corrected the documentation in README.md and VERSION.md.
