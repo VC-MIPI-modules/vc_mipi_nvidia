@@ -1,5 +1,8 @@
 #!/bin/bash
 
+PARENT_COMMAND=$(ps -o comm= $PPID)
+TEST_COMMAND="test.sh"
+
 usage() {
         echo "Usage: $0 [options]"
         echo ""
@@ -40,18 +43,14 @@ install_system_tools() {
 setup_toolchain() {
         echo "Setup tool chain ..."
         mkdir -p $BUILD_DIR
-        mkdir -p $DOWNLOAD_DIR
 
-        cd $DOWNLOAD_DIR
-        if [[ ! -e $GCC_FILE ]]; then
+        if [[ ! -e $GCC_DIR ]]; then
+                mkdir -p $GCC_DIR
+                cd $GCC_DIR
                 wget $GCC_URL/$GCC_FILE
+                tar xvf $GCC_FILE -C $GCC_DIR
+                rm $GCC_FILE
         fi
-
-        cd $BUILD_DIR
-        rm -Rf $GCC_DIR
-        mkdir -p $GCC_DIR
-        cd $DOWNLOAD_DIR
-        tar xvf $GCC_FILE -C $GCC_DIR
 }
 
 setup_kernel() {
@@ -60,9 +59,8 @@ setup_kernel() {
         mkdir -p $DOWNLOAD_DIR
 
         cd $DOWNLOAD_DIR
-        if [[ ! -e $SRC_FILE ]]; then 
-                wget $SRC_URL/$SRC_FILE
-        fi
+
+        download_and_check_file SRC
 
         cd $BSP_DIR
         rm -Rf $BSP_DIR/Linux_for_Tegra/source/public
@@ -91,7 +89,7 @@ setup_kernel() {
         git config gc.auto 1
 
         cp -R $DRIVER_DIR/* $DRIVER_DST_DIR
-        cp -R $DT_CAM_FILE $DT_CAM_FILE_DST_DIR
+        copy_dtsi_files
 }
 
 repatch_kernel() {
@@ -101,12 +99,14 @@ repatch_kernel() {
         FIRST_COMMIT=$(git rev-list --max-parents=0 --abbrev-commit HEAD)
         git reset --hard $FIRST_COMMIT
 
+        git config gc.auto 0
         for patch in ${PATCHES[@]}; do
                 echo "Applying patches from ${PATCH_DIR}/${patch}"
                 for patchfile in $PATCH_DIR/${patch}/*.patch; do
                         git am -3 --whitespace=fix --ignore-whitespace < ${patchfile}
                 done
         done
+        git config gc.auto 1
 }
 
 setup_bsp() {
@@ -115,9 +115,8 @@ setup_bsp() {
         mkdir -p $DOWNLOAD_DIR
 
         cd $DOWNLOAD_DIR
-        if [[ ! -e $BSP_FILE ]]; then 
-                wget $BSP_URL/$BSP_FILE
-        fi
+
+        download_and_check_file BSP
 
         cd $BUILD_DIR
         sudo rm -Rf Linux_for_Tegra
@@ -125,15 +124,20 @@ setup_bsp() {
         tar xjvf $BSP_FILE -C $BSP_DIR
 
         cd $DOWNLOAD_DIR
-        if [[ ! -e $RFS_FILE ]]; then 
-                wget $RFS_URL/$RFS_FILE
-        fi
+
+        download_and_check_file RFS
+
         sudo tar xjvf $RFS_FILE -C $BSP_DIR/Linux_for_Tegra/rootfs
 
         cd $BSP_DIR/Linux_for_Tegra
-        # NEW
-        # sudo ./tools/l4t_flash_prerequisites.sh
+        sudo ./tools/l4t_flash_prerequisites.sh # Only Orin Nano
         sudo ./apply_binaries.sh
+        case $VC_MIPI_BSP in
+        32.6.1|32.7.1|32.7.2|32.7.3|35.1.0|35.2.1|35.3.1)
+                sudo ./tools/l4t_create_default_user.sh --username vc --password vc \
+                        --hostname nvidia --autologin --accept-license
+                ;;
+        esac
 }
 
 setup_camera() {
@@ -141,7 +145,13 @@ setup_camera() {
 }
 
 setup_target() {
-        . $BIN_DIR/config/setup.sh --target
+        echo $1 $2
+        if [[ -z $1 ]]; then
+                . $BIN_DIR/config/setup.sh --target                
+        else
+                TARGET_USER=$1
+                TARGET_IP=$2
+        fi
 
         rm ~/.ssh/known_hosts
         ssh-copy-id -i ~/.ssh/id_rsa.pub $TARGET_USER@$TARGET_IP
@@ -185,7 +195,7 @@ while [ $# != 0 ] ; do
                 ;;
         -t|--target)
                 configure
-                setup_target
+                setup_target $1 $2
                 exit 0
                 ;;
         -o|--host)

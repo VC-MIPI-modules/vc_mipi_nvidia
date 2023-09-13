@@ -30,7 +30,7 @@
 //  2,4 | IMX178, IMX183, IMX226, IMX250, IMX252, IMX273, IMX290, IMX327, IMX335, IMX392, 
 //      | IMX412, IMX415, IMX568
 // -----+------------------------------------------------------------------------------------------
-#define VC_MIPI_LANES       1   // 1, 2 Lanes
+#define VC_MIPI_LANES       2   // 1, 2, 4 Lanes
 // ------------------------------------------------------------------------------------------------
 //  Embedded Metadata Height
 // -----+------------------------------------------------------------------------------------------
@@ -38,7 +38,7 @@
 //  1   | IMX290, IMX327, IMX335, IMX415, IMX568
 //  2   | IMX296, IMX297, IMX412
 // -----+------------------------------------------------------------------------------------------
-#define VC_MIPI_METADATA_H  "2" // "0", "1", "2" Lines of meta data
+#define VC_MIPI_METADATA_H  "1" // "0", "1", "2" Lines of meta data
 // ------------------------------------------------------------------------------------------------
 //   Sensor Manufacturer
 // -----+------------------------------------------------------------------------------------------
@@ -64,6 +64,11 @@
     #define BUS_WIDTH 2
     #define NUM_LANES "2" 
     #define NUM_CSI_LANES 4
+#endif
+#if VC_MIPI_LANES == 4
+    #define BUS_WIDTH 4
+    #define NUM_LANES "4" 
+    #define NUM_CSI_LANES 8
 #endif
 
 #if VC_MIPI_CAM_0 == 1 && VC_MIPI_CAM_1 == 1
@@ -178,8 +183,8 @@
 				// ----------------------------------------------------
 				// If you want to use GStreamer with nvarguscamerasrc
 				// you have to adjust this settings
-				physical_w              = "1.000";
-				physical_h              = "1.000";
+				physical_w              = "6.773";
+				physical_h              = "5.655";
 				// ----------------------------------------------------
 
 				// This node is needed by the Tegra framework.
@@ -196,8 +201,8 @@
 					// you have to adjust this settings. 
 					active_l                 = "0";
 					active_t                 = "0";
-					active_w                 = "0";
-					active_h                 = "0";
+					active_w                 = "2496";
+					active_h                 = "2048";
 					mode_type                = "bayer";
 					pixel_phase              = "rggb";
 					csi_pixel_bit_depth      = "10";
@@ -214,9 +219,9 @@
 
 					// For applications like argus_camera, there should be a minimal frame rate greater than zero!
 					min_framerate            = "100";       // mHz
-					max_framerate            = "60000";     // mHz
+					max_framerate            = "41300";     // mHz
 					step_framerate           = "100";       // mHz
-					default_framerate        = "60000";     // mHz
+					default_framerate        = "41300";     // mHz
 					// ----------------------------------------------------
 
 					gain_factor              = "1000";
@@ -230,8 +235,8 @@
 					phy_mode                 = "DPHY";
 					discontinuous_clk        = "no";
 					mclk_khz                 = "24000";
-					pix_clk_hz               = "74250000";
-					mclk_multiplier          = "9.33";
+					pix_clk_hz               = "215000000";
+					mclk_multiplier          = "0.0";  	// deprecated
 					cil_settletime           = "0";
 					dpcm_enable              = "false";
 				};
@@ -273,8 +278,8 @@
 				// ----------------------------------------------------
 				// If you want to use GStreamer with nvarguscamerasrc
 				// you have to adjust this settings
-				physical_w              = "1.000";
-				physical_h              = "1.000";
+				physical_w              = "6.773";
+				physical_h              = "5.655";
 				// ----------------------------------------------------
 
 				// This node is needed by the Tegra framework.
@@ -291,8 +296,8 @@
 					// you have to adjust this settings. 
 					active_l                 = "0";
 					active_t                 = "0";
-					active_w                 = "0";
-					active_h                 = "0";
+					active_w                 = "2496";
+					active_h                 = "2048";
 					mode_type                = "bayer";
 					pixel_phase              = "rggb";
 					csi_pixel_bit_depth      = "10";
@@ -309,9 +314,9 @@
 
 					// For applications like argus_camera, there should be a minimal frame rate greater than zero!
 					min_framerate            = "100";       // mHz
-					max_framerate            = "60000";     // mHz
+					max_framerate            = "41300";     // mHz
 					step_framerate           = "100";       // mHz
-					default_framerate        = "60000";     // mHz
+					default_framerate        = "41300";     // mHz
 					// ----------------------------------------------------
 
 					gain_factor              = "1000";
@@ -325,8 +330,8 @@
 					phy_mode                 = "DPHY";
 					discontinuous_clk        = "no";
 					mclk_khz                 = "24000";
-					pix_clk_hz               = "74250000";
-					mclk_multiplier          = "9.33";
+					pix_clk_hz               = "215000000";
+					mclk_multiplier          = "0.0";	// deprecated
 					cil_settletime           = "0";
 					dpcm_enable              = "false";
 				};

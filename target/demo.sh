@@ -31,6 +31,79 @@ install_dependencies() {
         fi
 }
 
+value() {
+        echo $(tr -d '\0' < $1)
+}
+
+check_dt_settings()
+{
+        cam_path=/sys/firmware/devicetree/base/cam_i2cmux/i2c@1
+        tegra_path=/sys/firmware/devicetree/base/tegra-camera-platform
+
+        echo "physical_w:               $(value ${cam_path}/vc_mipi@1a/physical_w)"
+        echo "physical_h:               $(value ${cam_path}/vc_mipi@1a/physical_h)"
+        echo
+        echo "num_lanes:                $(value ${cam_path}/vc_mipi@1a/num_lanes)"
+        echo "embedded_metadata_height: $(value ${cam_path}/vc_mipi@1a/mode0/embedded_metadata_height)"
+        echo "lane_polarity:            $(value ${cam_path}/vc_mipi@1a/mode0/lane_polarity)"
+        echo "active_l:                 $(value ${cam_path}/vc_mipi@1a/mode0/active_l)"
+        echo "active_t:                 $(value ${cam_path}/vc_mipi@1a/mode0/active_t)"
+        echo "active_w:                 $(value ${cam_path}/vc_mipi@1a/mode0/active_w)"
+        echo "active_h:                 $(value ${cam_path}/vc_mipi@1a/mode0/active_h)"
+        echo
+        echo "line_length:              $(value ${cam_path}/vc_mipi@1a/mode0/line_length)"
+        echo "discontinuous_clk:        $(value ${cam_path}/vc_mipi@1a/mode0/discontinuous_clk)"
+        echo "mclk_khz:                 $(value ${cam_path}/vc_mipi@1a/mode0/mclk_khz)"
+        echo "pix_clk_hz:               $(value ${cam_path}/vc_mipi@1a/mode0/pix_clk_hz)"
+        echo "mclk_multiplier:          $(value ${cam_path}/vc_mipi@1a/mode0/mclk_multiplier)"
+        echo "cil_settletime:           $(value ${cam_path}/vc_mipi@1a/mode0/cil_settletime)"
+        echo
+        echo "num_csi_lanes:            $(value ${tegra_path}/num_csi_lanes)"/
+        echo "max_lane_speed:           $(value ${tegra_path}/max_lane_speed)"
+        echo "min_bits_per_pixel:       $(value ${tegra_path}/min_bits_per_pixel)"
+        echo "max_pixel_rate:           $(value ${tegra_path}/max_pixel_rate)"
+}
+
+enable_debugging()
+{
+        echo 'file channel.c +p' > /sys/kernel/debug/dynamic_debug/control
+        echo 'file vi4_fops.c +p' > /sys/kernel/debug/dynamic_debug/control
+        echo 'file csi4_fops.c +p' > /sys/kernel/debug/dynamic_debug/control
+
+        echo 1 > /sys/kernel/debug/tracing/tracing_on
+        echo 30720 > /sys/kernel/debug/tracing/buffer_size_kb
+        echo 1 > /sys/kernel/debug/tracing/events/tegra_rtcpu/enable
+        echo 1 > /sys/kernel/debug/tracing/events/tegra_rtcpu/enable
+        echo 1 > /sys/kernel/debug/tracing/events/freertos/enable
+        echo 1 > /sys/kernel/debug/tracing/events/camera_common/enable
+        echo 3 > /sys/kernel/debug/camrtc/log-level
+        echo > /sys/kernel/debug/tracing/trace
+}
+
+clear_trace()
+{
+        echo > /sys/kernel/debug/tracing/trace
+}
+
+open_trace()
+{
+        less /sys/kernel/debug/tracing/trace
+}
+
+max_speed()
+{
+        path=/sys/kernel/debug/bpmp/debug/clk
+
+        echo 1 > ${path}/vi/mrq_rate_locked
+        echo 1 > ${path}/isp/mrq_rate_locked
+        echo 1 > ${path}/nvcsi/mrq_rate_locked
+        echo 1 > ${path}/emc/mrq_rate_locked
+        cat ${path}/vi/max_rate | tee ${path}/vi/rate
+        cat ${path}/isp/max_rate | tee  ${path}/isp/rate
+        cat ${path}/nvcsi/max_rate | tee ${path}/nvcsi/rate
+        cat ${path}/emc/max_rate | tee ${path}/emc/rate
+}
+
 get_system_info() 
 {
         if [[ -z $(which git) ]]; then
@@ -97,14 +170,18 @@ while [ $# != 0 ] ; do
                 argus=1
                 shift
                 ;;
-        --io)
-                io="$1"
-                shift
+        -c|--check)
+                check_dt_settings
+                exit 0
                 ;;
         -d|--device)
                 device="$1"
                 shift
                 ;;
+        --debug)
+                enable_debugging
+                exit 0
+                ;;                
         -e|--exposure)
                 exposure="$1"
                 shift
@@ -125,6 +202,10 @@ while [ $# != 0 ] ; do
                 get_system_info
                 exit 0
                 ;;
+        --io)
+                io="$1"
+                shift
+                ;;
         -o|--option)
                 option2="$1"
                 shift
@@ -140,6 +221,10 @@ while [ $# != 0 ] ; do
         -t|--trigger)
                 trigger="$1"
                 shift
+                ;;
+        --trace)
+                open_trace
+                exit 
                 ;;
         -w|--whitebalance)
                 whitebalance="-w '128 180 128'"
@@ -183,9 +268,27 @@ if [[ -n ${argus} ]]; then
         get_image_size
         adjust_pixel_format
 
-        gst-launch-1.0 nvarguscamerasrc sensor-id=${device} ! 'video/x-raw(memory:NVMM),framerate=20/1' ! autovideosink
+        gst-launch-1.0 nvarguscamerasrc sensor-id=${device} ! 'video/x-raw(memory:NVMM),framerate=20/1' ! fakesink
 else 
         cd ${script_dir}
-        v4l2-ctl -c bypass_mode=0
-        ./vcmipidemo -d${device} -an${option2} ${optionY} -s${shutter} -g${gain} -w '128 180 128'
+
+        max_speed
+        v4l2-ctl -d /dev/video${device} -c bypass_mode=0
+        # enable_debugging
+        # clear_trace
+        
+        # case ${device} in
+        # 0)
+                # v4l2-ctl --set-fmt-video=width=2592,height=1944
+        #         ;;
+        # 1)
+                v4l2-ctl --set-fmt-video=width=2496,height=2048
+        #         ;;
+        # esac
+        
+        # v4l2-ctl --stream-mmap --stream-count=1
+        # ./vcmipidemo -d${device} -an${option2} ${optionY} -s${shutter} -g${gain} -w '128 180 128'
+        ./v4l2-test -d /dev/video${device} -s -f 'Y10 '
+
+        # open_trace
 fi

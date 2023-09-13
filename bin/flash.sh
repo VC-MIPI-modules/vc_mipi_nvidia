@@ -27,14 +27,25 @@ flash_all() {
         cd $BSP_DIR/Linux_for_Tegra/
 	echo "Flashing all ... board: ${FLASH_BOARD}, partition: ${FLASH_PARTITION}"
         # sudo ./flash.sh $FLASH_BOARD $FLASH_PARTITION
+
+        # Only Orin Nano
+        start_time=$(date +%s)
         
         sudo ADDITIONAL_DTB_OVERLAY_OPT="BootOrderNvme.dtbo" \
         ./tools/kernel_flash/l4t_initrd_flash.sh \
                 --external-device nvme0n1p1 \
-                --external-only \
                 -c tools/kernel_flash/flash_l4t_external.xml \
-                --showlogs \
-                --network usb0 jetson-orin-nano-devkit internal
+                -p "-c bootloader/t186ref/cfg/flash_t234_qspi.xml" \
+                --network usb0 \
+                jetson-orin-nano-devkit internal
+
+        end_time=$(date +%s)
+        elapsed_time=$((${end_time} - ${start_time}))
+
+        echo "------------------------------------------------------------"
+        echo -n "  "
+        eval "echo $(date -ud "@${elapsed_time}" +'The process took %H hours %M minutes %S seconds')"
+        echo "------------------------------------------------------------"
 }
 
 flash_kernel() {

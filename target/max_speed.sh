@@ -1,12 +1,12 @@
 #!/bin/sh
 
+path=/sys/kernel/debug/bpmp/debug/clk
 
-echo 1 > /sys/kernel/debug/bpmp/debug/clk/vi/mrq_rate_locked
-echo 1 > /sys/kernel/debug/bpmp/debug/clk/isp/mrq_rate_locked
-echo 1 > /sys/kernel/debug/bpmp/debug/clk/nvcsi/mrq_rate_locked
-echo 1 > /sys/kernel/debug/bpmp/debug/clk/emc/mrq_rate_locked
-cat /sys/kernel/debug/bpmp/debug/clk/vi/max_rate |tee /sys/kernel/debug/bpmp/debug/clk/vi/rate
-cat /sys/kernel/debug/bpmp/debug/clk/isp/max_rate | tee  /sys/kernel/debug/bpmp/debug/clk/isp/rate
-cat /sys/kernel/debug/bpmp/debug/clk/nvcsi/max_rate | tee /sys/kernel/debug/bpmp/debug/clk/nvcsi/rate
-cat /sys/kernel/debug/bpmp/debug/clk/emc/max_rate | tee /sys/kernel/debug/bpmp/debug/clk/emc/rate
-
+echo 1 > ${path}/vi/mrq_rate_locked
+echo 1 > ${path}/isp/mrq_rate_locked
+echo 1 > ${path}/nvcsi/mrq_rate_locked
+echo 1 > ${path}/emc/mrq_rate_locked
+cat ${path}/vi/max_rate | tee ${path}/vi/rate
+cat ${path}/isp/max_rate | tee  ${path}/isp/rate
+cat ${path}/nvcsi/max_rate | tee ${path}/nvcsi/rate
+cat ${path}/emc/max_rate | tee ${path}/emc/rate
