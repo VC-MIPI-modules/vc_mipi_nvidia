@@ -8,6 +8,7 @@
       * Auvidea JNX42 with NVIDIA Jetson Nano and Xavier NX *(JNX42 supports only one camera - Cam0 for Jetson Nano, TX2 NX and Xavier NX)*
   * Bugfix
     * Fixed an issue with ./setup.sh -c (It did not load the correct DT file in every case.)
+    * Added the documentation in README.md.
   * Improvement
     * Build pipe line simplyfied by copying all DT files automatically as long as the destination path of the given L4T is present.
 ## v0.14.1 (Bugfixes)

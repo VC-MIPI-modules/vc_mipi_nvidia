@@ -13,6 +13,7 @@
   * [NVIDIA Jetson Nano 2GB Developer Kit](https://developer.nvidia.com/embedded/jetson-nano-2gb-developer-kit)
   * [NVIDIA Jetson Xavier NX Developer Kit](https://developer.nvidia.com/embedded/jetson-xavier-nx-devkit)
   * [Auvidea JNX30/JNX30D](https://auvidea.eu/product/70879)
+  * [Auvidea JNX42 LM](https://auvidea.eu/product/70784)
   * [Auvidea J20 on Devkit Jetson AGX Xavier or TX2](https://auvidea.eu/j20/) *(only connector 2+3)*
 * Supported board support packages
   * [NVIDIA L4T 32.3.1](https://developer.nvidia.com/l4t-3231-archive) *(only NVIDIA Jetson AGX Xavier)*
@@ -240,8 +241,10 @@ If you want to change some settings of a camera in the device tree, please follo
    | ---------------- | ------------- | ---------------- |
    | NVIDIA Jetson Nano | NVIDIA Jetson Nano Developer Kit | src/devicetree/NV_DevKit_Nano/tegra210-camera-vc-mipi-cam.dtsi |
    | NVIDIA Jetson Nano | Auvidea JNX30 | src/devicetree/Auvidea_JNX30_Nano/tegra210-camera-vc-mipi-cam.dtsi |
+   | NVIDIA Jetson Nano | Auvidea JNX42 | src/devicetree/Auvidea_JNX42_Nano/tegra210-camera-vc-mipi-cam.dtsi |
    | NVIDIA Jetson Xavier NX | NVIDIA Jetson Xavier NX Developer Kit | src/devicetree/NV_DevKit_XavierNX/tegra194-camera-vc-mipi-cam.dtsi |
    | NVIDIA Jetson Xavier NX | Auvidea JNX30 | src/devicetree/Auvidea_JNX30_XavierNX/tegra194-camera-vc-mipi-cam.dtsi |
+   | NVIDIA Jetson Xavier NX | Auvidea JNX42 | src/devicetree/Auvidea_JNX42_XavierNX/tegra194-camera-vc-mipi-cam.dtsi |
    | NVIDIA Jetson AGX Xavier | Auvidea J20 on DevKit | src/devicetree/Auvidea_J20_AGXXavier/tegra194-camera-vc-mipi-cam.dtsi |
    | NVIDIA Jetson TX2 | Auvidea J20 on DevKit | src/devicetree/Auvidea_J20_TX2/tegra186-camera-vc-mipi-cam.dtsi |
    | NVIDIA Jetson TX2 NX | Auvidea JNX30D | src/devicetree/Auvidea_JNX30D_TX2NX/tegra186-camera-vc-mipi-cam.dtsi |
@@ -307,6 +310,8 @@ If you have your own BSP, you have to integrate the driver into it. Please follo
    |                          |                | 32.6.1 - 32.7.3 | kernel_Nano_32.6.1+   |
    |                          | Auvidea JNX30  | 32.5.0 - 32.5.2 | kernel_Nano_32.5.0+ <br> dt_Auvidea_JNX30_Nano_32.5.0+ |
    |                          |                | 32.6.1 - 32.7.3 | kernel_Nano_32.6.1+ <br> dt_Auvidea_JNX30_Nano_32.5.0+ |
+   |                          | Auvidea JNX42  | 32.5.0 - 32.5.2 | kernel_Nano_32.5.0+ <br> dt_Auvidea_JNX30_Nano_32.5.0+ |
+   |                          |                | 32.6.1 - 32.7.3 | kernel_Nano_32.6.1+ <br> dt_Auvidea_JNX30_Nano_32.5.0+ |
    | NVIDIA Jetson Xavier NX  | NVIDIA DevKit  | 32.5.0          | kernel_Xavier_32.5.0+ |
    |                          |                | 32.5.1 - 32.5.2 | kernel_Xavier_32.5.1+ |
    |                          |                | 32.6.1 - 32.7.2 | kernel_Xavier_32.6.1+ |
@@ -315,6 +320,13 @@ If you have your own BSP, you have to integrate the driver into it. Please follo
    |                          |                | 35.2.1          | kernel_Xavier_35.2.1+ |
    |                          |                | 35.3.1          | kernel_Xavier_35.3.1+ |
    |                          | Auvidea JNX30  | 32.5.0          | kernel_Xavier_32.5.0+ <br> dt_Auvidea_JNX30_XavierNX_32.5.0+ |
+   |                          |                | 32.5.1 - 32.5.2 | kernel_Xavier_32.5.1+ <br> dt_Auvidea_JNX30_XavierNX_32.5.0+ |
+   |                          |                | 32.6.1 - 32.7.2 | kernel_Xavier_32.6.1+ <br> dt_Auvidea_JNX30_XavierNX_32.5.0+ |
+   |                          |                | 32.7.3          | kernel_Xavier_32.7.3+ <br> dt_Auvidea_JNX30_XavierNX_32.5.0+ |
+   |                          |                | 35.1.0          | kernel_Xavier_35.1.0+ <br> dt_Auvidea_JNX30_XavierNX_32.5.0+ |
+   |                          |                | 35.2.1          | kernel_Xavier_35.2.1+ <br> dt_Auvidea_JNX30_XavierNX_32.5.0+ |
+   |                          |                | 35.3.1          | kernel_Xavier_35.3.1+ <br> dt_Auvidea_JNX30_XavierNX_32.5.0+ |
+   |                          | Auvidea JNX42  | 32.5.0          | kernel_Xavier_32.5.0+ <br> dt_Auvidea_JNX30_XavierNX_32.5.0+ |
    |                          |                | 32.5.1 - 32.5.2 | kernel_Xavier_32.5.1+ <br> dt_Auvidea_JNX30_XavierNX_32.5.0+ |
    |                          |                | 32.6.1 - 32.7.2 | kernel_Xavier_32.6.1+ <br> dt_Auvidea_JNX30_XavierNX_32.5.0+ |
    |                          |                | 32.7.3          | kernel_Xavier_32.7.3+ <br> dt_Auvidea_JNX30_XavierNX_32.5.0+ |
@@ -342,8 +354,10 @@ If you have your own BSP, you have to integrate the driver into it. Please follo
    | ------------------------ | -------------- | ---------------------------------- |
    | NVIDIA Jetson Nano       | NVIDIA DevKit  | NV_DevKit_Nano/tegra210-camera-vc-mipi-cam.dtsi <br> => /hardware/nvidia/platform/t210/porg/kernel-dts/porg-platforms |
    |                          | Auvidea JNX30  | Auvidea_JNX30_Nano/tegra210-camera-vc-mipi-cam.dtsi <br> => /hardware/nvidia/platform/t210/porg/kernel-dts/porg-platforms |
+   |                          | Auvidea JNX42  | Auvidea_JNX42_Nano/tegra210-camera-vc-mipi-cam.dtsi <br> => /hardware/nvidia/platform/t210/porg/kernel-dts/porg-platforms |
    | NVIDIA Jetson Xavier NX  | NVIDIA DevKit  | NV_DevKit_XavierNX/tegra194-camera-vc-mipi-cam.dtsi <br> => /hardware/nvidia/platform/t19x/jakku/kernel-dts/common |
    |                          | Auvidea JNX30  | Auvidea_JNX30_XavierNX/tegra194-camera-vc-mipi-cam.dtsi <br> => /hardware/nvidia/platform/t19x/jakku/kernel-dts/common |
+   |                          | Auvidea JNX42  | Auvidea_JNX42_XavierNX/tegra194-camera-vc-mipi-cam.dtsi <br> => /hardware/nvidia/platform/t19x/jakku/kernel-dts/common |
    | NVIDIA Jetson AGX Xavier | DevKit + J20   | Auvidea_J20_AGXXavier/tegra194-camera-vc-mipi-cam.dtsi <br> => /hardware/nvidia/platform/t19x/common/kernel-dts/t19x-common-modules |
    | NVIDIA Jetson TX2        | DevKit + J20   | Auvidea_J20_TX2/tegra186-camera-vc-mipi-cam.dtsi <br> => /hardware/nvidia/platform/t18x/common/kernel-dts/t18x-common-modules |
    | NVIDIA Jetson TX2 NX     | Auvidea JNX30D | Auvidea_JNX30D_TX2NX/tegra186-camera-vc-mipi-cam.dtsi <br> => /hardware/nvidia/platform/t18x/lanai/kernel-dts/common |
