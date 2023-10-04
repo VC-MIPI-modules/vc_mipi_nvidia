@@ -20,8 +20,8 @@
 // ------------------------------------------------------------------------------------------------
 //  Driver Configuration for NVIDIA Jetson Orin Nano on NVIDIA Jetson Orin Nano Developer Kit
 // ------------------------------------------------------------------------------------------------
-#define VC_MIPI_CAM_0       1   // 1: Enabled, 0: Disabled  (serial_a => CSI Port 0 => VI Stream 0)
-#define VC_MIPI_CAM_1       1   // 1: Enabled, 0: Disabled  (serial_c => CSI Port 2 => VI Stream 2)
+#define VC_MIPI_CAM_1       1   // 1: Enabled, 0: Disabled  (serial_a => CSI Port 0 => VI Stream 0)
+#define VC_MIPI_CAM_0       1   // 1: Enabled, 0: Disabled  (serial_c => CSI Port 2 => VI Stream 2)
 // ------------------------------------------------------------------------------------------------
 //  Supported number of lanes
 // -----+------------------------------------------------------------------------------------------
@@ -30,7 +30,7 @@
 //  2,4 | IMX178, IMX183, IMX226, IMX250, IMX252, IMX273, IMX290, IMX327, IMX335, IMX392, 
 //      | IMX412, IMX415, IMX568
 // -----+------------------------------------------------------------------------------------------
-#define VC_MIPI_LANES       2   // 1, 2, 4 Lanes
+#define VC_MIPI_LANES       4   // 1, 2, 4 Lanes
 // ------------------------------------------------------------------------------------------------
 //  Embedded Metadata Height
 // -----+------------------------------------------------------------------------------------------
@@ -38,7 +38,7 @@
 //  1   | IMX290, IMX327, IMX335, IMX415, IMX568
 //  2   | IMX296, IMX297, IMX412
 // -----+------------------------------------------------------------------------------------------
-#define VC_MIPI_METADATA_H  "1" // "0", "1", "2" Lines of meta data
+#define VC_MIPI_METADATA_H  "4" // "0", "1", "2" Lines of meta data
 // ------------------------------------------------------------------------------------------------
 //   Sensor Manufacturer
 // -----+------------------------------------------------------------------------------------------
@@ -71,7 +71,7 @@
     #define NUM_CSI_LANES 8
 #endif
 
-#if VC_MIPI_CAM_0 == 1 && VC_MIPI_CAM_1 == 1
+#if VC_MIPI_CAM_1 == 1 && VC_MIPI_CAM_0 == 1
     #define VC_MIPI_CAMERAS 2
 #else
     #define VC_MIPI_CAMERAS 1
@@ -83,7 +83,7 @@
 		ports {
 			#address-cells = <1>;
 			#size-cells = <0>;
-#if VC_MIPI_CAM_0 == 1
+#if VC_MIPI_CAM_1 == 1
 			vc_vi_port0: port@0 {
 				reg = <0>;
 				vc_vi_in0: endpoint {
@@ -93,7 +93,7 @@
 				};
 			};
 #endif
-#if VC_MIPI_CAM_1 == 1
+#if VC_MIPI_CAM_0 == 1
 			vc_vi_port1: port@1 {
 				reg = <1>;
 				vc_vi_in1: endpoint {
@@ -111,7 +111,7 @@
 			num-channels = <VC_MIPI_CAMERAS>;
 			#address-cells = <1>;
 			#size-cells = <0>;
-#if VC_MIPI_CAM_0 == 1
+#if VC_MIPI_CAM_1 == 1
 			vc_csi_chan0: channel@0 {
 				reg = <0>;
 				ports {
@@ -135,7 +135,7 @@
 			};
 #endif
 
-#if VC_MIPI_CAM_1 == 1
+#if VC_MIPI_CAM_0 == 1
 			vc_csi_chan1: channel@1 {
 				reg = <1>;
 				ports {
@@ -162,7 +162,7 @@
 	};
 
 	cam_i2cmux {
-#if VC_MIPI_CAM_0 == 1
+#if VC_MIPI_CAM_1 == 1
 		i2c@0 {
 #if VC_MIPI_MANUFACTURER == 1
 			vc_mipi_cam0: vc_mipi@1a {
@@ -183,12 +183,13 @@
 				// ----------------------------------------------------
 				// If you want to use GStreamer with nvarguscamerasrc
 				// you have to adjust this settings
-				physical_w              = "6.773";
-				physical_h              = "5.655";
+				physical_w              = "0.000";
+				physical_h              = "0.000";
 				// ----------------------------------------------------
 
 				// This node is needed by the Tegra framework.
-				// You don't have to change any settings if just want to use the V4L API.
+				// You don't have to change any settings if just want 
+				// to use the V4L API.
 				mode0 {
 					num_lanes                = NUM_LANES;
 					tegra_sinterface         = "serial_b";
@@ -201,8 +202,8 @@
 					// you have to adjust this settings. 
 					active_l                 = "0";
 					active_t                 = "0";
-					active_w                 = "2496";
-					active_h                 = "2048";
+					active_w                 = "0";
+					active_h                 = "0";
 					mode_type                = "bayer";
 					pixel_phase              = "rggb";
 					csi_pixel_bit_depth      = "10";
@@ -217,11 +218,12 @@
 					step_exp_time            = "1";         // us
 					default_exp_time         = "10000";     // us
 
-					// For applications like argus_camera, there should be a minimal frame rate greater than zero!
+					// For applications like argus_camera, there should 
+					// be a minimal frame rate greater than zero!
 					min_framerate            = "100";       // mHz
-					max_framerate            = "41300";     // mHz
+					max_framerate            = "60000";     // mHz
 					step_framerate           = "100";       // mHz
-					default_framerate        = "41300";     // mHz
+					default_framerate        = "60000";     // mHz
 					// ----------------------------------------------------
 
 					gain_factor              = "1000";
@@ -255,9 +257,9 @@
 				};
 			};
 		};
-#endif // VC_MIPI_CAM_0
+#endif // VC_MIPI_CAM_1
 
-#if VC_MIPI_CAM_1 == 1
+#if VC_MIPI_CAM_0 == 1
 		i2c@1 {
 #if VC_MIPI_MANUFACTURER == 1
 			vc_mipi_cam1: vc_mipi@1a {
@@ -283,7 +285,8 @@
 				// ----------------------------------------------------
 
 				// This node is needed by the Tegra framework.
-				// You don't have to change any settings if just want to use the V4L API.
+				// You don't have to change any settings if just want 
+				// to use the V4L API.
 				mode0 {
 					num_lanes                = NUM_LANES;
 					tegra_sinterface         = "serial_c";
@@ -296,7 +299,7 @@
 					// you have to adjust this settings. 
 					active_l                 = "0";
 					active_t                 = "0";
-					active_w                 = "2496";
+					active_w                 = "2472";
 					active_h                 = "2048";
 					mode_type                = "bayer";
 					pixel_phase              = "rggb";
@@ -312,11 +315,12 @@
 					step_exp_time            = "1";         // us
 					default_exp_time         = "10000";     // us
 
-					// For applications like argus_camera, there should be a minimal frame rate greater than zero!
+					// For applications like argus_camera, there should 
+					// be a minimal frame rate greater than zero!
 					min_framerate            = "100";       // mHz
-					max_framerate            = "41300";     // mHz
+					max_framerate            = "57290";     // mHz
 					step_framerate           = "100";       // mHz
-					default_framerate        = "41300";     // mHz
+					default_framerate        = "57290";     // mHz
 					// ----------------------------------------------------
 
 					gain_factor              = "1000";
@@ -330,8 +334,8 @@
 					phy_mode                 = "DPHY";
 					discontinuous_clk        = "no";
 					mclk_khz                 = "24000";
-					pix_clk_hz               = "215000000";
-					mclk_multiplier          = "0.0";	// deprecated
+					pix_clk_hz               = "600000000"; // 205000000 - 600000000 tested with IMX568
+					mclk_multiplier          = "0.0";		// deprecated
 					cil_settletime           = "0";
 					dpcm_enable              = "false";
 				};
@@ -350,7 +354,7 @@
 				};
 			};
 		};
-#endif // VC_MIPI_CAM_1
+#endif // VC_MIPI_CAM_0
 	};
 
 	lens@vc_mipi {
@@ -376,7 +380,7 @@
 		isp_bw_margin_pct = <25>;
 
 		modules {
-#if VC_MIPI_CAM_0 == 1
+#if VC_MIPI_CAM_1 == 1
 			cam_module0: module0 {
 				badge = "jakku_front_vc_mipi";
 				position = "front";
@@ -396,9 +400,9 @@
 					proc-device-tree = "/proc/device-tree/lens@vc_mipi/";
 				};
 			};
-#endif // VC_MIPI_CAM_0
+#endif // VC_MIPI_CAM_1
 			
-#if VC_MIPI_CAM_1 == 1
+#if VC_MIPI_CAM_0 == 1
 			cam_module1: module1 {
 				badge = "jakku_rear_vc_mipi";
 				position = "rear";
@@ -418,7 +422,7 @@
 					proc-device-tree = "/proc/device-tree/lens@vc_mipi/";
 				};
 			};
-#endif // VC_MIPI_CAM_1
+#endif // VC_MIPI_CAM_0
 		};
 	};
 };
@@ -435,7 +439,7 @@
 		#size-cells = <0>;
 		mux-gpios = <&tegra_aon_gpio CAM_I2C_MUX GPIO_ACTIVE_HIGH>;
 		i2c-parent = <&cam_i2c>;
-#if VC_MIPI_CAM_0 == 1
+#if VC_MIPI_CAM_1 == 1
 		i2c@0 {
 			status = "okay";
 			reg = <0>;
@@ -450,7 +454,7 @@
 			};
 		};
 #endif
-#if VC_MIPI_CAM_1 == 1
+#if VC_MIPI_CAM_0 == 1
 		i2c@1 {
 			status = "okay";
 			reg = <1>;
