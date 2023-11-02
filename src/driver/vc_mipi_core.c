@@ -965,12 +965,20 @@ int vc_mod_set_mode(struct vc_cam *cam, int *reset)
 
         switch (cam->state.trigger_mode) {
         case REG_TRIGGER_DISABLE:
-        case REG_TRIGGER_SYNC:
         case REG_TRIGGER_STREAM_EDGE:
         case REG_TRIGGER_STREAM_LEVEL:
         default:
                 type = MODE_TYPE_STREAM;
                 stype = "STREAM";
+                break;
+        case REG_TRIGGER_SYNC:
+                if (cam->ctrl.flags & FLAG_TRIGGER_SLAVE) {
+                        type = MODE_TYPE_SLAVE;
+                        stype = "SLAVE";
+                } else {
+                        type = MODE_TYPE_STREAM;
+                        stype = "STREAM";
+                }
                 break;
         case REG_TRIGGER_EXTERNAL:
         case REG_TRIGGER_PULSEWIDTH:
@@ -1037,7 +1045,7 @@ int vc_mod_set_trigger_mode(struct vc_cam *cam, int mode)
                 mode_desc = "SINGLE";
                 state->trigger_mode = REG_TRIGGER_SINGLE;
 
-        } else if (mode == 5 && ctrl->flags & FLAG_TRIGGER_SYNC) {
+        } else if (mode == 5 && ctrl->flags & (FLAG_TRIGGER_SYNC | FLAG_TRIGGER_SLAVE)) {
                 mode_desc = "SYNC";
                 state->trigger_mode = REG_TRIGGER_SYNC;
 
@@ -1371,9 +1379,14 @@ int vc_sen_start_stream(struct vc_cam *cam)
                         vc_err(dev, "%s(): Unable to start streaming (error: %d)\n", __FUNCTION__, ret);
         }
 
-        ret |= vc_mod_write_io_mode(client_mod, state->io_mode);
-        ret |= vc_mod_write_trigger_mode(client_mod, state->trigger_mode);
+        if (ctrl->flags & FLAG_TRIGGER_SLAVE && state->trigger_mode == REG_TRIGGER_SYNC) {
+                ret |= vc_mod_write_io_mode(client_mod, REG_IO_XTRIG_ENABLE);
+                ret |= vc_mod_write_trigger_mode(client_mod, REG_TRIGGER_DISABLE);
 
+        } else {
+                ret |= vc_mod_write_io_mode(client_mod, state->io_mode);
+                ret |= vc_mod_write_trigger_mode(client_mod, state->trigger_mode);
+        }
         state->streaming = 1;
 
         return ret;

@@ -486,10 +486,6 @@ static void vc_init_ctrl_imx392(struct vc_ctrl *ctrl, struct vc_desc* desc)
 // ------------------------------------------------------------------------------------------------
 //  Settings for IMX412C (Rev.02)
 //
-//  NOTES: 
-//  - No TRIGGER and FLASH capability.
-//  TODO:
-//  - Slave Mode not implemented.
 
 static void vc_init_ctrl_imx412(struct vc_ctrl *ctrl, struct vc_desc* desc)
 {

@@ -56,5 +56,6 @@ In the table below you can find, which camera supports which trigger mode.
 | IMX296 | yes | yes | yes |   - |   - |   - |   - |
 | IMX297 | yes | yes | yes |   - |   - |   - |   - |
 | IMX392 | yes | yes | yes | yes |   - |   - |   - |
+| IMX412 |     |     |     |     | yes |   - |   - |
 | IMX565 | yes | yes | yes | yes |   - |   - |   - |
 | IMX568 | yes | yes | yes | yes |   - |   - |   - |

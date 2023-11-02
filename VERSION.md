@@ -1,19 +1,22 @@
 # Version History
 
+## v0.15.1 (Bugfixes)
+  * Bugfixes
+    * Fixed a missing implementation to set up slave mode for IMX412
 ## v0.15.0 (JNX42, Bugfixes & Improvements)
   * New Features
     * Added support for carrier boards
       * Auvidea JNX42 with NVIDIA Jetson Nano and Xavier NX *(JNX42 supports only one camera - Cam0 for Jetson Nano, TX2 NX and Xavier NX)*
   * Bugfixes
-    * Fixed an issue with ./setup.sh -c (It did not load the correct DT file in every case.)
+    * Fixed an issue with ./setup.sh -c (It did not load the correct DT file in every case)
     * Fixed wrong physical_w and physical_h values in README.md
   * Improvements
-    * Build pipeline simplyfied by copying all DT files automatically as long as the destination path of the given L4T is present.
-    * Build pipeline is checking the integrity of the downloaded files.
+    * Build pipeline simplyfied by copying all DT files automatically as long as the destination path of the given L4T is present
+    * Build pipeline is checking the integrity of the downloaded files
 ## v0.14.1 (Bugfixes)
   * Bugfixes
     * Corrected the documentation in README.md and VERSION.md.
-    * Fixed a bug in configure.sh with a missing DT file for AGX Xavier SoMs.
+    * Fixed a bug in configure.sh with a missing DT file for AGX Xavier SoMs
 ## v0.14.0 (L4T 32.7.3, L4T 35.2.1, 35.3.1)
   * New Features
     * Added support for carrier boards
@@ -26,27 +29,27 @@
       * IMX462
       * IMX565
     * Bugfix
-      * Added trigger support for OV9281.
+      * Added trigger support for OV9281
 ## v0.13.0 (L4T 35.1.0)
   * New Features
     * Added support for board support packages
       * NVIDIA L4T 35.1.0 *(only NVIDIA Jetson Xavier NX and AGX Xavier)*     
 ## v0.12.3 (Bugfixes)
   * Bugfixes
-    * Fixed an issue with the IMX183's self-triggering mode.
+    * Fixed an issue with the IMX183's self-triggering mode
 ## v0.12.2 (Bugfixes)
   * Bugfixes
-    * Fixed a problem in function vc_fix_image_size.
+    * Fixed a problem in function vc_fix_image_size
 ## v0.12.1 (Improvements & Bugfixes)
   * Improvements
-    * Improved ROI cropping documentation with adjustable ranges for each camera.
-    * Reorganized common kernel patches in a shared folder.
+    * Improved ROI cropping documentation with adjustable ranges for each camera
+    * Reorganized common kernel patches in a shared folder
   * Bugfixes
-    * Reduced image size limitation from width 32 to 4 and height from 4 to 1.
-    * Fixed missing active_l and active_t device tree properties for Xavier and TX2 SoMs.
-    * Fixed a problem with image sizes in heterogenous multi camera setups.
+    * Reduced image size limitation from width 32 to 4 and height from 4 to 1
+    * Fixed missing active_l and active_t device tree properties for Xavier and TX2 SoMs
+    * Fixed a problem with image sizes in heterogenous multi camera setups
     * Added missing active_l and active_t device tree properties in README.md
-    * Fixed image height workaround for new ROI cropping implementation.
+    * Fixed image height workaround for new ROI cropping implementation
 
 ## v0.12.0 (ROI cropping by V4L)
   * New Features
@@ -192,4 +195,4 @@
     * Added support for VC MIPI Camera Modules
       * IMX183, IMX226, IMX250, IMX252, IMX273, IMX290, IMX296, IMX327, IMX412, IMX415, OV9281
     * Image Streaming in GREY, Y10, Y12, SRGGB8, SRGGB10, SRGGB12 format
-    * Exposure and Gain can be set via V4L2 library.
+    * Exposure and Gain can be set via V4L2 library
