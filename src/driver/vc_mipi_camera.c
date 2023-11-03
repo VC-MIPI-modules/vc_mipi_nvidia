@@ -6,7 +6,7 @@
 #include "vc_mipi_core.h"
 #include "vc_mipi_modules.h"
 
-#define VERSION "0.15.0"
+#define VERSION "0.15.1"
 // #define VC_CTRL_VALUE
 
 
