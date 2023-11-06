@@ -34,6 +34,9 @@
 #define FLAG_TRIGGER_STREAM_LEVEL       (1 << 16)
 #define FLAG_TRIGGER_SLAVE              (1 << 17)
 
+#define FLAG_COMPAT_VMAX                (1 << 18)
+#define FLAG_PREGIUS                    (1 << 19)
+
 #define FORMAT_RAW08                    0x2a
 #define FORMAT_RAW10                    0x2b
 #define FORMAT_RAW12                    0x2c
@@ -141,9 +144,10 @@ struct vc_csr {
 };
 
 typedef struct vc_timing {
-        __u8 num_lanes;
-        __u8 format;
-        __u32 hmax;
+        __u8       num_lanes;
+        __u8       format;
+        __u32      hmax;
+        vc_control vmax;
 } vc_timing;
 
 struct vc_ctrl {
@@ -152,6 +156,7 @@ struct vc_ctrl {
         struct i2c_client *client_sen;
         struct i2c_client *client_mod;
         // Controls
+//        struct vc_control vmax;
         struct vc_control vmax;
         struct vc_control exposure;
         struct vc_control gain;
@@ -238,5 +243,8 @@ int vc_sen_set_gain(struct vc_cam *cam, int gain);
 int vc_sen_set_blacklevel(struct vc_cam *cam, int blacklevel);
 int vc_sen_start_stream(struct vc_cam *cam);
 int vc_sen_stop_stream(struct vc_cam *cam);
+
+vc_control vc_core_get_vmax_by_lane_format(struct vc_cam *cam, __u8 num_lanes, __u8 format);
+
 
 #endif // _VC_MIPI_CORE_H

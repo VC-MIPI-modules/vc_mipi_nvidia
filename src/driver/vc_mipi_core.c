@@ -273,6 +273,7 @@ static void vc_core_print_modes(struct device *dev, struct vc_desc *desc)
         vc_notice(dev, "+----+---------+---------+---------+---------+---------+\n");
 }
 
+#if 0
 static void vc_core_print_timing(struct vc_cam *cam)
 {
         struct vc_ctrl *ctrl = &cam->ctrl;
@@ -297,6 +298,34 @@ static void vc_core_print_timing(struct vc_cam *cam)
                         index++;
                 }
                 vc_notice(dev, "+-------+--------+----------+-----------+\n");
+        }
+}
+#endif
+
+static void vc_core_print_timing(struct vc_cam *cam)
+{
+        struct vc_ctrl *ctrl = &cam->ctrl;
+        struct device *dev = vc_core_get_mod_device(cam);
+        char sformat[16];
+        int index = 0;
+
+        if (ctrl->flags & FLAG_INCREASE_FRAME_RATE) {
+                vc_notice(dev, "+-------+--------+------------+-----------+\n");
+                vc_notice(dev, "| lanes | format | exposure   | framerate |\n");
+                vc_notice(dev, "|       |        | max [us]   | max [mHz] |\n");
+                vc_notice(dev, "+-------+--------+------------+-----------+\n");
+                while (index < 8 && ctrl->expo_timing[index].num_lanes != 0) {
+                        __u8 num_lanes = ctrl->expo_timing[index].num_lanes;
+                        __u8 format = ctrl->expo_timing[index].format;
+                        __u32 max_exposure = vc_core_calculate_max_exposure(cam, num_lanes, format);
+                        __u32 max_frame_rate = vc_core_calculate_max_frame_rate(cam, num_lanes, format);
+
+                        vc_core_print_format(format, sformat);
+                        vc_notice(dev, "|     %1d | %s  | %10d | %9d |\n",
+                                num_lanes, sformat, max_exposure, max_frame_rate);
+                        index++;
+                }
+                vc_notice(dev, "+-------+--------+------------+-----------+\n");
         }
 }
 
@@ -564,6 +593,9 @@ __u32 vc_core_calculate_max_exposure(struct vc_cam *cam, __u8 num_lanes, __u8 fo
         struct vc_ctrl *ctrl = &cam->ctrl;
         struct device *dev = vc_core_get_sen_device(cam);
 
+        __u32 vmax_max = vc_core_get_vmax_by_lane_format(cam, num_lanes, format).max;
+        __u32 vmax_min = vc_core_get_vmax_by_lane_format(cam, num_lanes, format).min;
+
         switch (cam->state.trigger_mode) {
         case REG_TRIGGER_DISABLE:
         case REG_TRIGGER_SYNC:
@@ -573,8 +605,8 @@ __u32 vc_core_calculate_max_exposure(struct vc_cam *cam, __u8 num_lanes, __u8 fo
                 {
                         __u32 period_1H_ns = vc_core_calculate_period_1H(cam, num_lanes, format);
                         vc_dbg(dev, "%s(): period_1H_ns: %u, vmax.max: %u, vmax.min: %u\n",
-                                __FUNCTION__, period_1H_ns, ctrl->vmax.max, ctrl->vmax.min);
-                        return ((__u64)period_1H_ns * (cam->ctrl.vmax.max - ctrl->vmax.min)) / 1000;
+                                __FUNCTION__, period_1H_ns, vmax_max, vmax_min);
+                        return ((__u64)period_1H_ns * (vmax_max - vmax_min)) / 1000;
                 }
         case REG_TRIGGER_EXTERNAL:
         case REG_TRIGGER_PULSEWIDTH:
@@ -593,28 +625,52 @@ __u32 vc_core_get_optimized_vmax(struct vc_cam *cam)
         struct vc_state *state = &cam->state;
         struct device *dev = &ctrl->client_sen->dev;
 
+        __u8 num_lanes = state->num_lanes;
+        __u8 format = vc_core_v4l2_code_to_format(state->format_code);
+        __u32 vmax_def = vc_core_get_vmax_by_lane_format(cam, num_lanes, format).def;
+
         // Increase the frame rate when image height is reduced.
         if (ctrl->flags & FLAG_INCREASE_FRAME_RATE && state->frame.height < ctrl->frame.height) {
-                return ctrl->vmax.def - (ctrl->frame.height - state->frame.height);
+                vc_dbg(dev, "%s(): Increased frame rate: vmax %u/%u, height: %u/%u\n", __FUNCTION__,
+                        state->vmax, vmax_def, state->frame.height, ctrl->frame.height);
 
-                vc_notice(dev, "%s(): Increased frame rate: vmax %u/%u, height: %u/%u\n", __FUNCTION__,
-                        state->vmax, ctrl->vmax.def, state->frame.height, ctrl->frame.height);
+                return vmax_def - (ctrl->frame.height - state->frame.height);
         }
 
-        return ctrl->vmax.def;
+        return vmax_def;
 }
 
 __u32 vc_core_calculate_max_frame_rate(struct vc_cam *cam, __u8 num_lanes, __u8 format)
 {
-        struct vc_ctrl *ctrl = &cam->ctrl;
         struct device *dev = vc_core_get_sen_device(cam);
         __u32 period_1H_ns = vc_core_calculate_period_1H(cam, num_lanes, format);
         __u32 vmax = vc_core_get_optimized_vmax(cam);
+        __u32 vmax_def = vc_core_get_vmax_by_lane_format(cam, num_lanes, format).def;
 
         vc_dbg(dev, "%s(): period_1H_ns: %u, vmax: %u/%u\n",
-                __FUNCTION__, period_1H_ns, vmax, ctrl->vmax.def);
+                __FUNCTION__, period_1H_ns, vmax, vmax_def);
 
         return 1000000000 / (((__u64)period_1H_ns * vmax) / 1000);
+}
+
+vc_control vc_core_get_vmax_by_lane_format(struct vc_cam *cam, __u8 num_lanes, __u8 format)
+{
+        struct vc_ctrl *ctrl = &cam->ctrl;
+        int index = 0;
+
+        if (!(ctrl->flags & FLAG_COMPAT_VMAX)) {
+                return ctrl->vmax;
+        }
+
+        for (index = 0; index < 8; index++) {
+                if ( (num_lanes == ctrl->expo_timing[index].num_lanes)
+                  && (format == ctrl->expo_timing[index].format) ) {
+                        return ctrl->expo_timing[index].vmax;
+                        //Nullpruefung!!
+                  }
+        }
+
+        return ctrl->vmax;
 }
 
 
@@ -1199,6 +1255,7 @@ static int vc_sen_read_image_size(struct vc_ctrl *ctrl, struct vc_frame *size)
         return 0;
 }
 
+#if 0
 int vc_sen_set_roi(struct vc_cam *cam)
 {
         struct vc_ctrl *ctrl = &cam->ctrl;
@@ -1235,6 +1292,60 @@ int vc_sen_set_roi(struct vc_cam *cam)
 
         return 0;
 }
+#endif
+
+int vc_sen_set_roi(struct vc_cam *cam)
+{
+        struct vc_ctrl *ctrl = &cam->ctrl;
+        struct vc_state *state = &cam->state;
+        struct i2c_client *client = ctrl->client_sen;
+        struct device *dev = &client->dev;
+        int w_left, w_top, w_width, w_height;
+        int ret = 0;
+
+        __u16 vc2EAV_SEL = 0x3942;
+
+        vc_csr2 vc2OP_BLK_HWIDTH   = (vc_csr2) { .l = 0x30d0, .m = 0x30d1 };
+        vc_csr2 vc2INFO_HWIDTH  = (vc_csr2) { .l = 0x30d2, .m = 0x30d3 };
+
+        w_left = ctrl->frame.left + state->frame.left;
+        w_top = ctrl->frame.top + state->frame.top;
+        w_width = state->frame.width;
+        w_height = state->frame.height;
+
+        if (ctrl->flags & FLAG_DOUBLE_HEIGHT) {
+                w_top *= 2;
+                w_height *= 2;
+        }
+
+        vc_notice(dev, "%s(): Set sensor roi: (left: %u, top: %u, width: %u, height: %u)\n", __FUNCTION__,
+                w_left, w_top, w_width, w_height);
+
+        ret |= i2c_write_reg2(dev, client, &ctrl->csr.sen.h_start, w_left, __FUNCTION__);
+        ret |= i2c_write_reg2(dev, client, &ctrl->csr.sen.v_start, w_top, __FUNCTION__);
+        ret |= i2c_write_reg2(dev, client, &ctrl->csr.sen.o_width, w_width, __FUNCTION__);
+        ret |= i2c_write_reg2(dev, client, &ctrl->csr.sen.o_height, w_height, __FUNCTION__);
+
+        if (ctrl->flags & FLAG_PREGIUS) {
+                ret |= i2c_write_reg2(dev, client, &vc2OP_BLK_HWIDTH, w_width, __FUNCTION__);
+                ret |= i2c_write_reg2(dev, client, &vc2INFO_HWIDTH, w_width, __FUNCTION__);
+                ret |= i2c_write_reg(dev, client, vc2EAV_SEL, 0x03, __FUNCTION__);
+
+        } else {
+                ret |= i2c_write_reg2(dev, client, &ctrl->csr.sen.h_end, w_width, __FUNCTION__);
+                ret |= i2c_write_reg2(dev, client, &ctrl->csr.sen.v_end, w_height, __FUNCTION__);
+        }
+
+        if (ret) {
+                vc_err(dev, "%s(): Couldn't set sensor roi: (left: %u, top: %u, width: %u, height: %u) (error: %d)\n", __FUNCTION__,
+                        w_left, w_top, w_width, w_height, ret);
+                return ret;
+        }
+
+        return 0;
+}
+
+
 
 #ifdef READ_VMAX
 static __u32 vc_sen_read_vmax(struct vc_ctrl *ctrl)
@@ -1444,9 +1555,9 @@ static void vc_core_calculate_vmax(struct vc_cam *cam, __u32 period_1H_ns)
 
 static void vc_calculate_exposure_sony(struct vc_cam *cam, __u64 exposure_1H)
 {
-        struct vc_ctrl *ctrl = &cam->ctrl;
         struct vc_state *state = &cam->state;
-        __u32 shs_min = ctrl->vmax.min;
+        __u8 format = vc_core_v4l2_code_to_format(state->format_code);
+        __u32 shs_min = vc_core_get_vmax_by_lane_format(cam, state->num_lanes, format).min;
 
         // Exposure time [s] = (1 H period) × (Number of lines per frame - SHS)
         //                     + Exposure time error (t OFFSET ) [µs]
@@ -1477,9 +1588,9 @@ static void vc_calculate_exposure_sony(struct vc_cam *cam, __u64 exposure_1H)
 
 static void vc_calculate_exposure_normal(struct vc_cam *cam, __u64 exposure_1H)
 {
-        struct vc_ctrl *ctrl = &cam->ctrl;
         struct vc_state *state = &cam->state;
-        __u32 shs_min = ctrl->vmax.min;
+        __u8 format = vc_core_v4l2_code_to_format(state->format_code);
+        __u32 shs_min = vc_core_get_vmax_by_lane_format(cam, state->num_lanes, format).min;
 
         // Is exposure time greater than shs_min and less than frame time?
         if (shs_min <= exposure_1H && exposure_1H < state->vmax) {
@@ -1516,6 +1627,9 @@ static void vc_calculate_exposure(struct vc_cam *cam, __u32 exposure_us)
         __u64 exposure_ns;
         __u64 exposure_1H;
 
+        __u32 vmax_def = vc_core_get_vmax_by_lane_format(cam, num_lanes, format).def;
+        __u32 vmax_min = vc_core_get_vmax_by_lane_format(cam, num_lanes, format).min;
+
         period_1H_ns = vc_core_calculate_period_1H(cam, num_lanes, format);
         vc_core_calculate_vmax(cam, period_1H_ns);
 
@@ -1532,7 +1646,7 @@ static void vc_calculate_exposure(struct vc_cam *cam, __u32 exposure_us)
         }
 
         vc_dbg(dev, "%s(): flags: 0x%04x, period_1H_ns: %u, shs: %u/%u, vmax: %u/%u\n", __FUNCTION__,
-                ctrl->flags, period_1H_ns, state->shs, ctrl->vmax.min, state->vmax, ctrl->vmax.def);
+                ctrl->flags, period_1H_ns, state->shs, vmax_min, state->vmax, vmax_def);
 }
 
 static void vc_calculate_trig_exposure(struct vc_cam *cam, __u32 exposure_us)
@@ -1599,6 +1713,7 @@ int vc_sen_set_exposure(struct vc_cam *cam, int exposure_us)
                 exposure_us = ctrl->exposure.max;
 
         state->vmax = 0;
+
         state->shs = 0;
         state->exposure_cnt = 0;
         state->retrigger_cnt = 0;
