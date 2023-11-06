@@ -273,35 +273,6 @@ static void vc_core_print_modes(struct device *dev, struct vc_desc *desc)
         vc_notice(dev, "+----+---------+---------+---------+---------+---------+\n");
 }
 
-#if 0
-static void vc_core_print_timing(struct vc_cam *cam)
-{
-        struct vc_ctrl *ctrl = &cam->ctrl;
-        struct device *dev = vc_core_get_mod_device(cam);
-        char sformat[16];
-        int index = 0;
-
-        if (ctrl->flags & FLAG_INCREASE_FRAME_RATE) {
-                vc_notice(dev, "+-------+--------+----------+-----------+\n");
-                vc_notice(dev, "| lanes | format | exposure | framerate |\n");
-                vc_notice(dev, "|       |        | max [us] | max [mHz] |\n");
-                vc_notice(dev, "+-------+--------+----------+-----------+\n");
-                while (index < 8 && ctrl->expo_timing[index].num_lanes != 0) {
-                        __u8 num_lanes = ctrl->expo_timing[index].num_lanes;
-                        __u8 format = ctrl->expo_timing[index].format;
-                        __u32 max_exposure = vc_core_calculate_max_exposure(cam, num_lanes, format);
-                        __u32 max_frame_rate = vc_core_calculate_max_frame_rate(cam, num_lanes, format);
-
-                        vc_core_print_format(format, sformat);
-                        vc_notice(dev, "|     %1d | %s  | %8d | %9d |\n",
-                                num_lanes, sformat, max_exposure, max_frame_rate);
-                        index++;
-                }
-                vc_notice(dev, "+-------+--------+----------+-----------+\n");
-        }
-}
-#endif
-
 static void vc_core_print_timing(struct vc_cam *cam)
 {
         struct vc_ctrl *ctrl = &cam->ctrl;
@@ -1254,45 +1225,6 @@ static int vc_sen_read_image_size(struct vc_ctrl *ctrl, struct vc_frame *size)
 
         return 0;
 }
-
-#if 0
-int vc_sen_set_roi(struct vc_cam *cam)
-{
-        struct vc_ctrl *ctrl = &cam->ctrl;
-        struct vc_state *state = &cam->state;
-        struct i2c_client *client = ctrl->client_sen;
-        struct device *dev = &client->dev;
-        int w_left, w_top, w_width, w_height;
-        int ret = 0;
-
-        w_left = ctrl->frame.left + state->frame.left;
-        w_top = ctrl->frame.top + state->frame.top;
-        w_width = state->frame.width;
-        w_height = state->frame.height;
-
-        if (ctrl->flags & FLAG_DOUBLE_HEIGHT) {
-                w_top *= 2;
-                w_height *= 2;
-        }
-
-        vc_notice(dev, "%s(): Set sensor roi: (left: %u, top: %u, width: %u, height: %u)\n", __FUNCTION__,
-                w_left, w_top, w_width, w_height);
-
-        ret |= i2c_write_reg2(dev, client, &ctrl->csr.sen.h_start, w_left, __FUNCTION__);
-        ret |= i2c_write_reg2(dev, client, &ctrl->csr.sen.v_start, w_top, __FUNCTION__);
-        ret |= i2c_write_reg2(dev, client, &ctrl->csr.sen.o_width, w_width, __FUNCTION__);
-        ret |= i2c_write_reg2(dev, client, &ctrl->csr.sen.o_height, w_height, __FUNCTION__);
-        ret |= i2c_write_reg2(dev, client, &ctrl->csr.sen.h_end, w_width, __FUNCTION__);
-        ret |= i2c_write_reg2(dev, client, &ctrl->csr.sen.v_end, w_height, __FUNCTION__);
-        if (ret) {
-                vc_err(dev, "%s(): Couldn't set sensor roi: (left: %u, top: %u, width: %u, height: %u) (error: %d)\n", __FUNCTION__,
-                        w_left, w_top, w_width, w_height, ret);
-                return ret;
-        }
-
-        return 0;
-}
-#endif
 
 int vc_sen_set_roi(struct vc_cam *cam)
 {
