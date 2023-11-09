@@ -4,6 +4,9 @@
 #include <linux/delay.h>
 #include <linux/errno.h>
 #include <linux/v4l2-mediabus.h>
+
+#include  <linux/kernel.h>
+
 #include "vc_mipi_modules.h"
 
 // #define READ_VMAX
@@ -564,8 +567,8 @@ __u32 vc_core_calculate_max_exposure(struct vc_cam *cam, __u8 num_lanes, __u8 fo
         struct vc_ctrl *ctrl = &cam->ctrl;
         struct device *dev = vc_core_get_sen_device(cam);
 
-        __u32 vmax_max = vc_core_get_vmax_by_lane_format(cam, num_lanes, format).max;
-        __u32 vmax_min = vc_core_get_vmax_by_lane_format(cam, num_lanes, format).min;
+        __u32 vmax_max = vc_core_get_vmax(cam, num_lanes, format).max;
+        __u32 vmax_min = vc_core_get_vmax(cam, num_lanes, format).min;
 
         switch (cam->state.trigger_mode) {
         case REG_TRIGGER_DISABLE:
@@ -598,7 +601,7 @@ __u32 vc_core_get_optimized_vmax(struct vc_cam *cam)
 
         __u8 num_lanes = state->num_lanes;
         __u8 format = vc_core_v4l2_code_to_format(state->format_code);
-        __u32 vmax_def = vc_core_get_vmax_by_lane_format(cam, num_lanes, format).def;
+        __u32 vmax_def = vc_core_get_vmax(cam, num_lanes, format).def;
 
         // Increase the frame rate when image height is reduced.
         if (ctrl->flags & FLAG_INCREASE_FRAME_RATE && state->frame.height < ctrl->frame.height) {
@@ -616,7 +619,7 @@ __u32 vc_core_calculate_max_frame_rate(struct vc_cam *cam, __u8 num_lanes, __u8 
         struct device *dev = vc_core_get_sen_device(cam);
         __u32 period_1H_ns = vc_core_calculate_period_1H(cam, num_lanes, format);
         __u32 vmax = vc_core_get_optimized_vmax(cam);
-        __u32 vmax_def = vc_core_get_vmax_by_lane_format(cam, num_lanes, format).def;
+        __u32 vmax_def = vc_core_get_vmax(cam, num_lanes, format).def;
 
         vc_dbg(dev, "%s(): period_1H_ns: %u, vmax: %u/%u\n",
                 __FUNCTION__, period_1H_ns, vmax, vmax_def);
@@ -624,6 +627,52 @@ __u32 vc_core_calculate_max_frame_rate(struct vc_cam *cam, __u8 num_lanes, __u8 
         return 1000000000 / (((__u64)period_1H_ns * vmax) / 1000);
 }
 
+
+vc_timing vc_core_get_vc_timing(struct vc_cam *cam, __u8 num_lanes, __u8 format)
+{
+        struct device *dev = vc_core_get_sen_device(cam);
+        struct vc_ctrl *ctrl = &cam->ctrl;
+        int index = 0;
+        vc_timing tRet;
+
+        for (index = 0; index < 8; index++) {
+                if ( (num_lanes == ctrl->expo_timing[index].num_lanes)
+                  && (format == ctrl->expo_timing[index].format) ) {
+                        return ctrl->expo_timing[index];
+                        //Nullpruefung!!
+                  }
+        }
+
+        vc_err(dev, "%s(): Could not get timing values!\n", __FUNCTION__);
+
+        return tRet;
+}
+
+vc_control vc_core_get_vmax(struct vc_cam *cam, __u8 num_lanes, __u8 format)
+{
+        struct vc_ctrl *ctrl = &cam->ctrl;
+
+        if (!(ctrl->flags & FLAG_COMPAT_VMAX)) {
+                return ctrl->vmax;
+        }
+        
+        return vc_core_get_vc_timing(cam, num_lanes, format).vmax;
+
+}
+
+vc_control vc_core_get_blacklevel(struct vc_cam *cam, __u8 num_lanes, __u8 format)
+{
+        struct vc_ctrl *ctrl = &cam->ctrl;
+
+        if (!(ctrl->flags & FLAG_COMPAT_BLACKLEVEL)) {
+                return ctrl->blacklevel;
+        }
+        
+        return vc_core_get_vc_timing(cam, num_lanes, format).blacklevel;
+}
+
+
+#if 0
 vc_control vc_core_get_vmax_by_lane_format(struct vc_cam *cam, __u8 num_lanes, __u8 format)
 {
         struct vc_ctrl *ctrl = &cam->ctrl;
@@ -643,6 +692,7 @@ vc_control vc_core_get_vmax_by_lane_format(struct vc_cam *cam, __u8 num_lanes, _
 
         return ctrl->vmax;
 }
+#endif
 
 
 // ------------------------------------------------------------------------------------------------
@@ -849,11 +899,14 @@ static void vc_core_state_init(struct vc_cam *cam)
         struct vc_desc *desc = &cam->desc;
         struct vc_ctrl *ctrl = &cam->ctrl;
         struct vc_state *state = &cam->state;
+        __u8 format = 0;
+        __u32 blacklevel_def = 0;
+        __u32 blacklevel_max = 0;
 
         state->mode = 0xff;
         state->exposure = ctrl->exposure.def;
         state->gain = ctrl->gain.def;
-        state->blacklevel = ctrl->blacklevel.def;
+//        state->blacklevel = ctrl->blacklevel.def;
         state->shs = 0;
         state->vmax = 0;
         state->exposure_cnt = 0;
@@ -861,6 +914,11 @@ static void vc_core_state_init(struct vc_cam *cam)
         state->framerate = ctrl->framerate.def;
         state->num_lanes = desc->modes[0].num_lanes;
         state->format_code = vc_core_get_default_format(cam);
+        format = vc_core_v4l2_code_to_format(state->format_code);
+        blacklevel_def = vc_core_get_blacklevel(cam, state->num_lanes, format).def;
+        blacklevel_max = vc_core_get_blacklevel(cam, state->num_lanes, format).max + 1;
+        state->blacklevel = (__u32)DIV_ROUND_CLOSEST(blacklevel_def * 100000, blacklevel_max);
+
         state->frame.left = 0;
         state->frame.top = 0;
         state->frame.width = ctrl->frame.width;
@@ -1367,27 +1425,29 @@ int vc_sen_set_gain(struct vc_cam *cam, int gain)
         return 0;
 }
 
-int vc_sen_set_blacklevel(struct vc_cam *cam, int blacklevel)
+//int vc_sen_set_blacklevel(struct vc_cam *cam, int blacklevel)
+int vc_sen_set_blacklevel(struct vc_cam *cam, __u32 blacklevel_rel)
 {
         struct vc_ctrl *ctrl = &cam->ctrl;
+        struct vc_state *state = &cam->state;
         struct i2c_client *client = ctrl->client_sen;
         struct device *dev = &client->dev;
         int ret = 0;
+        __u8 num_lanes = vc_core_get_num_lanes(cam);
+        __u8 format = vc_core_v4l2_code_to_format(state->format_code);
 
-        if (blacklevel < ctrl->blacklevel.min)
-                blacklevel = ctrl->blacklevel.min;
-        if (blacklevel > ctrl->blacklevel.max)
-                blacklevel = ctrl->blacklevel.max;
+        __u32 blacklevel_max = vc_core_get_blacklevel(cam, num_lanes, format).max;
+        __u32 blacklevel_abs = (__u32)DIV_ROUND_CLOSEST((blacklevel_rel * blacklevel_max), 100000);
 
-        vc_notice(dev, "%s(): Set sensor black level: %u\n", __FUNCTION__, blacklevel);
+        vc_notice(dev, "%s(): Set sensor black level: %u, (max=%u)\n", __FUNCTION__, blacklevel_abs, blacklevel_max);
 
-        ret |= i2c_write_reg2(dev, client, &ctrl->csr.sen.blacklevel, blacklevel, __FUNCTION__);
+        ret |= i2c_write_reg2(dev, client, &ctrl->csr.sen.blacklevel, blacklevel_abs, __FUNCTION__);
         if (ret) {
                 vc_err(dev, "%s(): Couldn't set black level (error: %d)\n", __FUNCTION__, ret);
                 return ret;
         }
 
-        cam->state.blacklevel = blacklevel;
+        cam->state.blacklevel = blacklevel_rel;
         return 0;
 }
 
@@ -1489,7 +1549,7 @@ static void vc_calculate_exposure_sony(struct vc_cam *cam, __u64 exposure_1H)
 {
         struct vc_state *state = &cam->state;
         __u8 format = vc_core_v4l2_code_to_format(state->format_code);
-        __u32 shs_min = vc_core_get_vmax_by_lane_format(cam, state->num_lanes, format).min;
+        __u32 shs_min = vc_core_get_vmax(cam, state->num_lanes, format).min;
 
         // Exposure time [s] = (1 H period) × (Number of lines per frame - SHS)
         //                     + Exposure time error (t OFFSET ) [µs]
@@ -1522,7 +1582,7 @@ static void vc_calculate_exposure_normal(struct vc_cam *cam, __u64 exposure_1H)
 {
         struct vc_state *state = &cam->state;
         __u8 format = vc_core_v4l2_code_to_format(state->format_code);
-        __u32 shs_min = vc_core_get_vmax_by_lane_format(cam, state->num_lanes, format).min;
+        __u32 shs_min = vc_core_get_vmax(cam, state->num_lanes, format).min;
 
         // Is exposure time greater than shs_min and less than frame time?
         if (shs_min <= exposure_1H && exposure_1H < state->vmax) {
@@ -1559,8 +1619,8 @@ static void vc_calculate_exposure(struct vc_cam *cam, __u32 exposure_us)
         __u64 exposure_ns;
         __u64 exposure_1H;
 
-        __u32 vmax_def = vc_core_get_vmax_by_lane_format(cam, num_lanes, format).def;
-        __u32 vmax_min = vc_core_get_vmax_by_lane_format(cam, num_lanes, format).min;
+        __u32 vmax_def = vc_core_get_vmax(cam, num_lanes, format).def;
+        __u32 vmax_min = vc_core_get_vmax(cam, num_lanes, format).min;
 
         period_1H_ns = vc_core_calculate_period_1H(cam, num_lanes, format);
         vc_core_calculate_vmax(cam, period_1H_ns);
