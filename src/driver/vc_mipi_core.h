@@ -34,7 +34,7 @@
 #define FLAG_TRIGGER_STREAM_LEVEL       (1 << 16)
 #define FLAG_TRIGGER_SLAVE              (1 << 17)
 
-#define FLAG_PREGIUS                    (1 << 18)
+#define FLAG_PREGIUS_S                  (1 << 18)
 #define FLAG_COMPAT_VMAX                (1 << 19)
 #define FLAG_COMPAT_BLACKLEVEL          (1 << 20)
 

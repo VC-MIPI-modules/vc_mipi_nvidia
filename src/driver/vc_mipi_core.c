@@ -1316,7 +1316,7 @@ int vc_sen_set_roi(struct vc_cam *cam)
         ret |= i2c_write_reg2(dev, client, &ctrl->csr.sen.o_width, w_width, __FUNCTION__);
         ret |= i2c_write_reg2(dev, client, &ctrl->csr.sen.o_height, w_height, __FUNCTION__);
 
-        if (ctrl->flags & FLAG_PREGIUS) {
+        if (ctrl->flags & FLAG_PREGIUS_S) {
                 ret |= i2c_write_reg2(dev, client, &vc2OP_BLK_HWIDTH, w_width, __FUNCTION__);
                 ret |= i2c_write_reg2(dev, client, &vc2INFO_HWIDTH, w_width, __FUNCTION__);
                 ret |= i2c_write_reg(dev, client, vc2EAV_SEL, 0x03, __FUNCTION__);
