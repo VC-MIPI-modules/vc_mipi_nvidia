@@ -6,7 +6,7 @@
 #include "vc_mipi_core.h"
 #include "vc_mipi_modules.h"
 
-#define VERSION "0.15.IMX56X"
+#define VERSION "0.15.IMX56X_Refact"
 // #define VC_CTRL_VALUE
 
 
@@ -298,14 +298,7 @@ static int vc_set_io_mode(struct tegracam_device *tc_dev, __s64 val)
         return vc_mod_set_io_mode(cam, val);
 }
 
-#if 0
 static int vc_set_black_level(struct tegracam_device *tc_dev, __s64 val)
-{
-        struct vc_cam *cam = tegracam_to_cam(tc_dev);
-        return vc_sen_set_blacklevel(cam, val);
-}
-#endif
-static int vc_set_black_level(struct tegracam_device *tc_dev, __u32 val)
 {
         struct vc_cam *cam = tegracam_to_cam(tc_dev);
         return vc_sen_set_blacklevel(cam, val);

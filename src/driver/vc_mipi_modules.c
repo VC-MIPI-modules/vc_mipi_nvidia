@@ -159,15 +159,15 @@ static void vc_init_ctrl_imx178(struct vc_ctrl *ctrl, struct vc_desc* desc)
 #endif
 
         // => Peter, 10ch/8ch - hmax?
-        ctrl->expo_timing[0]            = (vc_timing) { 2, FORMAT_RAW08, .hmax =  680, .vmax = {.min =  9, .max =  0x1ffff, .def =  2126}, .blacklevel = {.min = 0, .max = 255,   .def = 50 } }; 
-        ctrl->expo_timing[1]            = (vc_timing) { 2, FORMAT_RAW10, .hmax =  840, .vmax = {.min =  9, .max =  0x1ffff, .def =  2126}, .blacklevel = {.min = 0, .max = 1023,  .def = 50 } }; 
-        ctrl->expo_timing[2]            = (vc_timing) { 2, FORMAT_RAW12, .hmax =  984, .vmax = {.min =  9, .max =  0x1ffff, .def =  2126}, .blacklevel = {.min = 0, .max = 1023,  .def = 200 } }; 
-        ctrl->expo_timing[3]            = (vc_timing) { 2, FORMAT_RAW14, .hmax = 1156, .vmax = {.min =  9, .max =  0x1ffff, .def =  2126}, .blacklevel = {.min = 0, .max = 4095,  .def = 800 } }; 
+        ctrl->expo_timing[0]            = (vc_timing) { 2, FORMAT_RAW08, .hmax =  680, .vmax = {.min =  9, .max =  0x1ffff, .def =  2126}, .blacklevel = {.min = 0, .max = 255,  .def = 50 } }; 
+        ctrl->expo_timing[1]            = (vc_timing) { 2, FORMAT_RAW10, .hmax =  840, .vmax = {.min =  9, .max =  0x1ffff, .def =  2126}, .blacklevel = {.min = 0, .max = 1023, .def = 50 } }; 
+        ctrl->expo_timing[2]            = (vc_timing) { 2, FORMAT_RAW12, .hmax =  984, .vmax = {.min =  9, .max =  0x1ffff, .def =  2126}, .blacklevel = {.min = 0, .max = 1023, .def = 200 } }; 
+        ctrl->expo_timing[3]            = (vc_timing) { 2, FORMAT_RAW14, .hmax = 1156, .vmax = {.min =  9, .max =  0x1ffff, .def =  2126}, .blacklevel = {.min = 0, .max = 4095, .def = 800 } }; 
 
-        ctrl->expo_timing[4]            = (vc_timing) { 4, FORMAT_RAW08, .hmax =  600, .vmax = {.min =  9, .max =  0x1ffff, .def =  2126}, .blacklevel = {.min = 0, .max = 255,   .def = 50 } }; 
-        ctrl->expo_timing[5]            = (vc_timing) { 4, FORMAT_RAW10, .hmax =  600, .vmax = {.min =  9, .max =  0x1ffff, .def =  2126}, .blacklevel = {.min = 0, .max = 1023,  .def = 50 } }; 
-        ctrl->expo_timing[6]            = (vc_timing) { 4, FORMAT_RAW12, .hmax =  680, .vmax = {.min =  9, .max =  0x1ffff, .def =  2126}, .blacklevel = {.min = 0, .max = 1023,  .def = 200 } }; 
-        ctrl->expo_timing[7]            = (vc_timing) { 4, FORMAT_RAW14, .hmax = 1156, .vmax = {.min =  9, .max =  0x1ffff, .def =  2126}, .blacklevel = {.min = 0, .max = 4095,  .def = 800 } }; 
+        ctrl->expo_timing[4]            = (vc_timing) { 4, FORMAT_RAW08, .hmax =  600, .vmax = {.min =  9, .max =  0x1ffff, .def =  2126}, .blacklevel = {.min = 0, .max = 255,  .def = 50 } }; 
+        ctrl->expo_timing[5]            = (vc_timing) { 4, FORMAT_RAW10, .hmax =  600, .vmax = {.min =  9, .max =  0x1ffff, .def =  2126}, .blacklevel = {.min = 0, .max = 1023, .def = 50 } }; 
+        ctrl->expo_timing[6]            = (vc_timing) { 4, FORMAT_RAW12, .hmax =  680, .vmax = {.min =  9, .max =  0x1ffff, .def =  2126}, .blacklevel = {.min = 0, .max = 1023, .def = 200 } }; 
+        ctrl->expo_timing[7]            = (vc_timing) { 4, FORMAT_RAW14, .hmax = 1156, .vmax = {.min =  9, .max =  0x1ffff, .def =  2126}, .blacklevel = {.min = 0, .max = 4095, .def = 800 } }; 
 
         ctrl->retrigger_min             = 0x00292d40;
 
@@ -273,6 +273,7 @@ static void vc_init_ctrl_imx250(struct vc_ctrl *ctrl, struct vc_desc* desc)
         ctrl->expo_timing[5]            = (vc_timing) { 4, FORMAT_RAW12, .hmax =  510 }; //0x1fe
 #endif
 
+        // => Peter hmax?
         ctrl->expo_timing[0]            = (vc_timing) { 2, FORMAT_RAW08, .hmax =  540, .vmax = {.min =  10, .max =  0xfffff, .def =  2094}, .blacklevel = {.min = 0, .max = 255,  .def = 15  } };
         ctrl->expo_timing[1]            = (vc_timing) { 2, FORMAT_RAW10, .hmax =  660, .vmax = {.min =  10, .max =  0xfffff, .def =  2094}, .blacklevel = {.min = 0, .max = 1023, .def = 60  } }; 
         ctrl->expo_timing[2]            = (vc_timing) { 2, FORMAT_RAW12, .hmax =  780, .vmax = {.min =  10, .max =  0xfffff, .def =  2094}, .blacklevel = {.min = 0, .max = 4095, .def = 240 } };
@@ -659,7 +660,6 @@ static void vc_init_ctrl_imx415(struct vc_ctrl *ctrl, struct vc_desc* desc)
 // -------------------------------------------------------------
 //  Settings for IMX462 (Rev.01)
 //  2.0 MegaPixel Starvis
-//  NT
 
 static void vc_init_ctrl_imx462(struct vc_ctrl *ctrl, struct vc_desc *desc)
 {
@@ -673,8 +673,8 @@ static void vc_init_ctrl_imx462(struct vc_ctrl *ctrl, struct vc_desc *desc)
         ctrl->gain    = (vc_control) { .min = 0, .max = 238,     .def = 0 };
 //        ctrl->vmax    = (vc_control) { .min = 1, .max = 0x3ffff, .def = 0x465 };
 
-        ctrl->expo_timing[0] = (vc_timing){ 2, FORMAT_RAW10, .hmax = 1100, .vmax = {.min =  8, .max =  0x3ffff, .def =  0x465}, .blacklevel = {.min = 0, .max = 511, .def = 240 } };
-        ctrl->expo_timing[1] = (vc_timing){ 4, FORMAT_RAW10, .hmax = 550,  .vmax = {.min =  8, .max =  0x3ffff, .def =  0x465}, .blacklevel = {.min = 0, .max = 511, .def = 240 } };
+        ctrl->expo_timing[0] = (vc_timing){ 2, FORMAT_RAW10, .hmax = 1100, .vmax = {.min =  1, .max =  0x3ffff, .def =  0x465}, .blacklevel = {.min = 0, .max = 511, .def = 60 } };
+        ctrl->expo_timing[1] = (vc_timing){ 4, FORMAT_RAW10, .hmax = 550,  .vmax = {.min =  1, .max =  0x3ffff, .def =  0x465}, .blacklevel = {.min = 0, .max = 511, .def = 60 } };
 
         ctrl->flags                    |= FLAG_COMPAT_VMAX;
         ctrl->flags                    |= FLAG_COMPAT_BLACKLEVEL;
