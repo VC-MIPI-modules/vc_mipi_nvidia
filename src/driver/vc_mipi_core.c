@@ -671,28 +671,17 @@ vc_control vc_core_get_blacklevel(struct vc_cam *cam, __u8 num_lanes, __u8 forma
         return vc_core_get_vc_timing(cam, num_lanes, format).blacklevel;
 }
 
-
-#if 0
-vc_control vc_core_get_vmax_by_lane_format(struct vc_cam *cam, __u8 num_lanes, __u8 format)
+__u32 vc_core_get_retrigger(struct vc_cam *cam, __u8 num_lanes, __u8 format)
 {
         struct vc_ctrl *ctrl = &cam->ctrl;
-        int index = 0;
 
-        if (!(ctrl->flags & FLAG_COMPAT_VMAX)) {
-                return ctrl->vmax;
+        if (!(ctrl->flags & FLAG_COMPAT_RETRIGGER)) {
+                return ctrl->retrigger_min;
         }
-
-        for (index = 0; index < 8; index++) {
-                if ( (num_lanes == ctrl->expo_timing[index].num_lanes)
-                  && (format == ctrl->expo_timing[index].format) ) {
-                        return ctrl->expo_timing[index].vmax;
-                        //Nullpruefung!!
-                  }
-        }
-
-        return ctrl->vmax;
+        
+        return vc_core_get_vc_timing(cam, num_lanes, format).retrigger_min;
 }
-#endif
+
 
 
 // ------------------------------------------------------------------------------------------------
@@ -1646,14 +1635,15 @@ static void vc_calculate_trig_exposure(struct vc_cam *cam, __u32 exposure_us)
         struct vc_ctrl *ctrl = &cam->ctrl;
         struct vc_state *state = &cam->state;
         struct device *dev = &ctrl->client_sen->dev;
-        // __u8 num_lanes = state->num_lanes;
-        // __u8 format = vc_core_v4l2_code_to_format(state->format_code);
+        __u8 num_lanes = state->num_lanes;
+        __u8 format = vc_core_v4l2_code_to_format(state->format_code);
         __u32 min_frametime_us = 0;
         __u32 frametime_us = 0;
+        __u32 retrigger_min = vc_core_get_retrigger(cam, num_lanes, format);
 
         // NOTE: Currently it is not possible to use an optimized minimal frame time.
         // min_frametime_us = 1000000000 / vc_core_calculate_max_frame_rate(cam, num_lanes, format) + 1000;
-        min_frametime_us = ((__u64)ctrl->retrigger_min * 1000000) / ctrl->clk_ext_trigger;
+        min_frametime_us = ((__u64)retrigger_min * 1000000) / ctrl->clk_ext_trigger;
         frametime_us = min_frametime_us;
 
         if (state->trigger_mode & REG_TRIGGER_SELF) {

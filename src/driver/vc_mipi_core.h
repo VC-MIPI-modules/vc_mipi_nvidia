@@ -1,7 +1,7 @@
 #ifndef _VC_MIPI_CORE_H
 #define _VC_MIPI_CORE_H
 
-// #define DEBUG
+#define DEBUG
 
 #include <linux/types.h>
 #include <linux/i2c.h>
@@ -37,6 +37,7 @@
 #define FLAG_PREGIUS_S                  (1 << 18)
 #define FLAG_COMPAT_VMAX                (1 << 19)
 #define FLAG_COMPAT_BLACKLEVEL          (1 << 20)
+#define FLAG_COMPAT_RETRIGGER           (1 << 21)
 
 #define FORMAT_RAW08                    0x2a
 #define FORMAT_RAW10                    0x2b
@@ -150,6 +151,7 @@ typedef struct vc_timing {
         __u32      hmax;
         vc_control vmax;
         vc_control blacklevel;
+        __u32      retrigger_min;
 } vc_timing;
 
 struct vc_ctrl {
@@ -225,6 +227,7 @@ int vc_core_set_framerate(struct vc_cam *cam, __u32 framerate);
 __u32 vc_core_get_framerate(struct vc_cam *cam);
 vc_control vc_core_get_vmax(struct vc_cam *cam, __u8 num_lanes, __u8 format);
 vc_control vc_core_get_blacklevel(struct vc_cam *cam, __u8 num_lanes, __u8 format);
+__u32 vc_core_get_retrigger(struct vc_cam *cam, __u8 num_lanes, __u8 format);
 
 // --- Function to initialize the vc core --------------------------------------
 int vc_core_init(struct vc_cam *cam, struct i2c_client *client);

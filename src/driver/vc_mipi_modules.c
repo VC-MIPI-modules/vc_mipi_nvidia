@@ -117,7 +117,7 @@ static void vc_init_ctrl_imx296_base(struct vc_ctrl *ctrl, struct vc_desc* desc)
 
         ctrl->expo_timing[0]            = (vc_timing) { 1, FORMAT_RAW10, .hmax =  1100 };
         
-        ctrl->retrigger_min             = 0x000d7940;
+//        ctrl->retrigger_min             = 0x000d7940;
 
         ctrl->flags                     = FLAG_EXPOSURE_SONY;
         ctrl->flags                    |= FLAG_INCREASE_FRAME_RATE;
@@ -147,32 +147,21 @@ static void vc_init_ctrl_imx178(struct vc_ctrl *ctrl, struct vc_desc* desc)
         ctrl->frame.width               = 3072;
         ctrl->frame.height              = 2048;
 
-#if 0
-        ctrl->expo_timing[0]            = (vc_timing) { 2, FORMAT_RAW08, .hmax =  680 }; //0x02a8
-        ctrl->expo_timing[1]            = (vc_timing) { 2, FORMAT_RAW10, .hmax =  840 }; //0x0348
-        ctrl->expo_timing[2]            = (vc_timing) { 2, FORMAT_RAW12, .hmax =  984 }; //0x03d8
-        ctrl->expo_timing[3]            = (vc_timing) { 2, FORMAT_RAW14, .hmax = 1156 }; //0x0484
-        ctrl->expo_timing[4]            = (vc_timing) { 4, FORMAT_RAW08, .hmax =  600 }; //0x0258
-        ctrl->expo_timing[5]            = (vc_timing) { 4, FORMAT_RAW10, .hmax =  600 }; //0x0258
-        ctrl->expo_timing[6]            = (vc_timing) { 4, FORMAT_RAW12, .hmax =  680 }; //0x02a8
-        ctrl->expo_timing[7]            = (vc_timing) { 4, FORMAT_RAW14, .hmax = 1156 }; //0x0484
-#endif
+        ctrl->expo_timing[0]            = (vc_timing) { 2, FORMAT_RAW08, .hmax =  680, .vmax = {.min =  9, .max =  0x1ffff, .def =  2126}, .blacklevel = {.min = 0, .max = 255,  .def = 50  }, .retrigger_min = 2698560 }; 
+        ctrl->expo_timing[1]            = (vc_timing) { 2, FORMAT_RAW10, .hmax =  840, .vmax = {.min =  9, .max =  0x1ffff, .def =  2126}, .blacklevel = {.min = 0, .max = 1023, .def = 50  }, .retrigger_min = 2698560 }; 
+        ctrl->expo_timing[2]            = (vc_timing) { 2, FORMAT_RAW12, .hmax =  984, .vmax = {.min =  9, .max =  0x1ffff, .def =  2126}, .blacklevel = {.min = 0, .max = 1023, .def = 200 }, .retrigger_min = 2698560 }; 
+        ctrl->expo_timing[3]            = (vc_timing) { 2, FORMAT_RAW14, .hmax = 1156, .vmax = {.min =  9, .max =  0x1ffff, .def =  2126}, .blacklevel = {.min = 0, .max = 4095, .def = 800 }, .retrigger_min = 2698560 }; 
 
-        // => Peter, 10ch/8ch - hmax?
-        ctrl->expo_timing[0]            = (vc_timing) { 2, FORMAT_RAW08, .hmax =  680, .vmax = {.min =  9, .max =  0x1ffff, .def =  2126}, .blacklevel = {.min = 0, .max = 255,  .def = 50 } }; 
-        ctrl->expo_timing[1]            = (vc_timing) { 2, FORMAT_RAW10, .hmax =  840, .vmax = {.min =  9, .max =  0x1ffff, .def =  2126}, .blacklevel = {.min = 0, .max = 1023, .def = 50 } }; 
-        ctrl->expo_timing[2]            = (vc_timing) { 2, FORMAT_RAW12, .hmax =  984, .vmax = {.min =  9, .max =  0x1ffff, .def =  2126}, .blacklevel = {.min = 0, .max = 1023, .def = 200 } }; 
-        ctrl->expo_timing[3]            = (vc_timing) { 2, FORMAT_RAW14, .hmax = 1156, .vmax = {.min =  9, .max =  0x1ffff, .def =  2126}, .blacklevel = {.min = 0, .max = 4095, .def = 800 } }; 
+        ctrl->expo_timing[4]            = (vc_timing) { 4, FORMAT_RAW08, .hmax =  600, .vmax = {.min =  9, .max =  0x1ffff, .def =  2126}, .blacklevel = {.min = 0, .max = 255,  .def = 50  }, .retrigger_min = 2698560 }; 
+        ctrl->expo_timing[5]            = (vc_timing) { 4, FORMAT_RAW10, .hmax =  600, .vmax = {.min =  9, .max =  0x1ffff, .def =  2126}, .blacklevel = {.min = 0, .max = 1023, .def = 50  }, .retrigger_min = 2698560 }; 
+        ctrl->expo_timing[6]            = (vc_timing) { 4, FORMAT_RAW12, .hmax =  680, .vmax = {.min =  9, .max =  0x1ffff, .def =  2126}, .blacklevel = {.min = 0, .max = 1023, .def = 200 }, .retrigger_min = 2698560 }; 
+        ctrl->expo_timing[7]            = (vc_timing) { 4, FORMAT_RAW14, .hmax = 1156, .vmax = {.min =  9, .max =  0x1ffff, .def =  2126}, .blacklevel = {.min = 0, .max = 4095, .def = 800 }, .retrigger_min = 2698560 }; 
 
-        ctrl->expo_timing[4]            = (vc_timing) { 4, FORMAT_RAW08, .hmax =  600, .vmax = {.min =  9, .max =  0x1ffff, .def =  2126}, .blacklevel = {.min = 0, .max = 255,  .def = 50 } }; 
-        ctrl->expo_timing[5]            = (vc_timing) { 4, FORMAT_RAW10, .hmax =  600, .vmax = {.min =  9, .max =  0x1ffff, .def =  2126}, .blacklevel = {.min = 0, .max = 1023, .def = 50 } }; 
-        ctrl->expo_timing[6]            = (vc_timing) { 4, FORMAT_RAW12, .hmax =  680, .vmax = {.min =  9, .max =  0x1ffff, .def =  2126}, .blacklevel = {.min = 0, .max = 1023, .def = 200 } }; 
-        ctrl->expo_timing[7]            = (vc_timing) { 4, FORMAT_RAW14, .hmax = 1156, .vmax = {.min =  9, .max =  0x1ffff, .def =  2126}, .blacklevel = {.min = 0, .max = 4095, .def = 800 } }; 
-
-        ctrl->retrigger_min             = 0x00292d40;
+//        ctrl->retrigger_min             = 0x00292d40;
 
         ctrl->flags                    |= FLAG_COMPAT_BLACKLEVEL;
         ctrl->flags                    |= FLAG_COMPAT_VMAX;
+        ctrl->flags                    |= FLAG_COMPAT_RETRIGGER;
 }
 
 // ------------------------------------------------------------------------------------------------
@@ -194,17 +183,18 @@ static void vc_init_ctrl_imx183(struct vc_ctrl *ctrl, struct vc_desc* desc)
         ctrl->frame.width               = 5440;
         ctrl->frame.height              = 3648;
 
-        ctrl->expo_timing[0]            = (vc_timing) { 2, FORMAT_RAW08, .hmax = 1440, .vmax = {.min =  5, .max =  0x1ffff, .def =  3728}, .blacklevel = {.min = 0, .max = 255,  .def = 50 } };
-        ctrl->expo_timing[1]            = (vc_timing) { 2, FORMAT_RAW10, .hmax = 1440, .vmax = {.min =  5, .max =  0x1ffff, .def =  3728}, .blacklevel = {.min = 0, .max = 255,  .def = 50 } };
-        ctrl->expo_timing[2]            = (vc_timing) { 2, FORMAT_RAW12, .hmax = 1724, .vmax = {.min =  5, .max =  0x1ffff, .def =  3728}, .blacklevel = {.min = 0, .max = 255,  .def = 50 } };
-        ctrl->expo_timing[3]            = (vc_timing) { 4, FORMAT_RAW08, .hmax =  720, .vmax = {.min =  5, .max =  0x1ffff, .def =  3728}, .blacklevel = {.min = 0, .max = 255,  .def = 50 } };
-        ctrl->expo_timing[4]            = (vc_timing) { 4, FORMAT_RAW10, .hmax =  720, .vmax = {.min =  5, .max =  0x1ffff, .def =  3728}, .blacklevel = {.min = 0, .max = 255,  .def = 50 } };
-        ctrl->expo_timing[5]            = (vc_timing) { 4, FORMAT_RAW12, .hmax =  862, .vmax = {.min =  5, .max =  0x1ffff, .def =  3728}, .blacklevel = {.min = 0, .max = 255,  .def = 50 } };
+        ctrl->expo_timing[0]            = (vc_timing) { 2, FORMAT_RAW08, .hmax = 1440, .vmax = {.min =  5, .max =  0x1ffff, .def =  3728}, .blacklevel = {.min = 0, .max = 255,  .def = 50 }, .retrigger_min = 3599997 };
+        ctrl->expo_timing[1]            = (vc_timing) { 2, FORMAT_RAW10, .hmax = 1440, .vmax = {.min =  5, .max =  0x1ffff, .def =  3728}, .blacklevel = {.min = 0, .max = 255,  .def = 50 }, .retrigger_min = 3599997 };
+        ctrl->expo_timing[2]            = (vc_timing) { 2, FORMAT_RAW12, .hmax = 1724, .vmax = {.min =  5, .max =  0x1ffff, .def =  3728}, .blacklevel = {.min = 0, .max = 255,  .def = 50 }, .retrigger_min = 3599997 };
+        ctrl->expo_timing[3]            = (vc_timing) { 4, FORMAT_RAW08, .hmax =  720, .vmax = {.min =  5, .max =  0x1ffff, .def =  3728}, .blacklevel = {.min = 0, .max = 255,  .def = 50 }, .retrigger_min = 3599997 };
+        ctrl->expo_timing[4]            = (vc_timing) { 4, FORMAT_RAW10, .hmax =  720, .vmax = {.min =  5, .max =  0x1ffff, .def =  3728}, .blacklevel = {.min = 0, .max = 255,  .def = 50 }, .retrigger_min = 3599997 };
+        ctrl->expo_timing[5]            = (vc_timing) { 4, FORMAT_RAW12, .hmax =  862, .vmax = {.min =  5, .max =  0x1ffff, .def =  3728}, .blacklevel = {.min = 0, .max = 255,  .def = 50 }, .retrigger_min = 3599997 };
         
-        ctrl->retrigger_min             = 0x0036ee7d;
+//        ctrl->retrigger_min             = 0x0036ee7d;
 
         ctrl->flags                    |= FLAG_COMPAT_BLACKLEVEL;
         ctrl->flags                    |= FLAG_COMPAT_VMAX;
+        ctrl->flags                    |= FLAG_COMPAT_RETRIGGER;
 }
 
 // ------------------------------------------------------------------------------------------------
@@ -229,18 +219,19 @@ static void vc_init_ctrl_imx226(struct vc_ctrl *ctrl, struct vc_desc* desc)
         ctrl->frame.width               = 3904;
         ctrl->frame.height              = 3000;
 
-        ctrl->expo_timing[0]            = (vc_timing) { 2, FORMAT_RAW08, .hmax = 1072, .vmax = {.min =  5, .max =  0x1ffff, .def =  3079}, .blacklevel = {.min = 0, .max = 255, .def = 50 } };
-        ctrl->expo_timing[1]            = (vc_timing) { 2, FORMAT_RAW10, .hmax = 1072, .vmax = {.min =  5, .max =  0x1ffff, .def =  3079}, .blacklevel = {.min = 0, .max = 255, .def = 50 } };
-        ctrl->expo_timing[2]            = (vc_timing) { 2, FORMAT_RAW12, .hmax = 1288, .vmax = {.min =  5, .max =  0x1ffff, .def =  3079}, .blacklevel = {.min = 0, .max = 255, .def = 50 } };
-        ctrl->expo_timing[3]            = (vc_timing) { 4, FORMAT_RAW08, .hmax =  536, .vmax = {.min =  5, .max =  0x1ffff, .def =  3079}, .blacklevel = {.min = 0, .max = 255, .def = 50 } };
-        ctrl->expo_timing[4]            = (vc_timing) { 4, FORMAT_RAW10, .hmax =  536, .vmax = {.min =  5, .max =  0x1ffff, .def =  3079}, .blacklevel = {.min = 0, .max = 255, .def = 50 } };
-        ctrl->expo_timing[5]            = (vc_timing) { 4, FORMAT_RAW12, .hmax =  644, .vmax = {.min =  5, .max =  0x1ffff, .def =  3079}, .blacklevel = {.min = 0, .max = 255, .def = 50 } };
+        ctrl->expo_timing[0]            = (vc_timing) { 2, FORMAT_RAW08, .hmax = 1072, .vmax = {.min =  5, .max =  0x1ffff, .def =  3079}, .blacklevel = {.min = 0, .max = 255, .def = 50 }, .retrigger_min = 2698560 };
+        ctrl->expo_timing[1]            = (vc_timing) { 2, FORMAT_RAW10, .hmax = 1072, .vmax = {.min =  5, .max =  0x1ffff, .def =  3079}, .blacklevel = {.min = 0, .max = 255, .def = 50 }, .retrigger_min = 2698560 };
+        ctrl->expo_timing[2]            = (vc_timing) { 2, FORMAT_RAW12, .hmax = 1288, .vmax = {.min =  5, .max =  0x1ffff, .def =  3079}, .blacklevel = {.min = 0, .max = 255, .def = 50 }, .retrigger_min = 2698560 };
+        ctrl->expo_timing[3]            = (vc_timing) { 4, FORMAT_RAW08, .hmax =  536, .vmax = {.min =  5, .max =  0x1ffff, .def =  3079}, .blacklevel = {.min = 0, .max = 255, .def = 50 }, .retrigger_min = 2698560 };
+        ctrl->expo_timing[4]            = (vc_timing) { 4, FORMAT_RAW10, .hmax =  536, .vmax = {.min =  5, .max =  0x1ffff, .def =  3079}, .blacklevel = {.min = 0, .max = 255, .def = 50 }, .retrigger_min = 2698560 };
+        ctrl->expo_timing[5]            = (vc_timing) { 4, FORMAT_RAW12, .hmax =  644, .vmax = {.min =  5, .max =  0x1ffff, .def =  3079}, .blacklevel = {.min = 0, .max = 255, .def = 50 }, .retrigger_min = 2698560 };
 
         ctrl->clk_pixel                 = 72000000;
-        ctrl->retrigger_min             = 0x00292d40;
+//        ctrl->retrigger_min             = 0x00292d40;
 
         ctrl->flags                    |= FLAG_COMPAT_BLACKLEVEL;
         ctrl->flags                    |= FLAG_COMPAT_VMAX;
+        ctrl->flags                    |= FLAG_COMPAT_RETRIGGER;
         ctrl->flags                    |= FLAG_FORMAT_GBRG;
         ctrl->flags                    |= FLAG_TRIGGER_STREAM_EDGE | FLAG_TRIGGER_STREAM_LEVEL;
 }
@@ -264,27 +255,18 @@ static void vc_init_ctrl_imx250(struct vc_ctrl *ctrl, struct vc_desc* desc)
         ctrl->frame.width               = 2432;
         ctrl->frame.height              = 2048;
 
-#if 0
-        ctrl->expo_timing[0]            = (vc_timing) { 2, FORMAT_RAW08, .hmax =  540 }; //0x21c
-        ctrl->expo_timing[1]            = (vc_timing) { 2, FORMAT_RAW10, .hmax =  660 }; //0x294
-        ctrl->expo_timing[2]            = (vc_timing) { 2, FORMAT_RAW12, .hmax =  780 }; //0x30c
-        ctrl->expo_timing[3]            = (vc_timing) { 4, FORMAT_RAW08, .hmax =  350 }; //0x15e
-        ctrl->expo_timing[4]            = (vc_timing) { 4, FORMAT_RAW10, .hmax =  430 }; //0x1ae
-        ctrl->expo_timing[5]            = (vc_timing) { 4, FORMAT_RAW12, .hmax =  510 }; //0x1fe
-#endif
+        ctrl->expo_timing[0]            = (vc_timing) { 2, FORMAT_RAW08, .hmax =  540, .vmax = {.min =  10, .max =  0xfffff, .def =  2094}, .blacklevel = {.min = 0, .max = 255,  .def = 15  }, .retrigger_min = 1580040 };
+        ctrl->expo_timing[1]            = (vc_timing) { 2, FORMAT_RAW10, .hmax =  660, .vmax = {.min =  10, .max =  0xfffff, .def =  2094}, .blacklevel = {.min = 0, .max = 1023, .def = 60  }, .retrigger_min = 1580040 }; 
+        ctrl->expo_timing[2]            = (vc_timing) { 2, FORMAT_RAW12, .hmax =  780, .vmax = {.min =  10, .max =  0xfffff, .def =  2094}, .blacklevel = {.min = 0, .max = 4095, .def = 240 }, .retrigger_min = 1580040 };
+        ctrl->expo_timing[3]            = (vc_timing) { 4, FORMAT_RAW08, .hmax =  350, .vmax = {.min =  10, .max =  0xfffff, .def =  2094}, .blacklevel = {.min = 0, .max = 255,  .def = 15  }, .retrigger_min = 1580040 };
+        ctrl->expo_timing[4]            = (vc_timing) { 4, FORMAT_RAW10, .hmax =  430, .vmax = {.min =  10, .max =  0xfffff, .def =  2094}, .blacklevel = {.min = 0, .max = 1023, .def = 60  }, .retrigger_min = 1580040 };
+        ctrl->expo_timing[5]            = (vc_timing) { 4, FORMAT_RAW12, .hmax =  510, .vmax = {.min =  10, .max =  0xfffff, .def =  2094}, .blacklevel = {.min = 0, .max = 4095, .def = 240 }, .retrigger_min = 1580040 };
 
-        // => Peter hmax?
-        ctrl->expo_timing[0]            = (vc_timing) { 2, FORMAT_RAW08, .hmax =  540, .vmax = {.min =  10, .max =  0xfffff, .def =  2094}, .blacklevel = {.min = 0, .max = 255,  .def = 15  } };
-        ctrl->expo_timing[1]            = (vc_timing) { 2, FORMAT_RAW10, .hmax =  660, .vmax = {.min =  10, .max =  0xfffff, .def =  2094}, .blacklevel = {.min = 0, .max = 1023, .def = 60  } }; 
-        ctrl->expo_timing[2]            = (vc_timing) { 2, FORMAT_RAW12, .hmax =  780, .vmax = {.min =  10, .max =  0xfffff, .def =  2094}, .blacklevel = {.min = 0, .max = 4095, .def = 240 } };
-        ctrl->expo_timing[3]            = (vc_timing) { 4, FORMAT_RAW08, .hmax =  350, .vmax = {.min =  10, .max =  0xfffff, .def =  2094}, .blacklevel = {.min = 0, .max = 255,  .def = 15  } };
-        ctrl->expo_timing[4]            = (vc_timing) { 4, FORMAT_RAW10, .hmax =  430, .vmax = {.min =  10, .max =  0xfffff, .def =  2094}, .blacklevel = {.min = 0, .max = 1023, .def = 60  } };
-        ctrl->expo_timing[5]            = (vc_timing) { 4, FORMAT_RAW12, .hmax =  510, .vmax = {.min =  10, .max =  0xfffff, .def =  2094}, .blacklevel = {.min = 0, .max = 4095, .def = 240 } };
-
-        ctrl->retrigger_min             = 0x00181c08;
+//        ctrl->retrigger_min             = 0x00181c08;
 
         ctrl->flags                    |= FLAG_COMPAT_BLACKLEVEL;
         ctrl->flags                    |= FLAG_COMPAT_VMAX;
+        ctrl->flags                    |= FLAG_COMPAT_RETRIGGER;
 }
 
 // ------------------------------------------------------------------------------------------------
@@ -302,17 +284,20 @@ static void vc_init_ctrl_imx252(struct vc_ctrl *ctrl, struct vc_desc* desc)
         ctrl->frame.width               = 2048;
         ctrl->frame.height              = 1536;
 
-        ctrl->expo_timing[0]            = (vc_timing) { 2, FORMAT_RAW08, .hmax =  460 , .vmax = {.min =  10, .max =  0xfffff, .def =  1582}, .blacklevel = {.min = 0, .max = 255,  .def = 15 } };
-        ctrl->expo_timing[1]            = (vc_timing) { 2, FORMAT_RAW10, .hmax =  560 , .vmax = {.min =  10, .max =  0xfffff, .def =  1582}, .blacklevel = {.min = 0, .max = 1023, .def = 60 } };
-        ctrl->expo_timing[2]            = (vc_timing) { 2, FORMAT_RAW12, .hmax =  672 , .vmax = {.min =  10, .max =  0xfffff, .def =  1582}, .blacklevel = {.min = 0, .max = 4095, .def = 240} };
-        ctrl->expo_timing[3]            = (vc_timing) { 4, FORMAT_RAW08, .hmax =  310 , .vmax = {.min =  10, .max =  0xfffff, .def =  1582}, .blacklevel = {.min = 0, .max = 255,  .def = 15 } };
-        ctrl->expo_timing[4]            = (vc_timing) { 4, FORMAT_RAW10, .hmax =  380 , .vmax = {.min =  10, .max =  0xfffff, .def =  1582}, .blacklevel = {.min = 0, .max = 1023, .def = 60 } };
-        ctrl->expo_timing[5]            = (vc_timing) { 4, FORMAT_RAW12, .hmax =  444 , .vmax = {.min =  10, .max =  0xfffff, .def =  1582}, .blacklevel = {.min = 0, .max = 4095, .def = 240} };
+        ctrl->expo_timing[0]            = (vc_timing) { 2, FORMAT_RAW08, .hmax =  460 , .vmax = {.min =  10, .max =  0xfffff, .def =  1582}, .blacklevel = {.min = 0, .max = 255,  .def = 15 }, .retrigger_min = 1063754 };
+        ctrl->expo_timing[1]            = (vc_timing) { 2, FORMAT_RAW10, .hmax =  560 , .vmax = {.min =  10, .max =  0xfffff, .def =  1582}, .blacklevel = {.min = 0, .max = 1023, .def = 60 }, .retrigger_min = 1063754 };
+        ctrl->expo_timing[2]            = (vc_timing) { 2, FORMAT_RAW12, .hmax =  672 , .vmax = {.min =  10, .max =  0xfffff, .def =  1582}, .blacklevel = {.min = 0, .max = 4095, .def = 240}, .retrigger_min = 1063754 };
+        ctrl->expo_timing[3]            = (vc_timing) { 4, FORMAT_RAW08, .hmax =  310 , .vmax = {.min =  10, .max =  0xfffff, .def =  1582}, .blacklevel = {.min = 0, .max = 255,  .def = 15 }, .retrigger_min = 1063754 };
+        ctrl->expo_timing[4]            = (vc_timing) { 4, FORMAT_RAW10, .hmax =  380 , .vmax = {.min =  10, .max =  0xfffff, .def =  1582}, .blacklevel = {.min = 0, .max = 1023, .def = 60 }, .retrigger_min = 1063754 };
+        ctrl->expo_timing[5]            = (vc_timing) { 4, FORMAT_RAW12, .hmax =  444 , .vmax = {.min =  10, .max =  0xfffff, .def =  1582}, .blacklevel = {.min = 0, .max = 4095, .def = 240}, .retrigger_min = 1063754 };
 
-        ctrl->retrigger_min             = 0x00103b4a;
+//        ctrl->retrigger_min             = 0x00103b4a;
+
+// alternativ 121750 => Peter Ruecksprache
 
         ctrl->flags                    |= FLAG_COMPAT_BLACKLEVEL;
         ctrl->flags                    |= FLAG_COMPAT_VMAX;
+        ctrl->flags                    |= FLAG_COMPAT_RETRIGGER;
 }
 
 // ------------------------------------------------------------------------------------------------
@@ -334,14 +319,15 @@ static void vc_init_ctrl_imx264(struct vc_ctrl *ctrl, struct vc_desc* desc)
         ctrl->frame.width               = 2432;
         ctrl->frame.height              = 2048;
 
-        ctrl->expo_timing[0]            = (vc_timing) { 2, FORMAT_RAW08, .hmax =  996, .vmax = {.min =  10, .max =  0xfffff, .def =  2100}, .blacklevel = {.min = 0, .max = 255,  .def = 15 } };
-        ctrl->expo_timing[1]            = (vc_timing) { 2, FORMAT_RAW10, .hmax =  996, .vmax = {.min =  10, .max =  0xfffff, .def =  2100}, .blacklevel = {.min = 0, .max = 1023, .def = 60 } };
-        ctrl->expo_timing[2]            = (vc_timing) { 2, FORMAT_RAW12, .hmax =  996, .vmax = {.min =  10, .max =  0xfffff, .def =  2100}, .blacklevel = {.min = 0, .max = 4095, .def = 240} };
+        ctrl->expo_timing[0]            = (vc_timing) { 2, FORMAT_RAW08, .hmax =  996, .vmax = {.min =  10, .max =  0xfffff, .def =  2100}, .blacklevel = {.min = 0, .max = 255,  .def = 15 }, .retrigger_min = 1580040 };
+        ctrl->expo_timing[1]            = (vc_timing) { 2, FORMAT_RAW10, .hmax =  996, .vmax = {.min =  10, .max =  0xfffff, .def =  2100}, .blacklevel = {.min = 0, .max = 1023, .def = 60 }, .retrigger_min = 1580040 };
+        ctrl->expo_timing[2]            = (vc_timing) { 2, FORMAT_RAW12, .hmax =  996, .vmax = {.min =  10, .max =  0xfffff, .def =  2100}, .blacklevel = {.min = 0, .max = 4095, .def = 240}, .retrigger_min = 1580040 };
 
-        ctrl->retrigger_min             = 0x00181c08;
+//        ctrl->retrigger_min             = 0x00181c08; 
 
         ctrl->flags                    |= FLAG_COMPAT_BLACKLEVEL;
         ctrl->flags                    |= FLAG_COMPAT_VMAX;
+        ctrl->flags                    |= FLAG_COMPAT_RETRIGGER;
 }
 
 // ------------------------------------------------------------------------------------------------
@@ -363,14 +349,15 @@ static void vc_init_ctrl_imx265(struct vc_ctrl *ctrl, struct vc_desc* desc)
         ctrl->frame.width               = 2048;
         ctrl->frame.height              = 1536;
 
-        ctrl->expo_timing[0]            = (vc_timing) { 2, FORMAT_RAW08, .hmax =  846, .vmax = {.min =  10, .max =  0xfffff, .def =  1587}, .blacklevel = {.min = 0, .max = 255,  .def = 15 } };
-        ctrl->expo_timing[1]            = (vc_timing) { 2, FORMAT_RAW10, .hmax =  846, .vmax = {.min =  10, .max =  0xfffff, .def =  1587}, .blacklevel = {.min = 0, .max = 1023, .def = 60 } };
-        ctrl->expo_timing[2]            = (vc_timing) { 2, FORMAT_RAW12, .hmax =  846, .vmax = {.min =  10, .max =  0xfffff, .def =  1587}, .blacklevel = {.min = 0, .max = 4095, .def = 240} };
+        ctrl->expo_timing[0]            = (vc_timing) { 2, FORMAT_RAW08, .hmax =  846, .vmax = {.min =  10, .max =  0xfffff, .def =  1587}, .blacklevel = {.min = 0, .max = 255,  .def = 15 }, .retrigger_min = 1580040 };
+        ctrl->expo_timing[1]            = (vc_timing) { 2, FORMAT_RAW10, .hmax =  846, .vmax = {.min =  10, .max =  0xfffff, .def =  1587}, .blacklevel = {.min = 0, .max = 1023, .def = 60 }, .retrigger_min = 1580040 };
+        ctrl->expo_timing[2]            = (vc_timing) { 2, FORMAT_RAW12, .hmax =  846, .vmax = {.min =  10, .max =  0xfffff, .def =  1587}, .blacklevel = {.min = 0, .max = 4095, .def = 240}, .retrigger_min = 1580040 };
 
-        ctrl->retrigger_min             = 0x00181c08;
+//        ctrl->retrigger_min             = 0x00181c08;
 
         ctrl->flags                    |= FLAG_COMPAT_BLACKLEVEL;
         ctrl->flags                    |= FLAG_COMPAT_VMAX;
+        ctrl->flags                    |= FLAG_COMPAT_RETRIGGER;
 }
 
 // ------------------------------------------------------------------------------------------------
@@ -392,17 +379,18 @@ static void vc_init_ctrl_imx273(struct vc_ctrl *ctrl, struct vc_desc* desc)
         ctrl->frame.width               = 1440;
         ctrl->frame.height              = 1080;
 
-        ctrl->expo_timing[0]            = (vc_timing) { 2, FORMAT_RAW08, .hmax =  336, .vmax = {.min =  15, .max =  0xfffff, .def =  1130}, .blacklevel = {.min = 0, .max = 255,  .def = 15 } };
-        ctrl->expo_timing[1]            = (vc_timing) { 2, FORMAT_RAW10, .hmax =  420, .vmax = {.min =  15, .max =  0xfffff, .def =  1130}, .blacklevel = {.min = 0, .max = 1023, .def = 60 } };
-        ctrl->expo_timing[2]            = (vc_timing) { 2, FORMAT_RAW12, .hmax =  480, .vmax = {.min =  15, .max =  0xfffff, .def =  1130}, .blacklevel = {.min = 0, .max = 4095, .def = 240} };
-        ctrl->expo_timing[3]            = (vc_timing) { 4, FORMAT_RAW08, .hmax =  238, .vmax = {.min =  15, .max =  0xfffff, .def =  1130}, .blacklevel = {.min = 0, .max = 255,  .def = 15 } };
-        ctrl->expo_timing[4]            = (vc_timing) { 4, FORMAT_RAW10, .hmax =  290, .vmax = {.min =  15, .max =  0xfffff, .def =  1130}, .blacklevel = {.min = 0, .max = 1032, .def = 60 } };
-        ctrl->expo_timing[5]            = (vc_timing) { 4, FORMAT_RAW12, .hmax =  396, .vmax = {.min =  15, .max =  0xfffff, .def =  1130}, .blacklevel = {.min = 0, .max = 4095, .def = 240} };
+        ctrl->expo_timing[0]            = (vc_timing) { 2, FORMAT_RAW08, .hmax =  336, .vmax = {.min =  15, .max =  0xfffff, .def =  1130}, .blacklevel = {.min = 0, .max = 255,  .def = 15 }, .retrigger_min = 519230 };
+        ctrl->expo_timing[1]            = (vc_timing) { 2, FORMAT_RAW10, .hmax =  420, .vmax = {.min =  15, .max =  0xfffff, .def =  1130}, .blacklevel = {.min = 0, .max = 1023, .def = 60 }, .retrigger_min = 519230 };
+        ctrl->expo_timing[2]            = (vc_timing) { 2, FORMAT_RAW12, .hmax =  480, .vmax = {.min =  15, .max =  0xfffff, .def =  1130}, .blacklevel = {.min = 0, .max = 4095, .def = 240}, .retrigger_min = 519230 };
+        ctrl->expo_timing[3]            = (vc_timing) { 4, FORMAT_RAW08, .hmax =  238, .vmax = {.min =  15, .max =  0xfffff, .def =  1130}, .blacklevel = {.min = 0, .max = 255,  .def = 15 }, .retrigger_min = 519230 };
+        ctrl->expo_timing[4]            = (vc_timing) { 4, FORMAT_RAW10, .hmax =  290, .vmax = {.min =  15, .max =  0xfffff, .def =  1130}, .blacklevel = {.min = 0, .max = 1032, .def = 60 }, .retrigger_min = 519230 };
+        ctrl->expo_timing[5]            = (vc_timing) { 4, FORMAT_RAW12, .hmax =  396, .vmax = {.min =  15, .max =  0xfffff, .def =  1130}, .blacklevel = {.min = 0, .max = 4095, .def = 240}, .retrigger_min = 519230 };
 
-        ctrl->retrigger_min             = 0x0007ec3e;
+//        ctrl->retrigger_min             = 0x0007ec3e;
 
         ctrl->flags                    |= FLAG_COMPAT_BLACKLEVEL;
         ctrl->flags                    |= FLAG_COMPAT_VMAX;
+        ctrl->flags                    |= FLAG_COMPAT_RETRIGGER;
 }
 
 // ------------------------------------------------------------------------------------------------
@@ -444,13 +432,16 @@ static void vc_init_ctrl_imx296(struct vc_ctrl *ctrl, struct vc_desc* desc)
 
 //        ctrl->vmax                      = (vc_control) { .min =   5, .max =   0xfffff, .def =   1110 };
 //        ctrl->blacklevel                = (vc_control) { .min =   0, .max =     0xfff, .def =     60 };
-        ctrl->expo_timing[0]            = (vc_timing) { 1, FORMAT_RAW10, .hmax =  1100, .vmax = {.min =  5, .max =  0xfffff, .def =  1110}, .blacklevel = {.min = 0, .max = 511, .def = 60 } };
+
+//        bazo max blacklevel value increased from 511 to 1023
+        ctrl->expo_timing[0]            = (vc_timing) { 1, FORMAT_RAW10, .hmax =  1100, .vmax = {.min =  5, .max =  0xfffff, .def =  1110}, .blacklevel = {.min = 0, .max = 1023, .def = 60 }, .retrigger_min = 883008 };
 
         ctrl->frame.width               = 1440;
         ctrl->frame.height              = 1080;
 
         ctrl->flags                    |= FLAG_COMPAT_VMAX;
         ctrl->flags                    |= FLAG_COMPAT_BLACKLEVEL;
+        ctrl->flags                    |= FLAG_COMPAT_RETRIGGER;
 
 }
 
@@ -469,10 +460,14 @@ static void vc_init_ctrl_imx297(struct vc_ctrl *ctrl, struct vc_desc* desc)
 
 //        ctrl->vmax                      = (vc_control) { .min =   5, .max =   0xfffff, .def =   1110 };
 //        ctrl->blacklevel                = (vc_control) { .min =   0, .max =     0xfff, .def =     60 };
-        ctrl->expo_timing[0]            = (vc_timing) { 1, FORMAT_RAW10, .hmax =  1100, .vmax = {.min =  5, .max =  0xfffff, .def =  1110}, .blacklevel = {.min = 0, .max = 511, .def = 60 } };
+        ctrl->expo_timing[0]            = (vc_timing) { 1, FORMAT_RAW10, .hmax =  1100, .vmax = {.min =  5, .max =  0xfffff, .def =  1110}, .blacklevel = {.min = 0, .max = 511, .def = 60 }, .retrigger_min = 883008 };
 
         ctrl->frame.width               = 720;
         ctrl->frame.height              = 540;
+
+        ctrl->flags                    |= FLAG_COMPAT_VMAX;
+        ctrl->flags                    |= FLAG_COMPAT_BLACKLEVEL;
+        ctrl->flags                    |= FLAG_COMPAT_RETRIGGER;
 }
 
 // ------------------------------------------------------------------------------------------------
@@ -569,17 +564,18 @@ static void vc_init_ctrl_imx392(struct vc_ctrl *ctrl, struct vc_desc* desc)
         ctrl->frame.width               = 1920;
         ctrl->frame.height              = 1200;
 
-        ctrl->expo_timing[0]            = (vc_timing) { 2, FORMAT_RAW08, .hmax =  448, .vmax = {.min =  10, .max =  0xfffff, .def =  1252}, .blacklevel = {.min = 0, .max = 255,  .def = 15 } };
-        ctrl->expo_timing[1]            = (vc_timing) { 2, FORMAT_RAW10, .hmax =  530, .vmax = {.min =  10, .max =  0xfffff, .def =  1252}, .blacklevel = {.min = 0, .max = 1023, .def = 60 } };
-        ctrl->expo_timing[2]            = (vc_timing) { 2, FORMAT_RAW12, .hmax =  624, .vmax = {.min =  10, .max =  0xfffff, .def =  1252}, .blacklevel = {.min = 0, .max = 4095, .def = 240} };
-        ctrl->expo_timing[3]            = (vc_timing) { 4, FORMAT_RAW08, .hmax =  294, .vmax = {.min =  10, .max =  0xfffff, .def =  1252}, .blacklevel = {.min = 0, .max = 255,  .def = 15 } };
-        ctrl->expo_timing[4]            = (vc_timing) { 4, FORMAT_RAW10, .hmax =  355, .vmax = {.min =  10, .max =  0xfffff, .def =  1252}, .blacklevel = {.min = 0, .max = 1023, .def = 60 } };
-        ctrl->expo_timing[5]            = (vc_timing) { 4, FORMAT_RAW12, .hmax =  441, .vmax = {.min =  10, .max =  0xfffff, .def =  1252}, .blacklevel = {.min = 0, .max = 4095, .def = 240} };
+        ctrl->expo_timing[0]            = (vc_timing) { 2, FORMAT_RAW08, .hmax =  448, .vmax = {.min =  10, .max =  0xfffff, .def =  1252}, .blacklevel = {.min = 0, .max = 255,  .def = 15 }, .retrigger_min = 1063754 };
+        ctrl->expo_timing[1]            = (vc_timing) { 2, FORMAT_RAW10, .hmax =  530, .vmax = {.min =  10, .max =  0xfffff, .def =  1252}, .blacklevel = {.min = 0, .max = 1023, .def = 60 }, .retrigger_min = 1063754 };
+        ctrl->expo_timing[2]            = (vc_timing) { 2, FORMAT_RAW12, .hmax =  624, .vmax = {.min =  10, .max =  0xfffff, .def =  1252}, .blacklevel = {.min = 0, .max = 4095, .def = 240}, .retrigger_min = 1063754 };
+        ctrl->expo_timing[3]            = (vc_timing) { 4, FORMAT_RAW08, .hmax =  294, .vmax = {.min =  10, .max =  0xfffff, .def =  1252}, .blacklevel = {.min = 0, .max = 255,  .def = 15 }, .retrigger_min = 1063754 };
+        ctrl->expo_timing[4]            = (vc_timing) { 4, FORMAT_RAW10, .hmax =  355, .vmax = {.min =  10, .max =  0xfffff, .def =  1252}, .blacklevel = {.min = 0, .max = 1023, .def = 60 }, .retrigger_min = 1063754 };
+        ctrl->expo_timing[5]            = (vc_timing) { 4, FORMAT_RAW12, .hmax =  441, .vmax = {.min =  10, .max =  0xfffff, .def =  1252}, .blacklevel = {.min = 0, .max = 4095, .def = 240}, .retrigger_min = 1063754 };
         
-        ctrl->retrigger_min             = 0x00103b4a;
+//        ctrl->retrigger_min             = 0x00103b4a;
 
         ctrl->flags                    |= FLAG_COMPAT_VMAX;
         ctrl->flags                    |= FLAG_COMPAT_BLACKLEVEL;
+        ctrl->flags                    |= FLAG_COMPAT_RETRIGGER;
 }
 
 // ------------------------------------------------------------------------------------------------
@@ -704,23 +700,34 @@ static void vc_init_ctrl_imx565(struct vc_ctrl *ctrl, struct vc_desc *desc)
         ctrl->frame.height              = 3000;
         ctrl->frame.left                = 0;
 
-        ctrl->expo_timing[0]            = (vc_timing) { 2, FORMAT_RAW08, .hmax = 1070 , .vmax = {.min =  18, .max =  0xffffff, .def =  0xc2c}, .blacklevel = {.min = 0, .max = 255,  .def = 15 } };
-        ctrl->expo_timing[1]            = (vc_timing) { 2, FORMAT_RAW10, .hmax = 1328 , .vmax = {.min =  16, .max =  0xffffff, .def =  0xc2a}, .blacklevel = {.min = 0, .max = 1023, .def = 60 } };
-        ctrl->expo_timing[2]            = (vc_timing) { 2, FORMAT_RAW12, .hmax = 1586 , .vmax = {.min =  14, .max =  0xffffff, .def =  0xc26}, .blacklevel = {.min = 0, .max = 4095, .def = 240} };
-        ctrl->expo_timing[3]            = (vc_timing) { 4, FORMAT_RAW08, .hmax = 555  , .vmax = {.min =  30, .max =  0xffffff, .def =  0xc40}, .blacklevel = {.min = 0, .max = 255,  .def = 15 } };
+        ctrl->expo_timing[0]            = (vc_timing) { 2, FORMAT_RAW08, .hmax = 1070 , .vmax = {.min =  18, .max =  0xffffff, .def =  0xc2c}, .blacklevel = {.min = 0, .max = 255,  .def = 15 }, .retrigger_min = 2410776 };
+        ctrl->expo_timing[1]            = (vc_timing) { 2, FORMAT_RAW10, .hmax = 1328 , .vmax = {.min =  16, .max =  0xffffff, .def =  0xc2a}, .blacklevel = {.min = 0, .max = 1023, .def = 60 }, .retrigger_min = 2990142 };
+        ctrl->expo_timing[2]            = (vc_timing) { 2, FORMAT_RAW12, .hmax = 1586 , .vmax = {.min =  14, .max =  0xffffff, .def =  0xc26}, .blacklevel = {.min = 0, .max = 4095, .def = 240}, .retrigger_min = 3568752 };
+        ctrl->expo_timing[3]            = (vc_timing) { 4, FORMAT_RAW08, .hmax = 555  , .vmax = {.min =  30, .max =  0xffffff, .def =  0xc40}, .blacklevel = {.min = 0, .max = 255,  .def = 15 }, .retrigger_min = 1256094 };
         // ---------------------------------------------------------------
         // Workaround for Rev.01. This limits the fps to 18.8 fps!
         // The theoretically correct value for Rev.02 is .hmax = 684
         // ---------------------------------------------------------------
-        ctrl->expo_timing[4]            = (vc_timing) { 4, FORMAT_RAW10, .hmax = 1197 , .vmax = {.min =  26, .max =  0xffffff, .def =  0xc3a}, .blacklevel = {.min = 0, .max = 1023, .def = 60 } };
-        ctrl->expo_timing[5]            = (vc_timing) { 4, FORMAT_RAW12, .hmax = 812  , .vmax = {.min =  22, .max =  0xffffff, .def =  0xc34}, .blacklevel = {.min = 0, .max = 4095, .def = 240} };
+        ctrl->expo_timing[4]            = (vc_timing) { 4, FORMAT_RAW10, .hmax = 1197 , .vmax = {.min =  26, .max =  0xffffff, .def =  0xc3a}, .blacklevel = {.min = 0, .max = 1023, .def = 60 }, .retrigger_min = 1546074 };
+        ctrl->expo_timing[5]            = (vc_timing) { 4, FORMAT_RAW12, .hmax = 812  , .vmax = {.min =  22, .max =  0xffffff, .def =  0xc34}, .blacklevel = {.min = 0, .max = 4095, .def = 240}, .retrigger_min = 1833030 };
 
-        ctrl->retrigger_min             = 0x0011A7F8;
+/*
+        2Lane
+        8  Bit: 2410776
+        10 Bit: 2990142
+        12 Bit: 3568752
+
+        4Lane
+        8  Bit: 1256094
+        10 Bit: 1546074
+        12 Bit: 1833030
+*/        
 
         ctrl->flags                     = FLAG_EXPOSURE_SONY;
         ctrl->flags                    |= FLAG_PREGIUS_S;
         ctrl->flags                    |= FLAG_COMPAT_VMAX;
         ctrl->flags                    |= FLAG_COMPAT_BLACKLEVEL;
+        ctrl->flags                    |= FLAG_COMPAT_RETRIGGER;
         ctrl->flags                    |= FLAG_INCREASE_FRAME_RATE;
         ctrl->flags                    |= FLAG_TRIGGER_EXTERNAL;
         ctrl->flags                    |= FLAG_IO_ENABLED;
@@ -750,17 +757,30 @@ static void vc_init_ctrl_imx566(struct vc_ctrl *ctrl, struct vc_desc* desc)
         ctrl->frame.width               = 2848;
         ctrl->frame.height              = 2848;
 
-        ctrl->expo_timing[0]            = (vc_timing) { 2, FORMAT_RAW08, .hmax =  752,  .vmax = {.min =  24, .max =  0xffffff, .def =  0xb98}, .blacklevel = {.min = 0, .max = 255,  .def = 15 } };
-        ctrl->expo_timing[1]            = (vc_timing) { 2, FORMAT_RAW10, .hmax =  930,  .vmax = {.min =  20, .max =  0xffffff, .def =  0xb92}, .blacklevel = {.min = 0, .max = 1023, .def = 60 } };
-        ctrl->expo_timing[2]            = (vc_timing) { 2, FORMAT_RAW12, .hmax =  1109, .vmax = {.min =  18, .max =  0xffffff, .def =  0xb8c}, .blacklevel = {.min = 0, .max = 4095, .def = 240} };
-        ctrl->expo_timing[3]            = (vc_timing) { 4, FORMAT_RAW08, .hmax =  396,  .vmax = {.min =  40, .max =  0xffffff, .def =  0xbb0}, .blacklevel = {.min = 0, .max = 255,  .def = 15 } };
-        ctrl->expo_timing[4]            = (vc_timing) { 4, FORMAT_RAW10, .hmax =  485,  .vmax = {.min =  34, .max =  0xffffff, .def =  0xba6}, .blacklevel = {.min = 0, .max = 1023, .def = 60 } };
-        ctrl->expo_timing[5]            = (vc_timing) { 4, FORMAT_RAW12, .hmax =  574,  .vmax = {.min =  30, .max =  0xffffff, .def =  0xba0}, .blacklevel = {.min = 0, .max = 4095, .def = 240} };
+        ctrl->expo_timing[0]            = (vc_timing) { 2, FORMAT_RAW08, .hmax =  752,  .vmax = {.min =  24, .max =  0xffffff, .def =  0xb98}, .blacklevel = {.min = 0, .max = 255,  .def = 15 }, .retrigger_min = 1612278 };
+        ctrl->expo_timing[1]            = (vc_timing) { 2, FORMAT_RAW10, .hmax =  930,  .vmax = {.min =  20, .max =  0xffffff, .def =  0xb92}, .blacklevel = {.min = 0, .max = 1023, .def = 60 }, .retrigger_min = 1991196 };
+        ctrl->expo_timing[2]            = (vc_timing) { 2, FORMAT_RAW12, .hmax =  1109, .vmax = {.min =  18, .max =  0xffffff, .def =  0xb8c}, .blacklevel = {.min = 0, .max = 4095, .def = 240}, .retrigger_min = 2371194 };
+        ctrl->expo_timing[3]            = (vc_timing) { 4, FORMAT_RAW08, .hmax =  396,  .vmax = {.min =  40, .max =  0xffffff, .def =  0xbb0}, .blacklevel = {.min = 0, .max = 255,  .def = 15 }, .retrigger_min = 854172 };
+        ctrl->expo_timing[4]            = (vc_timing) { 4, FORMAT_RAW10, .hmax =  485,  .vmax = {.min =  34, .max =  0xffffff, .def =  0xba6}, .blacklevel = {.min = 0, .max = 1023, .def = 60 }, .retrigger_min = 1043334 };
+        ctrl->expo_timing[5]            = (vc_timing) { 4, FORMAT_RAW12, .hmax =  574,  .vmax = {.min =  30, .max =  0xffffff, .def =  0xba0}, .blacklevel = {.min = 0, .max = 4095, .def = 240}, .retrigger_min = 1233144 };
+
+/*
+        2Lane
+        8  Bit: 1612278
+        10 Bit: 1991196
+        12 Bit: 2371194
+
+        4Lane
+        8  Bit: 854172
+        10 Bit: 1043334
+        12 Bit: 1233144
+*/        
 
         ctrl->flags                     = FLAG_EXPOSURE_SONY;
         ctrl->flags                    |= FLAG_PREGIUS_S;
         ctrl->flags                    |= FLAG_COMPAT_VMAX;
         ctrl->flags                    |= FLAG_COMPAT_BLACKLEVEL;
+        ctrl->flags                    |= FLAG_COMPAT_RETRIGGER;
         ctrl->flags                    |= FLAG_INCREASE_FRAME_RATE;
         ctrl->flags                    |= FLAG_IO_ENABLED;
         ctrl->flags                    |= FLAG_TRIGGER_EXTERNAL | FLAG_TRIGGER_PULSEWIDTH |
@@ -788,17 +808,30 @@ static void vc_init_ctrl_imx567(struct vc_ctrl *ctrl, struct vc_desc* desc)
         ctrl->frame.width               = 2464;
         ctrl->frame.height              = 2064;
 
-        ctrl->expo_timing[0]            = (vc_timing) { 2, FORMAT_RAW08, .hmax =  656, .vmax = {.min =  26, .max =  0xffffff, .def =  0x88a}, .blacklevel = {.min = 0, .max = 255,  .def = 15 } };
-        ctrl->expo_timing[1]            = (vc_timing) { 2, FORMAT_RAW10, .hmax =  810, .vmax = {.min =  22, .max =  0xffffff, .def =  0x884}, .blacklevel = {.min = 0, .max = 1023, .def = 60 } };
-        ctrl->expo_timing[2]            = (vc_timing) { 2, FORMAT_RAW12, .hmax =  965, .vmax = {.min =  20, .max =  0xffffff, .def =  0x880}, .blacklevel = {.min = 0, .max = 4095, .def = 240} };
-        ctrl->expo_timing[3]            = (vc_timing) { 4, FORMAT_RAW08, .hmax =  348, .vmax = {.min =  46, .max =  0xffffff, .def =  0x8a8}, .blacklevel = {.min = 0, .max = 255,  .def = 15 } };
-        ctrl->expo_timing[4]            = (vc_timing) { 4, FORMAT_RAW10, .hmax =  425, .vmax = {.min =  38, .max =  0xffffff, .def =  0x89e}, .blacklevel = {.min = 0, .max = 1023, .def = 60 } };
-        ctrl->expo_timing[5]            = (vc_timing) { 4, FORMAT_RAW12, .hmax =  502, .vmax = {.min =  34, .max =  0xffffff, .def =  0x896}, .blacklevel = {.min = 0, .max = 4095, .def = 240} };
+        ctrl->expo_timing[0]            = (vc_timing) { 2, FORMAT_RAW08, .hmax =  656, .vmax = {.min =  26, .max =  0xffffff, .def =  0x88a}, .blacklevel = {.min = 0, .max = 255,  .def = 15 }, .retrigger_min = 1058562 };
+        ctrl->expo_timing[1]            = (vc_timing) { 2, FORMAT_RAW10, .hmax =  810, .vmax = {.min =  22, .max =  0xffffff, .def =  0x884}, .blacklevel = {.min = 0, .max = 1023, .def = 60 }, .retrigger_min = 1273590 };
+        ctrl->expo_timing[2]            = (vc_timing) { 2, FORMAT_RAW12, .hmax =  965, .vmax = {.min =  20, .max =  0xffffff, .def =  0x880}, .blacklevel = {.min = 0, .max = 4095, .def = 240}, .retrigger_min = 1514484 };
+        ctrl->expo_timing[3]            = (vc_timing) { 4, FORMAT_RAW08, .hmax =  348, .vmax = {.min =  46, .max =  0xffffff, .def =  0x8a8}, .blacklevel = {.min = 0, .max = 255,  .def = 15 }, .retrigger_min = 553716 };
+        ctrl->expo_timing[4]            = (vc_timing) { 4, FORMAT_RAW10, .hmax =  425, .vmax = {.min =  38, .max =  0xffffff, .def =  0x89e}, .blacklevel = {.min = 0, .max = 1023, .def = 60 }, .retrigger_min = 673812 };
+        ctrl->expo_timing[5]            = (vc_timing) { 4, FORMAT_RAW12, .hmax =  502, .vmax = {.min =  34, .max =  0xffffff, .def =  0x896}, .blacklevel = {.min = 0, .max = 4095, .def = 240}, .retrigger_min = 793692 };
+
+/*
+        2Lane
+        8  Bit: 1058562
+        10 Bit: 1273590
+        12 Bit: 1514484
+
+        4Lane
+        8  Bit: 553716
+        10 Bit: 673812
+        12 Bit: 793692
+*/        
 
         ctrl->flags                     = FLAG_EXPOSURE_SONY;
         ctrl->flags                    |= FLAG_PREGIUS_S;
         ctrl->flags                    |= FLAG_COMPAT_VMAX;
         ctrl->flags                    |= FLAG_COMPAT_BLACKLEVEL;
+        ctrl->flags                    |= FLAG_COMPAT_RETRIGGER;
         ctrl->flags                    |= FLAG_INCREASE_FRAME_RATE;
         ctrl->flags                    |= FLAG_IO_ENABLED;
         ctrl->flags                    |= FLAG_TRIGGER_EXTERNAL | FLAG_TRIGGER_PULSEWIDTH |
@@ -826,17 +859,30 @@ static void vc_init_ctrl_imx568(struct vc_ctrl *ctrl, struct vc_desc* desc)
         ctrl->frame.width               = 2464;
         ctrl->frame.height              = 2064;
 
-        ctrl->expo_timing[0]            = (vc_timing) { 2, FORMAT_RAW08, .hmax =  656, .vmax = {.min =  26, .max =  0xffffff, .def =  0x88a}, .blacklevel = {.min = 0, .max = 255,  .def = 15 } };
-        ctrl->expo_timing[1]            = (vc_timing) { 2, FORMAT_RAW10, .hmax =  810, .vmax = {.min =  22, .max =  0xffffff, .def =  0x884}, .blacklevel = {.min = 0, .max = 1023, .def = 60 } };
-        ctrl->expo_timing[2]            = (vc_timing) { 2, FORMAT_RAW12, .hmax =  965, .vmax = {.min =  20, .max =  0xffffff, .def =  0x880}, .blacklevel = {.min = 0, .max = 4095, .def = 240} };
-        ctrl->expo_timing[3]            = (vc_timing) { 4, FORMAT_RAW08, .hmax =  348, .vmax = {.min =  46, .max =  0xffffff, .def =  0x8a8}, .blacklevel = {.min = 0, .max = 255,  .def = 15 } };
-        ctrl->expo_timing[4]            = (vc_timing) { 4, FORMAT_RAW10, .hmax =  425, .vmax = {.min =  38, .max =  0xffffff, .def =  0x89e}, .blacklevel = {.min = 0, .max = 1023, .def = 60 } };
-        ctrl->expo_timing[5]            = (vc_timing) { 4, FORMAT_RAW12, .hmax =  502, .vmax = {.min =  34, .max =  0xffffff, .def =  0x896}, .blacklevel = {.min = 0, .max = 4095, .def = 240} };
+        ctrl->expo_timing[0]            = (vc_timing) { 2, FORMAT_RAW08, .hmax =  656, .vmax = {.min =  26, .max =  0xffffff, .def =  0x88a}, .blacklevel = {.min = 0, .max = 255,  .def = 15 }, .retrigger_min = 1058562 };
+        ctrl->expo_timing[1]            = (vc_timing) { 2, FORMAT_RAW10, .hmax =  810, .vmax = {.min =  22, .max =  0xffffff, .def =  0x884}, .blacklevel = {.min = 0, .max = 1023, .def = 60 }, .retrigger_min = 1273590 };
+        ctrl->expo_timing[2]            = (vc_timing) { 2, FORMAT_RAW12, .hmax =  965, .vmax = {.min =  20, .max =  0xffffff, .def =  0x880}, .blacklevel = {.min = 0, .max = 4095, .def = 240}, .retrigger_min = 1514484 };
+        ctrl->expo_timing[3]            = (vc_timing) { 4, FORMAT_RAW08, .hmax =  348, .vmax = {.min =  46, .max =  0xffffff, .def =  0x8a8}, .blacklevel = {.min = 0, .max = 255,  .def = 15 }, .retrigger_min = 553716 };
+        ctrl->expo_timing[4]            = (vc_timing) { 4, FORMAT_RAW10, .hmax =  425, .vmax = {.min =  38, .max =  0xffffff, .def =  0x89e}, .blacklevel = {.min = 0, .max = 1023, .def = 60 }, .retrigger_min = 673812 };
+        ctrl->expo_timing[5]            = (vc_timing) { 4, FORMAT_RAW12, .hmax =  502, .vmax = {.min =  34, .max =  0xffffff, .def =  0x896}, .blacklevel = {.min = 0, .max = 4095, .def = 240}, .retrigger_min = 793692 };
+
+/*
+        2Lane
+        8  Bit: 1058562
+        10 Bit: 1273590
+        12 Bit: 1514484
+
+        4Lane
+        8  Bit: 553716
+        10 Bit: 673812
+        12 Bit: 793692
+*/        
 
         ctrl->flags                     = FLAG_EXPOSURE_SONY;
         ctrl->flags                    |= FLAG_PREGIUS_S;
         ctrl->flags                    |= FLAG_COMPAT_VMAX;
         ctrl->flags                    |= FLAG_COMPAT_BLACKLEVEL;
+        ctrl->flags                    |= FLAG_COMPAT_RETRIGGER;
         ctrl->flags                    |= FLAG_INCREASE_FRAME_RATE;
         ctrl->flags                    |= FLAG_IO_ENABLED;
         ctrl->flags                    |= FLAG_TRIGGER_EXTERNAL | FLAG_TRIGGER_PULSEWIDTH |
