@@ -23,12 +23,19 @@ usage() {
 install_dependencies() {
         if [[ -z $(which v4l2-ctl) ]]; then
                 sudo apt update
-                sudo apt install -y v4l-utils python3-pip
+                sudo apt install -y v4l-utils git build-essential python3-pip
                 sudo pip3 install -U jetson-stats
         fi
-        if [[ -e vcmipidemo ]]; then
-                chmod +x vcmipidemo
-        fi
+        (
+                cd ${script_dir}
+                if [[ ! -e vcmipidemo ]]; then
+                        if [[ ! -e vc_mipi_demo ]]; then
+                                git clone https://github.com/VC-MIPI-modules/vc_mipi_demo.git
+                        fi
+                        ./vc_mipi_demo/bin/build.sh -a
+                        cp vc_mipi_demo/src/vcmipidemo . 
+                fi
+        )
 }
 
 get_system_info() 
@@ -187,5 +194,5 @@ if [[ -n ${argus} ]]; then
 else 
         cd ${script_dir}
         v4l2-ctl -c bypass_mode=0
-        ./vcmipidemo -d${device} -an${option2} ${optionY} -s${shutter} -g${gain} -w '128 180 128'
+        ./vcmipidemo -d${device} -a${option2} ${optionY} -s${shutter} -g${gain} -w '128 180 128'
 fi
