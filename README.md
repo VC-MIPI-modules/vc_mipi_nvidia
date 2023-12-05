@@ -179,6 +179,7 @@ The property *max_framerate* is given for the number of lanes and the pixel form
 | max_framerate (4L08) |          - |          - |          - |          - |          - |
 | max_framerate (4L10) |       60.0 |       22.3 |       40.0 |       59.9 |      120.0 |
 | max_framerate (4L12) |          - |       22.3 |          - |          - |          - |
+</details>
 
 <details>
   <summary>GStreamer properties for IMX565, IMX566, IMX567 and IMX568 (cameras with 2 and 4 lanes support)</summary>
