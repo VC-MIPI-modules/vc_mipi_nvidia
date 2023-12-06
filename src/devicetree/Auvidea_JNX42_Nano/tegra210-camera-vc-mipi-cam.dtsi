@@ -27,7 +27,7 @@
 //  1   | OV7251, IMX296, IMX297
 //  2   | OV9281, IMX264, IMX265
 //  2,4 | IMX178, IMX183, IMX226, IMX250, IMX252, IMX273, IMX290, IMX327, IMX335, IMX392, 
-//      | IMX412, IMX415, IMX462, IMX565, IMX568
+//      | IMX412, IMX415, IMX462, IMX565, IMX566, IMX567, IMX568
 // -----+------------------------------------------------------------------------------------------
 #define VC_MIPI_LANES       2   // 1, 2, 4 Lanes
 // ------------------------------------------------------------------------------------------------
@@ -160,8 +160,9 @@
                                         step_exp_time            = "1";         // us
                                         default_exp_time         = "10000";     // us
 
-                                        // For applications like argus_camera, there should be a minimal frame rate greater than zero!
-                                        min_framerate            = "100";       // mHz
+                                        // For applications like argus_camera, there should 
+                                        // be a minimal frame rate greater than zero!
+                                        min_framerate            = "1000";      // mHz
                                         max_framerate            = "60000";     // mHz
                                         step_framerate           = "100";       // mHz
                                         default_framerate        = "60000";     // mHz
@@ -278,7 +279,7 @@
                         gpios = <CAM_TRIGGER 0>;
                         label = "cam-trigger";
                 };
-        
+
                 camera-control-output-low {
                         gpio-hog;
                         output-low;
