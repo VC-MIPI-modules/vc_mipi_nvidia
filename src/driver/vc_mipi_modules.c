@@ -421,10 +421,7 @@ static void vc_init_ctrl_imx327(struct vc_ctrl *ctrl, struct vc_desc* desc)
 }
 
 // ------------------------------------------------------------------------------------------------
-//  Settings for IMX335 (Rev.00)
-//
-//  TODO:
-//  - Max. Framerate of 19.5 fps is to low. Has to be 60 fps
+//  Settings for IMX335 (Rev.02)
 
 static void vc_init_ctrl_imx335(struct vc_ctrl *ctrl, struct vc_desc* desc)
 {
@@ -432,7 +429,7 @@ static void vc_init_ctrl_imx335(struct vc_ctrl *ctrl, struct vc_desc* desc)
 
         vc_notice(dev, "%s(): Initialising module control for IMX335\n", __FUNCTION__);
 
-        ctrl->vmax                      = (vc_control) { .min =   9, .max =   0xfffff, .def =   4500 };
+        ctrl->vmax                      = (vc_control) { .min =   9, .max =   0xfffff, .def = 0x1194 };
         ctrl->gain                      = (vc_control) { .min =   0, .max =      0xff, .def =      0 };
         ctrl->blacklevel                = (vc_control) { .min =   0, .max =     0x3ff, .def =   0x32 };
 
@@ -446,10 +443,10 @@ static void vc_init_ctrl_imx335(struct vc_ctrl *ctrl, struct vc_desc* desc)
         ctrl->frame.width               = 2592;
         ctrl->frame.height              = 1944;
 
-        ctrl->expo_timing[0]            = (vc_timing) { 2, FORMAT_RAW10, .hmax =   916 };
-        ctrl->expo_timing[1]            = (vc_timing) { 2, FORMAT_RAW12, .hmax =   916 };
-        ctrl->expo_timing[2]            = (vc_timing) { 4, FORMAT_RAW10, .hmax =   614 };
-        ctrl->expo_timing[3]            = (vc_timing) { 4, FORMAT_RAW12, .hmax =   614 };
+        ctrl->expo_timing[0]            = (vc_timing) { 2, FORMAT_RAW10, .hmax = 0x113 };
+        ctrl->expo_timing[1]            = (vc_timing) { 2, FORMAT_RAW12, .hmax = 0x226 };
+        ctrl->expo_timing[2]            = (vc_timing) { 4, FORMAT_RAW10, .hmax = 0x113 };
+        ctrl->expo_timing[3]            = (vc_timing) { 4, FORMAT_RAW12, .hmax = 0x226 };
 
         ctrl->flags                    |= FLAG_EXPOSURE_SONY;
         ctrl->flags                    |= FLAG_INCREASE_FRAME_RATE;

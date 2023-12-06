@@ -905,17 +905,25 @@ static __u8 vc_mod_find_mode(struct vc_cam *cam, __u8 num_lanes, __u8 format, __
 {
         struct vc_desc *desc = &cam->desc;
         struct device *dev = vc_core_get_mod_device(cam);
-        __u8 index = 0;
+        __u8 index = 0, mode_index = 0;
+        __u32 data_rate = 0, max_data_rate = 0;
 
         for (index = 0; index < desc->num_modes; index++) {
                 struct vc_desc_mode *mode = &desc->modes[index];
-                vc_dbg(dev, "%s(): Checking mode (#%02u, lanes: %u, format: 0x%02x, type: 0x%02x, binning: 0x%02x)", __FUNCTION__,
-                        index, mode->num_lanes, mode->format, mode->type, mode->binning);
-                if(mode->num_lanes == num_lanes && mode->format == format && mode->type == type && mode->binning == binning) {
-                        return index;
+                data_rate = (*(__u32*)mode->data_rate)/1000000;
+
+                vc_dbg(dev, "%s(): Checking mode (#%02u, data_rate: %u, lanes: %u, format: 0x%02x, type: 0x%02x, binning: 0x%02x)",
+                        __FUNCTION__, index, data_rate, mode->num_lanes, mode->format, mode->type, mode->binning);
+                if(mode->num_lanes == num_lanes &&
+                   mode->format == format &&
+                   mode->type == type &&
+                   mode->binning == binning &&
+                   data_rate > max_data_rate) {
+                        max_data_rate = data_rate;
+                        mode_index = index;
                 }
         }
-        return 0;
+        return mode_index;
 }
 
 static int vc_mod_write_mode(struct i2c_client *client, __u8 mode)

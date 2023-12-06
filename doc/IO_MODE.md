@@ -40,3 +40,29 @@ In this mode the flash signal is active high and the trigger signal is active lo
 In this mode the flash signal is active low and the trigger signal is active low.
 
 ![Trigger and Flash active low](../doc/plantuml/iom_trigger_flash_active_low.svg)
+
+## Support for flash signal
+In the table below you can find, which camera supports which flash signal in IO Mode (1)
+
+| cameras | rev | STREAM       | TRIGGER      |
+| ------  | --- | -------------| ------------ |
+| IMX178  |  02 | xvs H 110 ns |  H exp. time |
+| IMX183  |  15 | xvs H 110 ns |  H exp. time |
+| IMX226  |  16 | xvs H 110 ns |  H exp. time |
+| IMX250  |  09 |     H 177 us |  H exp. time |
+| IMX252  |  12 |     H 150 us |  H exp. time |
+| IMX264  |  05 |     H 270 us |  H exp. time |
+| IMX265  |  05 |           no |  H exp. time |
+| IMX273  |  16 |     H 113 us |  H exp. time |
+| IMX290  |  02 |         n.a. |         n.a. |
+| IMX296  |  43 |     H 3.5 ms |  H exp. time |
+| IMX297  |  43 |     H 3.5 ms |  H exp. time |
+| IMX327  |  02 |         n.a. |         n.a. |
+| IMX335  |  02 |     L 7.5 us |         n.a. |
+| IMX392  |  08 |       143 us |  H exp. time |
+| IMX412  |  05 | xvs L 110 ns |         n.a. |
+| IMX415  |  02 |     L  14 us |         n.a. |
+| IMX462  |  01 |         n.a. |         n.a. |
+| IMX568  |  04 |  H exp. time |  L exp. time |
+| OV7281  |  01 |           no |         n.a. |
+| OV9281  |  03 |  H exp. time |         n.a. |
