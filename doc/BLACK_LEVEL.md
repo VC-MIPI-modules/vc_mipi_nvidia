@@ -21,7 +21,7 @@ default value is set, depending on the given Bit-Mode, but the
 ```
 v4l2-ctl -l
 ```
-call would show a black_level value of 0. For the time beeing there is no appropriate solution
-in order to satisfy all supported sensors, because the initial value of this control is beeing
+call would show a black_level value of 0. For the time being there is no appropriate solution
+in order to satisfy all supported sensors, because the initial value of this control is being
 held in the tegracam_ctrls.c
 
