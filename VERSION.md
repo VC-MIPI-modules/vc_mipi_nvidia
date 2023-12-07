@@ -1,5 +1,16 @@
 # Version History
 
+## v0.16.0 (Support for IMX566, IMX567, IMX568)
+  * New Features
+    * Added support for VC MIPI Camera Modules
+      * IMX566
+      * IMX567
+      * IMX568
+  * Improvements
+    * Refactoring of sensor timings (vmax, blacklevel and retrigger constants)
+  * Bugfix
+    * Fixed teardown effect of PregiusS sensors when using uncommon widths
+
 ## v0.15.0 (JNX42, Bugfixes & Improvements)
   * New Features
     * Added support for carrier boards
