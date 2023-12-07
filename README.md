@@ -47,7 +47,7 @@
     * **Software trigger** can be executed by V4L2 control 'single_trigger'
   * **[IO mode](doc/IO_MODE.md)** '0: disabled', '1: flash active high', '2: flash active low', '3: trigger active low', '4: trigger active low and flash active high', '5: trigger and flash active low' can be set via device tree or V4L2 control 'flash_mode'
   * **Frame rate** can be set via V4L2 control 'frame_rate' *(except IMX412 and OV9281)*
-  * **Black level** can be set via V4L2 control 'black_level' *(except IMX412, IMX415, OV7251 and OV9281)*
+  * **[Black level](doc/BLACK_LEVEL.md)** can be set via V4L2 control 'black_level' *(except IMX412, OV7251 and OV9281)*
   * **[ROI cropping](doc/ROI_CROPPING.md)** can be set via device tree properties active_l, active_t, active_w and active_h or v4l2-ctl.
 
 ## Prerequisites for cross-compiling
