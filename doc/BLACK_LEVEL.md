@@ -1,4 +1,4 @@
-# Blacklevel
+# Black level
 Adds an offset to the image output by setting
 ```
 v4l2-ctl -c black_level=value
@@ -12,7 +12,7 @@ to the maximal possible value of the sensors black level register.
 E.g. black_level=5859 (5.859%) will be correlating with an offset of 15 out of 256 possible
 values for the 8-Bit mode. The same relation would apply to 60/1024 or 240/4096 for the 
 10-Bit or the 12-Bit mode, respectively. The advantage of this relative property is that 
-there is no need to set up an new value absolute when switching between different Bit-modes.
+there is no need to set up a new absolute value when switching between different Bit-modes.
 
 With initialization of the driver, an optimal default value according to the manufacturers
 proposal will be set. Unfortunately the v4l2-ctl won't reflect the initial value until it 
