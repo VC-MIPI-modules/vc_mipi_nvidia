@@ -17,11 +17,9 @@ there is no need to set up a new absolute value when switching between different
 With initialization of the driver, an optimal default value according to the manufacturers
 proposal will be set. Unfortunately the v4l2-ctl won't reflect the initial value until it 
 is modified manually by the user. That means if the driver is starting up, the sensors 
-default value is set, depending on the given Bit-Mode, but the
+default value is set, depending on the given Bit-mode, but the
 ```
 v4l2-ctl -l
 ```
 call would show a black_level value of 0. For the time being there is no appropriate solution
-in order to satisfy all supported sensors, because the initial value of this control is being
-held in the tegracam_ctrls.c
-
+for this behaviour, because the initial value of this control is being held in the tegracam_ctrls.c
