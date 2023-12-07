@@ -35,7 +35,7 @@
   * IMX335
   * IMX412
   * IMX415
-  * IMX565, IMX568
+  * IMX565, IMX566, IMX567, IMX568
   * OV7251, OV9281
 * Features
   * Quickstart script for an easier installation process
