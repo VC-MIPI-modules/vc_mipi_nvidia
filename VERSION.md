@@ -9,6 +9,7 @@
   * Bugfixes
     * Fixed a problem with IMX568 on NVIDIA Jetson Nano
     * Fixed low frame rate problem with IMX335 and Rev.02
+    * Fixed tear down effect of Pregius S sensors when using uncommon widths
 
 ## v0.15.1 (Bugfixes)
   * Bugfixes
