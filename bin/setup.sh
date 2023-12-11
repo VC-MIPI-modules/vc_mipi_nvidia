@@ -130,6 +130,7 @@ setup_bsp() {
         sudo tar xjvf $RFS_FILE -C $BSP_DIR/Linux_for_Tegra/rootfs
 
         cd $BSP_DIR/Linux_for_Tegra
+        sudo ./tools/l4t_flash_prerequisites.sh # Only Orin Nano
         sudo ./apply_binaries.sh
         case $VC_MIPI_BSP in
         32.6.1|32.7.1|32.7.2|32.7.3|35.1.0|35.2.1|35.3.1)

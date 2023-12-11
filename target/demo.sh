@@ -104,14 +104,18 @@ while [ $# != 0 ] ; do
                 argus=1
                 shift
                 ;;
-        --io)
-                io="$1"
-                shift
+        -c|--check)
+                check_dt_settings
+                exit 0
                 ;;
         -d|--device)
                 device="$1"
                 shift
                 ;;
+        --debug)
+                enable_debugging
+                exit 0
+                ;;                
         -e|--exposure)
                 exposure="$1"
                 shift
@@ -132,6 +136,10 @@ while [ $# != 0 ] ; do
                 get_system_info
                 exit 0
                 ;;
+        --io)
+                io="$1"
+                shift
+                ;;
         -o|--option)
                 option2="$1"
                 shift
@@ -147,6 +155,10 @@ while [ $# != 0 ] ; do
         -t|--trigger)
                 trigger="$1"
                 shift
+                ;;
+        --trace)
+                open_trace
+                exit 
                 ;;
         -w|--whitebalance)
                 whitebalance="-w '128 180 128'"
@@ -190,7 +202,7 @@ if [[ -n ${argus} ]]; then
         get_image_size
         adjust_pixel_format
 
-        gst-launch-1.0 nvarguscamerasrc sensor-id=${device} ! 'video/x-raw(memory:NVMM),framerate=20/1' ! autovideosink
+        gst-launch-1.0 nvarguscamerasrc sensor-id=${device} ! 'video/x-raw(memory:NVMM),framerate=20/1' ! fakesink
 else 
         cd ${script_dir}
         v4l2-ctl -c bypass_mode=0

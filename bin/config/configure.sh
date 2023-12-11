@@ -16,7 +16,7 @@ case $VC_MIPI_SOM in
 Nano|NanoSD|Nano2GB|TX1)
         BSP_DIR=$BUILD_DIR/Nano\_$VC_MIPI_BSP
         ;;
-AGXXavier|XavierNX|XavierNXSD|TX2|TX2i|TX2NX)
+AGXXavier|XavierNX|XavierNXSD|TX2|TX2i|TX2NX|OrinNano)
         BSP_DIR=$BUILD_DIR/Xavier\_$VC_MIPI_BSP
         ;;
 esac
@@ -72,7 +72,7 @@ DTSI_FILE_DICT=(
         ["Auvidea_JNX30_XavierNX"]="tegra194-camera-vc-mipi-cam.dtsi"
         ["Auvidea_JNX42_XavierNX"]="tegra194-camera-vc-mipi-cam.dtsi"
                 ["NV_DevKit_Nano"]="tegra210-camera-vc-mipi-cam.dtsi" 
-            ["NV_DevKit_OrinNano"]="tegra234-p3768-camera-vc-mipi-cam.dtsi"
+            ["NV_DevKit_OrinNano"]="tegra234-camera-vc-mipi-cam.dtsi"
             ["NV_DevKit_XavierNX"]="tegra194-camera-vc-mipi-cam.dtsi"
           ["Auvidea_JNX30D_TX2NX"]="tegra186-camera-vc-mipi-cam.dtsi"
 )
@@ -133,7 +133,7 @@ Nano|NanoSD|Nano2GB)
         esac
         ;;
 
-AGXXavier|XavierNX|XavierNXSD|TX2|TX2i|TX2NX)
+AGXXavier|XavierNX|XavierNXSD|TX2|TX2i|TX2NX|OrinNano)
         case $VC_MIPI_BSP in
         32.3.1)
                 PATCHES+=('kernel_Xavier_32.3.1+')

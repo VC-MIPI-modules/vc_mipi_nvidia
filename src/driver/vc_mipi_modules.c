@@ -632,12 +632,12 @@ static void vc_init_ctrl_imx568(struct vc_ctrl *ctrl, struct vc_desc* desc)
         ctrl->frame.width               = 2472;
         ctrl->frame.height              = 2048;
 
-        ctrl->expo_timing[0]            = (vc_timing) { 2, FORMAT_RAW08, .hmax =  489 };
-        ctrl->expo_timing[1]            = (vc_timing) { 2, FORMAT_RAW10, .hmax =  590 };
-        ctrl->expo_timing[2]            = (vc_timing) { 2, FORMAT_RAW12, .hmax =  703 };
-        ctrl->expo_timing[3]            = (vc_timing) { 4, FORMAT_RAW08, .hmax =  253 };
-        ctrl->expo_timing[4]            = (vc_timing) { 4, FORMAT_RAW10, .hmax =  309 };
-        ctrl->expo_timing[5]            = (vc_timing) { 4, FORMAT_RAW12, .hmax =  365 };
+        ctrl->expo_timing[0]            = (vc_timing) { 2, FORMAT_RAW08, .hmax =  656 };
+        ctrl->expo_timing[1]            = (vc_timing) { 2, FORMAT_RAW10, .hmax =  810 }; 
+        ctrl->expo_timing[2]            = (vc_timing) { 2, FORMAT_RAW12, .hmax =  860 };
+        ctrl->expo_timing[3]            = (vc_timing) { 4, FORMAT_RAW08, .hmax =  348 };
+        ctrl->expo_timing[4]            = (vc_timing) { 4, FORMAT_RAW10, .hmax =  425 };
+        ctrl->expo_timing[5]            = (vc_timing) { 4, FORMAT_RAW12, .hmax =  502 };
 
         ctrl->flags                     = FLAG_EXPOSURE_SONY;
         ctrl->flags                    |= FLAG_INCREASE_FRAME_RATE;
