@@ -1,14 +1,14 @@
 # Version History
 
-## v0.16.0 
+## v0.17.0 (Orin Nano)
   * New Features
-    * Added support for VC MIPI Camera Modules 
+    * Added support for system on modules
+      * NVIDIA Jetson Orin Nano
+
+## v0.16.0 (IMX566, IMX567)
+  * New Features
+    * Added support for VC MIPI Camera Modules
       * IMX566, IMX567
-  * Improvements
-    * Added documentation for io_mode (flash) signals for all cameras
-  * Bugfixes
-    * Fixed a problem with IMX568 on NVIDIA Jetson Nano
-    * Fixed low frame rate problem with IMX335 and Rev.02
 
 ## v0.15.1 (Bugfixes)
   * Bugfixes
@@ -18,12 +18,12 @@
   * New Features
     * Added support for carrier boards
       * Auvidea JNX42 with NVIDIA Jetson Nano and Xavier NX *(JNX42 supports only one camera - Cam0 for Jetson Nano, TX2 NX and Xavier NX)*
-  * Improvements
-    * Build pipeline simplyfied by copying all DT files automatically as long as the destination path of the given L4T is present
-    * Build pipeline is checking the integrity of the downloaded files
   * Bugfixes
     * Fixed an issue with ./setup.sh -c (It did not load the correct DT file in every case)
     * Fixed wrong physical_w and physical_h values in README.md
+  * Improvements
+    * Build pipeline simplyfied by copying all DT files automatically as long as the destination path of the given L4T is present
+    * Build pipeline is checking the integrity of the downloaded files
 
 ## v0.14.1 (Bugfixes)
   * Bugfixes
@@ -41,8 +41,8 @@
     * Added support for VC MIPI Camera Modules 
       * IMX462
       * IMX565
-  * Bugfixes
-    * Added trigger support for OV9281
+    * Bugfix
+      * Added trigger support for OV9281
 
 ## v0.13.0 (L4T 35.1.0)
   * New Features
@@ -56,6 +56,7 @@
 ## v0.12.2 (Bugfixes)
   * Bugfixes
     * Fixed a problem in function vc_fix_image_size
+    
 ## v0.12.1 (Improvements & Bugfixes)
   * Improvements
     * Improved ROI cropping documentation with adjustable ranges for each camera
