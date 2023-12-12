@@ -546,10 +546,11 @@ static void vc_init_ctrl_imx565(struct vc_ctrl *ctrl, struct vc_desc *desc)
         MODE(2, 2, FORMAT_RAW12, 1586,   14, 0xffffff, 0xc26, 4095,  240,   3568752)
         MODE(3, 4, FORMAT_RAW08,  555,   30, 0xffffff, 0xc40,  255,   15,   1256094)
         // ---------------------------------------------------------------
-        // Workaround for Rev.01. This limits the fps to 18.8 fps!
+        // Workaround for Rev.01. .hmax = 1197. 
+        // This limits the fps to 18.8 fps!
         // The theoretically correct value for Rev.02 is .hmax = 684
         // ---------------------------------------------------------------
-        MODE(4, 4, FORMAT_RAW10, 1197,   26, 0xffffff, 0xc3a, 1023,   60,   1546074)
+        MODE(4, 4, FORMAT_RAW10,  684,   26, 0xffffff, 0xc3a, 1023,   60,   1546074)
         MODE(5, 4, FORMAT_RAW12,  812,   22, 0xffffff, 0xc34, 4095,  240,   1833030)
 
         ctrl->flags                     = FLAG_EXPOSURE_SONY;
