@@ -1,11 +1,12 @@
 # Version History
 
-## v0.16.0 
+## v0.16.0 (Support IMX566, IMX567)
   * New Features
     * Added support for VC MIPI Camera Modules 
       * IMX566, IMX567
   * Improvements
     * Added documentation for io_mode (flash) signals for all cameras
+    * Added documentation for black level
   * Bugfixes
     * Fixed a problem with IMX568 on NVIDIA Jetson Nano
     * Fixed low frame rate problem with IMX335 and Rev.02
