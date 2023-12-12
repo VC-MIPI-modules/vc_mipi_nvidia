@@ -43,6 +43,49 @@ build_modules() {
         sudo cp -arfv $MODULES_OUT/lib $MODULES_BSP
 }
 
+build_nvidia_driver() {
+        echo "Build nvidia display driver ..."
+        echo "KERNEL_SOURCE: $KERNEL_SOURCE"
+        echo "KERNEL_OUT: $KERNEL_OUT"
+        echo "KERNEL_DIR: $KERNEL_DIR"
+        echo "MODULES_OUT: $MODULES_OUT"
+        echo "MODULES_BSP: $MODULES_BSP"
+
+#        cd $KERNEL_SOURCE
+        KERNEL_COMP=$KERNEL_SOURCE/kernel/kernel-5.10
+#        cd $KERNEL_COMP
+
+        echo "KERNEL_COMP: $KERNEL_COMP"
+        NV_SRC=$KERNEL_SOURCE/NVIDIA-kernel-module-source-TempVersion
+
+        echo "WORKING_DIR: $WORKING_DIR"
+        echo "NV_SRC: $NV_SRC"
+        echo "CROSS_COMPILE: $CROSS_COMPILE "
+        echo "------------------"
+
+        mkdir -p $BSP_DIR/Linux_for_Tegra/backup_display_driver
+        ls -la $MODULES_BSP/lib/modules/
+
+        exit 1
+
+#        cd $KERNEL_SOURCE/NVIDIA-kernel-module-source-TempVersion
+        cd $NV_SRC
+
+#        SYSOUT=$KERNEL_SOURCE/kernel_out \
+
+        make \
+        modules \
+        SYSSRC=$KERNEL_COMP \
+        SYSOUT=$KERNEL_OUT \
+        CC=${CROSS_COMPILE}gcc \
+        LD=${CROSS_COMPILE}ld.bfd \
+        AR=${CROSS_COMPILE}ar \
+        CXX=${CROSS_COMPILE}g++ \
+        OBJCOPY=${CROSS_COMPILE}objcopy \
+        TARGET_ARCH=aarch64 \
+        ARCH=arm64
+}
+
 build_device_tree() {
         echo "Build device tree ..."
         cd $KERNEL_SOURCE
@@ -89,6 +132,11 @@ while [ $# != 0 ] ; do
                 patch_kernel
                 configure_kernel
                 build_modules
+                exit 0
+                ;;
+        -n)
+                configure
+                build_nvidia_driver
                 exit 0
                 ;;
         *)

@@ -32,6 +32,9 @@ function extract_and_set_key_from_config {
                 XavierNX|XavierNXSD)
                         part_str_som="XavierNX"
                         ;;
+                OrinNX)
+                        part_str_som="OrinNX"
+                        ;;
                 AGXXavier|TX2)
                         part_str_som=$VC_MIPI_SOM
                         ;;

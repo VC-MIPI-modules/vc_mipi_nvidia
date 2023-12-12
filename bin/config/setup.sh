@@ -200,7 +200,7 @@ write_configuration() {
 
 setup_driver() {
         print_title $1 $2
-        choose_som 0 1 2 3 4 5 6 7 9
+        choose_som 0 1 2 3 4 5 6 7 8 9
         case ${som} in
         Nano2GB)
                 choose_board 0
@@ -230,6 +230,9 @@ setup_driver() {
                 choose_board 3
                 choose_bsp 10
                 ;;
+        OrinNX)
+                choose_board 5
+                choose_bsp 9 10
         esac
         check_configuration $1 $2
         write_configuration

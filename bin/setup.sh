@@ -109,6 +109,55 @@ repatch_kernel() {
         git config gc.auto 1
 }
 
+setup_nvidia_driver() {
+        echo "Preparing NVIDIA display driver ..."
+
+        cd $KERNEL_SOURCE
+        NVDD_FILE=nvidia_kernel_display_driver_source.tbz2
+        if [[ ! -e $NVDD_FILE ]]
+        then
+                echo "Could not find NVIDIA display driver package! (pwd $(pwd))"
+                exit 1
+        fi
+
+        # checking integrity of display driver...
+        SHA_SUM_FILE=${NVDD_FILE}.sha1sum
+        if [[ ! -e $SHA_SUM_FILE ]]
+        then
+                echo "Could not find NVIDIA display driver sha1 file! (pwd $(pwd))"
+                exit 1
+        fi
+ 
+        SHA_SUM_FILE_VAR="$(cat $SHA_SUM_FILE | awk '{print $1}')"
+        if [[ -e SHA_SUM_FILE_VAR ]]
+        then
+                echo "Could not get secure hash from ${SHA_SUM_FILE}!"
+                exit 1
+        fi
+#        echo "SHA_SUM_FILE_VAR: $SHA_SUM_FILE_VAR"
+
+        SHA_SUM_VAR="$(sha1sum $NVDD_FILE | awk '{print $1}')"
+        if [[ -z $SHA_SUM_VAR ]]
+        then
+                echo "Could not get secure hash from ${NVDD_FILE}!"
+                exit 1
+        fi
+#        echo "SHA_SUM_VAR: $SHA_SUM_VAR"
+
+        if [[ $SHA_SUM_FILE_VAR != $SHA_SUM_VAR ]]
+        then
+                echo "Secure hashes are not equal!"
+                exit 1
+        fi
+
+        echo "Secure hash of $NVDD_FILE seems to be ok ..."
+
+        tar -xvf $NVDD_FILE
+
+        cd $KERNEL_SOURCE/NVIDIA-kernel-module-source-TempVersion
+
+}
+
 setup_bsp() {
         echo "Setup board support package ..."
         mkdir -p $BUILD_DIR
@@ -196,6 +245,11 @@ while [ $# != 0 ] ; do
         -t|--target)
                 configure
                 setup_target $1 $2
+                exit 0
+                ;;
+        -n)
+                configure
+                setup_nvidia_driver
                 exit 0
                 ;;
         -o|--host)
