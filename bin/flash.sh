@@ -26,11 +26,27 @@ check_recovery_mode() {
 flash_all() {
         cd $BSP_DIR/Linux_for_Tegra/
 	echo "Flashing all ... board: ${FLASH_BOARD}, partition: ${FLASH_PARTITION}"
+
+        start_time=$(date +%s)
+
         sudo ./flash.sh $FLASH_BOARD $FLASH_PARTITION
+
+        end_time=$(date +%s)
+        elapsed_time=$((${end_time} - ${start_time}))
+
+        echo "------------------------------------------------------------"
+        echo -n "  "
+        eval "echo $(date -ud "@${elapsed_time}" +'The process took %H hours %M minutes %S seconds')"
+        echo "------------------------------------------------------------"
 }
 
 flash_kernel() {
-        scp $KERNEL_OUT/arch/arm64/boot/Image $TARGET_USER@$TARGET_IP:/tmp
+        echo "Flashing kernel only ..."
+        IMAGE_FILE=Image
+        TARGET_DIR=/tmp
+        scp $KERNEL_OUT/arch/arm64/boot/$IMAGE_FILE $TARGET_USER@$TARGET_IP:$TARGET_DIR
+        $TARGET_SHELL "echo vc | sudo -S mv $TARGET_DIR/$IMAGE_FILE /boot"
+        $TARGET_SHELL ls -l /boot
 }
 
 flash_device_tree() {
@@ -40,7 +56,8 @@ flash_device_tree() {
 }
 
 reboot_target() {
-        $TARGET_SHELL sudo /sbin/reboot
+        echo "Rebooting target ..."
+        $TARGET_SHELL "echo vc | sudo -S /sbin/reboot"
 }
 
 while [ $# != 0 ] ; do
@@ -58,7 +75,6 @@ while [ $# != 0 ] ; do
                 configure
                 check_recovery_mode
                 flash_device_tree
-                exit 0
                 ;;
         -h|--help)
                 usage
@@ -67,7 +83,10 @@ while [ $# != 0 ] ; do
         -k|--kernel)
                 configure
                 flash_kernel
-                exit 0
+                ;;
+        -r|--reboot)
+                configure
+                reboot_target
                 ;;
         *)
                 echo "Unknown option ${option}"
@@ -75,6 +94,3 @@ while [ $# != 0 ] ; do
                 ;;
         esac
 done
-
-usage
-exit 1

@@ -35,9 +35,6 @@
 #define FLAG_TRIGGER_SLAVE              (1 << 17)
 
 #define FLAG_PREGIUS_S                  (1 << 18)
-#define FLAG_COMPAT_VMAX                (1 << 19)
-#define FLAG_COMPAT_BLACKLEVEL          (1 << 20)
-#define FLAG_COMPAT_RETRIGGER           (1 << 21)
 
 #define FORMAT_RAW08                    0x2a
 #define FORMAT_RAW10                    0x2b
@@ -145,14 +142,14 @@ struct vc_csr {
         struct vc_sen_csr sen;
 };
 
-typedef struct vc_timing {
+typedef struct vc_mode {
         __u8       num_lanes;
         __u8       format;
         __u32      hmax;
         vc_control vmax;
         vc_control blacklevel;
         __u32      retrigger_min;
-} vc_timing;
+} vc_mode;
 
 struct vc_ctrl {
         // Communication
@@ -160,21 +157,17 @@ struct vc_ctrl {
         struct i2c_client *client_sen;
         struct i2c_client *client_mod;
         // Controls
-//        struct vc_control vmax;
-        struct vc_control vmax;
+        struct vc_mode mode[8];
         struct vc_control exposure;
         struct vc_control gain;
         struct vc_control framerate;
-        struct vc_control blacklevel;
         // Modes & Frame Formats
         struct vc_frame frame;          // Pixel
         // Control and status registers
         struct vc_csr csr;
         // Exposure
-        struct vc_timing expo_timing[8];
         __u32 clk_ext_trigger;          // Hz
         __u32 clk_pixel;                // Hz
-        __u32 retrigger_min;
         // Flash
         __u32 flash_factor;
         __s32 flash_toffset;

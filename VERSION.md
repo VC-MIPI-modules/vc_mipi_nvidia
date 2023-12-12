@@ -1,6 +1,6 @@
 # Version History
 
-## v0.16.0 
+## v0.16.0 (Support IMX566, IMX567)
   * New Features
     * Added support for VC MIPI Camera Modules 
       * IMX566, IMX567

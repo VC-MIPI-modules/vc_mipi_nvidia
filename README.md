@@ -1,7 +1,7 @@
 # Vision Components MIPI CSI-2 driver for NVIDIA Jetson Nano, Xavier NX, AGX Xavier and TX2
 ![VC MIPI camera](https://www.vision-components.com/fileadmin/external/documentation/hardware/VC_MIPI_Camera_Module/VC_MIPI_Camera_Module-Dateien/mipi_sensor_front_back.png)
 
-## Version 0.15.1 ([History](VERSION.md))
+## Version 0.16.0 ([History](VERSION.md))
 * Supported system on modules
   * [NVIDIA Jetson Nano 4GB/2GB (production + devkit)](https://developer.nvidia.com/embedded/jetson-nano)
   * [NVIDIA Jetson Xavier NX (production + devkit)](https://developer.nvidia.com/embedded/jetson-xavier-nx)
@@ -296,18 +296,14 @@ If you want to use your camera in an application with long exposure times or ext
 
 # Tested with VC MIPI Camera Module Revision
 
-  * IMX178 (Rev.01), IMX183 (Rev.12), IMX226 (Rev.13), 
-  * IMX250 (Rev.07), IMX252 (Rev.10), IMX264 (Rev.03), IMX265 (Rev.01), IMX273 (Rev.13), IMX392 (Rev.06)
-  * IMX290 (Rev.02), IMX327 (Rev.02)
-  * IMX296 (Rev.42), IMX297 (Rev.??)
-  * IMX335 (Rev.00)
-  * IMX412 (Rev.02)
-  * IMX415 (Rev.01)
-  * IMX462 (Rev.01)
-  * IMX565 (Rev.01)
-  * IMX566 (Rev.02)
-  * IMX567 (Rev.02)
-  * IMX568 (Rev.01)
+  * IMX178 (Rev.02), IMX183 (Rev.15), IMX226 (Rev.16), 
+  * IMX250 (Rev.09), IMX252 (Rev.12), IMX264 (Rev.05), IMX265 (Rev.05), IMX273 (Rev.16), IMX392 (Rev.08)
+  * IMX290 (Rev.02), IMX327 (Rev.02), IMX462 (Rev.01)
+  * IMX296 (Rev.43), IMX297 (Rev.43)
+  * IMX335 (Rev.02)
+  * IMX412 (Rev.05)
+  * IMX415 (Rev.02)
+  * IMX565 (Rev.03), IMX566 (Rev.03), IMX567 (Rev.03), IMX568 (Rev.04)
   * OV7251 (Rev.01), OV9281 (Rev.02)
 
 You can find the revision of the camera module in the dmesg log.

@@ -276,7 +276,7 @@ static void vc_core_print_modes(struct device *dev, struct vc_desc *desc)
         vc_notice(dev, "+----+---------+---------+---------+---------+---------+\n");
 }
 
-static void vc_core_print_timing(struct vc_cam *cam)
+static void vc_core_print_mode(struct vc_cam *cam)
 {
         struct vc_ctrl *ctrl = &cam->ctrl;
         struct device *dev = vc_core_get_mod_device(cam);
@@ -288,9 +288,9 @@ static void vc_core_print_timing(struct vc_cam *cam)
                 vc_notice(dev, "| lanes | format | exposure   | framerate |\n");
                 vc_notice(dev, "|       |        | max [us]   | max [mHz] |\n");
                 vc_notice(dev, "+-------+--------+------------+-----------+\n");
-                while (index < 8 && ctrl->expo_timing[index].num_lanes != 0) {
-                        __u8 num_lanes = ctrl->expo_timing[index].num_lanes;
-                        __u8 format = ctrl->expo_timing[index].format;
+                while (index < 8 && ctrl->mode[index].num_lanes != 0) {
+                        __u8 num_lanes = ctrl->mode[index].num_lanes;
+                        __u8 format = ctrl->mode[index].format;
                         __u32 max_exposure = vc_core_calculate_max_exposure(cam, num_lanes, format);
                         __u32 max_frame_rate = vc_core_calculate_max_frame_rate(cam, num_lanes, format);
 
@@ -305,7 +305,7 @@ static void vc_core_print_timing(struct vc_cam *cam)
 
 void vc_core_print_debug(struct vc_cam *cam)
 {
-        vc_core_print_timing(cam);
+        vc_core_print_mode(cam);
 }
 
 // ------------------------------------------------------------------------------------------------
@@ -628,58 +628,40 @@ __u32 vc_core_calculate_max_frame_rate(struct vc_cam *cam, __u8 num_lanes, __u8 
 }
 
 
-vc_timing vc_core_get_vc_timing(struct vc_cam *cam, __u8 num_lanes, __u8 format)
+vc_mode vc_core_get_mode(struct vc_cam *cam, __u8 num_lanes, __u8 format)
 {
         struct device *dev = vc_core_get_sen_device(cam);
         struct vc_ctrl *ctrl = &cam->ctrl;
         int index = 0;
-        vc_timing tRet;
+        vc_mode tRet;
 
         for (index = 0; index < 8; index++) {
-                if ( (num_lanes == ctrl->expo_timing[index].num_lanes)
-                  && (format == ctrl->expo_timing[index].format) ) {
-                        return ctrl->expo_timing[index];
+                if ( (num_lanes == ctrl->mode[index].num_lanes)
+                  && (format == ctrl->mode[index].format) ) {
+                        return ctrl->mode[index];
                         //Nullpruefung!!
                   }
         }
 
-        vc_err(dev, "%s(): Could not get timing values!\n", __FUNCTION__);
+        vc_err(dev, "%s(): Could not get mode values!\n", __FUNCTION__);
 
         return tRet;
 }
 
 vc_control vc_core_get_vmax(struct vc_cam *cam, __u8 num_lanes, __u8 format)
 {
-        struct vc_ctrl *ctrl = &cam->ctrl;
-
-        if (!(ctrl->flags & FLAG_COMPAT_VMAX)) {
-                return ctrl->vmax;
-        }
-        
-        return vc_core_get_vc_timing(cam, num_lanes, format).vmax;
+        return vc_core_get_mode(cam, num_lanes, format).vmax;
 
 }
 
 vc_control vc_core_get_blacklevel(struct vc_cam *cam, __u8 num_lanes, __u8 format)
 {
-        struct vc_ctrl *ctrl = &cam->ctrl;
-
-        if (!(ctrl->flags & FLAG_COMPAT_BLACKLEVEL)) {
-                return ctrl->blacklevel;
-        }
-        
-        return vc_core_get_vc_timing(cam, num_lanes, format).blacklevel;
+        return vc_core_get_mode(cam, num_lanes, format).blacklevel;
 }
 
 __u32 vc_core_get_retrigger(struct vc_cam *cam, __u8 num_lanes, __u8 format)
 {
-        struct vc_ctrl *ctrl = &cam->ctrl;
-
-        if (!(ctrl->flags & FLAG_COMPAT_RETRIGGER)) {
-                return ctrl->retrigger_min;
-        }
-        
-        return vc_core_get_vc_timing(cam, num_lanes, format).retrigger_min;
+        return vc_core_get_mode(cam, num_lanes, format).retrigger_min;
 }
 
 
@@ -939,7 +921,7 @@ int vc_core_init(struct vc_cam *cam, struct i2c_client *client)
 #endif
         vc_core_state_init(cam);
         vc_core_update_controls(cam);
-        vc_core_print_timing(cam);
+        vc_core_print_mode(cam);
 
         vc_notice(&ctrl->client_mod->dev, "VC MIPI Core successfully initialized");
         return 0;
@@ -1444,7 +1426,8 @@ int vc_sen_set_blacklevel(struct vc_cam *cam, __u32 blacklevel_rel)
         __u32 blacklevel_max = vc_core_get_blacklevel(cam, num_lanes, format).max;
         __u32 blacklevel_abs = (__u32)DIV_ROUND_CLOSEST((blacklevel_rel * blacklevel_max), 100000);
 
-        vc_notice(dev, "%s(): Set sensor black level: %u, (max=%u)\n", __FUNCTION__, blacklevel_abs, blacklevel_max);
+        vc_notice(dev, "%s(): Set sensor black level: %u (%u/%u)\n", __FUNCTION__, 
+                blacklevel_rel, blacklevel_abs, blacklevel_max);
 
         ret |= i2c_write_reg2(dev, client, &ctrl->csr.sen.blacklevel, blacklevel_abs, __FUNCTION__);
         if (ret) {
@@ -1525,9 +1508,9 @@ static __u32 vc_core_calculate_period_1H(struct vc_cam *cam, __u8 num_lanes, __u
         __u8 index = 0;
 
         for (index = 0; index <= 7; index++) {
-                struct vc_timing *timing = &ctrl->expo_timing[index];
-                if (timing->num_lanes == num_lanes && timing->format == format) {
-                        return ((__u64)timing->hmax * 1000000000) / ctrl->clk_pixel;
+                struct vc_mode *mode = &ctrl->mode[index];
+                if (mode->num_lanes == num_lanes && mode->format == format) {
+                        return ((__u64)mode->hmax * 1000000000) / ctrl->clk_pixel;
                 }
         }
         return 0;
