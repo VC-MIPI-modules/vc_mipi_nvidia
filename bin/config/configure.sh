@@ -248,6 +248,13 @@ OrinNano)
         FLASH_PARTITION='nvme0n1p1'
         ;;
 
+OrinNX)
+        # Carrier board independant settings
+        FLASH_DT='kernel-dtb'
+        FLASH_BOARD='jetson-orin---nvme'
+        FLASH_PARTITION='nvme0n1p1'
+        ;;
+
 *)
         echo "SOM $VC_MIPI_SOM not supported!"
         ;;

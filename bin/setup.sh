@@ -116,7 +116,7 @@ setup_nvidia_driver() {
         NVDD_FILE=nvidia_kernel_display_driver_source.tbz2
         if [[ ! -e $NVDD_FILE ]]
         then
-                echo "Could not find NVIDIA display driver package! (pwd $(pwd))"
+                echo "Could not find NVIDIA display driver package ${NVDD_FILE}! (pwd $(pwd))"
                 exit 1
         fi
 
@@ -129,7 +129,7 @@ setup_nvidia_driver() {
         fi
  
         SHA_SUM_FILE_VAR="$(cat $SHA_SUM_FILE | awk '{print $1}')"
-        if [[ -e SHA_SUM_FILE_VAR ]]
+        if [[ -z $SHA_SUM_FILE_VAR ]]
         then
                 echo "Could not get secure hash from ${SHA_SUM_FILE}!"
                 exit 1
@@ -154,7 +154,7 @@ setup_nvidia_driver() {
 
         tar -xvf $NVDD_FILE
 
-        cd $KERNEL_SOURCE/NVIDIA-kernel-module-source-TempVersion
+#        cd $KERNEL_SOURCE/NVIDIA-kernel-module-source-TempVersion
 
 }
 
