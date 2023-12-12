@@ -63,6 +63,9 @@ In the table below you can find, which camera supports which flash signal in IO 
 | IMX412  |  05 | xvs L 110 ns |         n.a. |
 | IMX415  |  02 |     L  14 us |         n.a. |
 | IMX462  |  01 |         n.a. |         n.a. |
-| IMX568  |  04 |  H exp. time |  L exp. time |
+| IMX565  |  03 |  H exp. time |  H exp. time | 
+| IMX566  |  03 |  H exp. time |  H exp. time |
+| IMX567  |  03 |  H exp. time |  H exp. time |
+| IMX568  |  04 |  H exp. time |  H exp. time |
 | OV7281  |  01 |           no |         n.a. |
 | OV9281  |  03 |  H exp. time |         n.a. |
