@@ -43,36 +43,36 @@ build_modules() {
         sudo cp -arfv $MODULES_OUT/lib $MODULES_BSP
 }
 
+# Info:
+# Makefile is looking into the kernel config file.
+# If the kernel config file has been changed, the display driver has to be rebuilt!
+
 build_nvidia_driver() {
-        echo "Build nvidia display driver ..."
-        echo "KERNEL_SOURCE: $KERNEL_SOURCE"
-        echo "KERNEL_OUT: $KERNEL_OUT"
-        echo "KERNEL_DIR: $KERNEL_DIR"
-        echo "MODULES_OUT: $MODULES_OUT"
-        echo "MODULES_BSP: $MODULES_BSP"
+        # checking for Orin ...
+        case $VC_MIPI_SOM in
+        OrinNano|OrinNX)
+                ;;
+        *)
+                return 0
+                ;;
+        esac
 
-#        cd $KERNEL_SOURCE
+        echo "Build NVIDIA display driver ..."
+
+        cd $KERNEL_SOURCE
+        NVDD_DIR=NVIDIA-kernel-module-source-TempVersion
+
+        if [ ! -d $NVDD_DIR ]
+        then
+                echo "Could not find NVIDIA display driver source directory ${NVDD_DIR}! (pwd $(pwd))"
+                exit 1
+        fi
+
+        cd $NVDD_DIR
+
         KERNEL_COMP=$KERNEL_SOURCE/kernel/kernel-5.10
-#        cd $KERNEL_COMP
 
-        echo "KERNEL_COMP: $KERNEL_COMP"
-        NV_SRC=$KERNEL_SOURCE/NVIDIA-kernel-module-source-TempVersion
-
-        echo "WORKING_DIR: $WORKING_DIR"
-        echo "NV_SRC: $NV_SRC"
-        echo "CROSS_COMPILE: $CROSS_COMPILE "
-        echo "------------------"
-
-        mkdir -p $BSP_DIR/Linux_for_Tegra/backup_display_driver
-        ls -la $MODULES_BSP/lib/modules/
-
-        exit 1
-
-#        cd $KERNEL_SOURCE/NVIDIA-kernel-module-source-TempVersion
-        cd $NV_SRC
-
-#        SYSOUT=$KERNEL_SOURCE/kernel_out \
-
+        # Building display driver ...
         make \
         modules \
         SYSSRC=$KERNEL_COMP \
@@ -84,6 +84,103 @@ build_nvidia_driver() {
         OBJCOPY=${CROSS_COMPILE}objcopy \
         TARGET_ARCH=aarch64 \
         ARCH=arm64
+
+        # Stripping modules ...
+        NVDD_MOD_DIR=kernel-open
+        NVDD_MOD_ARRAY=('nvidia.ko' 'nvidia-drm.ko' 'nvidia-modeset.ko')
+        for modfile in ${NVDD_MOD_ARRAY[@]}
+        do
+                if [ ! -e ${NVDD_MOD_DIR}/${modfile} ]
+                then
+                        echo "Could not find NVIDIA display driver module ${NVDD_MOD_DIR}/${modfile}! (pwd $(pwd))"
+                        exit 1
+                fi
+
+                echo "stripping ${NVDD_MOD_DIR}/${modfile} ..."
+                ${CROSS_COMPILE}strip --strip-unneeded ${NVDD_MOD_DIR}/${modfile}
+        done
+
+        # Assembling version ...
+        DIST_VERSION="$(awk '/^VERSION = / { print $3 }' ${KERNEL_COMP}/Makefile)"
+        DIST_PATCHLEVEL="$(awk '/^PATCHLEVEL = / { print $3 }' ${KERNEL_COMP}/Makefile)"
+        DIST_SUBLEVEL="$(awk '/^SUBLEVEL = / { print $3 }' ${KERNEL_COMP}/Makefile)"
+
+        DIST_VERSION_COMP=${DIST_VERSION}.${DIST_PATCHLEVEL}.${DIST_SUBLEVEL}${LOCALVERSION}
+        echo "DIST_VERSION_COMP: $DIST_VERSION_COMP"
+
+        NVDD_DEST_DIR=${MODULES_BSP}/lib/modules/${DIST_VERSION_COMP}/extra/opensrc-disp
+        echo "NVDD_DEST_DIR: $NVDD_DEST_DIR"
+
+        if [ ! -d $NVDD_DEST_DIR ]
+        then
+                echo "Could not find NVIDIA display driver module destination directory ${NVDD_DEST_DIR}!"
+                exit 1
+        fi
+
+        # Backup original display modules ...
+        BACKUP_NVDD_DIR=${BSP_DIR}/Linux_for_Tegra/backup_display_driver
+        if [ ! -d ${BACKUP_NVDD_DIR} ]
+        then
+                mkdir -p ${BACKUP_NVDD_DIR}
+        fi
+
+        for modfile in ${NVDD_MOD_ARRAY[@]}
+        do
+                if [ ! -e ${BACKUP_NVDD_DIR}/${modfile} ]
+                then 
+                        cp -v ${NVDD_DEST_DIR}/${modfile} ${BACKUP_NVDD_DIR}
+                fi
+        done
+
+        # Copy newly generated display driver modules ...
+        for modfile in ${NVDD_MOD_ARRAY[@]}
+        do
+                sudo cp -v ${NVDD_MOD_DIR}/${modfile} ${NVDD_DEST_DIR}
+        done
+
+        # Executable for signing of modules
+        # This file will be generated during kernel build.
+        SIGN_FILE=${KERNEL_OUT}/scripts/sign-file
+        if [ ! -e ${SIGN_FILE} ]
+        then
+                echo "Could not find kernel signing tool ${SIGN_FILE}! (pwd $(pwd))"
+                exit 1
+        fi
+
+        # Default kernel signing key file
+        # This file will be generated during kernel build.
+        SIGN_X509_KEY=${KERNEL_OUT}/certs/signing_key.x509
+        if [ ! -e ${SIGN_X509_KEY} ]
+        then
+                echo "Could not find kernel signing key ${SIGN_X509_KEY}! (pwd $(pwd))"
+                exit 1
+        fi
+
+        # Default private signing key file
+        # This file will be generated during kernel build.
+        SIGN_PRIV_KEY=${KERNEL_OUT}/certs/signing_key.pem
+        if [ ! -e ${SIGN_PRIV_KEY} ]
+        then
+                echo "Could not find private signing key ${SIGN_PRIV_KEY}! (pwd $(pwd))"
+                exit 1
+        fi
+
+        echo "Sign NVIDIA display driver ..."
+        for modfile in ${NVDD_MOD_ARRAY[@]}
+        do
+                if [ ! -e ${NVDD_DEST_DIR}/${modfile} ]
+                then
+                        echo "Could not find NVIDIA display driver module ${NVDD_DEST_DIR}/${modfile} in destination directory! (pwd $(pwd))"
+                        exit 1
+                fi
+                # Applying signing command ...
+                sudo ${SIGN_FILE} sha512 ${SIGN_PRIV_KEY} ${SIGN_X509_KEY} ${NVDD_DEST_DIR}/${modfile}
+        done
+
+        #bazo todo: modinfo check for sig_key
+
+        #"first time" sudo depmod -a nach flash...
+        # seems not necessary
 }
 
 build_device_tree() {

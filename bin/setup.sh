@@ -38,6 +38,8 @@ install_system_tools() {
         sudo apt install -y bison
         sudo apt install -y libssl-dev
         sudo apt install -y python3-pip
+
+        sudo apt install -y kmod
 }
 
 setup_toolchain() {
@@ -110,11 +112,21 @@ repatch_kernel() {
 }
 
 setup_nvidia_driver() {
+        # checking for Orin ...
+        case $VC_MIPI_SOM in
+        OrinNano|OrinNX)
+                ;;
+        *)
+                return 0
+                ;;
+        esac
+
         echo "Preparing NVIDIA display driver ..."
 
         cd $KERNEL_SOURCE
         NVDD_FILE=nvidia_kernel_display_driver_source.tbz2
-        if [[ ! -e $NVDD_FILE ]]
+        NVDD_DIR=NVIDIA-kernel-module-source-TempVersion
+        if [ ! -e $NVDD_FILE ]
         then
                 echo "Could not find NVIDIA display driver package ${NVDD_FILE}! (pwd $(pwd))"
                 exit 1
@@ -122,29 +134,27 @@ setup_nvidia_driver() {
 
         # checking integrity of display driver...
         SHA_SUM_FILE=${NVDD_FILE}.sha1sum
-        if [[ ! -e $SHA_SUM_FILE ]]
+        if [ ! -e $SHA_SUM_FILE ]
         then
                 echo "Could not find NVIDIA display driver sha1 file! (pwd $(pwd))"
                 exit 1
         fi
  
         SHA_SUM_FILE_VAR="$(cat $SHA_SUM_FILE | awk '{print $1}')"
-        if [[ -z $SHA_SUM_FILE_VAR ]]
+        if [ -z $SHA_SUM_FILE_VAR ]
         then
                 echo "Could not get secure hash from ${SHA_SUM_FILE}!"
                 exit 1
         fi
-#        echo "SHA_SUM_FILE_VAR: $SHA_SUM_FILE_VAR"
 
         SHA_SUM_VAR="$(sha1sum $NVDD_FILE | awk '{print $1}')"
-        if [[ -z $SHA_SUM_VAR ]]
+        if [ -z $SHA_SUM_VAR ]
         then
                 echo "Could not get secure hash from ${NVDD_FILE}!"
                 exit 1
         fi
-#        echo "SHA_SUM_VAR: $SHA_SUM_VAR"
 
-        if [[ $SHA_SUM_FILE_VAR != $SHA_SUM_VAR ]]
+        if [ $SHA_SUM_FILE_VAR != $SHA_SUM_VAR ]
         then
                 echo "Secure hashes are not equal!"
                 exit 1
@@ -152,10 +162,14 @@ setup_nvidia_driver() {
 
         echo "Secure hash of $NVDD_FILE seems to be ok ..."
 
+        # remove existing display driver source dir ...
+        if [ -d $NVDD_DIR ]
+        then
+                rm -rf $NVDD_DIR
+        fi
+
+        # extracting display driver sources ...
         tar -xvf $NVDD_FILE
-
-#        cd $KERNEL_SOURCE/NVIDIA-kernel-module-source-TempVersion
-
 }
 
 setup_bsp() {

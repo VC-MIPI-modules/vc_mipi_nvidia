@@ -39,6 +39,7 @@ flash_all() {
                         --network usb0 \
                         jetson-orin-nano-devkit internal
                 ;;
+#bazo: flash orin nx ...
         *)
                 sudo ./flash.sh $FLASH_BOARD $FLASH_PARTITION
                 ;;

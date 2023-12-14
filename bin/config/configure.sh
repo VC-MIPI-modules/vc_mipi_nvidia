@@ -251,6 +251,7 @@ OrinNano)
 OrinNX)
         # Carrier board independant settings
         FLASH_DT='kernel-dtb'
+#bazo todo: define target...
         FLASH_BOARD='jetson-orin---nvme'
         FLASH_PARTITION='nvme0n1p1'
         ;;
