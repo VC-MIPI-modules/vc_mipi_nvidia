@@ -172,6 +172,35 @@ setup_nvidia_driver() {
         tar -xvf $NVDD_FILE
 }
 
+setup_flash_prerequisites() {
+        case $VC_MIPI_SOM in
+        OrinNano|OrinNX)
+                echo "Setting up flash prerequisites ..."
+                sudo ./tools/l4t_flash_prerequisites.sh
+                ;;
+        *)
+                return 0
+                ;;
+        esac
+}
+
+setup_som_carrier_specifics() {
+        if [[ "OrinNX" == $VC_MIPI_SOM && "Auvidea_JNX42" == $VC_MIPI_BOARD ]]
+        then
+                echo "OrinNX on Auvidea JNX42 detected ..."
+                # Modifying EPROM size
+                EPROM_FILE=${BSP_DIR}/Linux_for_Tegra/bootloader/t186ref/BCT/tegra234-mb2-bct-misc-p3767-0000.dts
+                if [ ! -e ${EPROM_FILE} ]
+                then
+                        echo "Could not find ${EPROM_FILE}! (pwd $(pwd))"
+                        exit 1
+                fi
+
+                echo "Modifying ${EPROM_FILE} ..."
+                sed -i 's/cvb_eeprom_read_size = <0x100>;/cvb_eeprom_read_size = <0x0>;/' ${EPROM_FILE}
+        fi
+}
+
 setup_bsp() {
         echo "Setup board support package ..."
         mkdir -p $BUILD_DIR
@@ -193,7 +222,9 @@ setup_bsp() {
         sudo tar xjvf $RFS_FILE -C $BSP_DIR/Linux_for_Tegra/rootfs
 
         cd $BSP_DIR/Linux_for_Tegra
-        sudo ./tools/l4t_flash_prerequisites.sh # Only Orin Nano
+#        sudo ./tools/l4t_flash_prerequisites.sh # Only Orin
+        setup_flash_prerequisites
+
         sudo ./apply_binaries.sh
         case $VC_MIPI_BSP in
         32.6.1|32.7.1|32.7.2|32.7.3|35.1.0|35.2.1|35.3.1)
@@ -266,12 +297,19 @@ while [ $# != 0 ] ; do
                 setup_nvidia_driver
                 exit 0
                 ;;
+        -b)
+                configure
+                setup_som_carrier_specifics
+                exit 0
+                ;;
         -o|--host)
                 configure
                 install_system_tools
                 setup_toolchain
                 setup_bsp
                 setup_kernel
+                setup_nvidia_driver
+                setup_som_carrier_specifics
                 exit 0
                 ;;
         *)

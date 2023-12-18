@@ -35,29 +35,19 @@ build_kernel() {
         cp -rfv $KERNEL_OUT/arch/arm64/boot/Image $BSP_DIR/Linux_for_Tegra/kernel/
 }
 
-build_modules() {
-        echo "Build kernel modules ..."
-        cd $KERNEL_SOURCE
-        make -C $KERNEL_DIR O=$KERNEL_OUT -j$(nproc) --output-sync=target modules
-        make -C $KERNEL_DIR O=$KERNEL_OUT INSTALL_MOD_PATH=$MODULES_OUT modules_install 
-        sudo cp -arfv $MODULES_OUT/lib $MODULES_BSP
-}
-
 # Info:
 # Makefile is looking into the kernel config file.
 # If the kernel config file has been changed, the display driver has to be rebuilt!
-
 build_nvidia_driver() {
         # checking for Orin ...
         case $VC_MIPI_SOM in
         OrinNano|OrinNX)
+                echo "Build NVIDIA display driver ..."
                 ;;
         *)
                 return 0
                 ;;
         esac
-
-        echo "Build NVIDIA display driver ..."
 
         cd $KERNEL_SOURCE
         NVDD_DIR=NVIDIA-kernel-module-source-TempVersion
@@ -106,10 +96,10 @@ build_nvidia_driver() {
         DIST_SUBLEVEL="$(awk '/^SUBLEVEL = / { print $3 }' ${KERNEL_COMP}/Makefile)"
 
         DIST_VERSION_COMP=${DIST_VERSION}.${DIST_PATCHLEVEL}.${DIST_SUBLEVEL}${LOCALVERSION}
-        echo "DIST_VERSION_COMP: $DIST_VERSION_COMP"
 
-        NVDD_DEST_DIR=${MODULES_BSP}/lib/modules/${DIST_VERSION_COMP}/extra/opensrc-disp
-        echo "NVDD_DEST_DIR: $NVDD_DEST_DIR"
+        NVDD_DEST_RFS_DIR=${MODULES_BSP}/lib/modules/${DIST_VERSION_COMP}/extra/opensrc-disp
+        NVDD_DEST_DIR=${MODULES_OUT}/lib/modules/${DIST_VERSION_COMP}/extra/opensrc-disp
+        mkdir -p $NVDD_DEST_DIR
 
         if [ ! -d $NVDD_DEST_DIR ]
         then
@@ -128,7 +118,7 @@ build_nvidia_driver() {
         do
                 if [ ! -e ${BACKUP_NVDD_DIR}/${modfile} ]
                 then 
-                        cp -v ${NVDD_DEST_DIR}/${modfile} ${BACKUP_NVDD_DIR}
+                        cp -v ${NVDD_DEST_RFS_DIR}/${modfile} ${BACKUP_NVDD_DIR}
                 fi
         done
 
@@ -165,7 +155,7 @@ build_nvidia_driver() {
                 exit 1
         fi
 
-        echo "Sign NVIDIA display driver ..."
+        echo "Signing NVIDIA display driver ..."
         for modfile in ${NVDD_MOD_ARRAY[@]}
         do
                 if [ ! -e ${NVDD_DEST_DIR}/${modfile} ]
@@ -178,9 +168,18 @@ build_nvidia_driver() {
         done
 
         #bazo todo: modinfo check for sig_key
+}
 
-        #"first time" sudo depmod -a nach flash...
-        # seems not necessary
+build_modules() {
+        echo "Build kernel modules ..."
+        cd $KERNEL_SOURCE
+        make -C $KERNEL_DIR O=$KERNEL_OUT -j$(nproc) --output-sync=target modules
+
+        build_nvidia_driver
+
+        cd $KERNEL_SOURCE
+        make -C $KERNEL_DIR O=$KERNEL_OUT INSTALL_MOD_PATH=$MODULES_OUT modules_install 
+        sudo cp -arfv $MODULES_OUT/lib $MODULES_BSP
 }
 
 build_device_tree() {
@@ -229,11 +228,6 @@ while [ $# != 0 ] ; do
                 patch_kernel
                 configure_kernel
                 build_modules
-                exit 0
-                ;;
-        -n)
-                configure
-                build_nvidia_driver
                 exit 0
                 ;;
         *)
