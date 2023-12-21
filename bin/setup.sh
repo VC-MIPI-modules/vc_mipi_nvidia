@@ -255,8 +255,6 @@ setup_target() {
         $TARGET_SHELL mkdir -p $TARGET_DIR
         scp $WORKING_DIR/target/* $TARGET_USER@$TARGET_IP:$TARGET_DIR
         $TARGET_SHELL chmod +x $TARGET_DIR/*.sh
-        scp ~/Projects/vc_mipi_demo/src/vcmipidemo $TARGET_USER@$TARGET_IP:$TARGET_DIR
-        scp ~/Projects/vc_mipi_demo/src/vcimgnetsrv $TARGET_USER@$TARGET_IP:$TARGET_DIR
 }
 
 while [ $# != 0 ] ; do

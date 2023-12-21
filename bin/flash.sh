@@ -84,6 +84,7 @@ flash_device_tree() {
 }
 
 reboot_target() {
+        echo "Rebooting target ..."
         $TARGET_SHELL "echo vc | sudo -S /sbin/reboot"
 }
 

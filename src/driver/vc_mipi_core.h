@@ -1,7 +1,7 @@
 #ifndef _VC_MIPI_CORE_H
 #define _VC_MIPI_CORE_H
 
-// #define DEBUG
+#define DEBUG
 
 #include <linux/types.h>
 #include <linux/i2c.h>
@@ -33,6 +33,8 @@
 #define FLAG_TRIGGER_STREAM_EDGE        (1 << 15)
 #define FLAG_TRIGGER_STREAM_LEVEL       (1 << 16)
 #define FLAG_TRIGGER_SLAVE              (1 << 17)
+
+#define FLAG_PREGIUS_S                  (1 << 18)
 
 #define FORMAT_RAW08                    0x2a
 #define FORMAT_RAW10                    0x2b
@@ -140,11 +142,14 @@ struct vc_csr {
         struct vc_sen_csr sen;
 };
 
-typedef struct vc_timing {
-        __u8 num_lanes;
-        __u8 format;
-        __u32 hmax;
-} vc_timing;
+typedef struct vc_mode {
+        __u8       num_lanes;
+        __u8       format;
+        __u32      hmax;
+        vc_control vmax;
+        vc_control blacklevel;
+        __u32      retrigger_min;
+} vc_mode;
 
 struct vc_ctrl {
         // Communication
@@ -152,20 +157,17 @@ struct vc_ctrl {
         struct i2c_client *client_sen;
         struct i2c_client *client_mod;
         // Controls
-        struct vc_control vmax;
+        struct vc_mode mode[8];
         struct vc_control exposure;
         struct vc_control gain;
         struct vc_control framerate;
-        struct vc_control blacklevel;
         // Modes & Frame Formats
         struct vc_frame frame;          // Pixel
         // Control and status registers
         struct vc_csr csr;
         // Exposure
-        struct vc_timing expo_timing[8];
         __u32 clk_ext_trigger;          // Hz
         __u32 clk_pixel;                // Hz
-        __u32 retrigger_min;
         // Flash
         __u32 flash_factor;
         __s32 flash_toffset;
@@ -216,6 +218,9 @@ int vc_core_set_num_lanes(struct vc_cam *cam, __u32 number);
 __u32 vc_core_get_num_lanes(struct vc_cam *cam);
 int vc_core_set_framerate(struct vc_cam *cam, __u32 framerate);
 __u32 vc_core_get_framerate(struct vc_cam *cam);
+vc_control vc_core_get_vmax(struct vc_cam *cam, __u8 num_lanes, __u8 format);
+vc_control vc_core_get_blacklevel(struct vc_cam *cam, __u8 num_lanes, __u8 format);
+__u32 vc_core_get_retrigger(struct vc_cam *cam, __u8 num_lanes, __u8 format);
 
 // --- Function to initialize the vc core --------------------------------------
 int vc_core_init(struct vc_cam *cam, struct i2c_client *client);
@@ -235,7 +240,9 @@ int vc_mod_get_io_mode(struct vc_cam *cam);
 int vc_sen_set_roi(struct vc_cam *cam);
 int vc_sen_set_exposure(struct vc_cam *cam, int exposure);
 int vc_sen_set_gain(struct vc_cam *cam, int gain);
-int vc_sen_set_blacklevel(struct vc_cam *cam, int blacklevel);
+
+//int vc_sen_set_blacklevel(struct vc_cam *cam, int blacklevel);
+int vc_sen_set_blacklevel(struct vc_cam *cam, __u32 blacklevel);
 int vc_sen_start_stream(struct vc_cam *cam);
 int vc_sen_stop_stream(struct vc_cam *cam);
 

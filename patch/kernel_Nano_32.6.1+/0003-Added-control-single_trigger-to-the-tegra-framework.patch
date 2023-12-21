@@ -42,9 +42,9 @@ index 2abc9f1..0cb2ab2 100644
 -		.type = V4L2_CTRL_TYPE_INTEGER64,
 +		.type = V4L2_CTRL_TYPE_INTEGER,
  		.flags = V4L2_CTRL_FLAG_SLIDER,
- 		.min = CTRL_U32_MIN,
- 		.max = CTRL_U32_MAX,
- 		.def = CTRL_U32_MIN,
+ 		.min = 0,
+ 		.max = 100000,
+ 		.def = 0,
  		.step = 1,
  	},
 +	{

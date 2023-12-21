@@ -44,9 +44,9 @@ index 4bca039d4..60116ca6a 100644
 +		.name = "Black Level",
 +		.type = V4L2_CTRL_TYPE_INTEGER,
 +		.flags = 0,
-+		.min = CTRL_U32_MIN,
-+		.max = CTRL_U32_MAX,
-+		.def = CTRL_U32_MIN,
++		.min = 0,
++		.max = 100000,
++		.def = 0,
 +		.step = 1,
 +	},
 +	{

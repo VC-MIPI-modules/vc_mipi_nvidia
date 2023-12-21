@@ -84,7 +84,7 @@ index 6afd16ef8..881211d4b 100644
 -				__func__, err, chan->sequence);
 +	if (err) {
 +		if (err & 0x00020022)
-+			dev_err(chan->vi->dev, "%s(): Multi-bit transmission error (err: 0x08%x, frame: %d)\n", __func__, err, chan->sequence);
++			dev_err(chan->vi->dev, "%s(): Multi-bit transmission error (err: 0x%08x, frame: %d)\n", __func__, err, chan->sequence);
 +		else
 +			dev_err(chan->vi->dev, "%s(): Multi-bit header error (err: 0x%x, frame: %d)\n", __func__, err, chan->sequence);
 +	}

@@ -58,4 +58,6 @@ In the table below you can find, which camera supports which trigger mode.
 | IMX392 | yes | yes | yes | yes |   - |   - |   - |
 | IMX412 |     |     |     |     | yes |   - |   - |
 | IMX565 | yes | yes | yes | yes |   - |   - |   - |
+| IMX566 | yes | yes | yes | yes |   - |   - |   - |
+| IMX567 | yes | yes | yes | yes |   - |   - |   - |
 | IMX568 | yes | yes | yes | yes |   - |   - |   - |
