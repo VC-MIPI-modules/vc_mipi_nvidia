@@ -38,7 +38,6 @@ install_system_tools() {
         sudo apt install -y bison
         sudo apt install -y libssl-dev
         sudo apt install -y python3-pip
-
         sudo apt install -y kmod
 }
 
