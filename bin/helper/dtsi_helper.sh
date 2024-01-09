@@ -96,10 +96,10 @@ function copy_dtsi_if_dest_exists {
 
         if [[ ! -e $DEST_DIR ]]
         then
-                echo "Dest dir $DEST_DIR does not exist. Skipping file $SOURCE_FILE!"
                 return 0
         fi
 
+        echo "Copy $SOURCE_FILE to $DEST_DIR"
         cp -R $SOURCE_FILE $DEST_DIR
 }
 
