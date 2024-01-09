@@ -67,6 +67,7 @@ flash_device_tree() {
         case $VC_MIPI_SOM in
         OrinNano)
                 echo "Flashing devtree only ..."
+                echo "Please modify /boot/extlinux/extlinux.conf"
                 DTB_FILE=tegra234-p3767-0004-p3768-0000-a0.dtb
                 TARGET_DIR=/tmp
                 scp $KERNEL_OUT/arch/arm64/boot/dts/nvidia/$DTB_FILE \
