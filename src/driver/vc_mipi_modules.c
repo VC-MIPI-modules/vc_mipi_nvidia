@@ -150,9 +150,9 @@ static void vc_init_ctrl_imx178(struct vc_ctrl *ctrl, struct vc_desc* desc)
         MODE(1, 2, FORMAT_RAW10,  840,    9, 0x1ffff,  2126, 1023,   50,   2698560)
         MODE(2, 2, FORMAT_RAW12,  984,    9, 0x1ffff,  2126, 1023,  200,   2698560)
         MODE(3, 2, FORMAT_RAW14, 1156,    9, 0x1ffff,  2126, 4095,  800,   2698560)
-        MODE(4, 4, FORMAT_RAW10,  600,    9, 0x1ffff,  2126,  255,   50,   2698560)
-        MODE(5, 4, FORMAT_RAW12,  600,    9, 0x1ffff,  2126, 1023,   50,   2698560)
-        MODE(6, 4, FORMAT_RAW10,  680,    9, 0x1ffff,  2126, 1023,  200,   2698560)
+        MODE(4, 4, FORMAT_RAW08,  600,    9, 0x1ffff,  2126,  255,   50,   2698560)
+        MODE(5, 4, FORMAT_RAW10,  600,    9, 0x1ffff,  2126, 1023,   50,   2698560)
+        MODE(6, 4, FORMAT_RAW12,  680,    9, 0x1ffff,  2126, 1023,  200,   2698560)
         MODE(7, 4, FORMAT_RAW14, 1156,    9, 0x1ffff,  2126, 4095,  800,   2698560)
 }
 
