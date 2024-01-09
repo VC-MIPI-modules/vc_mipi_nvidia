@@ -35,10 +35,11 @@
 //  Embedded Metadata Height
 // -----+------------------------------------------------------------------------------------------
 //  0   | IMX178, IMX183, IMX226, IMX250, IMX252, IMX264, IMX265, IMX273, IMX392, OV7251, OV9281
-//  1   | IMX290, IMX327, IMX335, IMX415, IMX568
+//  1   | IMX290, IMX327, IMX335, IMX415, IMX462
 //  2   | IMX296, IMX297, IMX412
+//  4   | IMX565, IMX566, IMX567, IMX568
 // -----+------------------------------------------------------------------------------------------
-#define VC_MIPI_METADATA_H  "4" // "0", "1", "2" Lines of meta data
+#define VC_MIPI_METADATA_H  "0" // "0", "1", "2", "4" Lines of meta data
 // ------------------------------------------------------------------------------------------------
 //   Sensor Manufacturer
 // -----+------------------------------------------------------------------------------------------
@@ -59,16 +60,19 @@
     #define BUS_WIDTH 1
     #define NUM_LANES "1" 
     #define NUM_CSI_LANES 2
+	#define PIX_CLK_HZ "150000000"
 #endif
 #if VC_MIPI_LANES == 2
     #define BUS_WIDTH 2
     #define NUM_LANES "2" 
     #define NUM_CSI_LANES 4
+	#define PIX_CLK_HZ "300000000"
 #endif
 #if VC_MIPI_LANES == 4
     #define BUS_WIDTH 4
     #define NUM_LANES "4" 
     #define NUM_CSI_LANES 8
+	#define PIX_CLK_HZ "600000000"
 #endif
 
 #if VC_MIPI_CAM_1 == 1 && VC_MIPI_CAM_0 == 1
@@ -237,8 +241,8 @@
 					phy_mode                 = "DPHY";
 					discontinuous_clk        = "no";
 					mclk_khz                 = "24000";
-					pix_clk_hz               = "215000000";
-					mclk_multiplier          = "0.0";  	// deprecated
+					pix_clk_hz               = PIX_CLK_HZ;
+					mclk_multiplier          = "0.0";		// deprecated
 					cil_settletime           = "0";
 					dpcm_enable              = "false";
 				};
@@ -334,7 +338,7 @@
 					phy_mode                 = "DPHY";
 					discontinuous_clk        = "no";
 					mclk_khz                 = "24000";
-					pix_clk_hz               = "600000000"; // 205000000 - 600000000 tested with IMX568
+					pix_clk_hz               = PIX_CLK_HZ;
 					mclk_multiplier          = "0.0";		// deprecated
 					cil_settletime           = "0";
 					dpcm_enable              = "false";
