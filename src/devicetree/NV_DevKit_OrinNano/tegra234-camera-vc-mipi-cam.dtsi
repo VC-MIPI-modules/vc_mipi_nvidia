@@ -91,7 +91,7 @@
 			vc_vi_port0: port@0 {
 				reg = <0>;
 				vc_vi_in0: endpoint {
-					port-index = <1>;
+					port-index = <0>;
 					bus-width = <BUS_WIDTH>;
 					remote-endpoint = <&vc_csi_out0>;
 				};
@@ -121,10 +121,10 @@
 				ports {
 					#address-cells = <1>;
 					#size-cells = <0>;
-						vc_csi_chan0_port0: port@0 {
+					vc_csi_chan0_port0: port@0 {
 						reg = <0>;
 						vc_csi_in0: endpoint@0 {
-							port-index = <1>;
+							port-index = <0>;
 							bus-width = <BUS_WIDTH>;
 							remote-endpoint = <&vc_mipi_out0>;
 						};
@@ -138,7 +138,6 @@
 				};
 			};
 #endif
-
 #if VC_MIPI_CAM_0 == 1
 			vc_csi_chan1: channel@1 {
 				reg = <1>;
@@ -196,10 +195,10 @@
 				// to use the V4L API.
 				mode0 {
 					num_lanes                = NUM_LANES;
-					tegra_sinterface         = "serial_b";
+					tegra_sinterface         = "serial_a";
 					embedded_metadata_height = VC_MIPI_METADATA_H;
 					readout_orientation      = "0";
-					lane_polarity            = "6";
+					lane_polarity            = "0";
 
 					// ----------------------------------------------------
 					// If you want to use GStreamer with nvarguscamerasrc
@@ -253,7 +252,7 @@
 					port@0 {
 						reg = <0>;
 						vc_mipi_out0: endpoint {
-							port-index = <1>;
+							port-index = <0>;
 							bus-width = <BUS_WIDTH>;
 							remote-endpoint = <&vc_csi_in0>;
 						};
@@ -303,8 +302,8 @@
 					// you have to adjust this settings. 
 					active_l                 = "0";
 					active_t                 = "0";
-					active_w                 = "2472";
-					active_h                 = "2048";
+					active_w                 = "0";
+					active_h                 = "0";
 					mode_type                = "bayer";
 					pixel_phase              = "rggb";
 					csi_pixel_bit_depth      = "10";
@@ -322,9 +321,9 @@
 					// For applications like argus_camera, there should 
 					// be a minimal frame rate greater than zero!
 					min_framerate            = "100";       // mHz
-					max_framerate            = "57290";     // mHz
+					max_framerate            = "60000";     // mHz
 					step_framerate           = "100";       // mHz
-					default_framerate        = "57290";     // mHz
+					default_framerate        = "60000";     // mHz
 					// ----------------------------------------------------
 
 					gain_factor              = "1000";
@@ -412,13 +411,13 @@
 				position = "rear";
 				orientation = "1";
 				cam_module1_drivernode0: drivernode0 {
-				pcl_id = "v4l2_sensor";
+					pcl_id = "v4l2_sensor";
 #if VC_MIPI_MANUFACTURER == 1
-				devname = "vc_mipi 10-001a";
-				proc-device-tree = "/proc/device-tree/cam_i2cmux/i2c@1/vc_mipi@1a";
+					devname = "vc_mipi 10-001a";
+					proc-device-tree = "/proc/device-tree/cam_i2cmux/i2c@1/vc_mipi@1a";
 #else
-				devname = "vc_mipi 10-0060";
-				proc-device-tree = "/proc/device-tree/cam_i2cmux/i2c@1/vc_mipi@60";
+					devname = "vc_mipi 10-0060";
+					proc-device-tree = "/proc/device-tree/cam_i2cmux/i2c@1/vc_mipi@60";
 #endif	
 				};
 				cam_module1_drivernode1: drivernode1 {
