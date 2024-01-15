@@ -71,15 +71,14 @@
 //           [U]               [USB]     ___               JNX42 LM
 //           [S]      ____     [===]    [ETH]    _         Rear view
 //__<usb>____[B]_____[HDMI]____[USB]____[''']___[o]__
-//===================================================      Revision =/= 1
+//===================================================      Revision >= 2
 //                    [*]      [...]     [*]               
 //                   Reset               Pwr               Buttons without
 //                                                         Force Recovery
 //#########################################################################
 
 // Cam0 and Cam1 Trigger pins are swapped in revision 1.0
-// If Auvidea board revision is other than 1.0, this value should be set
-// to anything else.
+// Auvidea board revision 2 and upwards will be compatible with NVIDIA device tree.
 #define REVISION 1
 #if REVISION == 1
         #define CAM0_PWDN       TEGRA234_MAIN_GPIO(AC, 0)

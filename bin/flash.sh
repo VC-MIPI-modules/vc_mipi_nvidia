@@ -25,8 +25,8 @@ check_recovery_mode() {
 
 flash_all() {
         cd $BSP_DIR/Linux_for_Tegra/
-	echo "Flashing all ... board: ${FLASH_BOARD}, partition: ${FLASH_PARTITION}"
-        
+        echo "Flashing all ... board: ${FLASH_BOARD}, partition: ${FLASH_PARTITION}"
+
         start_time=$(date +%s)
 
         case $VC_MIPI_SOM in
@@ -39,7 +39,15 @@ flash_all() {
                         --network usb0 \
                         jetson-orin-nano-devkit internal
                 ;;
-#bazo: flash orin nx ...
+        OrinNX)
+                sudo ADDITIONAL_DTB_OVERLAY_OPT="BootOrderNvme.dtbo" \
+                        ./tools/kernel_flash/l4t_initrd_flash.sh \
+                        --external-device nvme0n1p1 \
+                        -c tools/kernel_flash/flash_l4t_external.xml \
+                        -p "-c bootloader/t186ref/cfg/flash_t234_qspi.xml" \
+                        --network usb0 \
+                        p3509-a02+p3767-0000 internal
+                ;;
         *)
                 sudo ./flash.sh $FLASH_BOARD $FLASH_PARTITION
                 ;;
@@ -69,6 +77,16 @@ flash_device_tree() {
                 echo "Flashing devtree only ..."
                 echo "Please modify /boot/extlinux/extlinux.conf"
                 DTB_FILE=tegra234-p3767-0004-p3768-0000-a0.dtb
+                TARGET_DIR=/tmp
+                scp $KERNEL_OUT/arch/arm64/boot/dts/nvidia/$DTB_FILE \
+                        $TARGET_USER@$TARGET_IP:$TARGET_DIR
+                $TARGET_SHELL "echo vc | sudo -S mv $TARGET_DIR/$DTB_FILE /boot/dtb"
+                $TARGET_SHELL ls -l /boot/dtb
+                ;;
+        OrinNX)
+                echo "Flashing devtree only ..."
+                echo "Please modify /boot/extlinux/extlinux.conf"
+                DTB_FILE=tegra234-p3767-0000-p3509-a02.dtb
                 TARGET_DIR=/tmp
                 scp $KERNEL_OUT/arch/arm64/boot/dts/nvidia/$DTB_FILE \
                         $TARGET_USER@$TARGET_IP:$TARGET_DIR

@@ -1,7 +1,7 @@
 #ifndef _VC_MIPI_CORE_H
 #define _VC_MIPI_CORE_H
 
-#define DEBUG
+// #define DEBUG
 
 #include <linux/types.h>
 #include <linux/i2c.h>

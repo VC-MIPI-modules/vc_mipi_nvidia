@@ -221,7 +221,6 @@ setup_bsp() {
         sudo tar xjvf $RFS_FILE -C $BSP_DIR/Linux_for_Tegra/rootfs
 
         cd $BSP_DIR/Linux_for_Tegra
-#        sudo ./tools/l4t_flash_prerequisites.sh # Only Orin
         setup_flash_prerequisites
 
         sudo ./apply_binaries.sh
