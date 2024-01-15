@@ -51,8 +51,8 @@ soms=(
 "NVIDIA Jetson AGX Xavier (devkit) (https://developer.nvidia.com/embedded/jetson-agx-xavier-developer-kit)"
 "NVIDIA Jetson TX2/TX2i (devkit) (https://developer.nvidia.com/embedded/jetson-tx2-developer-kit)"
 "NVIDIA Jetson TX2 NX (production) (https://developer.nvidia.com/embedded/jetson-tx2-nx)"
-"NVIDIA Jetson Orin NX (devkit) (https://developer.nvidia.com/embedded/jetson-tx2-developer-kit)"
-"NVIDIA Jetson Orin Nano (devkit) (https://developer.nvidia.com/embedded/jetson-tx2-developer-kit)"        
+"NVIDIA Jetson Orin NX (devkit) (https://developer.nvidia.com/embedded/jetson-modules#jetson_orin_nx)"
+"NVIDIA Jetson Orin Nano (devkit) (https://developer.nvidia.com/embedded/jetson-modules#jetson_orin_nano)"        
 )
 
 som_keys=(
