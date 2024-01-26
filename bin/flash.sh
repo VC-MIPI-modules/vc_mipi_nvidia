@@ -30,23 +30,23 @@ flash_all() {
         start_time=$(date +%s)
 
         case $VC_MIPI_SOM in
-        OrinNano)
-                sudo ADDITIONAL_DTB_OVERLAY_OPT="BootOrderNvme.dtbo" \
-                        ./tools/kernel_flash/l4t_initrd_flash.sh \
-                        --external-device nvme0n1p1 \
+        OrinNano4GB_SD|OrinNano8GB_SD)
+                sudo ./tools/kernel_flash/l4t_initrd_flash.sh \
+                        --external-device ${FLASH_PARTITION} \
                         -c tools/kernel_flash/flash_l4t_external.xml \
                         -p "-c bootloader/t186ref/cfg/flash_t234_qspi.xml" \
                         --network usb0 \
-                        jetson-orin-nano-devkit internal
+                        ${FLASH_BOARD} internal
                 ;;
-        OrinNX)
+
+        OrinNano4GB_NVME|OrinNano8GB_NVME|OrinNX8GB|OrinNX16GB)
                 sudo ADDITIONAL_DTB_OVERLAY_OPT="BootOrderNvme.dtbo" \
                         ./tools/kernel_flash/l4t_initrd_flash.sh \
-                        --external-device nvme0n1p1 \
+                        --external-device ${FLASH_PARTITION} \
                         -c tools/kernel_flash/flash_l4t_external.xml \
                         -p "-c bootloader/t186ref/cfg/flash_t234_qspi.xml" \
                         --network usb0 \
-                        p3509-a02+p3767-0000 internal
+                        ${FLASH_BOARD} internal
                 ;;
         *)
                 sudo ./flash.sh $FLASH_BOARD $FLASH_PARTITION
@@ -67,30 +67,21 @@ flash_kernel() {
         IMAGE_FILE=Image
         TARGET_DIR=/tmp
         scp $KERNEL_OUT/arch/arm64/boot/$IMAGE_FILE $TARGET_USER@$TARGET_IP:$TARGET_DIR
-        $TARGET_SHELL "echo vc | sudo -S mv $TARGET_DIR/$IMAGE_FILE /boot"
+        $TARGET_SHELL "echo $TARGET_PW | sudo -S mv $TARGET_DIR/$IMAGE_FILE /boot"
         $TARGET_SHELL ls -l /boot
 }
 
 flash_device_tree() {
         case $VC_MIPI_SOM in
-        OrinNano)
+        OrinNano4GB_SD|OrinNano8GB_SD|OrinNano4GB_NVME|OrinNano8GB_NVME|OrinNX8GB|OrinNX16GB)
                 echo "Flashing devtree only ..."
                 echo "Please modify /boot/extlinux/extlinux.conf"
-                DTB_FILE=tegra234-p3767-0004-p3768-0000-a0.dtb
                 TARGET_DIR=/tmp
-                scp $KERNEL_OUT/arch/arm64/boot/dts/nvidia/$DTB_FILE \
+                scp $KERNEL_OUT/arch/arm64/boot/dts/nvidia/$ORIN_DTB_FILE \
                         $TARGET_USER@$TARGET_IP:$TARGET_DIR
-                $TARGET_SHELL "echo vc | sudo -S mv $TARGET_DIR/$DTB_FILE /boot/dtb"
-                $TARGET_SHELL ls -l /boot/dtb
-                ;;
-        OrinNX)
-                echo "Flashing devtree only ..."
-                echo "Please modify /boot/extlinux/extlinux.conf"
-                DTB_FILE=tegra234-p3767-0000-p3509-a02.dtb
-                TARGET_DIR=/tmp
-                scp $KERNEL_OUT/arch/arm64/boot/dts/nvidia/$DTB_FILE \
-                        $TARGET_USER@$TARGET_IP:$TARGET_DIR
-                $TARGET_SHELL "echo vc | sudo -S mv $TARGET_DIR/$DTB_FILE /boot/dtb"
+                $TARGET_SHELL ls -la $TARGET_DIR/$ORIN_DTB_FILE
+
+                $TARGET_SHELL "echo $TARGET_PW | sudo -S mv $TARGET_DIR/$ORIN_DTB_FILE /boot/dtb"
                 $TARGET_SHELL ls -l /boot/dtb
                 ;;
         *)
@@ -104,7 +95,7 @@ flash_device_tree() {
 
 reboot_target() {
         echo "Rebooting target ..."
-        $TARGET_SHELL "echo vc | sudo -S /sbin/reboot"
+        $TARGET_SHELL "echo $TARGET_PW | sudo -S /sbin/reboot"
 }
 
 while [ $# != 0 ] ; do

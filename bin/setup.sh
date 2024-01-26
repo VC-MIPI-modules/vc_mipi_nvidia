@@ -113,7 +113,7 @@ repatch_kernel() {
 setup_nvidia_driver() {
         # checking for Orin ...
         case $VC_MIPI_SOM in
-        OrinNano|OrinNX)
+        OrinNano4GB_SD|OrinNano8GB_SD|OrinNano4GB_NVME|OrinNano8GB_NVME|OrinNX8GB|OrinNX16GB)
                 ;;
         *)
                 return 0
@@ -173,7 +173,7 @@ setup_nvidia_driver() {
 
 setup_flash_prerequisites() {
         case $VC_MIPI_SOM in
-        OrinNano|OrinNX)
+        OrinNano4GB_SD|OrinNano8GB_SD|OrinNano4GB_NVME|OrinNano8GB_NVME|OrinNX8GB|OrinNX16GB)
                 echo "Setting up flash prerequisites ..."
                 sudo ./tools/l4t_flash_prerequisites.sh
                 ;;
@@ -184,10 +184,8 @@ setup_flash_prerequisites() {
 }
 
 setup_som_carrier_specifics() {
-        if [[ "OrinNX" == $VC_MIPI_SOM && "Auvidea_JNX42" == $VC_MIPI_BOARD ]]
-        then
-                echo "OrinNX on Auvidea JNX42 detected ..."
-                # Modifying EPROM size
+        case $VC_MIPI_SOM in
+        OrinNano4GB_SD|OrinNano8GB_SD|OrinNano4GB_NVME|OrinNano8GB_NVME|OrinNX8GB|OrinNX16GB)
                 EPROM_FILE=${BSP_DIR}/Linux_for_Tegra/bootloader/t186ref/BCT/tegra234-mb2-bct-misc-p3767-0000.dts
                 if [ ! -e ${EPROM_FILE} ]
                 then
@@ -196,12 +194,89 @@ setup_som_carrier_specifics() {
                 fi
 
                 echo "Modifying ${EPROM_FILE} ..."
-                sed -i 's/cvb_eeprom_read_size = <0x100>;/cvb_eeprom_read_size = <0x0>;/' ${EPROM_FILE}
+                # JNX42 has no EEPROM
+                if [[ "Auvidea_JNX42" = $VC_MIPI_BOARD ]]
+                then
+                        # Setting EPROM size to 0x0
+                        sed -i 's/cvb_eeprom_read_size = <0x100>;/cvb_eeprom_read_size = <0x0>;/' ${EPROM_FILE}
+                else
+                        # Setting EPROM size to 100x0
+                        sed -i 's/cvb_eeprom_read_size = <0x0>;/cvb_eeprom_read_size = <0x100>;/' ${EPROM_FILE}
+                fi
+                ;;
+        *)
+                return 0
+                ;;
+        esac
+}
+
+setup_user_credentials() {
+        echo ""
+        echo "------------------------------------------------------------"
+        echo "  Setup user credentials for target. "
+        echo "------------------------------------------------------------"
+        echo ""
+        echo "  Please choose a user name for your target."
+        echo "  If you leave it out, the default name '${VC_DEFAULT_USER}' will be used."
+        echo -n "  USER (${VC_DEFAULT_USER}): "
+        read user
+        if [[ -n ${user} ]]; then
+                TARGET_USER=${user}
+        else
+                TARGET_USER=${VC_DEFAULT_USER}
         fi
+
+        echo ""
+        echo "  Please choose a user password for your target."
+        echo "  If you leave it out, the default password '${VC_DEFAULT_PW}' will be used."
+        echo "  You can change it later on the target with the command 'passwd'."
+        echo -n "  PW (${VC_DEFAULT_PW}): "
+        read pw
+        if [[ -n ${pw} ]]; then
+                TARGET_PW=${pw}
+        else
+                TARGET_PW=${VC_DEFAULT_PW}
+        fi
+
+        echo ""
+        echo "  The following user will be created:"
+        echo "  user name: ${TARGET_USER}"
+        echo "  user password: ${TARGET_PW}"
+
+        mkdir -p $BUILD_DIR
+        cd $BUILD_DIR
+        echo "export TARGET_USER=$TARGET_USER" >  $TARGET_FILE
+        echo "export TARGET_PW=$TARGET_PW"    >>  $TARGET_FILE
+}
+
+create_target_user() {
+        echo "Create target user ..."
+        cd $BSP_DIR/Linux_for_Tegra
+        case $VC_MIPI_BSP in
+        32.6.1|32.7.1|32.7.2|32.7.3|35.1.0|35.2.1|35.3.1)
+                sudo ./tools/l4t_create_default_user.sh --username ${TARGET_USER} --password ${TARGET_PW} \
+                        --hostname nvidia --autologin --accept-license
+                ;;
+        esac
+}
+
+setup_target_files() {
+        echo "Setup target files ..."
+
+        TARGET_DIR=$BSP_DIR/Linux_for_Tegra/rootfs/home/$TARGET_USER/test
+        sudo mkdir -p $TARGET_DIR
+
+        sudo cp $WORKING_DIR/target/* $TARGET_DIR
+        sudo chmod +x $TARGET_DIR/*.sh
+
+        rfs=$BSP_DIR/Linux_for_Tegra/rootfs
+        sudo chown -v -R $(cat "${rfs}"/etc/passwd | grep ${TARGET_USER} | cut -d : -f 3-4) \
+                "${rfs}/home/${TARGET_USER}" > /dev/null
 }
 
 setup_bsp() {
         echo "Setup board support package ..."
+
         mkdir -p $BUILD_DIR
         mkdir -p $DOWNLOAD_DIR
 
@@ -224,12 +299,8 @@ setup_bsp() {
         setup_flash_prerequisites
 
         sudo ./apply_binaries.sh
-        case $VC_MIPI_BSP in
-        32.6.1|32.7.1|32.7.2|32.7.3|35.1.0|35.2.1|35.3.1)
-                sudo ./tools/l4t_create_default_user.sh --username vc --password vc \
-                        --hostname nvidia --autologin --accept-license
-                ;;
-        esac
+
+        create_target_user
 }
 
 setup_camera() {
@@ -237,16 +308,32 @@ setup_camera() {
 }
 
 setup_target() {
-        echo $1 $2
+        echo $1 $2 $3 $4
         if [[ -z $1 ]]; then
-                . $BIN_DIR/config/setup.sh --target                
+                . $BIN_DIR/config/setup.sh --target
         else
                 TARGET_USER=$1
-                TARGET_IP=$2
+                TARGET_PW=$2
+                TARGET_IP=$3
+                TARGET_RSA=$4
         fi
 
-        rm ~/.ssh/known_hosts
-        ssh-copy-id -i ~/.ssh/id_rsa.pub $TARGET_USER@$TARGET_IP
+        known_hosts_filepath=~/.ssh/known_hosts
+        date_time=$(date '+%Y%m%d_%H%M%S')
+        known_hosts_filepath_backup=${known_hosts_filepath}_backup_by_vc_setup_${date_time}
+        if [[ -e ${known_hosts_filepath} ]]
+        then 
+                # Backup User's known_hosts file => known_host__backup_by_vc_setup_YYYYMMDD_HHMMSS.
+                echo "Backup known_hosts file..."
+                cp -v ${known_hosts_filepath} ${known_hosts_filepath_backup}
+                
+                # Remove already existing connection credential with this given IP.
+                ssh-keygen -f ${known_hosts_filepath} -R ${TARGET_IP}
+        fi
+
+        # Copy User's public rsa file into the target authorized_keys file.
+        echo "Copy public rsa key..."
+        ssh-copy-id -i ~/.ssh/${TARGET_RSA}.pub $TARGET_USER@$TARGET_IP
 
         TARGET_DIR=/home/$TARGET_USER/test
         $TARGET_SHELL rm -Rf $TARGET_DIR
@@ -302,7 +389,9 @@ while [ $# != 0 ] ; do
                 configure
                 install_system_tools
                 setup_toolchain
+                setup_user_credentials
                 setup_bsp
+                setup_target_files
                 setup_kernel
                 setup_nvidia_driver
                 setup_som_carrier_specifics

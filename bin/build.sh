@@ -41,7 +41,7 @@ build_kernel() {
 build_nvidia_driver() {
         # checking for Orin ...
         case $VC_MIPI_SOM in
-        OrinNano|OrinNX)
+        OrinNano4GB_SD|OrinNano8GB_SD|OrinNano4GB_NVME|OrinNano8GB_NVME|OrinNX8GB|OrinNX16GB)
                 echo "Build NVIDIA display driver ..."
                 ;;
         *)

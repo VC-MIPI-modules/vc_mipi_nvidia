@@ -51,8 +51,12 @@ soms=(
 "NVIDIA Jetson AGX Xavier (devkit) (https://developer.nvidia.com/embedded/jetson-agx-xavier-developer-kit)"
 "NVIDIA Jetson TX2/TX2i (devkit) (https://developer.nvidia.com/embedded/jetson-tx2-developer-kit)"
 "NVIDIA Jetson TX2 NX (production) (https://developer.nvidia.com/embedded/jetson-tx2-nx)"
-"NVIDIA Jetson Orin NX (devkit) (https://developer.nvidia.com/embedded/jetson-modules#jetson_orin_nx)"
-"NVIDIA Jetson Orin Nano (devkit) (https://developer.nvidia.com/embedded/jetson-modules#jetson_orin_nano)"        
+"NVIDIA Jetson Orin NX 8GB (devkit) (https://developer.nvidia.com/embedded/jetson-modules#jetson_orin_nx)"
+"NVIDIA Jetson Orin NX 16GB (devkit) (https://developer.nvidia.com/embedded/jetson-modules#jetson_orin_nx)"
+"NVIDIA Jetson Orin Nano 4GB SD (devkit) (https://developer.nvidia.com/embedded/jetson-modules#jetson_orin_nano)"        
+"NVIDIA Jetson Orin Nano 8GB SD (devkit) (https://developer.nvidia.com/embedded/jetson-modules#jetson_orin_nano)"        
+"NVIDIA Jetson Orin Nano 4GB NVME (devkit) (https://developer.nvidia.com/embedded/jetson-modules#jetson_orin_nano)"        
+"NVIDIA Jetson Orin Nano 8GB NVME (devkit) (https://developer.nvidia.com/embedded/jetson-modules#jetson_orin_nano)"        
 )
 
 som_keys=(
@@ -64,8 +68,12 @@ som_keys=(
 "AGXXavier"
 "TX2"
 "TX2NX"
-"OrinNX"
-"OrinNano"
+"OrinNX8GB"
+"OrinNX16GB"
+"OrinNano4GB_SD"
+"OrinNano8GB_SD"
+"OrinNano4GB_NVME"
+"OrinNano8GB_NVME"
 )
 
 choose_som() {
@@ -77,7 +85,7 @@ choose_som() {
                 echo "  Choose your system on module"
                 index=1
                 for i in "${indices[@]}"; do
-                        echo "    $index: ${soms[$i]}"
+                        printf "    %2d: %s \n" $index "${soms[$i]}"
                         ((index=index+1))
                 done
                 read_selection 1 ${#indices[@]}
@@ -90,7 +98,7 @@ boards=(
 "NVIDIA Jetson Nano 2GB Developer Kit (https://developer.nvidia.com/embedded/jetson-nano-2gb-developer-kit)"
 "NVIDIA Jetson Nano Developer Kit B01 (https://developer.nvidia.com/embedded/jetson-nano-developer-kit)"
 "NVIDIA Jetson Xavier NX Developer Kit (https://developer.nvidia.com/embedded/jetson-xavier-nx-devkit)"
-"NVIDIA Jetson Orin Nano Developer Kit (...)"
+"NVIDIA Jetson Orin Nano Developer Kit (https://developer.nvidia.com/embedded/learn/get-started-jetson-orin-nano-devkit)"
 "Auvidea JNX30/JNX30D (https://auvidea.eu/product/70879)"
 "Auvidea JNX42 LM (https://auvidea.eu/product/70784)"
 "Auvidea J20 on Devkit Jetson AGX Xavier or TX2 (https://auvidea.eu/j20)"
@@ -200,7 +208,7 @@ write_configuration() {
 
 setup_driver() {
         print_title $1 $2
-        choose_som 0 1 2 3 4 5 6 7 8 9
+        choose_som 0 1 2 3 4 5 6 7 8 9 10 11 12 13
         case ${som} in
         Nano2GB)
                 choose_board 0
@@ -226,11 +234,11 @@ setup_driver() {
                 choose_board 4
                 choose_bsp 2 3 4 5 6 7
                 ;;
-        OrinNano)
-                choose_board 3
+        OrinNano4GB_SD|OrinNano8GB_SD|OrinNano4GB_NVME|OrinNano8GB_NVME)
+                choose_board 3 5
                 choose_bsp 10
                 ;;
-        OrinNX)
+        OrinNX8GB|OrinNX16GB)
                 choose_board 5
                 choose_bsp 9 10
         esac
@@ -240,7 +248,9 @@ setup_driver() {
 
 setup_target() {
         TARGET_USER=$USER
+        TARGET_PW=
         TARGET_IP=
+        TARGET_RSA=
         if [[ -e $TARGET_FILE ]]; then
                 . $TARGET_FILE
         fi
@@ -254,16 +264,28 @@ setup_target() {
         if [[ -n ${user} ]]; then
                 TARGET_USER=${user}
         fi
+        echo -n "  PW ($TARGET_PW): "
+        read pw
+        if [[ -n ${pw} ]]; then
+                TARGET_PW=${pw}
+        fi
         echo -n "  IP ($TARGET_IP): "
         read ip
         if [[ -n ${ip} ]]; then
                 TARGET_IP=${ip}
         fi
+        echo -n "  RSA ($TARGET_RSA):"
+        read rsa
+        if [[ -n ${rsa} ]]; then
+                TARGET_RSA=${rsa}
+        fi
 
         mkdir -p $BUILD_DIR
         cd $BUILD_DIR
         echo "export TARGET_USER=$TARGET_USER" >  $TARGET_FILE
+        echo "export TARGET_PW=$TARGET_PW"     >> $TARGET_FILE
         echo "export TARGET_IP=$TARGET_IP"     >> $TARGET_FILE
+        echo "export TARGET_RSA=$TARGET_RSA"   >> $TARGET_FILE
         TARGET_SHELL="ssh $TARGET_USER@$TARGET_IP"
 }
 

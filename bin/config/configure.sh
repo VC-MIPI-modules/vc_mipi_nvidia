@@ -16,7 +16,7 @@ case $VC_MIPI_SOM in
 Nano|NanoSD|Nano2GB|TX1)
         BSP_DIR=$BUILD_DIR/Nano\_$VC_MIPI_BSP
         ;;
-AGXXavier|XavierNX|XavierNXSD|TX2|TX2i|TX2NX|OrinNano|OrinNX)
+AGXXavier|XavierNX|XavierNXSD|TX2|TX2i|TX2NX|OrinNano4GB_SD|OrinNano8GB_SD|OrinNano4GB_NVME|OrinNano8GB_NVME|OrinNX8GB|OrinNX16GB)
         BSP_DIR=$BUILD_DIR/Xavier\_$VC_MIPI_BSP
         ;;
 esac
@@ -39,6 +39,7 @@ case $VC_MIPI_BSP in
 esac
 
 TARGET_USER=$USER
+TARGET_PW=
 TARGET_IP=
 if [[ $1 == 'target' ]]; then
         . $BIN_DIR/config/setup.sh --target
@@ -72,6 +73,7 @@ DTSI_FILE_DICT=(
         ["Auvidea_JNX30_XavierNX"]="tegra194-camera-vc-mipi-cam.dtsi"
         ["Auvidea_JNX42_XavierNX"]="tegra194-camera-vc-mipi-cam.dtsi"
           ["Auvidea_JNX42_OrinNX"]="tegra234-camera-vc-mipi-cam.dtsi"
+        ["Auvidea_JNX42_OrinNano"]="tegra234-camera-vc-mipi-cam.dtsi"
                 ["NV_DevKit_Nano"]="tegra210-camera-vc-mipi-cam.dtsi" 
             ["NV_DevKit_OrinNano"]="tegra234-camera-vc-mipi-cam.dtsi"
             ["NV_DevKit_XavierNX"]="tegra194-camera-vc-mipi-cam.dtsi"
@@ -86,6 +88,7 @@ DTSI_DEST_DICT=(
         ["Auvidea_JNX30_XavierNX"]="$KERNEL_SOURCE/hardware/nvidia/platform/t19x/jakku/kernel-dts/common"
         ["Auvidea_JNX42_XavierNX"]="$KERNEL_SOURCE/hardware/nvidia/platform/t19x/jakku/kernel-dts/common"
           ["Auvidea_JNX42_OrinNX"]="$KERNEL_SOURCE/hardware/nvidia/platform/t23x/p3768/kernel-dts/cvb"
+        ["Auvidea_JNX42_OrinNano"]="$KERNEL_SOURCE/hardware/nvidia/platform/t23x/p3768/kernel-dts/cvb"
                 ["NV_DevKit_Nano"]="$KERNEL_SOURCE/hardware/nvidia/platform/t210/porg/kernel-dts/porg-platforms" 
             ["NV_DevKit_OrinNano"]="$KERNEL_SOURCE/hardware/nvidia/platform/t23x/p3768/kernel-dts/cvb"
             ["NV_DevKit_XavierNX"]="$KERNEL_SOURCE/hardware/nvidia/platform/t19x/jakku/kernel-dts/common"
@@ -135,7 +138,7 @@ Nano|NanoSD|Nano2GB)
         esac
         ;;
 
-AGXXavier|XavierNX|XavierNXSD|TX2|TX2i|TX2NX|OrinNano|OrinNX)
+AGXXavier|XavierNX|XavierNXSD|TX2|TX2i|TX2NX|OrinNano4GB_SD|OrinNano8GB_SD|OrinNano4GB_NVME|OrinNano8GB_NVME|OrinNX8GB|OrinNX16GB)
         case $VC_MIPI_BSP in
         32.3.1)
                 PATCHES+=('kernel_Xavier_32.3.1+')
@@ -241,20 +244,51 @@ TX2NX)
         FLASH_PARTITION='mmcblk0p1'
         ;;
 
-OrinNano)
-        # Carrier board independant settings
-        FLASH_DT='kernel-dtb'
-        FLASH_BOARD='jetson-orin-nano-devkit-nvme'
-        FLASH_PARTITION='nvme0n1p1'
-        ;;
 
-OrinNX)
-        # Carrier board independant settings
-        FLASH_DT='kernel-dtb'
-        FLASH_BOARD='p3509-a02+p3767-0000'
-        FLASH_PARTITION='nvme0n1p1'
-        ;;
+OrinNano4GB_SD|OrinNano8GB_SD|OrinNano4GB_NVME|OrinNano8GB_NVME|OrinNX8GB|OrinNX16GB)
+        ORIN_DTB_PREFIX='tegra234-p3767-'
+        ORIN_DTB_SKU=''
+        ORIN_DTB_SUFFIX=''
+        case $VC_MIPI_BOARD in
+        Auvidea_JNX42)
+                FLASH_BOARD='p3509-a02+p3767-0000'
+                ORIN_DTB_SUFFIX='-p3509-a02.dtb'
+                ;;
+        NV_DevKit_OrinNano)
+                FLASH_BOARD='jetson-orin-nano-devkit'
+                ORIN_DTB_SUFFIX='-p3768-0000-a0.dtb'
+                ;;
+        esac
 
+        case $VC_MIPI_SOM in
+        OrinNano4GB_SD)
+                ORIN_DTB_SKU='0004'
+                FLASH_PARTITION='mmcblk1p1'
+                ;;
+        OrinNano8GB_SD)
+                ORIN_DTB_SKU='0003'
+                FLASH_PARTITION='mmcblk1p1'
+                ;;
+        OrinNano4GB_NVME)
+                ORIN_DTB_SKU='0004'
+                FLASH_PARTITION='nvme0n1p1'
+                ;;
+        OrinNano8GB_NVME)
+                ORIN_DTB_SKU='0003'
+                FLASH_PARTITION='nvme0n1p1'
+                ;;
+        OrinNX8GB)
+                ORIN_DTB_SKU='0001'
+                FLASH_PARTITION='nvme0n1p1'
+                ;;
+        OrinNX16GB)
+                ORIN_DTB_SKU='0000'
+                FLASH_PARTITION='nvme0n1p1'
+                ;;
+        esac
+
+        ORIN_DTB_FILE=${ORIN_DTB_PREFIX}${ORIN_DTB_SKU}${ORIN_DTB_SUFFIX}
+        ;;
 *)
         echo "SOM $VC_MIPI_SOM not supported!"
         ;;

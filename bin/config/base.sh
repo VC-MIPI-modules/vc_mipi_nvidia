@@ -12,3 +12,8 @@ CONFIGURATION_FILE=$BUILD_DIR/configuration.sh
 
 declare -A -g DTSI_FILE_DICT
 declare -A -g DTSI_DEST_DICT
+
+VC_DEFAULT_USER="vc"
+VC_DEFAULT_PW="vc"
+
+ORIN_DTB_FILE=
