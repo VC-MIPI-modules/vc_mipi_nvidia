@@ -22,7 +22,7 @@ download_and_check_file () {
         fi
 
         DL_STRIKE=0
-        DL_RESULT=0
+        DL_RESULT=1
         DL_AUTO_RETRY=3
 
         # Creating variables (e.g. BSP_URL_UNRESOLVED, BSP_URL, BSP_FILE, BSP_FILE_CHECKSUM).
@@ -38,8 +38,11 @@ download_and_check_file () {
 
         # First check if already downloaded file is valid.
         # Then a download isn't necessary anymore.
-        echo "$CHECKSUM_VAR $FILE_VAR" | md5sum -c
-        DL_RESULT=$?
+        if [[ -e $FILE_VAR ]]
+        then
+                DL_RESULT=$(echo "$CHECKSUM_VAR $FILE_VAR" | md5sum -c >/dev/null ; echo $? )
+        fi
+
         if [[ $DL_RESULT != 0 ]]; then
                 echo ""
                 case $1 in
@@ -76,8 +79,8 @@ download_and_check_file () {
 
                         DL_STRIKE=$((DL_STRIKE+1))
                         
-                        echo "$CHECKSUM_VAR $FILE_VAR" | md5sum -c
-                        DL_RESULT=$?
+                        DL_RESULT=$(echo "$CHECKSUM_VAR $FILE_VAR" | md5sum -c >/dev/null ; echo $? )
+
                         if [[ 0 != $DL_RESULT ]]
                         then 
                                 echo ""
