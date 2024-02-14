@@ -1,9 +1,17 @@
 # Version History
 
-## v0.17.0 (Orin Nano)
+## v0.17.0 (Orin Nano, Orin NX)
   * New Features
     * Added support for system on modules
-      * NVIDIA Jetson Orin Nano
+      * NVIDIA Jetson Orin Nano 8GB/4GB SD/NVME *(NVIDIA DevKit, Auvidea JNX42)*
+      * NVIDIA Jetson Orin NX 16GB/8GB NVME *(Auvidea JNX42)*
+    * Added support for board support package
+      * NVIDIA L4T 32.7.4 *(only NVIDIA Jetson Nano)*
+  * Improvements
+    * Infinite Trigger Timeout for NVIDIA Jetson Nano *(only L4T 32.7.4)*
+    * Configuration of user credentials for target during setup
+    * Setup of demo and test scripts automated
+    * Function ./setup --target extended in order to backup the user's known_hosts file
 
 ## v0.16.0 (Support IMX566, IMX567)
   * New Features

@@ -1,19 +1,22 @@
 # Vision Components MIPI CSI-2 driver for NVIDIA Jetson Nano, Xavier NX, AGX Xavier and TX2
 ![VC MIPI camera](https://www.vision-components.com/fileadmin/external/documentation/hardware/VC_MIPI_Camera_Module/VC_MIPI_Camera_Module-Dateien/mipi_sensor_front_back.png)
 
-## Version 0.16.0 ([History](VERSION.md))
+## Version 0.17.0 ([History](VERSION.md))
 * Supported system on modules
   * [NVIDIA Jetson Nano 4GB/2GB (production + devkit)](https://developer.nvidia.com/embedded/jetson-nano)
   * [NVIDIA Jetson Xavier NX (production + devkit)](https://developer.nvidia.com/embedded/jetson-xavier-nx)
   * [NVIDIA Jetson AGX Xavier](https://developer.nvidia.com/embedded/jetson-agx-xavier-developer-kit)
   * [NVIDIA Jetson TX2](https://developer.nvidia.com/embedded/jetson-tx2-developer-kit)
   * [NVIDIA Jetson TX2 NX](https://developer.nvidia.com/embedded/jetson-tx2-nx)
+  * [NVIDIA Jetson Orin Nano 8GB/4GB](https://developer.nvidia.com/embedded/jetson-modules#jetson_orin_nano)
+  * [NVIDIA Jetson Orin NX 16GB/8GB](https://developer.nvidia.com/embedded/jetson-modules#jetson_orin_nx)
 * Supported carrier boards
   * [NVIDIA Jetson Nano Developer Kit B01](https://developer.nvidia.com/embedded/jetson-nano-developer-kit)
   * [NVIDIA Jetson Nano 2GB Developer Kit](https://developer.nvidia.com/embedded/jetson-nano-2gb-developer-kit)
   * [NVIDIA Jetson Xavier NX Developer Kit](https://developer.nvidia.com/embedded/jetson-xavier-nx-devkit)
+  * [NVIDIA Jetson Orin Nano Developer Kit](https://developer.nvidia.com/embedded/learn/get-started-jetson-orin-nano-devkit)
   * [Auvidea JNX30/JNX30D](https://auvidea.eu/product/70879)
-  * [Auvidea JNX42 LM](https://auvidea.eu/product/70784) *(only NVIDIA Jetson Nano, Xavier NX)
+  * [Auvidea JNX42 LM](https://auvidea.eu/product/70784) *(only NVIDIA Jetson Nano, Xavier NX, Orin Nano, Orin NX)*
   * [Auvidea J20 on Devkit Jetson AGX Xavier or TX2](https://auvidea.eu/j20/) *(only connector 2+3)*
 * Supported board support packages
   * [NVIDIA L4T 32.3.1](https://developer.nvidia.com/l4t-3231-archive) *(only NVIDIA Jetson AGX Xavier)*
@@ -24,9 +27,10 @@
   * [NVIDIA L4T 32.7.1](https://developer.nvidia.com/embedded/linux-tegra-r3271)
   * [NVIDIA L4T 32.7.2](https://developer.nvidia.com/embedded/linux-tegra-r3272)
   * [NVIDIA L4T 32.7.3](https://developer.nvidia.com/embedded/linux-tegra-r3273)
-  * [NVIDIA L4T 35.1.0](https://developer.nvidia.com/embedded/jetson-linux-r351) *(only NVIDIA Jetson Xavier NX and AGX Xavier, experimental)*
-  * [NVIDIA L4T 35.2.1](https://developer.nvidia.com/embedded/jetson-linux-r3521) *(only NVIDIA Jetson Xavier NX and AGX Xavier, experimental)*
-  * [NVIDIA L4T 35.3.1](https://developer.nvidia.com/embedded/jetson-linux-r3531) *(only NVIDIA Jetson Xavier NX and AGX Xavier, experimental)*
+  * [NVIDIA L4T 32.7.4](https://developer.nvidia.com/embedded/linux-tegra-r3274) *(only NVIDIA Jetson Nano, experimental)*
+  * [NVIDIA L4T 35.1.0](https://developer.nvidia.com/embedded/jetson-linux-r351) *(only NVIDIA Jetson Xavier NX and AGX Xavier)*
+  * [NVIDIA L4T 35.2.1](https://developer.nvidia.com/embedded/jetson-linux-r3521) *(only NVIDIA Jetson Xavier NX, AGX Xavier and Orin NX, experimental)*
+  * [NVIDIA L4T 35.3.1](https://developer.nvidia.com/embedded/jetson-linux-r3531) *(only NVIDIA Jetson Xavier NX, AGX Xavier, Orin NX and Orin Nano, experimental)*
 * Supported [VC MIPI Camera Modules](https://www.vision-components.com/fileadmin/external/documentation/hardware/VC_MIPI_Camera_Module/index.html) 
   * IMX178, IMX183, IMX226
   * IMX250, IMX252, IMX264, IMX265, IMX273, IMX392
@@ -58,12 +62,14 @@
 
 # Quickstart
 
-1. Enter recovery mode by following the [Quick Start Guide](https://docs.nvidia.com/jetson/l4t/index.html#page/Tegra%20Linux%20Driver%20Package%20Development%20Guide/quick_start.html) instructions.   
+1. Enter recovery mode by following the instructions in one of the guides:<br>
+[Quick Start Guide L4T 35.3.1](https://docs.nvidia.com/jetson/archives/r35.3.1/DeveloperGuide/text/IN/QuickStart.html) (NVIDIA Jetson Orin Nano, Orin NX, Xavier NX and AGX Xavier) <br>
+[Quick Start Guide L4T 32.7.3](https://docs.nvidia.com/jetson/archives/l4t-archived/l4t-3273/index.html#page/Tegra%20Linux%20Driver%20Package%20Development%20Guide/quick_start.html) (NVIDIA Jetson Nano, TX2, Xavier NX and AGX Xavier)
 
 2. Create a directory and clone the repository.
    ```
      $ cd <working_dir>
-     $ git clone https://github.com/pmliquify/vc_mipi_nvidia
+     $ git clone https://github.com/VC-MIPI-modules/vc_mipi_nvidia
    ```
 
 3. Start the quickstart installation process and follow the instructions.
@@ -256,7 +262,7 @@ As an example the device tree for the IMX226 with 4 lanes and pixel format RAW10
 
 If you want to change some settings of a camera in the device tree, please follow these steps.
 
-1. Edit the device tree file for your hardware setup. Currently there are six device tree files for six different combinations of SoMs and carrier boards.
+1. Edit the device tree file for your hardware setup. 
    | system on module | carrier board | device tree file |
    | ---------------- | ------------- | ---------------- |
    | NVIDIA Jetson Nano | NVIDIA Jetson Nano Developer Kit | src/devicetree/NV_DevKit_Nano/tegra210-camera-vc-mipi-cam.dtsi |
@@ -268,13 +274,18 @@ If you want to change some settings of a camera in the device tree, please follo
    | NVIDIA Jetson AGX Xavier | Auvidea J20 on DevKit | src/devicetree/Auvidea_J20_AGXXavier/tegra194-camera-vc-mipi-cam.dtsi |
    | NVIDIA Jetson TX2 | Auvidea J20 on DevKit | src/devicetree/Auvidea_J20_TX2/tegra186-camera-vc-mipi-cam.dtsi |
    | NVIDIA Jetson TX2 NX | Auvidea JNX30D | src/devicetree/Auvidea_JNX30D_TX2NX/tegra186-camera-vc-mipi-cam.dtsi |
+   | NVIDIA Jetson Orin Nano | NVIDIA Jetson Orin Nano Developer Kit | src/devicetree/NV_DevKit_OrinNano/tegra234-camera-vc-mipi-cam.dtsi |
+   | NVIDIA Jetson Orin Nano | Auvidea JNX42 | src/devicetree/Auvidea_JNX42_OrinNano/tegra234-camera-vc-mipi-cam.dtsi |
+   | NVIDIA Jetson Orin NX | Auvidea JNX42 | src/devicetree/Auvidea_JNX42_OrinNX/tegra234-camera-vc-mipi-cam.dtsi |
    
    To edit the correct device tree file you can simply use the setup script. It will open the correct device tree file in the nano editor.
    ```
      $ ./setup.sh --camera
    ```
 
-2. Enter recovery mode by following the [Quick Start Guide](https://docs.nvidia.com/jetson/l4t/index.html#page/Tegra%20Linux%20Driver%20Package%20Development%20Guide/quick_start.html) instructions.   
+2. Enter recovery mode by following the instructions in one of the guides:<br>
+[Quick Start Guide L4T 35.3.1](https://docs.nvidia.com/jetson/archives/r35.3.1/DeveloperGuide/text/IN/QuickStart.html) (NVIDIA Jetson Orin Nano, Orin NX, Xavier NX and AGX Xavier) <br>
+[Quick Start Guide L4T 32.7.3](https://docs.nvidia.com/jetson/archives/l4t-archived/l4t-3273/index.html#page/Tegra%20Linux%20Driver%20Package%20Development%20Guide/quick_start.html) (NVIDIA Jetson Nano, TX2, Xavier NX and AGX Xavier)
 
 3. Build and flash the device tree files to the target.
    ```
@@ -326,10 +337,13 @@ If you have your own BSP, you have to integrate the driver into it. Please follo
    | ------------------------ | -------------- | --------------- | --------------------- |
    | NVIDIA Jetson Nano       | NVIDIA DevKit  | 32.5.0 - 32.5.2 | kernel_Nano_32.5.0+   |
    |                          |                | 32.6.1 - 32.7.3 | kernel_Nano_32.6.1+   |
+   |                          |                | 32.7.4          | kernel_Nano_32.6.1+ <br> kernel_Nano_32.7.4 |
    |                          | Auvidea JNX30  | 32.5.0 - 32.5.2 | kernel_Nano_32.5.0+ <br> dt_Auvidea_JNX30_Nano_32.5.0+ |
    |                          |                | 32.6.1 - 32.7.3 | kernel_Nano_32.6.1+ <br> dt_Auvidea_JNX30_Nano_32.5.0+ |
+   |                          |                | 32.7.4          | kernel_Nano_32.6.1+ <br> kernel_Nano_32.7.4 <br> dt_Auvidea_JNX30_Nano_32.5.0+ |
    |                          | Auvidea JNX42  | 32.5.0 - 32.5.2 | kernel_Nano_32.5.0+ <br> dt_Auvidea_JNX30_Nano_32.5.0+ |
    |                          |                | 32.6.1 - 32.7.3 | kernel_Nano_32.6.1+ <br> dt_Auvidea_JNX30_Nano_32.5.0+ |
+   |                          |                | 32.7.4          | kernel_Nano_32.6.1+ <br> kernel_Nano_32.7.4 <br> dt_Auvidea_JNX30_Nano_32.5.0+ |
    | NVIDIA Jetson Xavier NX  | NVIDIA DevKit  | 32.5.0          | kernel_Xavier_32.5.0+ |
    |                          |                | 32.5.1 - 32.5.2 | kernel_Xavier_32.5.1+ |
    |                          |                | 32.6.1 - 32.7.2 | kernel_Xavier_32.6.1+ |
@@ -365,6 +379,10 @@ If you have your own BSP, you have to integrate the driver into it. Please follo
    | NVIDIA Jetson TX2 NX     | Auvidea JNX30D | 32.5.1 - 32.5.2 | kernel_Xavier_32.5.1+ |
    |                          |                | 32.6.1 - 32.7.2 | kernel_Xavier_32.6.1+ |
    |                          |                | 32.7.3          | kernel_Xavier_32.7.3+ |
+   | NVIDIA Jetson Orin Nano  | NVIDIA DevKit  | 35.3.1          | kernel_Xavier_35.3.1+ |
+   |                          | Auvidea JNX42  | 35.3.1          | kernel_Xavier_35.3.1+ |
+   | NVIDIA Jetson Orin NX    | Auvidea JNX42  | 35.2.1          | kernel_Xavier_35.2.1+ |
+   |                          |                | 35.3.1          | kernel_Xavier_35.3.1+ |
 
 2. Copy the camera device tree to the folder listed in the following table
 
@@ -379,6 +397,9 @@ If you have your own BSP, you have to integrate the driver into it. Please follo
    | NVIDIA Jetson AGX Xavier | DevKit + J20   | Auvidea_J20_AGXXavier/tegra194-camera-vc-mipi-cam.dtsi <br> => /hardware/nvidia/platform/t19x/common/kernel-dts/t19x-common-modules |
    | NVIDIA Jetson TX2        | DevKit + J20   | Auvidea_J20_TX2/tegra186-camera-vc-mipi-cam.dtsi <br> => /hardware/nvidia/platform/t18x/common/kernel-dts/t18x-common-modules |
    | NVIDIA Jetson TX2 NX     | Auvidea JNX30D | Auvidea_JNX30D_TX2NX/tegra186-camera-vc-mipi-cam.dtsi <br> => /hardware/nvidia/platform/t18x/lanai/kernel-dts/common |
+   | NVIDIA Jetson Orin Nano  | NVIDIA DevKit  | NV_DevKit_OrinNano/tegra234-camera-vc-mipi-cam.dtsi <br> => /hardware/nvidia/platform/t23x/p3768/kernel-dts/cvb |
+   |                          | Auvidea JNX42  | Auvidea_JNX42_OrinNano/tegra234-camera-vc-mipi-cam.dtsi <br> => /hardware/nvidia/platform/t23x/p3768/kernel-dts/cvb |
+   | NVIDIA Jetson Orin NX    | Auvidea JNX42  | Auvidea_JNX42_OrinNX/tegra234-camera-vc-mipi-cam.dtsi <br> => /hardware/nvidia/platform/t23x/p3768/kernel-dts/cvb |
 
 3. Copy all driver files from folder **src/driver** to **/kernel/nvidia/drivers/media/i2c**
 

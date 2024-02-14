@@ -1,0 +1,296 @@
+From ce14dd15ca904c8cfe5deab342d8db670db77a4e Mon Sep 17 00:00:00 2001
+From: "/setup.sh" <support@vision-components.com>
+Date: Mon, 11 Sep 2023 16:33:22 +0200
+Subject: [PATCH] Timeout patch for Nano with suppressed dmesg printings for
+ all trigger modes.
+
+---
+ .../media/platform/tegra/camera/vi/channel.c  |  8 ++
+ .../media/platform/tegra/camera/vi/vi2_fops.c | 28 +++++-
+ .../drivers/video/tegra/host/nvhost_syncpt.c  | 91 +++++++++++++------
+ .../drivers/video/tegra/host/nvhost_syncpt.h  |  1 +
+ kernel/nvidia/include/linux/nvhost.h          |  3 +
+ kernel/nvidia/include/media/mc_common.h       |  3 +
+ 6 files changed, 105 insertions(+), 29 deletions(-)
+
+diff --git a/kernel/nvidia/drivers/media/platform/tegra/camera/vi/channel.c b/kernel/nvidia/drivers/media/platform/tegra/camera/vi/channel.c
+index d75001cc1..8ce4d5030 100644
+--- a/kernel/nvidia/drivers/media/platform/tegra/camera/vi/channel.c
++++ b/kernel/nvidia/drivers/media/platform/tegra/camera/vi/channel.c
+@@ -405,6 +405,10 @@ void release_buffer(struct tegra_channel *chan,
+ 	if (chan->capture_state != CAPTURE_GOOD || vbuf->sequence < 2)
+ 		buf->state = VB2_BUF_STATE_REQUEUEING;
+ 
++        if (atomic_read(&chan->stop_streaming_token)) {
++                buf->state = VB2_BUF_STATE_ERROR;
++        }
++
+ 	if (chan->sequence == 1) {
+ 		/*
+ 		 * Evaluate the initial capture latency between videobuf2 queue
+@@ -982,6 +986,8 @@ static int tegra_channel_start_streaming(struct vb2_queue *vq, u32 count)
+ 	struct tegra_channel *chan = vb2_get_drv_priv(vq);
+ 	struct tegra_mc_vi *vi = chan->vi;
+ 
++        atomic_set(&chan->stop_streaming_token, 0);
++
+ 	if (vi->fops) {
+ 		int ret = 0;
+ 
+@@ -1000,6 +1006,8 @@ static void tegra_channel_stop_streaming(struct vb2_queue *vq)
+ 	struct tegra_channel *chan = vb2_get_drv_priv(vq);
+ 	struct tegra_mc_vi *vi = chan->vi;
+ 
++        atomic_set(&chan->stop_streaming_token, 1);
++
+ 	if (vi->fops) {
+ 		vi->fops->vi_stop_streaming(vq);
+ 		vi->fops->vi_power_off(chan);
+diff --git a/kernel/nvidia/drivers/media/platform/tegra/camera/vi/vi2_fops.c b/kernel/nvidia/drivers/media/platform/tegra/camera/vi/vi2_fops.c
+index 1af3e073f..e5f2dfe84 100644
+--- a/kernel/nvidia/drivers/media/platform/tegra/camera/vi/vi2_fops.c
++++ b/kernel/nvidia/drivers/media/platform/tegra/camera/vi/vi2_fops.c
+@@ -22,6 +22,10 @@
+ #include "vi2_formats.h"
+ #include <trace/events/camera_common.h>
+ 
++#define DEFAULT_TIMEOUT_JIFFIES 200
++#define MIPI_NO_TIMEOUT (-1)
++
++
+ static void tegra_channel_stop_kthreads(struct tegra_channel *chan);
+ 
+ static void vi_write(struct tegra_mc_vi *vi, unsigned int addr, u32 val)
+@@ -229,7 +233,12 @@ static void tegra_channel_ec_init(struct tegra_channel *chan)
+ 	 * VC_MIPI: Timeout changed to a much longer time due to the need of
+ 	 *          external trigger modes.
+ 	 */
+-	chan->timeout = msecs_to_jiffies(5000);
++
++        if (0 < chan->trigger_mode) {
++                chan->timeout = MIPI_NO_TIMEOUT;
++        } else {
++                chan->timeout = msecs_to_jiffies(DEFAULT_TIMEOUT_JIFFIES);
++        }
+ 
+ 	/*
+ 	 * Sync point FIFO full blocks host interface
+@@ -850,6 +859,8 @@ static int tegra_channel_kthread_capture_start(void *data)
+ 
+ static void tegra_channel_stop_kthreads(struct tegra_channel *chan)
+ {
++	struct tegra_channel_buffer *buf = NULL;
++
+ 	mutex_lock(&chan->stop_kthread_lock);
+ 	/* Stop the kthread for capture */
+ 	if (chan->kthread_capture_start) {
+@@ -860,6 +871,11 @@ static void tegra_channel_stop_kthreads(struct tegra_channel *chan)
+ 	if (chan->low_latency) {
+ 		/* Stop the kthread for release frame */
+ 		if (chan->kthread_release) {
++			if (!list_empty(&chan->release)) {
++				buf = dequeue_inflight(chan);
++				if (buf)
++					tegra_channel_release_frame(chan, buf);
++			}
+ 			kthread_stop(chan->kthread_release);
+ 			chan->kthread_release = NULL;
+ 		}
+@@ -980,6 +996,11 @@ static int vi2_channel_stop_streaming(struct vb2_queue *vq)
+ 	struct tegra_csi_device *csi = chan->vi->csi;
+ 	int err = 0;
+ 
++        chan->timeout = msecs_to_jiffies(DEFAULT_TIMEOUT_JIFFIES);
++        for (index = 0; index < chan->valid_ports; index++) {
++                nvhost_syncpt_stop_waiting_ext(chan->vi->ndev, chan->syncpt[index][0]);
++        }
++
+ 	if (!chan->bypass) {
+ 		tegra_channel_stop_kthreads(chan);
+ 		/* wait for last frame memory write ack */
+@@ -1010,6 +1031,11 @@ static int vi2_channel_stop_streaming(struct vb2_queue *vq)
+ 	}
+ 
+ 	tegra_channel_set_stream(chan, false);
++
++        for (index = 0; index < chan->valid_ports; index++) {
++                nvhost_syncpt_restart_waiting_ext(chan->vi->ndev, chan->syncpt[index][0]);
++        }
++
+ 	err = tegra_channel_write_blobs(chan);
+ 	if (err)
+ 		return err;
+diff --git a/kernel/nvidia/drivers/video/tegra/host/nvhost_syncpt.c b/kernel/nvidia/drivers/video/tegra/host/nvhost_syncpt.c
+index cb7f9769e..728f2937a 100644
+--- a/kernel/nvidia/drivers/video/tegra/host/nvhost_syncpt.c
++++ b/kernel/nvidia/drivers/video/tegra/host/nvhost_syncpt.c
+@@ -205,6 +205,31 @@ int nvhost_syncpt_incr(struct nvhost_syncpt *sp, u32 id)
+ 	return 0;
+ }
+ 
++int nvhost_syncpt_stop_waiting_ext(struct platform_device *dev, u32 id)
++{
++	struct nvhost_master *master = nvhost_get_host(dev);
++	struct nvhost_syncpt *sp =
++		nvhost_get_syncpt_owner_struct(id, &master->syncpt);
++
++	atomic_set(&sp->stop_stream_called[id],1);
++
++	return 0;
++}
++EXPORT_SYMBOL(nvhost_syncpt_stop_waiting_ext);
++
++int nvhost_syncpt_restart_waiting_ext(struct platform_device *dev, u32 id)
++{
++	struct nvhost_master *master = nvhost_get_host(dev);
++	struct nvhost_syncpt *sp =
++		nvhost_get_syncpt_owner_struct(id, &master->syncpt);
++
++	atomic_set(&sp->stop_stream_called[id],0);
++
++	return 0;
++}
++EXPORT_SYMBOL(nvhost_syncpt_restart_waiting_ext);
++
++
+ /**
+  * Updated sync point form hardware, and returns true if syncpoint is expired,
+  * false if we may need to wait
+@@ -214,6 +239,9 @@ static bool syncpt_update_min_is_expired(
+ 	u32 id,
+ 	u32 thresh)
+ {
++        if (atomic_read(&sp->stop_stream_called[id])) {
++                return true;
++        }
+ 	syncpt_op().update_min(sp, id);
+ 	return nvhost_syncpt_is_expired(sp, id, thresh);
+ }
+@@ -374,35 +402,38 @@ int nvhost_syncpt_wait_timeout(struct nvhost_syncpt *sp, u32 id,
+ 			err = remain;
+ 			break;
+ 		}
+-		if (timeout != NVHOST_NO_TIMEOUT)
++
++		if (timeout != NVHOST_NO_TIMEOUT) {
+ 			timeout -= check;
+-		if (timeout && check_count <= MAX_STUCK_CHECK_COUNT) {
+-			new_val = syncpt_op().update_min(sp, id);
+-			if (old_val == new_val) {
+-				dev_warn(&syncpt_to_dev(sp)->dev->dev,
+-					"%s: syncpoint id %d (%s) stuck waiting %d, timeout=%d\n",
+-					 current->comm, id,
+-					 syncpt_op().name(sp, id),
+-					 thresh, timeout);
+-				nvhost_syncpt_debug(sp);
+-			} else {
+-				old_val = new_val;
+-				dev_info(&syncpt_to_dev(sp)->dev->dev,
+-					"%s: syncpoint id %d (%s) progressing slowly %d, timeout=%d\n",
+-					 current->comm, id,
+-					 syncpt_op().name(sp, id),
+-					 thresh, timeout);
+-			}
+-			if (check_count == MAX_STUCK_CHECK_COUNT) {
+-				if (low_timeout) {
+-					dev_warn(&syncpt_to_dev(sp)->dev->dev,
+-						"is timeout %d too low?\n",
+-						low_timeout);
+-				}
+-				nvhost_debug_dump(syncpt_to_dev(sp));
+-			}
+-			check_count++;
+-		}
++
++                        if (timeout && check_count <= MAX_STUCK_CHECK_COUNT) {
++                                new_val = syncpt_op().update_min(sp, id);
++                                if (old_val == new_val) {
++                                        dev_warn(&syncpt_to_dev(sp)->dev->dev,
++                                                "%s: syncpoint id %d (%s) stuck waiting %d, timeout=%d\n",
++                                                current->comm, id,
++                                                syncpt_op().name(sp, id),
++                                                thresh, timeout);
++                                        nvhost_syncpt_debug(sp);
++                                } else {
++                                        old_val = new_val;
++                                        dev_info(&syncpt_to_dev(sp)->dev->dev,
++                                                "%s: syncpoint id %d (%s) progressing slowly %d, timeout=%d\n",
++                                                current->comm, id,
++                                                syncpt_op().name(sp, id),
++                                                thresh, timeout);
++                                }
++                                if (check_count == MAX_STUCK_CHECK_COUNT) {
++                                        if (low_timeout) {
++                                                dev_warn(&syncpt_to_dev(sp)->dev->dev,
++                                                        "is timeout %d too low?\n",
++                                                        low_timeout);
++                                        }
++                                        nvhost_debug_dump(syncpt_to_dev(sp));
++                                }
++                                check_count++;
++                        }
++                }
+ 	}
+ 
+ 	if (!syncpt_poll)
+@@ -1132,6 +1163,7 @@ int nvhost_syncpt_init(struct platform_device *dev,
+ 	sp->last_used_by = kzalloc(sizeof(char *) * nb_pts, GFP_KERNEL);
+ 	sp->min_val = kzalloc(sizeof(atomic_t) * nb_pts, GFP_KERNEL);
+ 	sp->max_val = kzalloc(sizeof(atomic_t) * nb_pts, GFP_KERNEL);
++        sp->stop_stream_called = kzalloc(sizeof(atomic_t) * nb_pts, GFP_KERNEL);
+ 	sp->lock_counts =
+ 		kzalloc(sizeof(atomic_t) * nvhost_syncpt_nb_mlocks(sp),
+ 			GFP_KERNEL);
+@@ -1313,6 +1345,9 @@ void nvhost_syncpt_deinit(struct nvhost_syncpt *sp)
+ 	kfree(sp->assigned);
+ 	sp->assigned = NULL;
+ 
++        kfree(sp->stop_stream_called);
++        sp->stop_stream_called = NULL;
++
+ 	nvhost_syncpt_deinit_timeline(sp);
+ }
+ 
+diff --git a/kernel/nvidia/drivers/video/tegra/host/nvhost_syncpt.h b/kernel/nvidia/drivers/video/tegra/host/nvhost_syncpt.h
+index 1d23ced31..4b97a3f01 100644
+--- a/kernel/nvidia/drivers/video/tegra/host/nvhost_syncpt.h
++++ b/kernel/nvidia/drivers/video/tegra/host/nvhost_syncpt.h
+@@ -69,6 +69,7 @@ struct nvhost_syncpt {
+ 	struct nvhost_syncpt_attr invalid_syncpt_type_attr;
+ 	struct nvhost_syncpt_attr invalid_assigned_attr;
+ #endif
++	atomic_t *stop_stream_called;
+ };
+ 
+ int nvhost_syncpt_init(struct platform_device *, struct nvhost_syncpt *);
+diff --git a/kernel/nvidia/include/linux/nvhost.h b/kernel/nvidia/include/linux/nvhost.h
+index aefb46ceb..65be0f5f1 100644
+--- a/kernel/nvidia/include/linux/nvhost.h
++++ b/kernel/nvidia/include/linux/nvhost.h
+@@ -783,6 +783,9 @@ u32 nvhost_syncpt_read_maxval(struct platform_device *dev, u32 id);
+ void nvhost_syncpt_set_minval(struct platform_device *dev, u32 id, u32 val);
+ void nvhost_syncpt_set_maxval(struct platform_device *dev, u32 id, u32 val);
+ 
++int nvhost_syncpt_stop_waiting_ext(struct platform_device *dev, u32 id);
++int nvhost_syncpt_restart_waiting_ext(struct platform_device *dev, u32 id);
++
+ void nvhost_eventlib_log_task(struct platform_device *pdev,
+ 			      u32 syncpt_id,
+ 			      u32 syncpt_thres,
+diff --git a/kernel/nvidia/include/media/mc_common.h b/kernel/nvidia/include/media/mc_common.h
+index 85888dbde..9408b183f 100644
+--- a/kernel/nvidia/include/media/mc_common.h
++++ b/kernel/nvidia/include/media/mc_common.h
+@@ -262,6 +262,9 @@ struct tegra_channel {
+ 	enum interlaced_type interlace_type;
+ 	int interlace_bplfactor;
+ 
++        atomic_t stop_streaming_token;
++        __u8 trigger_mode;
++
+ 	atomic_t syncpt_depth;
+ 	struct rw_semaphore reset_lock;
+ };
+-- 
+2.34.1
+

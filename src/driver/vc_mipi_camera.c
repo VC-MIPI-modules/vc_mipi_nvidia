@@ -2,11 +2,12 @@
 #include <linux/module.h>
 #include <linux/of.h>
 #include <media/tegra-v4l2-camera.h>
+#include <media/mc_common.h>
 #include <media/tegracam_core.h>
 #include "vc_mipi_core.h"
 #include "vc_mipi_modules.h"
 
-#define VERSION "0.16.0"
+#define VERSION "0.17.0"
 // #define VC_CTRL_VALUE
 
 
@@ -51,6 +52,76 @@ void vc_update_image_size_from_mode(struct tegracam_device *tc_dev,  __u32 *left
                         __FUNCTION__, mode_idx, *left, *top, *width, *height);
         }
 }
+
+#if defined(VC_MIPI_JETSON_NANO) && defined(VC_MIPI_L4T_32_7_4)
+int vc_set_channel_trigger_mode(struct tegracam_device *tc_dev, __u8 trigger_mode)
+{
+        struct vc_cam *cam = tegracam_to_cam(tc_dev);
+        struct device *dev = vc_core_get_sen_device(cam);
+        struct vc_ctrl *ctrl = &cam->ctrl;
+        struct i2c_client *client_sen = ctrl->client_sen;
+        struct camera_common_data *s_data = NULL;
+        struct v4l2_subdev *sd = NULL;
+        struct tegra_channel *chan = NULL;
+        struct media_pad *pad_csi = NULL;
+        struct media_pad *pad_vi = NULL;
+        struct v4l2_subdev *sd_csi = NULL;
+        struct v4l2_subdev *sd_vi = NULL;
+        struct video_device *vdev_vi = NULL;
+
+        s_data = to_camera_common_data(&client_sen->dev);
+        if (NULL == s_data) {
+                vc_err(dev, "%s(): s_data is NULL!\n", __FUNCTION__);
+                return -EINVAL;
+        }
+
+        sd = &s_data->subdev;
+        if (NULL == sd) {
+                vc_err(dev, "%s(): sd is NULL!\n", __FUNCTION__);
+                return -EINVAL;
+        }
+
+	pad_csi = media_entity_remote_pad(&sd->entity.pads[0]);
+        if (NULL == pad_csi) {
+                vc_err(dev, "%s(): pad_csi is NULL!\n", __FUNCTION__);
+                return -EINVAL;
+        }
+
+	sd_csi = media_entity_to_v4l2_subdev(pad_csi->entity);
+        if (NULL == sd_csi) {
+                vc_err(dev, "%s(): sd_csi is NULL!\n", __FUNCTION__);
+                return -EINVAL;
+        }
+
+	pad_vi = media_entity_remote_pad(&sd_csi->entity.pads[1]);
+        if (NULL == pad_vi) {
+                vc_err(dev, "%s(): pad_vi is NULL!\n", __FUNCTION__);
+                return -EINVAL;
+        }
+
+	sd_vi = media_entity_to_v4l2_subdev(pad_vi->entity);
+        if (NULL == sd_vi) {
+                vc_err(dev, "%s(): sd_vi is NULL!\n", __FUNCTION__);
+                return -EINVAL;
+        }
+        
+	vdev_vi = media_entity_to_video_device(pad_vi->entity);
+        if (NULL == vdev_vi) {
+                vc_err(dev, "%s(): vdev_vi is NULL!\n", __FUNCTION__);
+                return -EINVAL;
+        }
+
+	chan = video_get_drvdata(vdev_vi);
+        if (NULL == chan) {
+                vc_err(dev, "%s(): channel is NULL!\n", __FUNCTION__);
+                return -EINVAL;
+        }
+
+        chan->trigger_mode = trigger_mode;
+
+        return 0;
+}
+#endif
 
 #ifdef VC_MIPI_JETSON_NANO
 void vc_fix_image_size(struct tegracam_device *tc_dev, __u32 *width, __u32 *height, 
@@ -289,6 +360,11 @@ static int vc_set_trigger_mode(struct tegracam_device *tc_dev, __s64 val)
         struct vc_cam *cam = tegracam_to_cam(tc_dev);
         int ret = vc_mod_set_trigger_mode(cam, val);
         vc_update_tegra_controls(tc_dev);
+
+#if defined(VC_MIPI_JETSON_NANO) && defined(VC_MIPI_L4T_32_7_4)
+        ret = vc_set_channel_trigger_mode(tc_dev, (__u8)val);
+#endif
+
         return ret;
 }
 
@@ -636,6 +712,9 @@ static int vc_probe(struct i2c_client *client, const struct i2c_device_id *id)
         struct device *dev = &client->dev;
         struct vc_cam *cam;
         struct tegracam_device *tc_dev;
+#if defined(VC_MIPI_JETSON_NANO) && defined(VC_MIPI_L4T_32_7_4)
+        struct camera_common_data *common_data;
+#endif
         int ret;
 
         vc_notice(dev, "%s(): Probing UNIVERSAL VC MIPI Driver (v%s)\n", __func__, VERSION);
@@ -648,6 +727,13 @@ static int vc_probe(struct i2c_client *client, const struct i2c_device_id *id)
         tc_dev = devm_kzalloc(dev, sizeof(struct tegracam_device), GFP_KERNEL);
         if (!tc_dev)
                 return 0;
+
+#if defined(VC_MIPI_JETSON_NANO) && defined(VC_MIPI_L4T_32_7_4)
+        common_data = devm_kzalloc(&client->dev, sizeof(struct camera_common_data), GFP_KERNEL);
+        if (!common_data) {
+                return -ENOMEM;
+        }
+#endif
 
         ret = vc_core_init(cam, client);
         if (ret) {

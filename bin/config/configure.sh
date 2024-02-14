@@ -135,6 +135,10 @@ Nano|NanoSD|Nano2GB)
         32.6.1|32.7.1|32.7.2|32.7.3)
                 PATCHES+=('kernel_Nano_32.6.1+')
                 ;;
+        32.7.4)
+                PATCHES+=('kernel_Nano_32.6.1+')
+                PATCHES+=('kernel_Nano_32.7.4')
+                ;;
         esac
         ;;
 
@@ -177,7 +181,7 @@ Nano|NanoSD|Nano2GB)
                 32.3.1)
                         PATCHES+=('dt_Auvidea_JNX30_Nano_32.3.1+')
                         ;;
-                32.5.0|32.5.1|32.5.2|32.6.1|32.7.1|32.7.2|32.7.3)
+                32.5.0|32.5.1|32.5.2|32.6.1|32.7.1|32.7.2|32.7.3|32.7.4)
                         PATCHES+=('dt_Auvidea_JNX30_Nano_32.5.0+')
                         ;;
                 esac
