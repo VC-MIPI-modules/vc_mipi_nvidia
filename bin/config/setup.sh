@@ -171,7 +171,7 @@ choose_bsp() {
                 echo "  Choose your board support package"
                 index=1
                 for i in "${indices[@]}"; do
-                        echo "    $index: ${bsps[$i]}"
+                        printf "    %2d: %s \n" $index "${bsps[$i]}"
                         ((index=index+1))
                 done
                 read_selection 1 ${#indices[@]}

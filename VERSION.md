@@ -8,10 +8,14 @@
     * Added support for board support package
       * NVIDIA L4T 32.7.4 *(only NVIDIA Jetson Nano)*
   * Improvements
+    * setup.sh script recognizes now already downloaded L4T archives
     * Infinite Trigger Timeout for NVIDIA Jetson Nano *(only L4T 32.7.4)*
     * Configuration of user credentials for target during setup
-    * Setup of demo and test scripts automated
-    * Function ./setup --target extended in order to backup the user's known_hosts file
+    * Function vc_mod_set_mode adjusted. When module is in streaming mode and the format is already set, then the module is not powered down and up again. In that case the additional wait time is omitted, too. 
+    * Function ./setup.sh --target extended:
+      * user's known_hosts file is being backed up
+      * demo.sh and max_speed.sh scripts are being copied directly from the vc_mipi_nvidia/target/ directory to the /home/user/test/ folder on the device
+    * demo.sh and max_speed.sh scripts extended. Usage of both scripts can be examined by the "-h" option
 
 ## v0.16.0 (Support IMX566, IMX567)
   * New Features

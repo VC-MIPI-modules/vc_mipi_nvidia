@@ -392,7 +392,10 @@ while [ $# != 0 ] ; do
                 setup_toolchain
                 setup_user_credentials
                 setup_bsp
-                setup_target_files
+# If the user likes to pre-install the test directory with test scripts 
+# in the configured user-home directory of the target system,
+# the following function can be activated.
+#                setup_target_files
                 setup_kernel
                 setup_nvidia_driver
                 setup_som_carrier_specifics

@@ -79,6 +79,31 @@
    ```
    > If you have changed your hardware setup simply execute this script again.
 
+4. (Optional)<br>
+   Set up the target by executing one of the following commands on the host computer when the target device is already running:
+   ```
+     $ cd vc_mipi_nvidia/bin
+     $ ./setup.sh --target
+   ```
+   or
+   ```
+     $ cd vc_mipi_nvidia/bin
+     $ ./setup.sh -t
+   ```
+   This function will configure a connection with the running target. It will backup the users known_hosts file and copy the users public rsa key, so that every time when a ssh connection to the device is opened, the user don't need to enter the password again. It will also copy the demo.sh and max_speed.sh script into the /home/username/test/ folder on the device.<br>
+   For more information about the mentioned scripts, please run the appropriate script with the option "-h" in a shell on the running device.
+   ```
+   vc@nvidia $ test/demo.sh -h
+   ```
+   or
+   ```
+   vc@nvidia $ test/max_speed.sh -h
+   ```
+   When operating with the max_speed.sh script, it should be run as root.<br> E.g. speeding up the clocks:
+   ```
+   vc@nvidia $ sudo test/max_speed.sh -m
+   ```
+
 # Changing camera settings in the device tree
 
 ## GStreamer Support
@@ -193,9 +218,9 @@ The property *max_framerate* is given for the number of lanes and the pixel form
 | Property             | IMX565     | IMX566     | IMX567/568 |
 | -------------------- | ---------: | ---------: | ---------: |
 | physical_w           |     11.311 |      7.804 |      6.752 |
-| physical_h           |      8.220 |      7.804 |      5.612 |
+| physical_h           |      8.220 |      7.804 |      5.655 |
 | active_w             |       4128 |       2848 |       2464 |
-| active_h             |       3000 |       2848 |       2048 |
+| active_h             |       3000 |       2848 |       2064 |
 | pixel_t              | RG 8,10,12 | RG 8,10,12 | RG 8,10,12 |
 | max_gain_val         |         48 |         48 |         48 |
 | step_gain_val        |      0.100 |      0.100 |      0.100 |
@@ -411,9 +436,18 @@ To test the camera you can use [Vision Components MIPI CSI-2 demo software](http
 
 * When the test system has booted successfully, it is necessary to run the script max_speed.sh from the /target folder as superuser. It will read out the maximum frequencies and set them as the current ones. This is a recommendation from nvidia.
    ```
-     $ sudo ./max_speed.sh
+     $ sudo ./max_speed.sh -m
    ```
-* For changing device trees only (./build.sh -d and ./flash.sh -d), you will have to modify your /boot/extlinux/extlinux.conf on your target machine by removing the FDT entry or by commenting out with '#'. Otherwise you will have to flash your complete linux image for every device tree change to take effect.
+* For changing device trees only (./build.sh -d and ./flash.sh -d) there must be a differentiation between Orin and Non-Orin Targets:
+  - For targets like Xavier NX and AGX Xavier, you will have to modify your /boot/extlinux/extlinux.conf on your target machine by removing the FDT entry or by commenting out with '#'. Otherwise you will have to flash your complete linux image for every device tree change to take effect.
+  - For OrinNano and Orin NX the FDT entry must be present in the /boot/extlinux/extlinux.conf file. The ./flash -d command will copy the proper file (e.g. tegra234-p3767-0003-p3768-0000-a0.dtb for OrinNano 8GB on NVIDIA DevKit) into the /boot/dtb/ directory. <br>Therefore, the extlinux.conf FDT entry must be renamed from e.g.:
+    <pre>
+    FDT /boot/dtb/<b>kernel_</b>tegra234-p3767-0003-p3768-0000-a0.dtb 
+    </pre>
+    to 
+    <pre>
+    FDT /boot/dtb/tegra234-p3767-0003-p3768-0000-a0.dtb
+    </pre>
 
 ## For NVIDIA Jetson TX2 NX
 

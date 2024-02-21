@@ -1054,8 +1054,8 @@ int vc_mod_set_mode(struct vc_cam *cam, int *reset)
         }
 
         mode = vc_mod_find_mode(cam, num_lanes, format, type, binning);
-        if (mode == state->mode && !(ctrl->flags & FLAG_RESET_ALWAYS)) {
-                vc_dbg(dev, "%s(): Module mode %u already set!\n", __FUNCTION__, mode);
+        if (mode == state->mode && (!(ctrl->flags & FLAG_RESET_ALWAYS) && type == MODE_TYPE_STREAM)) {
+                vc_dbg(dev, "%s(): Module mode %u need not to be set!\n", __FUNCTION__, mode);
                 *reset = 0;
                 return 0;
         }
