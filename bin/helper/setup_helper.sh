@@ -36,10 +36,16 @@ download_and_check_file () {
         CHECKSUM_VAR=${!CHECKSUM_VAR}
         user_retry_input=
 
-        # First check if already downloaded file is valid.
-        # Then a download isn't necessary anymore.
-        echo "$CHECKSUM_VAR $FILE_VAR" | md5sum -c
-        DL_RESULT=$?
+        # first check file already exists
+        if [[ -e $FILE_VAR ]]; then
+                # then check already downloaded file is valid.
+                # Then a download isn't necessary anymore.
+                echo "$CHECKSUM_VAR $FILE_VAR" | md5sum -c
+                DL_RESULT=$?
+        else
+                DL_RESULT=1 # exit code as 1
+        fi
+        
         if [[ $DL_RESULT != 0 ]]; then
                 echo ""
                 case $1 in
