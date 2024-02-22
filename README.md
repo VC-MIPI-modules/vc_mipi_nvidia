@@ -317,6 +317,7 @@ If you want to change some settings of a camera in the device tree, please follo
      $ ./build.sh --dt
      $ ./flash.sh --dt
    ```
+   >Regarding to Jetpack5 and higher, please have a look at the section Annotations.
 
 # Using long exposure times or external trigger mode with long waiting times (> 5 seconds)
 
@@ -434,13 +435,19 @@ To test the camera you can use [Vision Components MIPI CSI-2 demo software](http
 # Annotations
 ## For Jetpack 5 (L4T 35.1.0, 35.2.1, 35.3.1):
 
-* When the test system has booted successfully, it is necessary to run the script max_speed.sh from the /target folder as superuser. It will read out the maximum frequencies and set them as the current ones. This is a recommendation from nvidia.
+* When the system has booted successfully, it is necessary to run the script max_speed.sh from the /target folder as superuser. It will read out the maximum frequencies and set them as the current ones. This is a recommendation from nvidia.
    ```
      $ sudo ./max_speed.sh -m
    ```
 * For changing device trees only (./build.sh -d and ./flash.sh -d) there must be a differentiation between Orin and Non-Orin Targets:
-  - For targets like Xavier NX and AGX Xavier, you will have to modify your /boot/extlinux/extlinux.conf on your target machine by removing the FDT entry or by commenting out with '#'. Otherwise you will have to flash your complete linux image for every device tree change to take effect.
-  - For OrinNano and Orin NX the FDT entry must be present in the /boot/extlinux/extlinux.conf file. The ./flash -d command will copy the proper file (e.g. tegra234-p3767-0003-p3768-0000-a0.dtb for OrinNano 8GB on NVIDIA DevKit) into the /boot/dtb/ directory. <br>Therefore, the extlinux.conf FDT entry must be renamed from e.g.:
+  - For targets like Xavier NX and AGX Xavier, you will have to modify your /boot/extlinux/extlinux.conf on your target machine by removing the FDT entry or by commenting out with '#'. Otherwise you will have to flash your complete linux image for every device tree change to take effect. <br>
+    ```
+    # FDT /boot/dtb/kernel_tegra194-p3668-0000-p3509-0000.dtb
+    ```
+    > [!IMPORTANT]
+    > When calling the flash script with the option -d (flash the device tree only), the device must be in force recovery mode!
+  - For OrinNano and Orin NX the FDT entry must be present in the /boot/extlinux/extlinux.conf file. The ./flash -d command will copy the proper file (e.g. tegra234-p3767-0003-p3768-0000-a0.dtb for OrinNano 8GB on NVIDIA DevKit) into the /boot/dtb/ directory. <br>Therefore, the extlinux.conf FDT entry must be renamed e.g.:<br>
+    from
     <pre>
     FDT /boot/dtb/<b>kernel_</b>tegra234-p3767-0003-p3768-0000-a0.dtb 
     </pre>
@@ -448,6 +455,8 @@ To test the camera you can use [Vision Components MIPI CSI-2 demo software](http
     <pre>
     FDT /boot/dtb/tegra234-p3767-0003-p3768-0000-a0.dtb
     </pre>
+    > [!IMPORTANT]
+    > When calling the flash script with the option -d (flash the device tree only), the device must be running. It must <b>not</b> be in force recovery mode!
 
 ## For NVIDIA Jetson TX2 NX
 
