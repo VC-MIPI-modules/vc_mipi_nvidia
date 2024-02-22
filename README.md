@@ -444,8 +444,7 @@ To test the camera you can use [Vision Components MIPI CSI-2 demo software](http
     ```
     # FDT /boot/dtb/kernel_tegra194-p3668-0000-p3509-0000.dtb
     ```
-   > [!IMPORTANT]
-   > When calling the flash script with the option -d (flash the device tree only), the device must be in force recovery mode!
+    > When calling the flash script with the option -d (flash the device tree only), the device must be in force recovery mode!
   - For OrinNano and Orin NX the FDT entry must be present in the /boot/extlinux/extlinux.conf file. The ./flash -d command will copy the proper file (e.g. tegra234-p3767-0003-p3768-0000-a0.dtb for OrinNano 8GB on NVIDIA DevKit) into the /boot/dtb/ directory. <br>Therefore, the extlinux.conf FDT entry must be renamed e.g.:<br>
     from
     <pre>
@@ -455,8 +454,7 @@ To test the camera you can use [Vision Components MIPI CSI-2 demo software](http
     <pre>
     FDT /boot/dtb/tegra234-p3767-0003-p3768-0000-a0.dtb
     </pre>
-   > [!IMPORTANT]
-   > When calling the flash script with the option -d (flash the device tree only), the device must be running. It must <b>not</b> be in force recovery mode!
+    > When calling the flash script with the option -d (flash the device tree only), the device must be running. It must <b>not</b> be in force recovery mode!
 
 ## For NVIDIA Jetson TX2 NX
 
