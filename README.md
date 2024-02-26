@@ -77,7 +77,12 @@
      $ cd vc_mipi_nvidia/bin
      $ ./quickstart.sh
    ```
-   > If you have changed your hardware setup simply execute this script again.
+   > If you have changed your hardware setup simply execute this script again.<br>
+   
+   > During the setup process of the quickstart.sh script, there will be executed the l4t_create_default_user.sh script from NVIDIA, which will create a default user with the credentials given by the user.<br>
+   > (After setting up the toolchain, the user is prompted to this credentials mask.)<br>
+   > This script has been available since L4T 32.6.1 and will be applied accordingly.<br>
+   > For older version (L4T 32.3.1 - L4T 32.5.2), the user has to setup the default user by hand after the flashing process. This procedure is guided by the ubuntu setup dialogs immediately after the first boot.
 
 4. (Optional)<br>
    Set up the target by executing one of the following commands on the host computer when the target device is already running:

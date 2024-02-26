@@ -1,7 +1,7 @@
 #!/bin/bash
 
 usage() {
-        echo "Usage: $0 [options]"
+        echo "Usage: sudo $0 [options]"
         echo ""
         echo "Script to test and demonstrate camera features."
         echo ""
@@ -97,6 +97,17 @@ set_emc_rate() {
         echo 1 > ${path}/emc/mrq_rate_locked
         echo $1 > ${path}/emc/rate
 }
+
+if [[ 0 -ne $EUID ]] 
+then
+        echo "This script must be run as root."
+        exit 1
+fi
+
+if [[ 0 == $# ]]
+then
+        usage
+fi
 
 while [ $# != 0 ] ; do
         option="$1"
