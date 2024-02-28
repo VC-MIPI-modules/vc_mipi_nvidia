@@ -140,7 +140,7 @@ setup_bsp() {
 }
 
 setup_camera() {
-        nano -l +23 $DT_CAM_FILE
+        gedit $DT_CAM_FILE
 }
 
 setup_target() {
