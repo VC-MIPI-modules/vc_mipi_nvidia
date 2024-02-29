@@ -1,0 +1,547 @@
+/*
+ * Common include DTS file for CVM:P3668-0001 and CVB:P3449-0000 variants.
+ *
+ * Copyright (c) 2019-2020 , NVIDIA CORPORATION.  All rights reserved.
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; version 2 of the License.
+ *
+ * This program is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+ * FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for
+ * more details.
+ */
+
+#include "dt-bindings/extcon-ids.h"
+#include "dt-bindings/gpio/tegra194-gpio.h"
+#include <dt-bindings/pwm/pwm.h>
+#include <tegra194-soc/tegra194-soc-cvm.dtsi>
+#include "tegra194-fixed-regulator-p3668.dtsi"
+#include <t19x-common-platforms/tegra194-comms.dtsi>
+#include <t19x-common-platforms/tegra194-platforms-eqos.dtsi>
+#include "tegra194-powermon-p3668.dtsi"
+#include "tegra194-power-tree-p3668.dtsi"
+#include "tegra194-thermal-p3668.dtsi"
+#include <t19x-common-platforms/tegra194-no-pll-aon-clock.dtsi>
+#include "tegra194-p3668-pcie-plugin-manager.dtsi"
+#include "tegra194-plugin-manager-p3668.dtsi"
+
+/ {
+	nvidia,fastboot-usb-vid = <0x0955>;
+	nvidia,fastboot-usb-pid = <0xee1e>;
+	model = "NVIDIA Jetson Xavier NX Developer Kit";
+
+	chosen {
+		bootargs ="console=ttyTCU0,115200";
+		board-has-eeprom;
+		nvidia,tegra-joint_xpu_rail;
+	};
+
+	cpufreq {
+		compatible = "nvidia,tegra194-cpufreq";
+		status = "okay";
+		cpu_emc_map = <1907200 1600000>,
+			    <1881600 800000>,
+			    <1574400 665000>,
+			    <1267200 408000>;
+	};
+
+	pmc@c370000 {
+		nvidia,invert-interrupt;
+	};
+
+        pmc@c360000 {
+                 iopad_defaults: iopad-defaults {
+                         sdmmc-io-pads {
+                                 pins = "sdmmc1-hv", "sdmmc3-hv";
+                                 nvidia,enable-voltage-switching;
+                         };
+                 };
+         };
+
+	hdr40_i2c0: i2c@c240000 {
+		/* This I2C (GEN2) is routed only to 40-pin hdr
+		 * Not being used in Jakku CVM/CVB/Porg-base-board
+		 * it seems "ucsi_ccg" for USB-TypeC which is not supported by Jakku */
+		bmi160@69 {
+			compatible = "bmi,bmi160";
+			reg = <0x69>;
+			interrupt-parent = <&tegra_aon_gpio>;
+			interrupts = <TEGRA194_AON_GPIO(AA, 2) GPIO_ACTIVE_LOW>;
+			accelerometer_matrix    = [01 00 00 00 01 00 00 00 01];
+			gyroscope_matrix        = [01 00 00 00 01 00 00 00 01];
+			accelerometer_delay_us_min = <1250>;
+			gyroscope_delay_us_min = <1250>;
+			status = "disabled";
+		};
+	};
+
+	external-connection {
+		vbus_id_extcon: extcon@1 {
+			compatible = "extcon-gpio-states";
+			reg = <0x1>;
+			extcon-gpio,name = "VBUS";
+			extcon-gpio,cable-states = <
+						0x0 0x1
+						0x1 0x0>;
+			gpios = <&tegra_main_gpio TEGRA194_MAIN_GPIO(Z, 1) 0>;
+			extcon-gpio,out-cable-names = <EXTCON_USB EXTCON_USB_HOST EXTCON_NONE>;
+			wakeup-source;
+			#extcon-cells = <1>;
+		};
+	};
+
+	xusb_padctl: xusb_padctl@3520000 {
+		status = "okay";
+
+		pads {
+			usb2 {
+				lanes {
+					usb2-0 {
+						nvidia,function = "xusb";
+						status = "okay";
+					};
+					usb2-1 {
+						nvidia,function = "xusb";
+						status = "okay";
+					};
+					usb2-2 {
+						nvidia,function = "xusb";
+						status = "okay";
+					};
+				};
+			};
+			usb3 {
+				lanes {
+					usb3-2 {
+						nvidia,function = "xusb";
+						status = "okay";
+					};
+				};
+			};
+		};
+
+		ports {
+			usb2-0 {
+				mode = "otg";
+				status = "okay";
+			};
+			usb2-1 {
+				mode = "host";
+				status = "okay";
+			};
+			usb2-2 {
+				mode = "host";
+				vbus-supply = <&battery_reg>;
+				status = "okay";
+			};
+			usb3-2 {
+				nvidia,usb2-companion = <1>;
+				status = "okay";
+			};
+		};
+	};
+
+	tegra_xudc: xudc@3550000 {
+		extcon-cables = <&vbus_id_extcon 0>;
+		extcon-cable-names = "vbus";
+		#extcon-cells = <1>;
+		phys = <&{/xusb_padctl@3520000/pads/usb2/lanes/usb2-0}>;
+		phy-names = "usb2";
+		nvidia,xusb-padctl = <&xusb_padctl>;
+		nvidia,boost_cpu_freq = <1200>;
+		status = "okay";
+	};
+
+	tegra_xhci: xhci@3610000 {
+		extcon-cables = <&vbus_id_extcon 1>;
+		extcon-cable-names = "id";
+		#extcon-cells = <1>;
+		phys = <&{/xusb_padctl@3520000/pads/usb2/lanes/usb2-0}>,
+			<&{/xusb_padctl@3520000/pads/usb2/lanes/usb2-1}>,
+			<&{/xusb_padctl@3520000/pads/usb2/lanes/usb2-2}>,
+			<&{/xusb_padctl@3520000/pads/usb3/lanes/usb3-2}>;
+		phy-names = "usb2-0", "usb2-1", "usb2-2", "usb3-2";
+		nvidia,xusb-padctl = <&xusb_padctl>;
+		status = "okay";
+	};
+
+	/* Below node can be moved to cvb to make decision about enabling/disabling */
+	arm-pmu {
+		status = "okay";
+	};
+
+	power-domain {
+		status = "okay";
+	};
+
+	interrupt-controller {
+		status = "okay";
+	};
+
+	mods-simple-bus {
+		status = "okay";
+	};
+
+	cpuidle {
+		compatible = "nvidia,tegra19x-cpuidle";
+		status = "okay";
+	};
+
+	thermal-zones {
+		status = "okay";
+	};
+
+	reserved-memory {
+		ramoops_carveout {
+			status = "okay";
+		};
+	};
+
+	mttcan@c310000 {
+		status = "okay";
+		pll_source = "pllc";
+		clocks = <&bpmp_clks TEGRA194_CLK_CAN1_CORE>,
+			<&bpmp_clks TEGRA194_CLK_CAN1_HOST>,
+			<&bpmp_clks TEGRA194_CLK_CAN1>,
+			<&bpmp_clks TEGRA194_CLK_PLLC>;
+		clock-names = "can_core", "can_host","can", "pllc";
+	};
+
+	mttcan@c320000 {
+		status = "disabled";
+	};
+
+	host1x {
+		dpaux@155F0000 {
+			status = "okay";
+			compatible = "nvidia,tegra194-dpaux3-padctl";
+			/delete-property/ power-domains;
+			dpaux_default: pinmux@0 {
+				dpaux3_pins {
+					pins = "dpaux3-3";
+					function = "i2c";
+				};
+			};
+		};
+	};
+
+	hardwood {
+		compatible = "nvidia,denver-hardwood";
+		interrupts = <0 24 0x4>;
+	};
+
+	pfsd {
+		pwm_polarity= <PWM_POLARITY_NORMAL>;
+		suspend_state = <0>;
+	};
+
+	serial@3100000 {
+		compatible = "nvidia,tegra186-hsuart";
+		status = "okay";
+	};
+
+	serial@3140000 {
+		compatible = "nvidia,tegra186-hsuart";
+		status = "okay";
+	};
+
+	combined-uart {
+		console-port;
+		combined-uart;
+		status = "okay";
+	};
+
+	pwm@c340000 {
+		status = "okay";
+	};
+
+	sdhci_emmc: sdhci@3460000 {
+		uhs-mask = <0x0>;
+		nvidia,enable-hwcq;
+		status = "okay";
+	};
+
+	sdhci_sd: sdhci@3400000 {
+		mmc-ocr-mask = <0x0>;
+		cd-inverted;
+		cd-gpios = <&tegra_main_gpio TEGRA194_MAIN_GPIO(G, 7) 0>;
+		nvidia,cd-wakeup-capable;
+		mmc-ocr-mask = <0>;
+		cd-inverted;
+		vmmc-supply = <&p3668_vdd_sdmmc1_sw>;
+		status = "okay";
+	};
+
+	mipical@3990000 {
+		status = "okay";
+	};
+
+	tegra-hsp@b950000 {
+		status = "okay";
+	};
+
+	rtcpu@bc00000 {
+		status = "okay";
+		nvidia,cmd-timeout = <2000>;
+	};
+
+	gpio@c2f0000 {
+		pex-refclk-sel-low {
+			gpio-hog;
+			output-low;
+			gpios = <TEGRA194_AON_GPIO(AA, 5) 0>;
+			label = "pex_refclk_sel_low";
+			status = "disabled";
+		};
+
+		pex-refclk-sel-high {
+			gpio-hog;
+			output-high;
+			gpios = <TEGRA194_AON_GPIO(AA, 5) 0>;
+			label = "pex_refclk_sel_high";
+			status = "disabled";
+		};
+		w-disable1 {
+			gpio-hog;
+			output-high;
+			gpios = <TEGRA194_AON_GPIO(CC, 2) GPIO_ACTIVE_LOW>;
+			label = "w-disable1";
+			status = "okay";
+		};
+		w-disable2 {
+			gpio-hog;
+			output-high;
+			gpios = <TEGRA194_AON_GPIO(CC, 0) GPIO_ACTIVE_LOW>;
+			label = "w-disable2";
+			status = "okay";
+		};
+
+//		suspend_gpio: suspend-led-gpio {
+//			gpio-hog;
+//			output-high;
+//			gpio-suspend;
+//			suspend-output-low;
+//			gpios = <TEGRA194_AON_GPIO(CC, 1) GPIO_ACTIVE_HIGH>;
+//			label = "suspend-led-gpio";
+//			status = "okay";
+//		};
+
+		i2c-reset-gpio {
+			gpio-hog;
+			output-low;
+			gpios = <TEGRA194_AON_GPIO(CC, 1) GPIO_ACTIVE_HIGH>;
+			label = "i2c-reset-gpio";
+			status = "okay";
+		};
+	};
+
+	pcie@14160000 {
+		status = "okay";
+
+		nvidia,pex-wake = <&tegra_main_gpio TEGRA194_MAIN_GPIO(L, 2)
+					GPIO_ACTIVE_HIGH>;
+		vddio-pex-ctl-supply = <&p3668_spmic_sd3>;
+		nvidia,disable-aspm-states = <0xf>;
+		nvidia,enable-power-down;
+		nvidia,max-speed = <3>;
+
+		num-lanes = <1>;
+		phys = <&p2u_11>;
+		phy-names = "pcie-p2u-0";
+	};
+
+	pcie@141a0000 {
+		status = "okay";
+
+		vddio-pex-ctl-supply = <&p3668_spmic_sd3>;
+		nvidia,disable-aspm-states = <0xf>;
+		nvidia,enable-power-down;
+		nvidia,max-speed = <4>;
+
+		phys = <&p2u_12>,
+		       <&p2u_13>,
+		       <&p2u_14>,
+		       <&p2u_15>,
+		       <&p2u_16>,
+		       <&p2u_17>,
+		       <&p2u_18>,
+		       <&p2u_19>;
+
+		phy-names = "pcie-p2u-0", "pcie-p2u-1", "pcie-p2u-2", "pcie-p2u-3",
+					"pcie-p2u-4", "pcie-p2u-5", "pcie-p2u-6", "pcie-p2u-7";
+	};
+
+	pcie_ep@141a0000 {
+		status = "disabled";
+
+		nvidia,disable-aspm-states = <0xf>;
+
+		vddio-pex-ctl-supply = <&p3668_spmic_sd3>;
+
+		phys = <&p2u_12>, <&p2u_13>, <&p2u_14>, <&p2u_15>,
+			<&p2u_16>, <&p2u_17>, <&p2u_18>, <&p2u_19>;
+		phy-names = "pcie-p2u-0", "pcie-p2u-1", "pcie-p2u-2", "pcie-p2u-3",
+				"pcie-p2u-4", "pcie-p2u-5", "pcie-p2u-6", "pcie-p2u-7";
+
+		nvidia,pex-rst-gpio = <&tegra_main_gpio TEGRA194_MAIN_GPIO(GG, 1)
+					GPIO_ACTIVE_LOW>;
+	};
+
+	eeprom-manager {
+		data-size = <0x100>;
+		bus@0 {
+			i2c-bus = <&gen1_i2c>;
+			eeprom@0 {
+				slave-address = <0x50>;
+				label = "cvm";
+			};
+		};
+	};
+
+	hdr40_i2c1: i2c@31e0000 {
+		pinctrl-names = "default";
+		pinctrl-0 = <&dpaux_default>;
+	};
+
+	host1x {
+		dpaux@155F0000 {
+			status = "okay";
+			compatible = "nvidia,tegra194-dpaux3-padctl";
+			dpaux_default: pinmux@0 {
+				dpaux3_pins {
+					pins = "dpaux3-3";
+					function = "i2c";
+				};
+			};
+		};
+	};
+
+	dpaux3 {
+		compatible = "nvidia,tegra194-dpaux3-pinctrl";
+		status = "okay";
+	};
+
+	spi@3210000{ /* SPI1 in 40 pin conn */
+		status = "okay";
+		spi@0 { /* chip select 0 */
+			compatible = "tegra-spidev";
+			reg = <0x0>;
+			spi-max-frequency = <50000000>;
+			controller-data {
+				nvidia,enable-hw-based-cs;
+				nvidia,rx-clk-tap-delay = <0x10>;
+				nvidia,tx-clk-tap-delay = <0x0>;
+			};
+		};
+		spi@1 { /* chip select 1 */
+			compatible = "tegra-spidev";
+			reg = <0x1>;
+			spi-max-frequency = <50000000>;
+			controller-data {
+				nvidia,enable-hw-based-cs;
+				nvidia,rx-clk-tap-delay = <0x10>;
+				nvidia,tx-clk-tap-delay = <0x0>;
+			};
+		};
+	};
+
+	spi@3230000{ /* SPI3 in 40 pin conn */
+		status = "okay";
+		spi@0 { /* chip select 0 */
+			compatible = "tegra-spidev";
+			reg = <0x0>;
+			spi-max-frequency = <50000000>;
+			controller-data {
+				nvidia,enable-hw-based-cs;
+				nvidia,rx-clk-tap-delay = <0x10>;
+				nvidia,tx-clk-tap-delay = <0x0>;
+			};
+		};
+		spi@1 { /* chips select 1 */
+			compatible = "tegra-spidev";
+			reg = <0x1>;
+			spi-max-frequency = <50000000>;
+			controller-data {
+				nvidia,enable-hw-based-cs;
+				nvidia,rx-clk-tap-delay = <0x10>;
+				nvidia,tx-clk-tap-delay = <0x0>;
+			};
+		};
+	};
+
+	ether_qos@2490000 {
+		nvidia,phy-reset-gpio = <&tegra_main_gpio TEGRA194_MAIN_GPIO(R, 1) 0>;
+		nvidia,phy-reset-post-delay = <224>;
+		nvidia,phy-reset-duration = <10000>;
+                mdio {
+                        compatible = "nvidia,eqos-mdio";
+                        #address-cells = <1>;
+                        #size-cells = <0>;
+                        phy0: ethernet-phy@0 {
+                                reg = <1>;
+			};
+		};
+	};
+
+	leds {
+		compatible = "gpio-leds";
+		status = "okay";
+		pwr {
+			gpios = <&tegra_aon_gpio TEGRA194_AON_GPIO(CC, 1) GPIO_ACTIVE_HIGH>;
+			default-state = "on";
+		};
+	};
+
+
+	/* QSPI flash S25FS128SAGNFI103 is controlled by qspi0 */
+	spi@3270000 {
+		spi-max-frequency = <136000000>;
+		status = "okay";
+		prod-settings {
+			#prod-cells = <3>;
+			prod {
+				prod = <0x04 0x000000ff 0x10>;
+			};
+		};
+		/* QSPI NOR */
+		spiflash@0 {
+			#address-cells = <1>;
+			#size-cells = <1>;
+			compatible = "s25fs256s";
+			reg = <0>;
+			spi-max-frequency = <136000000>;
+			partition@0 {
+				label = "Whole_flash0";
+				reg = <0x00000000 0x2000000>;	/* size of QSPI-NOR 32MB == 256Mb */
+			};
+			controller-data {
+				nvidia,x1-len-limit = <16>;
+				nvidia,x1-bus-speed = <136000000>; /* In Mhz */
+				nvidia,x1-dymmy-cycle = <8>;
+				nvidia,x4-bus-speed = <136000000>;
+				nvidia,x4-dymmy-cycle = <8>;
+				nvidia,x4-is-ddr=<0>;
+				nvidia,ctrl-bus-clk-ratio = <1>;
+			};
+		};
+	};
+	clocks-init {
+		compatible = "nvidia,clocks-config";
+		status = "okay";
+		disable {
+			clocks = <&aon_clks TEGRA194_CLK_PLLAON>,
+				<&bpmp_clks TEGRA194_CLK_CAN1>,
+				<&bpmp_clks TEGRA194_CLK_CAN2>;
+		};
+	};
+
+	soctherm-oc-event {
+		status = "okay";
+	};
+};
+
+#if LINUX_VERSION >= 414
+#include <tegra194-linux-4.14.dtsi>
+#endif

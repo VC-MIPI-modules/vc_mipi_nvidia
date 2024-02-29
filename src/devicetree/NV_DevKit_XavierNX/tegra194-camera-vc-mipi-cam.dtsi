@@ -234,7 +234,7 @@
 
 i2c@3180000 {
     pca9547@70 {
-	reset-gpios = <&tegra_main_gpio I2C_MUX_RESET GPIO_ACTIVE_HIGH>;
+	//reset-gpios = <&tegra_main_gpio I2C_MUX_RESET GPIO_ACTIVE_HIGH>;
         compatible = I2C_MUX_CHIP; // unit 1 uses pca9548 all others use pca9587
         status = "okay";
         reg = <0x70>;

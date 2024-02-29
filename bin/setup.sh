@@ -133,8 +133,8 @@ setup_bsp() {
         sudo ./apply_binaries.sh
         case $VC_MIPI_BSP in
         32.6.1|32.7.1|32.7.2|32.7.3|35.1.0|35.2.1|35.3.1)
-                sudo ./tools/l4t_create_default_user.sh --username vc --password vc \
-                        --hostname nvidia --autologin --accept-license
+                sudo ./tools/l4t_create_default_user.sh --username sb3d --password sb3d \
+                        --hostname sb3d --autologin --accept-license
                 ;;
         esac
 }
