@@ -1,7 +1,9 @@
 # Vision Components MIPI CSI-2 driver for NVIDIA Jetson Nano, Xavier NX, AGX Xavier and TX2
+
 ![VC MIPI camera](https://www.vision-components.com/fileadmin/external/documentation/hardware/VC_MIPI_Camera_Module/VC_MIPI_Camera_Module-Dateien/mipi_sensor_front_back.png)
 
 ## Version 0.17.0 ([History](VERSION.md))
+
 * Supported system on modules
   * [NVIDIA Jetson Nano 4GB/2GB (production + devkit)](https://developer.nvidia.com/embedded/jetson-nano)
   * [NVIDIA Jetson Xavier NX (production + devkit)](https://developer.nvidia.com/embedded/jetson-xavier-nx)
@@ -55,64 +57,83 @@
   * **[ROI cropping](doc/ROI_CROPPING.md)** can be set via device tree properties active_l, active_t, active_w and active_h or v4l2-ctl.
 
 ## Prerequisites for cross-compiling
+
 ### Host PC
+
 * Recommended OS is Ubuntu 18.04 LTS or Ubuntu 20.04 LTS
 * You need git to clone this repository
 * All other packages are installed by the scripts contained in this repository
 
-# Quickstart
+## Quickstart
 
-1. Enter recovery mode by following the instructions in one of the guides:<br>
-[Quick Start Guide L4T 35.3.1](https://docs.nvidia.com/jetson/archives/r35.3.1/DeveloperGuide/text/IN/QuickStart.html) (NVIDIA Jetson Orin Nano, Orin NX, Xavier NX and AGX Xavier) <br>
-[Quick Start Guide L4T 32.7.3](https://docs.nvidia.com/jetson/archives/l4t-archived/l4t-3273/index.html#page/Tegra%20Linux%20Driver%20Package%20Development%20Guide/quick_start.html) (NVIDIA Jetson Nano, TX2, Xavier NX and AGX Xavier)
+1. Enter recovery mode by following the instructions in one of the guides:
+
+   [Quick Start Guide L4T 35.3.1](https://docs.nvidia.com/jetson/archives/r35.3.1/DeveloperGuide/text/IN/QuickStart.html) (NVIDIA Jetson Orin Nano, Orin NX, Xavier NX and AGX Xavier)
+
+   [Quick Start Guide L4T 32.7.3](https://docs.nvidia.com/jetson/archives/l4t-archived/l4t-3273/index.html#page/Tegra%20Linux%20Driver%20Package%20Development%20Guide/quick_start.html) (NVIDIA Jetson Nano, TX2, Xavier NX and AGX Xavier)
 
 2. Create a directory and clone the repository.
-   ```
-     $ cd <working_dir>
-     $ git clone https://github.com/VC-MIPI-modules/vc_mipi_nvidia
-   ```
+
+    ```bash
+    cd <working_dir>
+    git clone https://github.com/VC-MIPI-modules/vc_mipi_nvidia
+    ```
 
 3. Start the quickstart installation process and follow the instructions.
-   ```
-     $ cd vc_mipi_nvidia/bin
-     $ ./quickstart.sh
-   ```
-   > If you have changed your hardware setup simply execute this script again.<br>
-   
-   > During the setup process of the quickstart.sh script, there will be executed the l4t_create_default_user.sh script from NVIDIA, which will create a default user with the credentials given by the user.<br>
-   > (After setting up the toolchain, the user is prompted to this credentials mask.)<br>
-   > This script has been available since L4T 32.6.1 and will be applied accordingly.<br>
-   > For older version (L4T 32.3.1 - L4T 32.5.2), the user has to setup the default user by hand after the flashing process. This procedure is guided by the ubuntu setup dialogs immediately after the first boot.
 
-4. (Optional)<br>
+   ```bash
+   cd vc_mipi_nvidia/bin
+   ./quickstart.sh
+   ```
+
+   > If you have changed your hardware setup simply execute this script again.
+
+   > During the setup process of the quickstart.sh script, there will be executed the l4t_create_default_user.sh script from NVIDIA, which will create a default user with the credentials given by the user.
+   > * After setting up the toolchain, the user is prompted to this credentials mask.
+   > * This script has been available since L4T 32.6.1 and will be applied accordingly.
+   > * For older version (L4T 32.3.1 - L4T 32.5.2), the user has to setup the default user by hand after the flashing process. This procedure is guided by the ubuntu setup dialogs immediately after the first boot.
+
+4. (Optional)
+
    Set up the target by executing one of the following commands on the host computer when the target device is already running:
+
+   ```bash
+   cd vc_mipi_nvidia/bin
+   ./setup.sh --target
    ```
-     $ cd vc_mipi_nvidia/bin
-     $ ./setup.sh --target
-   ```
+
    or
+
+   ```bash
+   cd vc_mipi_nvidia/bin
+   ./setup.sh -t
    ```
-     $ cd vc_mipi_nvidia/bin
-     $ ./setup.sh -t
-   ```
-   This function will configure a connection with the running target. It will backup the users known_hosts file and copy the users public rsa key, so that every time when a ssh connection to the device is opened, the user don't need to enter the password again. It will also copy the demo.sh and max_speed.sh script into the /home/username/test/ folder on the device.<br>
+
+   This function will configure a connection with the running target. It will backup the users known_hosts file and copy the users public rsa key, so that every time when a ssh connection to the device is opened, the user don't need to enter the password again. It will also copy the demo.sh and max_speed.sh script into the /home/username/test/ folder on the device.
+
    For more information about the mentioned scripts, please run the appropriate script with the option "-h" in a shell on the running device.
+
+   ```bash
+   vc@nvidia $./test/demo.sh -h
    ```
-   vc@nvidia $ test/demo.sh -h
-   ```
+
    or
+
+   ```bash
+   vc@nvidia $ ./test/max_speed.sh -h
    ```
-   vc@nvidia $ test/max_speed.sh -h
-   ```
+
    When operating with the max_speed.sh script, it should be run as root.<br> E.g. speeding up the clocks:
-   ```
-   vc@nvidia $ sudo test/max_speed.sh -m
+
+   ```bash
+   vc@nvidia $ sudo ./test/max_speed.sh -m
    ```
 
-# Changing camera settings in the device tree
+## Changing camera settings in the device tree
 
-## GStreamer Support
-If you want to use GStreamer with nvarguscamerasrc it is essential to adjust some properties in the device tree. To do that follow the instructions in this section. For each camera there is a mode0 node in the device tree. There is an additional comment in this node to mark the properties that you need to customize. In the tables below you will find the specific values for each camera. 
+### GStreamer Support
+
+If you want to use GStreamer with nvarguscamerasrc it is essential to adjust some properties in the device tree. To do that follow the instructions in this section. For each camera there is a mode0 node in the device tree. There is an additional comment in this node to mark the properties that you need to customize. In the tables below you will find the specific values for each camera.
 
 The value of the property *pixel_t* lists the supported pixel formats. Here you have to choose one out of the following table.
 
@@ -240,8 +261,10 @@ The property *max_framerate* is given for the number of lanes and the pixel form
 </details>
 
 ### Example
+
 As an example the device tree for the IMX226 with 4 lanes and pixel format RAW10 is shown on the code snippet. Be aware of that the property values for gain are given in mdB [:)] and the frame rate in mHz. So, you have to multiply the values from the table with 1000.
-```
+
+```dts
   ...
   // ----------------------------------------------------
   // If you want to use GStreamer with nvarguscamerasrc
@@ -307,10 +330,11 @@ If you want to change some settings of a camera in the device tree, please follo
    | NVIDIA Jetson Orin Nano | NVIDIA Jetson Orin Nano Developer Kit | src/devicetree/NV_DevKit_OrinNano/tegra234-camera-vc-mipi-cam.dtsi |
    | NVIDIA Jetson Orin Nano | Auvidea JNX42 | src/devicetree/Auvidea_JNX42_OrinNano/tegra234-camera-vc-mipi-cam.dtsi |
    | NVIDIA Jetson Orin NX | Auvidea JNX42 | src/devicetree/Auvidea_JNX42_OrinNX/tegra234-camera-vc-mipi-cam.dtsi |
-   
+
    To edit the correct device tree file you can simply use the setup script. It will open the correct device tree file in the nano editor.
-   ```
-     $ ./setup.sh --camera
+
+   ```bash
+     ./setup.sh --camera
    ```
 
 2. Enter recovery mode by following the instructions in one of the guides:<br>
@@ -318,13 +342,15 @@ If you want to change some settings of a camera in the device tree, please follo
 [Quick Start Guide L4T 32.7.3](https://docs.nvidia.com/jetson/archives/l4t-archived/l4t-3273/index.html#page/Tegra%20Linux%20Driver%20Package%20Development%20Guide/quick_start.html) (NVIDIA Jetson Nano, TX2, Xavier NX and AGX Xavier)
 
 3. Build and flash the device tree files to the target.
-   ```
-     $ ./build.sh --dt
-     $ ./flash.sh --dt
-   ```
-   >Regarding to Jetpack5 and higher, please have a look at the section Annotations.
 
-# Using long exposure times or external trigger mode with long waiting times (> 5 seconds)
+   ```bash
+     ./build.sh --dt
+     ./flash.sh --dt
+   ```
+
+   > Regarding to Jetpack5 and higher, please have a look at the section Annotations.
+
+## Using long exposure times or external trigger mode with long waiting times (> 5 seconds)
 
 If you want to use your camera in an application with long exposure times or external trigger and the time between two consecutively triggers is potentially long (> 5 seconds) it is necessary to adjust the timeout of the csi receiver. In this case please change following line of code.
 
@@ -336,34 +362,35 @@ If you want to use your camera in an application with long exposure times or ext
    | NVIDIA Jetson TX2        | 1097 | /kernel/nvidia/drivers/media/platform/tegra/camera/vi/vi4_fops.c |
    | NVIDIA Jetson TX2 NX     | 1097 | /kernel/nvidia/drivers/media/platform/tegra/camera/vi/vi4_fops.c |
 
-# Tested with VC MIPI Camera Module Revision
+## Tested with VC MIPI Camera Module Revision
 
-  * IMX178 (Rev.02), IMX183 (Rev.15), IMX226 (Rev.16), 
-  * IMX250 (Rev.09), IMX252 (Rev.12), IMX264 (Rev.05), IMX265 (Rev.05), IMX273 (Rev.16), IMX392 (Rev.08)
-  * IMX290 (Rev.02), IMX327 (Rev.02), IMX462 (Rev.01)
-  * IMX296 (Rev.43), IMX297 (Rev.43)
-  * IMX335 (Rev.02)
-  * IMX412 (Rev.05)
-  * IMX415 (Rev.02)
-  * IMX565 (Rev.03), IMX566 (Rev.03), IMX567 (Rev.03), IMX568 (Rev.04)
-  * OV7251 (Rev.01), OV9281 (Rev.02)
+* IMX178 (Rev.02), IMX183 (Rev.15), IMX226 (Rev.16), 
+* IMX250 (Rev.09), IMX252 (Rev.12), IMX264 (Rev.05), IMX265 (Rev.05), IMX273 (Rev.16), IMX392 (Rev.08)
+* IMX290 (Rev.02), IMX327 (Rev.02), IMX462 (Rev.01)
+* IMX296 (Rev.43), IMX297 (Rev.43)
+* IMX335 (Rev.02)
+* IMX412 (Rev.05)
+* IMX415 (Rev.02)
+* IMX565 (Rev.03), IMX566 (Rev.03), IMX567 (Rev.03), IMX568 (Rev.04)
+* OV7251 (Rev.01), OV9281 (Rev.02)
 
 You can find the revision of the camera module in the dmesg log.
-```
-  # dmesg | grep 'i2c'
-  [...] i2c 6-0010: +--- VC MIPI Camera -----------------------------------+
-  [...] i2c 6-0010: | MANUF. | Vision Components               MID: 0x0427 |
-  [...] i2c 6-0010: | MODULE | ID:  0x0183                     REV:   0012 |
-  [...] i2c 6-0010: | SENSOR | SONY IMX183                                 |
-  ...
+
+```bash
+dmesg | grep 'i2c'
+[...] i2c 6-0010: +--- VC MIPI Camera -----------------------------------+
+[...] i2c 6-0010: | MANUF. | Vision Components               MID: 0x0427 |
+[...] i2c 6-0010: | MODULE | ID:  0x0183                     REV:   0012 |
+[...] i2c 6-0010: | SENSOR | SONY IMX183                                 |
+...
 ```
 
-# Integrate the driver in your own BSP
+## Integrate the driver in your own BSP
 
 If you have your own BSP, you have to integrate the driver into it. Please follow these steps.
 
 1. Apply all patches in the folder kernel_common_32.3.1+ and the patches listed in the following table that match your hardware setup
-   
+
    | system on module         | carrier board  | BSP             | all patches in folder patch/... |
    | ------------------------ | -------------- | --------------- | --------------------- |
    | NVIDIA Jetson Nano       | NVIDIA DevKit  | 32.5.0 - 32.5.2 | kernel_Nano_32.5.0+   |
@@ -434,34 +461,44 @@ If you have your own BSP, you have to integrate the driver into it. Please follo
 
 3. Copy all driver files from folder **src/driver** to **/kernel/nvidia/drivers/media/i2c**
 
-# Testing the camera
-To test the camera you can use [Vision Components MIPI CSI-2 demo software](https://github.com/pmliquify/vc_mipi_demo)
+## Testing the camera
 
-# Annotations
-## For Jetpack 5 (L4T 35.1.0, 35.2.1, 35.3.1):
+## Annotations
+
+### For Jetpack 5 (L4T 35.1.0, 35.2.1, 35.3.1):
 
 * When the system has booted successfully, it is necessary to run the script max_speed.sh from the /target folder as superuser. It will read out the maximum frequencies and set them as the current ones. This is a recommendation from nvidia.
-   ```
-     $ sudo ./max_speed.sh -m
-   ```
+
+  ```bash
+  sudo ./max_speed.sh -m
+  ```
+
 * For changing device trees only (./build.sh -d and ./flash.sh -d) there must be a differentiation between Orin and Non-Orin Targets:
-  - For targets like Xavier NX and AGX Xavier, you will have to modify your /boot/extlinux/extlinux.conf on your target machine by removing the FDT entry or by commenting out with '#'. Otherwise you will have to flash your complete linux image for every device tree change to take effect. <br>
-    ```
+  * For targets like Xavier NX and AGX Xavier, you will have to modify your /boot/extlinux/extlinux.conf on your target machine by removing the FDT entry or by commenting out with '#'. Otherwise you will have to flash your complete linux image for every device tree change to take effect.
+
+    ```bash
     # FDT /boot/dtb/kernel_tegra194-p3668-0000-p3509-0000.dtb
     ```
-    > When calling the flash script with the option -d (flash the device tree only), the device must be in force recovery mode!
-  - For OrinNano and Orin NX the FDT entry must be present in the /boot/extlinux/extlinux.conf file. The ./flash -d command will copy the proper file (e.g. tegra234-p3767-0003-p3768-0000-a0.dtb for OrinNano 8GB on NVIDIA DevKit) into the /boot/dtb/ directory. <br>Therefore, the extlinux.conf FDT entry must be renamed e.g.:<br>
-    from
-    <pre>
-    FDT /boot/dtb/<b>kernel_</b>tegra234-p3767-0003-p3768-0000-a0.dtb 
-    </pre>
-    to 
-    <pre>
-    FDT /boot/dtb/tegra234-p3767-0003-p3768-0000-a0.dtb
-    </pre>
-    > When calling the flash script with the option -d (flash the device tree only), the device must be running. It must <b>not</b> be in force recovery mode!
 
-## For NVIDIA Jetson TX2 NX
+    > When calling the flash script with the option -d (flash the device tree only), the device must be in force recovery mode!
+  * For OrinNano and Orin NX the FDT entry must be present in the /boot/extlinux/extlinux.conf file. The ./flash -d command will copy the proper file (e.g. tegra234-p3767-0003-p3768-0000-a0.dtb for OrinNano 8GB on NVIDIA DevKit) into the /boot/dtb/ directory.
+  
+    Therefore, the extlinux.conf FDT entry must be renamed e.g.:<br>
+    from
+
+    ```bash
+    FDT /boot/dtb/<b>kernel_</b>tegra234-p3767-0003-p3768-0000-a0.dtb 
+    ```
+
+    to
+
+    ```bash
+    FDT /boot/dtb/tegra234-p3767-0003-p3768-0000-a0.dtb
+    ```
+
+    > When calling the flash script with the option -d (flash the device tree only), the device must be running. It must **not** be in force recovery mode!
+
+### For NVIDIA Jetson TX2 NX
 
 * Currently the following camera modules do not work with the TX2 NX
   * IMX178, IMX183
