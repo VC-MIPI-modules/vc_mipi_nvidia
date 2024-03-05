@@ -463,6 +463,8 @@ If you have your own BSP, you have to integrate the driver into it. Please follo
 
 ## Testing the camera
 
+To test the camera you can use [v4l2-test](https://github.com/pmliquify/v4l2-test)
+
 ## Annotations
 
 ### For Jetpack 5 (L4T 35.1.0, 35.2.1, 35.3.1):

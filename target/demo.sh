@@ -12,28 +12,26 @@ usage() {
         echo "-g, --gain                Set the gain"
         echo "-h, --help                Show this help text"
         echo "-i, --info                Get system information"
-        echo "-o, --option              Set the options"
         echo "-r, --framerate           Set the frame rate in Hz"
         echo "-s, --shutter             Set the shutter time in µs"
         echo "-t, --trigger             Set the trigger mode (Options: 0-7)"
         echo "    --io                  Set the io mode (Options: 0-5)"
-        echo "-w, --whitebalance        Activate white balance"
 }
 
 install_dependencies() {
         if [[ -z $(which v4l2-ctl) ]]; then
                 sudo apt update
-                sudo apt install -y v4l-utils git build-essential python3-pip
+                sudo apt install -y v4l-utils git build-essential cmake python3-pip
                 sudo pip3 install -U jetson-stats
         fi
         (
                 cd ${script_dir}
-                if [[ ! -e vcmipidemo ]]; then
-                        if [[ ! -e vc_mipi_demo ]]; then
-                                git clone https://github.com/VC-MIPI-modules/vc_mipi_demo.git
+                if [[ ! -e v4l2-test ]]; then
+                        if [[ ! -e v4l2-test.git ]]; then
+                                git clone https://github.com/pmliquify/v4l2-test.git v4l2-test.git
                         fi
-                        ./vc_mipi_demo/bin/build.sh -a
-                        cp vc_mipi_demo/src/vcmipidemo .
+                        ./v4l2-test.git/make.sh
+                        cp v4l2-test.git/build_generic/v4l2-test .
                 fi
         )
 }
@@ -51,7 +49,6 @@ install_avtviewer() {
                 cp V4L2Viewer ../../viewer
         fi
 }
-
 
 setup_iq_tuning()
 {
@@ -216,14 +213,11 @@ format=
 trigger=
 io=
 value=
-whitebalance=
 device=0
-option2=x
 shutter=10000
 gain=0
 exposure=100000000
 framerate=
-optionY=
 width=
 height=
 
@@ -272,10 +266,6 @@ while [ $# != 0 ] ; do
                 io="$1"
                 shift
                 ;;
-        -o|--option)
-                option2="$1"
-                shift
-                ;;
         -r|--framerate)
                 framerate="$1"
                 shift
@@ -295,14 +285,6 @@ while [ $# != 0 ] ; do
         -v|--viewer)
                 install_avtviewer
                 exit
-                ;;
-        -w|--whitebalance)
-                whitebalance="-w '128 180 128'"
-                shift
-                ;;
-        -y)
-                optionY="-y$1"
-                shift
                 ;;
         *)
                 echo "Unknown option ${option}"
@@ -338,10 +320,9 @@ if [[ -n ${argus} ]]; then
         get_image_size
         adjust_pixel_format
 
-        gst-launch-1.0 nvarguscamerasrc sensor-id=${device} ! 'video/x-raw(memory:NVMM),framerate=20/1' ! fakesink
+        gst-launch-1.0 nvarguscamerasrc sensor-id=${device} ! 'video/x-raw(memory:NVMM),framerate=20/1' ! autovideosink
 else
         cd ${script_dir}
         v4l2-ctl -c bypass_mode=0
-        sudo dmesg | grep SEN
-        ./vcmipidemo -d${device} -a${option2} ${optionY} -s${shutter} -g${gain} -w '128 180 128'
+        ./v4l2-test stream -d /dev/video${device} -e ${shutter} -g ${gain} -p 16
 fi
