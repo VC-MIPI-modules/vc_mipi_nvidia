@@ -3,7 +3,7 @@
 ## v0.17.1 (L4T 35.3.1)
 
 * Improvement
-  * Stability patch implementend. Nvargus daemon got stuck sporadically after several hours of streaming via ISP. Fixed. 
+  * Stability patch implemented. Nvargus daemon got stuck sporadically after several hours of streaming via ISP. Fixed. 
 
 ## v0.17.0 (Orin Nano, Orin NX)
 
