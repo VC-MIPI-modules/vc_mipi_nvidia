@@ -26,7 +26,7 @@ KERNEL_OUT=$KERNEL_SOURCE/build
 MODULES_OUT=$KERNEL_SOURCE/modules
 DRIVER_DST_DIR=$KERNEL_SOURCE/kernel/nvidia/drivers/media/i2c
 case $VC_MIPI_BSP in
-35.1.0|35.2.1|35.3.1)
+35.1.0|35.2.1|35.3.1|35.5.0)
         KERNEL_DIR=kernel/kernel-5.10/
         MODULES_BSP=$BSP_DIR/Linux_for_Tegra/rootfs/usr
         DTB_OUT=$KERNEL_OUT/arch/arm64/boot/dts/nvidia
@@ -65,8 +65,8 @@ else
         exit 1
 fi
 
-DTSI_FILE_DICT=( 
-         ["Auvidea_J20_AGXXavier"]="tegra194-camera-vc-mipi-cam.dtsi" 
+DTSI_FILE_DICT=(
+         ["Auvidea_J20_AGXXavier"]="tegra194-camera-vc-mipi-cam.dtsi"
                ["Auvidea_J20_TX2"]="tegra186-camera-vc-mipi-cam.dtsi"
             ["Auvidea_JNX30_Nano"]="tegra210-camera-vc-mipi-cam.dtsi"
             ["Auvidea_JNX42_Nano"]="tegra210-camera-vc-mipi-cam.dtsi"
@@ -74,14 +74,14 @@ DTSI_FILE_DICT=(
         ["Auvidea_JNX42_XavierNX"]="tegra194-camera-vc-mipi-cam.dtsi"
           ["Auvidea_JNX42_OrinNX"]="tegra234-camera-vc-mipi-cam.dtsi"
         ["Auvidea_JNX42_OrinNano"]="tegra234-camera-vc-mipi-cam.dtsi"
-                ["NV_DevKit_Nano"]="tegra210-camera-vc-mipi-cam.dtsi" 
+                ["NV_DevKit_Nano"]="tegra210-camera-vc-mipi-cam.dtsi"
             ["NV_DevKit_OrinNano"]="tegra234-camera-vc-mipi-cam.dtsi"
             ["NV_DevKit_XavierNX"]="tegra194-camera-vc-mipi-cam.dtsi"
           ["Auvidea_JNX30D_TX2NX"]="tegra186-camera-vc-mipi-cam.dtsi"
 )
 
-DTSI_DEST_DICT=( 
-         ["Auvidea_J20_AGXXavier"]="$KERNEL_SOURCE/hardware/nvidia/platform/t19x/common/kernel-dts/t19x-common-modules" 
+DTSI_DEST_DICT=(
+         ["Auvidea_J20_AGXXavier"]="$KERNEL_SOURCE/hardware/nvidia/platform/t19x/common/kernel-dts/t19x-common-modules"
                ["Auvidea_J20_TX2"]="$KERNEL_SOURCE/hardware/nvidia/platform/t18x/common/kernel-dts/t18x-common-modules"
             ["Auvidea_JNX30_Nano"]="$KERNEL_SOURCE/hardware/nvidia/platform/t210/porg/kernel-dts/porg-platforms"
             ["Auvidea_JNX42_Nano"]="$KERNEL_SOURCE/hardware/nvidia/platform/t210/porg/kernel-dts/porg-platforms"
@@ -89,7 +89,7 @@ DTSI_DEST_DICT=(
         ["Auvidea_JNX42_XavierNX"]="$KERNEL_SOURCE/hardware/nvidia/platform/t19x/jakku/kernel-dts/common"
           ["Auvidea_JNX42_OrinNX"]="$KERNEL_SOURCE/hardware/nvidia/platform/t23x/p3768/kernel-dts/cvb"
         ["Auvidea_JNX42_OrinNano"]="$KERNEL_SOURCE/hardware/nvidia/platform/t23x/p3768/kernel-dts/cvb"
-                ["NV_DevKit_Nano"]="$KERNEL_SOURCE/hardware/nvidia/platform/t210/porg/kernel-dts/porg-platforms" 
+                ["NV_DevKit_Nano"]="$KERNEL_SOURCE/hardware/nvidia/platform/t210/porg/kernel-dts/porg-platforms"
             ["NV_DevKit_OrinNano"]="$KERNEL_SOURCE/hardware/nvidia/platform/t23x/p3768/kernel-dts/cvb"
             ["NV_DevKit_XavierNX"]="$KERNEL_SOURCE/hardware/nvidia/platform/t19x/jakku/kernel-dts/common"
           ["Auvidea_JNX30D_TX2NX"]="$KERNEL_SOURCE/hardware/nvidia/platform/t18x/lanai/kernel-dts/common"
@@ -168,8 +168,11 @@ AGXXavier|XavierNX|XavierNXSD|TX2|TX2i|TX2NX|OrinNano4GB_SD|OrinNano8GB_SD|OrinN
         35.3.1)
                 PATCHES+=('kernel_Xavier_35.3.1+')
                 ;;
+        35.5.0)
+                PATCHES+=('kernel_Xavier_35.5.0+')
+                ;;
         esac
-        
+
 esac
 
 case $VC_MIPI_SOM in
