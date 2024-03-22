@@ -138,7 +138,7 @@ setup_nvidia_driver() {
                 echo "Could not find NVIDIA display driver sha1 file! (pwd $(pwd))"
                 exit 1
         fi
- 
+
         SHA_SUM_FILE_VAR="$(cat $SHA_SUM_FILE | awk '{print $1}')"
         if [ -z $SHA_SUM_FILE_VAR ]
         then
@@ -253,7 +253,7 @@ create_target_user() {
         echo "Create target user ..."
         cd $BSP_DIR/Linux_for_Tegra
         case $VC_MIPI_BSP in
-        32.6.1|32.7.1|32.7.2|32.7.3|32.7.4|35.1.0|35.2.1|35.3.1)
+        32.6.1|32.7.1|32.7.2|32.7.3|32.7.4|35.1.0|35.2.1|35.3.1|35.5.0)
 
                 sudo ./tools/l4t_create_default_user.sh --username ${TARGET_USER} --password ${TARGET_PW} \
                         --hostname nvidia --autologin --accept-license
@@ -323,11 +323,11 @@ setup_target() {
         date_time=$(date '+%Y%m%d_%H%M%S')
         known_hosts_filepath_backup=${known_hosts_filepath}_backup_by_vc_setup_${date_time}
         if [[ -e ${known_hosts_filepath} ]]
-        then 
+        then
                 # Backup User's known_hosts file => known_host__backup_by_vc_setup_YYYYMMDD_HHMMSS.
                 echo "Backup known_hosts file..."
                 cp -v ${known_hosts_filepath} ${known_hosts_filepath_backup}
-                
+
                 # Remove already existing connection credential with this given IP.
                 ssh-keygen -f ${known_hosts_filepath} -R ${TARGET_IP}
         fi
@@ -392,7 +392,7 @@ while [ $# != 0 ] ; do
                 setup_toolchain
                 setup_user_credentials
                 setup_bsp
-# If the user likes to pre-install the test directory with test scripts 
+# If the user likes to pre-install the test directory with test scripts
 # in the configured user-home directory of the target system,
 # the following function can be activated.
 #                setup_target_files
