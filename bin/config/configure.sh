@@ -21,11 +21,20 @@ AGXXavier|XavierNX|XavierNXSD|TX2|TX2i|TX2NX|OrinNano4GB_SD|OrinNano8GB_SD|OrinN
         ;;
 esac
 DOWNLOAD_DIR=$BSP_DIR/downloads
-KERNEL_SOURCE=$BSP_DIR/Linux_for_Tegra/source/public
+#bazo modify
+#KERNEL_SOURCE=$BSP_DIR/Linux_for_Tegra/source/public
+KERNEL_SOURCE=$BSP_DIR/Linux_for_Tegra/source
 KERNEL_OUT=$KERNEL_SOURCE/build
 MODULES_OUT=$KERNEL_SOURCE/modules
 DRIVER_DST_DIR=$KERNEL_SOURCE/kernel/nvidia/drivers/media/i2c
+DRIVER_OOT_DST_DIR=$KERNEL_SOURCE/nvidia-oot/drivers/media/i2c
 case $VC_MIPI_BSP in
+36.2.0)
+        KERNEL_DIR=kernel/kernel-jammy-src/
+        MODULES_BSP=$BSP_DIR/Linux_for_Tegra/rootfs/usr
+        ROOTFS_DIR=$BSP_DIR/Linux_for_Tegra/rootfs
+        DTB_OUT=$KERNEL_OUT/arch/arm64/boot/dts/nvidia
+        ;;
 35.1.0|35.2.1|35.3.1)
         KERNEL_DIR=kernel/kernel-5.10/
         MODULES_BSP=$BSP_DIR/Linux_for_Tegra/rootfs/usr
@@ -168,6 +177,9 @@ AGXXavier|XavierNX|XavierNXSD|TX2|TX2i|TX2NX|OrinNano4GB_SD|OrinNano8GB_SD|OrinN
         35.3.1)
                 PATCHES+=('kernel_Xavier_35.3.1+')
                 ;;
+        36.2.0)
+                PATCHES+=('kernel_Xavier_36.2.0+')
+                ;;
         esac
         
 esac
@@ -211,7 +223,7 @@ XavierNX|XavierNXSD)
                 32.5.0|32.5.1|32.5.2|32.6.1|32.7.1|32.7.2|32.7.3)
                         PATCHES+=('dt_Auvidea_JNX30_XavierNX_32.5.0+')
                         ;;
-                35.1.0|35.2.1|35.3.1)
+                35.1.0|35.2.1|35.3.1|36.2.0)
                         # Comment
                 ;;
                 esac
@@ -271,7 +283,9 @@ OrinNano4GB_SD|OrinNano8GB_SD|OrinNano4GB_NVME|OrinNano8GB_NVME|OrinNX8GB|OrinNX
                 ;;
         OrinNano8GB_SD)
                 ORIN_DTB_SKU='0003'
-                FLASH_PARTITION='mmcblk1p1'
+#bazo modify
+#                FLASH_PARTITION='mmcblk1p1'
+                FLASH_PARTITION='mmcblk0p1'
                 ;;
         OrinNano4GB_NVME)
                 ORIN_DTB_SKU='0004'
@@ -312,8 +326,17 @@ echo "  Using flash parameters:                      $FLASH_DT $FLASH_BOARD $FLA
 echo "  Using target user and ip address:            $TARGET_USER@$TARGET_IP"
 echo "------------------------------------------------------------"
 
-GCC_URL=http://releases.linaro.org/components/toolchain/binaries/7.3-2018.05/aarch64-linux-gnu
-GCC_FILE=gcc-linaro-7.3.1-2018.05-x86_64_aarch64-linux-gnu.tar.xz
-export CROSS_COMPILE=$GCC_DIR/gcc-linaro-7.3.1-2018.05-x86_64_aarch64-linux-gnu/bin/aarch64-linux-gnu-
+#bazo modify
+
+#GCC_URL=http://releases.linaro.org/components/toolchain/binaries/7.3-2018.05/aarch64-linux-gnu
+#GCC_FILE=gcc-linaro-7.3.1-2018.05-x86_64_aarch64-linux-gnu.tar.xz
+#export CROSS_COMPILE=$GCC_DIR/gcc-linaro-7.3.1-2018.05-x86_64_aarch64-linux-gnu/bin/aarch64-linux-gnu-
+#export LOCALVERSION=-tegra
+#export ARCH=arm64
+
+GCC_URL=https://snapshots.linaro.org/gnu-toolchain/11.3-2022.06-1/aarch64-linux-gnu
+GCC_FILE=gcc-linaro-11.3.1-2022.06-x86_64_aarch64-linux-gnu.tar.xz
+export CROSS_COMPILE=$GCC_DIR/gcc-linaro-11.3.1-2022.06-x86_64_aarch64-linux-gnu/bin/aarch64-linux-gnu-
 export LOCALVERSION=-tegra
 export ARCH=arm64
+export KERNEL_HEADERS=$KERNEL_SOURCE/kernel/kernel-jammy-src

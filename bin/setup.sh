@@ -64,12 +64,21 @@ setup_kernel() {
         download_and_check_file SRC
 
         cd $BSP_DIR
-        rm -Rf $BSP_DIR/Linux_for_Tegra/source/public
+#bazo modify
+#        rm -Rf $BSP_DIR/Linux_for_Tegra/source/public
+        rm -Rf $BSP_DIR/Linux_for_Tegra/source
         cd $DOWNLOAD_DIR
         tar xjvf $SRC_FILE -C $BSP_DIR
 
-        cd $BSP_DIR/Linux_for_Tegra/source/public
+#bazo modify
+#        cd $BSP_DIR/Linux_for_Tegra/source/public
+        cd $BSP_DIR/Linux_for_Tegra/source
         tar xvf kernel_src.tbz2
+
+        tar xvf kernel_oot_modules_src.tbz2
+
+        tar xvf nvidia_kernel_display_driver_source.tbz2
+#bazo modify
 
         git init
         git config gc.auto 0
@@ -77,7 +86,8 @@ setup_kernel() {
         git config --local user.email "support@vision-components.com"
 
         git add hardware
-        git add kernel
+#        git add kernel
+        git add nvidia-oot
         git commit -m "Initial commit"
 
         for patch in "${PATCHES[@]}"; do
@@ -89,13 +99,16 @@ setup_kernel() {
 
         git config gc.auto 1
 
-        cp -R $DRIVER_DIR/* $DRIVER_DST_DIR
-        copy_dtsi_files
+#bazo modify
+#        cp -R $DRIVER_DIR/* $DRIVER_DST_DIR
+#        copy_dtsi_files
 }
 
 repatch_kernel() {
         echo "Repatch kernel ..."
-        cd $BSP_DIR/Linux_for_Tegra/source/public
+#bazo modify
+#        cd $BSP_DIR/Linux_for_Tegra/source/public
+        cd $BSP_DIR/Linux_for_Tegra/source
         git am --abort
         FIRST_COMMIT=$(git rev-list --max-parents=0 --abbrev-commit HEAD)
         git reset --hard $FIRST_COMMIT
@@ -111,6 +124,13 @@ repatch_kernel() {
 }
 
 setup_nvidia_driver() {
+        # already included in 36.2.0
+        if [[ "36.2.0" == $VC_MIPI_BSP ]]
+        then
+                echo "nothing to do"
+                return 0
+        fi
+
         # checking for Orin ...
         case $VC_MIPI_SOM in
         OrinNano4GB_SD|OrinNano8GB_SD|OrinNano4GB_NVME|OrinNano8GB_NVME|OrinNX8GB|OrinNX16GB)
@@ -124,7 +144,19 @@ setup_nvidia_driver() {
 
         cd $KERNEL_SOURCE
         NVDD_FILE=nvidia_kernel_display_driver_source.tbz2
-        NVDD_DIR=NVIDIA-kernel-module-source-TempVersion
+        NVDD_DIR=""
+        case $VC_MIPI_BSP in
+        35.1.0|35.2.1|35.3.1)
+                NVDD_DIR=NVIDIA-kernel-module-source-TempVersion
+                ;;
+        35.5.0|36.2.0)
+                NVDD_DIR=nvdisplay
+                ;;
+        *)
+                return 1
+                ;;
+        esac
+#        NVDD_DIR=NVIDIA-kernel-module-source-TempVersion
         if [ ! -e $NVDD_FILE ]
         then
                 echo "Could not find NVIDIA display driver package ${NVDD_FILE}! (pwd $(pwd))"
@@ -184,9 +216,12 @@ setup_flash_prerequisites() {
 }
 
 setup_som_carrier_specifics() {
+
+        #bazo modify
         case $VC_MIPI_SOM in
         OrinNano4GB_SD|OrinNano8GB_SD|OrinNano4GB_NVME|OrinNano8GB_NVME|OrinNX8GB|OrinNX16GB)
-                EPROM_FILE=${BSP_DIR}/Linux_for_Tegra/bootloader/t186ref/BCT/tegra234-mb2-bct-misc-p3767-0000.dts
+#                EPROM_FILE=${BSP_DIR}/Linux_for_Tegra/bootloader/t186ref/BCT/tegra234-mb2-bct-misc-p3767-0000.dts
+                EPROM_FILE=${BSP_DIR}/Linux_for_Tegra/bootloader/generic/BCT/tegra234-mb2-bct-misc-p3767-0000.dts
                 if [ ! -e ${EPROM_FILE} ]
                 then
                         echo "Could not find ${EPROM_FILE}! (pwd $(pwd))"
@@ -203,6 +238,54 @@ setup_som_carrier_specifics() {
                         # Setting EPROM size to 100x0
                         sed -i 's/cvb_eeprom_read_size = <0x0>;/cvb_eeprom_read_size = <0x100>;/' ${EPROM_FILE}
                 fi
+
+                case $VC_MIPI_BSP in
+                35.4.1|35.5.0)
+                        GPIO_FILE=${BSP_DIR}/Linux_for_Tegra/bootloader/t186ref/BCT/tegra234-mb2-bct-scr-p3767-0000.dts
+                        if [ ! -e ${GPIO_FILE} ]
+                        then
+                                echo "Could not find ${GPIO_FILE}! (pwd $(pwd))"
+                                exit 1
+                        fi
+
+                        GPIO_PART_STR="reg@322 "
+
+                        GPIO_STR1="        reg@322 { /* GPIO_M_SCR_00_0 */"
+                        GPIO_STR2="            exclusion-info = <2>;"
+                        GPIO_STR3="            value = <0x38009696>;"
+                        GPIO_STR4="        };"
+
+                        FIND_RESULT=0
+                        FIND_RESULT=$(grep -q "${GPIO_PART_STR}" ${GPIO_FILE}; echo $?)
+
+                        if [[ "Auvidea_JNX42" = $VC_MIPI_BOARD ]]
+                        then
+                                if [[ 1 == $FIND_RESULT ]]
+                                then
+                                        echo "GPIO_M_SCR_00_0 missing, trying to insert..."
+
+                                        sed '/tfc {/r'<(
+                                                echo "$GPIO_STR1"
+                                                echo "$GPIO_STR2"
+                                                echo "$GPIO_STR3"
+                                                echo "$GPIO_STR4"
+                                                echo ""
+                                        ) -i -- ${GPIO_FILE}
+                                fi
+                        else
+                                if [[ 0 == $FIND_RESULT ]]
+                                then
+                                        echo "GPIO_M_SCR_00_0 already present, trying to remove..."
+
+                                        sed -i -e "/$GPIO_PART_STR/,+4d" ${GPIO_FILE}
+                                fi
+
+                        fi
+                        ;;
+                *)
+                        #nothing to do
+                        ;;
+                esac
                 ;;
         *)
                 return 0
@@ -253,7 +336,7 @@ create_target_user() {
         echo "Create target user ..."
         cd $BSP_DIR/Linux_for_Tegra
         case $VC_MIPI_BSP in
-        32.6.1|32.7.1|32.7.2|32.7.3|32.7.4|35.1.0|35.2.1|35.3.1)
+        32.6.1|32.7.1|32.7.2|32.7.3|32.7.4|35.1.0|35.2.1|35.3.1|36.2.0)
 
                 sudo ./tools/l4t_create_default_user.sh --username ${TARGET_USER} --password ${TARGET_PW} \
                         --hostname nvidia --autologin --accept-license
@@ -397,7 +480,7 @@ while [ $# != 0 ] ; do
 # the following function can be activated.
 #                setup_target_files
                 setup_kernel
-                setup_nvidia_driver
+#                setup_nvidia_driver
                 setup_som_carrier_specifics
                 exit 0
                 ;;

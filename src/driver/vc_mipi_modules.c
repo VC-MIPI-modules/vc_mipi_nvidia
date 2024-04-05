@@ -28,6 +28,7 @@ int vc_mod_is_color_sensor(struct vc_desc *desc)
         }
         return 0;
 }
+EXPORT_SYMBOL_GPL(vc_mod_is_color_sensor);
 
 static void vc_init_ctrl(struct vc_ctrl *ctrl, struct vc_desc* desc)
 {
@@ -774,3 +775,5 @@ int vc_mod_ctrl_init(struct vc_ctrl* ctrl, struct vc_desc* desc)
 
         return 0;
 }
+EXPORT_SYMBOL_GPL(vc_mod_ctrl_init);
+MODULE_LICENSE("GPL v2");

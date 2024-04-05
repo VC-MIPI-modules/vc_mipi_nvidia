@@ -1,0 +1,25 @@
+From 7108a8065755d23507569c2eb00723786d0f9e47 Mon Sep 17 00:00:00 2001
+From: "/setup.sh" <support@vision-components.com>
+Date: Wed, 20 Mar 2024 16:32:42 +0100
+Subject: [PATCH] Increased tegra channel timeout.
+
+---
+ nvidia-oot/drivers/media/platform/tegra/camera/vi/vi5_fops.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/nvidia-oot/drivers/media/platform/tegra/camera/vi/vi5_fops.c b/nvidia-oot/drivers/media/platform/tegra/camera/vi/vi5_fops.c
+index 3d29ee785..e2df4e434 100644
+--- a/nvidia-oot/drivers/media/platform/tegra/camera/vi/vi5_fops.c
++++ b/nvidia-oot/drivers/media/platform/tegra/camera/vi/vi5_fops.c
+@@ -33,7 +33,7 @@
+ #define VI_CHANNEL_DEV "/dev/capture-vi-channel"
+ #define VI_CHAN_PATH_MAX 40
+ 
+-#define CAPTURE_TIMEOUT_MS	2500
++#define CAPTURE_TIMEOUT_MS	5000
+ 
+ static const struct vi_capture_setup default_setup = {
+ 	.channel_flags = 0
+-- 
+2.34.1
+

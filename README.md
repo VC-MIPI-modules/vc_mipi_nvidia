@@ -1,5 +1,14 @@
 # Vision Components MIPI CSI-2 driver for NVIDIA Jetson Nano, Xavier NX, AGX Xavier, TX2, Orin Nano and Orin NX
 
+## L4T 36.2 JetPack 6 Developers Preview Test Branch
+NVIDIA OrinNano DevKit only <br>
+<span style="color:red">!! not working ATM !!</span>
+
+Todo:
+- hardware/nvidia/t23x/nv-public/overlay/Makefile
+- copy tegra234-p3767-camera-p3768-vc_mipi-dual.dts
+- add tegra234-p3767-camera-p3768-vc_mipi-dual.dts OVERLAY into p3768-0000-p3767-0000-a0.conf
+
 ![VC MIPI camera](https://www.vision-components.com/fileadmin/external/documentation/hardware/VC_MIPI_Camera_Module/VC_MIPI_Camera_Module-Dateien/mipi_sensor_front_back.png)
 
 ## Version 0.17.1 ([History](VERSION.md))

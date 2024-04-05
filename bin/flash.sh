@@ -31,10 +31,12 @@ flash_all() {
 
         case $VC_MIPI_SOM in
         OrinNano4GB_SD|OrinNano8GB_SD)
+                #bazo modify "t186ref"|"generic"
+                echo "flashing nano sd FLASH_PARTITION: ${FLASH_PARTITION}, FLASH_BOARD: ${FLASH_BOARD}"
                 sudo ./tools/kernel_flash/l4t_initrd_flash.sh \
                         --external-device ${FLASH_PARTITION} \
                         -c tools/kernel_flash/flash_l4t_external.xml \
-                        -p "-c bootloader/t186ref/cfg/flash_t234_qspi.xml" \
+                        -p "-c bootloader/generic/cfg/flash_t234_qspi.xml" \
                         --network usb0 \
                         ${FLASH_BOARD} internal
                 ;;
@@ -105,7 +107,7 @@ while [ $# != 0 ] ; do
         case "${option}" in
         -a|--all)
                 configure
-                check_recovery_mode
+#                check_recovery_mode
                 flash_all
                 exit 0
                 ;;

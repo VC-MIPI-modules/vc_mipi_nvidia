@@ -19,20 +19,46 @@ configure() {
 
 patch_kernel() {
         echo "Copying driver sources into kernel sources ..."
-        cp -Ruv $DRIVER_DIR/* $DRIVER_DST_DIR
-        copy_dtsi_files
+#bazo modify
+#        cp -Ruv $DRIVER_DIR/* $DRIVER_DST_DIR
+        cp -Ruv $DRIVER_DIR/* $DRIVER_OOT_DST_DIR
+#        copy_dtsi_files
 }
 
 configure_kernel() {
         cd $KERNEL_SOURCE
-        make -C $KERNEL_DIR O=$KERNEL_OUT -j$(nproc) tegra_defconfig
+        pwd
+#bazo modify
+#        make -C $KERNEL_DIR O=$KERNEL_OUT -j$(nproc) tegra_defconfig
+
+        make -C $KERNEL_DIR O=$KERNEL_OUT -j$(nproc) defconfig
 }
 
 build_kernel() {
         echo "Build kernel ..."
+#bazo modify
+#        cd $KERNEL_SOURCE
+#        make -C $KERNEL_DIR O=$KERNEL_OUT -j$(nproc) --output-sync=target Image
+#        cp -rfv $KERNEL_OUT/arch/arm64/boot/Image $BSP_DIR/Linux_for_Tegra/kernel/
+
+        echo "KERNEL_SOURCE: $KERNEL_SOURCE"
+        echo "KERNEL_DIR: $KERNEL_DIR"
+        echo "KERNEL_OUT: $KERNEL_OUT"
+        echo "MODULES_OUT: $MODULES_OUT"
+        echo "KERNEL_HEADERS: $KERNEL_HEADERS"
+        echo "ROOTFS_DIR: $ROOTFS_DIR"
+        echo "CROSS_COMPILE: $CROSS_COMPILE"
+        
         cd $KERNEL_SOURCE
-        make -C $KERNEL_DIR O=$KERNEL_OUT -j$(nproc) --output-sync=target Image
-        cp -rfv $KERNEL_OUT/arch/arm64/boot/Image $BSP_DIR/Linux_for_Tegra/kernel/
+        
+        make -C kernel
+
+        export INSTALL_MOD_PATH=$ROOTFS_DIR/
+        sudo -E make install -C kernel
+
+        cp kernel/kernel-jammy-src/arch/arm64/boot/Image \
+        $BSP_DIR/Linux_for_Tegra/kernel/Image
+
 }
 
 # Info:
@@ -50,7 +76,19 @@ build_nvidia_driver() {
         esac
 
         cd $KERNEL_SOURCE
-        NVDD_DIR=NVIDIA-kernel-module-source-TempVersion
+
+        NVDD_DIR=""
+        case $VC_MIPI_BSP in
+        35.1.0|35.2.1|35.3.1)
+                NVDD_DIR=NVIDIA-kernel-module-source-TempVersion
+                ;;
+        36.2.0)
+                NVDD_DIR=nvdisplay
+                ;;
+        *)
+                return 1
+                ;;
+        esac
 
         if [ ! -d $NVDD_DIR ]
         then
@@ -60,7 +98,8 @@ build_nvidia_driver() {
 
         cd $NVDD_DIR
 
-        KERNEL_COMP=$KERNEL_SOURCE/kernel/kernel-5.10
+#        KERNEL_COMP=$KERNEL_SOURCE/kernel/kernel-5.10
+        KERNEL_COMP=$KERNEL_SOURCE/$KERNEL_DIR
 
         # Building display driver ...
         make \
@@ -172,21 +211,46 @@ build_nvidia_driver() {
 
 build_modules() {
         echo "Build kernel modules ..."
-        cd $KERNEL_SOURCE
-        make -C $KERNEL_DIR O=$KERNEL_OUT -j$(nproc) --output-sync=target modules
 
-        build_nvidia_driver
+#bazo modify
+#        cd $KERNEL_SOURCE
+#        make -C $KERNEL_DIR O=$KERNEL_OUT -j$(nproc) --output-sync=target modules
+#
+#        build_nvidia_driver
+#
+#        cd $KERNEL_SOURCE
+#        make -C $KERNEL_DIR O=$KERNEL_OUT INSTALL_MOD_PATH=$MODULES_OUT modules_install 
+#        sudo cp -arfv $MODULES_OUT/lib $MODULES_BSP
+
+        echo "KERNEL_SOURCE: $KERNEL_SOURCE"
+        echo "KERNEL_DIR: $KERNEL_DIR"
+        echo "KERNEL_OUT: $KERNEL_OUT"
+        echo "MODULES_OUT: $MODULES_OUT"
+        echo "KERNEL_HEADERS: $KERNEL_HEADERS"
+        echo "ROOTFS_DIR: $ROOTFS_DIR"
+        echo "CROSS_COMPILE: $CROSS_COMPILE"
 
         cd $KERNEL_SOURCE
-        make -C $KERNEL_DIR O=$KERNEL_OUT INSTALL_MOD_PATH=$MODULES_OUT modules_install 
-        sudo cp -arfv $MODULES_OUT/lib $MODULES_BSP
+
+        make modules
+
+        export INSTALL_MOD_PATH=$ROOTFS_DIR/
+
+        sudo -E make modules_install
 }
 
 build_device_tree() {
         echo "Build device tree ..."
+#bazo modify
+#        cd $KERNEL_SOURCE
+#        make -C $KERNEL_DIR O=$KERNEL_OUT -j$(nproc) --output-sync=target dtbs
+#        cp -rfv $DTB_OUT/*.dtb $BSP_DIR/Linux_for_Tegra/kernel/dtb/
+
         cd $KERNEL_SOURCE
-        make -C $KERNEL_DIR O=$KERNEL_OUT -j$(nproc) --output-sync=target dtbs
-        cp -rfv $DTB_OUT/*.dtb $BSP_DIR/Linux_for_Tegra/kernel/dtb/
+        make dtbs
+
+        cp nvidia-oot/device-tree/platform/generic-dts/dtbs/* \
+        $BSP_DIR/Linux_for_Tegra/kernel/dtb/
 }
 
 set -e
@@ -199,7 +263,7 @@ while [ $# != 0 ] ; do
         -a|--all)
                 configure
                 patch_kernel
-                configure_kernel
+#                configure_kernel
                 build_kernel
                 build_modules	
                 build_device_tree
@@ -207,8 +271,8 @@ while [ $# != 0 ] ; do
                 ;;
         -d|--dt)
                 configure
-                patch_kernel
-                configure_kernel
+#                patch_kernel
+#                configure_kernel
                 build_device_tree
                 exit 0
                 ;;
@@ -218,15 +282,15 @@ while [ $# != 0 ] ; do
                 ;;
         -k|--kernel)
                 configure
-                patch_kernel
-                configure_kernel
+#                patch_kernel
+#                configure_kernel
                 build_kernel
                 exit 0
                 ;;
         -m|--modules)
                 configure
                 patch_kernel
-                configure_kernel
+#                configure_kernel
                 build_modules
                 exit 0
                 ;;
