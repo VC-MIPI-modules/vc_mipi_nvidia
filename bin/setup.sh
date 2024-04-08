@@ -282,6 +282,26 @@ setup_som_carrier_specifics() {
 
                         fi
                         ;;
+                36.2.0)
+                        ORIN_NANO_CONF_FILE=${BSP_DIR}/Linux_for_Tegra/p3768-0000-p3767-0000-a0.conf
+                        if [ ! -e ${ORIN_NANO_CONF_FILE} ]
+                        then
+                                echo "Could not find ${ORIN_NANO_CONF_FILE}! (pwd $(pwd))"
+                                exit 1
+                        fi
+
+                        CONF_PART_STR='OVERLAY_DTB_FILE="${OVERLAY_DTB_FILE},tegra234-p3767-camera-p3768-vc_mipi-dual.dtbo";'
+
+                        echo "CONF_PART_STR: ${CONF_PART_STR}"
+                        FIND_RESULT=0
+                        FIND_RESULT=$(grep -q "${CONF_PART_STR}" ${ORIN_NANO_CONF_FILE}; echo $?)
+                        CONF_STRING=""
+                        if [[ 1 == $FIND_RESULT ]]
+                        then
+                                echo "conf_part_string missing, trying to insert..."
+                                echo ${CONF_PART_STR} >> ${ORIN_NANO_CONF_FILE}
+                        fi
+                ;;
                 *)
                         #nothing to do
                         ;;

@@ -22,7 +22,7 @@ patch_kernel() {
 #bazo modify
 #        cp -Ruv $DRIVER_DIR/* $DRIVER_DST_DIR
         cp -Ruv $DRIVER_DIR/* $DRIVER_OOT_DST_DIR
-#        copy_dtsi_files
+        copy_dtsi_files
 }
 
 configure_kernel() {
@@ -271,7 +271,7 @@ while [ $# != 0 ] ; do
                 ;;
         -d|--dt)
                 configure
-#                patch_kernel
+                patch_kernel
 #                configure_kernel
                 build_device_tree
                 exit 0

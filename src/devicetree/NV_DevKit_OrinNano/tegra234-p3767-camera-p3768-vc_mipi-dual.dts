@@ -12,7 +12,7 @@
 
 #define CAM0_PWDN	TEGRA234_MAIN_GPIO(H, 6)
 #define CAM1_PWDN	TEGRA234_MAIN_GPIO(AC, 0)
-#define CAM_I2C_MUX 	TEGRA234_AON_GPIO(CC, 3)
+#define CAM_I2C_MUX	TEGRA234_AON_GPIO(CC, 3)
 
 // ------------------------------------------------------------------------------------------------
 //  Driver Configuration for NVIDIA Jetson Orin Nano on NVIDIA Jetson Orin Nano Developer Kit
@@ -146,11 +146,13 @@
                                                 cam_module0_drivernode0: drivernode0 {
                                                         pcl_id = "v4l2_sensor";
 #if VC_MIPI_MANUFACTURER == 1
-                                                        devname = "vc_mipi 9-001a";
+                                                        devname = "vc_mipi 10-001a";
+//                                                        devname = "vc_mipi 9-001a";   //orig
                                                         proc-device-tree = "/proc/device-tree/cam_i2cmux/i2c@0/vc_mipi@1a";
                                                         sysfs-device-tree = "/sys/firmware/devicetree/base/bus@0/cam_i2cmux/i2c@0/vc_mipi@1a";
 #else
-                                                        devname = "vc_mipi 9-0060";
+                                                        devname = "vc_mipi 10-0060";
+//                                                        devname = "vc_mipi 9-0060";   //orig
                                                         proc-device-tree = "/proc/device-tree/cam_i2cmux/i2c@0/vc_mipi@60";
                                                         sysfs-device-tree = "/sys/firmware/devicetree/base/bus@0/cam_i2cmux/i2c@0/vc_mipi@60";
 #endif
@@ -171,11 +173,13 @@
                                                 cam_module1_drivernode0: drivernode0 {
                                                         pcl_id = "v4l2_sensor";
 #if VC_MIPI_MANUFACTURER == 1
-                                                        devname = "vc_mipi 10-001a";
+                                                        devname = "vc_mipi 9-001a";
+//                                                        devname = "vc_mipi 10-001a";  //orig
                                                         proc-device-tree = "/proc/device-tree/cam_i2cmux/i2c@1/vc_mipi@1a";
                                                         sysfs-device-tree = "/sys/firmware/devicetree/base/bus@0/cam_i2cmux/i2c@1/vc_mipi@1a";
 #else
-                                                        devname = "vc_mipi 10-0060";
+                                                        devname = "vc_mipi 9-0060";
+//                                                        devname = "vc_mipi 10-0060";  //orig
                                                         proc-device-tree = "/proc/device-tree/cam_i2cmux/i2c@1/vc_mipi@60";
                                                         sysfs-device-tree = "/sys/firmware/devicetree/base/bus@0/cam_i2cmux/i2c@1/vc_mipi@60";
 #endif	
@@ -552,7 +556,7 @@
                                         aperture            = "0.0";
                                 };
 
-			/*
+                        // IMX219 example
                                 gpio@2200000 {
                                         camera-control-output-low {
                                                 gpio-hog;
@@ -561,7 +565,9 @@
                                                 label = "cam0-pwdn","cam1-pwdn";
                                         };
                                 };
-			*/
+
+			// IMX477 example
+                        /*
                                 gpio@6000d000 {
                                         camera-control-output-low {
                                                 gpio-hog;
@@ -570,6 +576,7 @@
                                                 label = "cam1-pwdn", "cam0-pwdn";
                                         };
                                 };
+                        */
                         };
                 };
         };
