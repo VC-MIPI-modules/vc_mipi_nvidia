@@ -4,15 +4,32 @@
 Flashing tested with NVIDIA OrinNano + NVIDIA DevKit only <br>
 For the time beeing, this branch is dedicated for advanced users, who already worked with this repo. Beginners should not use this branch until it is tested and documented.
 
-ToDo:
-- Documenting the flashing process | short comprehension...
-- the file tegra234-p3767-camera-p3768-vc_mipi-dual.dts can be edited with "./setup.sh -c"
-- the tegra234-p3767-camera-p3768-vc_mipi-dual.dtbo file will be generated with "./build.sh -d" | this step is automatically done by "./build.sh -a"
-- the dtbo will be generated into the kernel/dtb directory on the host pc
-- when flashing the first time with "sudo ./flash.sh -a", the overlay file will be flashed into uefi
-- for modifying the camera-settings via tegra234-p3767-camera-p3768-vc_mipi-dual.dtbo file, the /boot/extlinux/extlinux.conf entry must be modified/duplicated and the <br>
-OVERLAYS /boot/tegra234-p3767-camera-p3768-vc_mipi-dual.dtbo
+**ToDo:**
+- Documenting the flashing process
+- Documenting the build process with differences to previous versions
+
+**Hints:**
+- due to numerous changes, this branch is serving the L4T 36.2 and OrinNano only. When using `quickstart.sh` or `setup.sh -o`, the choices will be limited to that
+  - with this L4T 36.2 version, the tegra part is completely separated from the kernel
+  - VC Mipi driver is now running as a couple of kernel modules
+  - modifications to the camera device tree are realised with device tree overlays
+<br>
+- nvarguscamerasrc+nvvidconv must be installed separately (gst-nvarguscamera_src.tbz2 and gst-nvvidconv_src.tbz2 are residing in the Linux_for_Tegra/source folder and will be copied automatically into the home directory of the target device)
+  - the argus_camera sample application (nvidia-l4t-jetson-multimedia-api) can be used alternatively
+- a convenience script setup_nvidia.sh can be called on the running jetson to install some prerequisites (an internet connection must be present)
+  - this script will install build essentials, nvidia-l4t-jetson-multimedia-api, lib-cuda-dev and v4l-utils
+  - the nvarguscamerasrc and nvvidconv will be generated
+  - the NVIDIA samples (including argus_camera) will be built and installed
+<br>
+- device tree handling
+  - the file tegra234-p3767-camera-p3768-vc_mipi-dual.dts can be edited with `./setup.sh -c`
+  - the tegra234-p3767-camera-p3768-vc_mipi-dual.dtbo file will be generated with `./build.sh -d` | this step is automatically done by `./build.sh -a`
+  - the dtbo will be generated into the kernel/dtb directory on the host pc
+  - when flashing the first time with `sudo ./flash.sh -a`, the overlay file will be flashed into uefi
+  - to modify the camera-settings via tegra234-p3767-camera-p3768-vc_mipi-dual.dtbo file, the /boot/extlinux/extlinux.conf entry must be modified/duplicated and the <br>
+  OVERLAYS /boot/tegra234-p3767-camera-p3768-vc_mipi-dual.dtbo
 entry must be added. This will override the initial uefi dtbo and modifications can take effect
+  - the dtbo file must be copied into the specified location before the restart
 ```
 LABEL secondary
       MENU LABEL secondary kernel
@@ -23,21 +40,10 @@ LABEL secondary
 
       OVERLAYS /boot/tegra234-p3767-camera-p3768-vc_mipi-dual.dtbo
 ```
-- the dtbo file must be copied into the given location before the restart
 
-Hints:
-- due to numerous changes, this branch is serving the L4T 36.2 and OrinNano only. When using "quickstart.sh" or "setup.sh -o", the choices will be limited to that
-- with this L4T 36.2 version, the tegra part is completely separated from the kernel
-- VC Mipi driver is now running as a couple of kernel modules
-- modifications to the camera device tree are realised with device tree overlays
-- nvarguscamerasrc+nvvidconv must be installed separately (gst-nvarguscamera_src.tbz2 and gst-nvvidconv_src.tbz2 are residing in the Linux_for_Tegra/source folder and will be copied automatically into the given home directory)
-- the argus_camera sample application (nvidia-l4t-jetson-multimedia-api) can be used alternatively
-- a convenience script setup_nvidia.sh can be called on the running jetson to install some prerequisites (an internet connection must be present)
-- this script will install build essentials, nvidia-l4t-jetson-multimedia-api, lib-cuda-dev and v4l-utils
-
-Warnings:
+**Warnings:**
 - this version has been tested with two identical IMX565 sensors only
-- there might be problems when using only one sensor
+- there might be problems when using only a single sensor
 
 ![VC MIPI camera](https://www.vision-components.com/fileadmin/external/documentation/hardware/VC_MIPI_Camera_Module/VC_MIPI_Camera_Module-Dateien/mipi_sensor_front_back.png)
 
