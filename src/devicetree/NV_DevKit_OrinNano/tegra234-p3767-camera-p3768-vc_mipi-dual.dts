@@ -36,7 +36,7 @@
 //  2   | IMX296, IMX297, IMX412
 //  4   | IMX565, IMX566, IMX567, IMX568
 // -----+------------------------------------------------------------------------------------------
-#define VC_MIPI_METADATA_H  "4" // "0", "1", "2", "4" Lines of meta data
+#define VC_MIPI_METADATA_H  "0" // "0", "1", "2", "4" Lines of meta data
 // ------------------------------------------------------------------------------------------------
 //   Sensor Manufacturer
 // -----+------------------------------------------------------------------------------------------
@@ -285,49 +285,9 @@
                                                         // ----------------------------------------------------
                                                         // If you want to use GStreamer with nvarguscamerasrc
                                                         // you have to adjust this settings
-                                                        physical_w              = "11.311";
-                                                        physical_h              = "8.220";
+                                                        physical_w              = "1.000";
+                                                        physical_h              = "1.000";
                                                         // ----------------------------------------------------
-/*
-							mode0 { 
-								mclk_khz = "24000";
-								num_lanes = "2";
-								tegra_sinterface = "serial_b";
-								phy_mode = "DPHY";
-								discontinuous_clk = "no";
-								dpcm_enable = "false";
-								cil_settletime = "0";
-								lane_polarity = "6";
-								active_w = "3840";
-								active_h = "2160";
-								mode_type = "bayer";
-								pixel_phase = "rggb";
-								csi_pixel_bit_depth = "10";
-								readout_orientation = "90";
-								line_length = "11200";
-								inherent_gain = "1";
-								mclk_multiplier = "80";
-								pix_clk_hz = "300000000";
-								gain_factor = "16";
-								framerate_factor = "1000000";
-								exposure_factor = "1000000";
-								min_gain_val = "16"; 
-								max_gain_val = "356"; 
-								step_gain_val = "1";
-								default_gain = "16"; 
-								min_hdr_ratio = "1";
-								max_hdr_ratio = "1";
-								min_framerate = "2000000"; 
-								max_framerate = "30000000"; 
-								step_framerate = "1";
-								default_framerate = "30000000"; 
-								min_exp_time = "13"; 
-								max_exp_time = "683709"; 
-								step_exp_time = "1";
-								default_exp_time = "2495"; 
-								embedded_metadata_height = "2";
-							};
-*/
                                                         // This node is needed by the Tegra framework.
                                                         // You don't have to change any settings if just want 
                                                         // to use the V4L API.
@@ -343,8 +303,8 @@
                                                                 // you have to adjust this settings. 
                                                                 active_l                 = "0";
                                                                 active_t                 = "0";
-                                                                active_w                 = "4128";
-                                                                active_h                 = "3000";
+                                                                active_w                 = "0";
+                                                                active_h                 = "0";
                                                                 mode_type                = "bayer";
                                                                 pixel_phase              = "rggb";
                                                                 csi_pixel_bit_depth      = "10";
@@ -362,9 +322,9 @@
                                                                 // For applications like argus_camera, there should 
                                                                 // be a minimal frame rate greater than zero!
                                                                 min_framerate            = "100";       // mHz
-                                                                max_framerate            = "17900";     // mHz
+                                                                max_framerate            = "60000";     // mHz
                                                                 step_framerate           = "100";       // mHz
-                                                                default_framerate        = "17900";     // mHz
+                                                                default_framerate        = "60000";     // mHz
                                                                 // ----------------------------------------------------
 
                                                                 gain_factor              = "1000";
@@ -431,50 +391,10 @@
                                                         // ----------------------------------------------------
                                                         // If you want to use GStreamer with nvarguscamerasrc
                                                         // you have to adjust this settings
-                                                        physical_w              = "11.311";
-                                                        physical_h              = "8.220";
+                                                        physical_w              = "1.000";
+                                                        physical_h              = "1.000";
                                                         // ----------------------------------------------------
 
-/*
-							mode0 { 
-								mclk_khz = "24000";
-								num_lanes = "2";
-								tegra_sinterface = "serial_c";
-								phy_mode = "DPHY";
-								discontinuous_clk = "no";
-								dpcm_enable = "false";
-								cil_settletime = "0";
-								lane_polarity = "0";
-								active_w = "3840";
-								active_h = "2160";
-								mode_type = "bayer";
-								pixel_phase = "rggb";
-								csi_pixel_bit_depth = "10";
-								readout_orientation = "90";
-								line_length = "11200";
-								inherent_gain = "1";
-								mclk_multiplier = "80";
-								pix_clk_hz = "300000000";
-								gain_factor = "16";
-								framerate_factor = "1000000";
-								exposure_factor = "1000000";
-								min_gain_val = "16"; 
-								max_gain_val = "356"; 
-								step_gain_val = "1";
-								default_gain = "16"; 
-								min_hdr_ratio = "1";
-								max_hdr_ratio = "1";
-								min_framerate = "2000000"; 
-								max_framerate = "30000000"; 
-								step_framerate = "1";
-								default_framerate = "30000000"; 
-								min_exp_time = "13"; 
-								max_exp_time = "683709"; 
-								step_exp_time = "1";
-								default_exp_time = "2495"; 
-								embedded_metadata_height = "2";
-							};
-*/
                                                         mode0 {
                                                                 num_lanes                = NUM_LANES;
                                                                 tegra_sinterface         = "serial_c";
@@ -487,8 +407,8 @@
                                                                 // you have to adjust this settings. 
                                                                 active_l                 = "0";
                                                                 active_t                 = "0";
-                                                                active_w                 = "4128";
-                                                                active_h                 = "3000";
+                                                                active_w                 = "0";
+                                                                active_h                 = "0";
                                                                 mode_type                = "bayer";
                                                                 pixel_phase              = "rggb";
                                                                 csi_pixel_bit_depth      = "10";
@@ -506,9 +426,9 @@
                                                                 // For applications like argus_camera, there should 
                                                                 // be a minimal frame rate greater than zero!
                                                                 min_framerate            = "100";       // mHz
-                                                                max_framerate            = "17900";     // mHz
+                                                                max_framerate            = "60000";     // mHz
                                                                 step_framerate           = "100";       // mHz
-                                                                default_framerate        = "17900";     // mHz
+                                                                default_framerate        = "60000";     // mHz
                                                                 // ----------------------------------------------------
 
                                                                 gain_factor              = "1000";

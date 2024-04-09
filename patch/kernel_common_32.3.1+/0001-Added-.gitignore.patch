@@ -4,8 +4,8 @@ Date: Wed, 20 Mar 2024 14:57:26 +0100
 Subject: [PATCH] Added .gitignore
 
 ---
- .gitignore | 12 ++++++++++++
- 1 file changed, 12 insertions(+)
+ .gitignore | 22 ++++++++++++
+ 1 file changed, 22 insertions(+)
  create mode 100644 .gitignore
 
 diff --git a/.gitignore b/.gitignore
@@ -13,7 +13,7 @@ new file mode 100644
 index 000000000..606bc62da
 --- /dev/null
 +++ b/.gitignore
-@@ -0,0 +1,12 @@
+@@ -0,0 +1,22 @@
 +.vscode*
 +build/
 +hwpm/
@@ -23,6 +23,14 @@ index 000000000..606bc62da
 +nvethernetrm/
 +nvgpu/
 +out/
++*.cmd
++*.d
++*.dtb
++*.dtbo
++*.ko
++*.mod*
++*.o
++*.order
 +*.*bz2*
 +*.sh
 +public_sources_sha.txt

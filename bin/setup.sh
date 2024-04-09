@@ -313,6 +313,21 @@ setup_som_carrier_specifics() {
         esac
 }
 
+setup_nvidia_prereq_on_target() {
+        if [[ "36.2.0" != $VC_MIPI_BSP ]]
+        then
+                return 0
+        fi
+
+        target_dir=${ROOTFS_DIR}/home/${TARGET_USER}
+        src_dir=${WORKING_DIR}/target
+
+        cp ${src_dir}/setup_nvidia.sh ${target_dir}
+
+        cp ${KERNEL_SOURCE}/gst-nvarguscamera_src.tbz2 ${target_dir}
+        cp ${KERNEL_SOURCE}/gst-nvvidconv_src.tbz2 ${target_dir}
+}
+
 setup_user_credentials() {
         echo ""
         echo "------------------------------------------------------------"
@@ -489,6 +504,11 @@ while [ $# != 0 ] ; do
                 setup_som_carrier_specifics
                 exit 0
                 ;;
+        -z)
+                configure
+                setup_nvidia_prereq_on_target
+                exit 0
+                ;;
         -o|--host)
                 configure
                 install_system_tools
@@ -502,6 +522,7 @@ while [ $# != 0 ] ; do
                 setup_kernel
 #                setup_nvidia_driver
                 setup_som_carrier_specifics
+                setup_nvidia_prereq_on_target
                 exit 0
                 ;;
         *)
