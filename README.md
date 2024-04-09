@@ -13,14 +13,14 @@ For the time beeing, this branch is dedicated for advanced users, who already wo
   - with this L4T 36.2 version, the tegra part is completely separated from the kernel
   - VC Mipi driver is now running as a couple of kernel modules
   - modifications to the camera device tree are realised with device tree overlays
-<br>
+
 - nvarguscamerasrc+nvvidconv must be installed separately (gst-nvarguscamera_src.tbz2 and gst-nvvidconv_src.tbz2 are residing in the Linux_for_Tegra/source folder and will be copied automatically into the home directory of the target device)
   - the argus_camera sample application (nvidia-l4t-jetson-multimedia-api) can be used alternatively
 - a convenience script setup_nvidia.sh can be called on the running jetson to install some prerequisites (an internet connection must be present)
   - this script will install build essentials, nvidia-l4t-jetson-multimedia-api, lib-cuda-dev and v4l-utils
   - the nvarguscamerasrc and nvvidconv will be generated
   - the NVIDIA samples (including argus_camera) will be built and installed
-<br>
+
 - device tree handling
   - the file tegra234-p3767-camera-p3768-vc_mipi-dual.dts can be edited with `./setup.sh -c`
   - the tegra234-p3767-camera-p3768-vc_mipi-dual.dtbo file will be generated with `./build.sh -d` | this step is automatically done by `./build.sh -a`
