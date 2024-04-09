@@ -8,6 +8,7 @@ ToDo:
 - Documenting the flashing process | short comprehension...
 - the file tegra234-p3767-camera-p3768-vc_mipi-dual.dts can be edited with "./setup.sh -c"
 - the tegra234-p3767-camera-p3768-vc_mipi-dual.dtbo file will be generated with "./build.sh -d" | this step is automatically done by "./build.sh -a"
+- the dtbo will be generated into the kernel/dtb directory on the host pc
 - when flashing the first time with "sudo ./flash.sh -a", the overlay file will be flashed into uefi
 - for modifying the camera-settings via tegra234-p3767-camera-p3768-vc_mipi-dual.dtbo file, the /boot/extlinux/extlinux.conf entry must be modified/duplicated and the <br>
 OVERLAYS /boot/tegra234-p3767-camera-p3768-vc_mipi-dual.dtbo
@@ -29,9 +30,10 @@ Hints:
 - with this L4T 36.2 version, the tegra part is completely separated from the kernel
 - VC Mipi driver is now running as a couple of kernel modules
 - modifications to the camera device tree are realised with device tree overlays
-- nvarguscamerasrc+nvvidconv must be installed separately (gst-nvarguscamera_src.tbz2 and gst-nvvidconv_src.tbz2 are residing in the Linux_for_Tegra/source folder)
+- nvarguscamerasrc+nvvidconv must be installed separately (gst-nvarguscamera_src.tbz2 and gst-nvvidconv_src.tbz2 are residing in the Linux_for_Tegra/source folder and will be copied automatically into the given home directory)
 - the argus_camera sample application (nvidia-l4t-jetson-multimedia-api) can be used alternatively
 - a convenience script setup_nvidia.sh can be called on the running jetson to install some prerequisites (an internet connection must be present)
+- this script will install build essentials, nvidia-l4t-jetson-multimedia-api, lib-cuda-dev and v4l-utils
 
 Warnings:
 - this version has been tested with two identical IMX565 sensors only
