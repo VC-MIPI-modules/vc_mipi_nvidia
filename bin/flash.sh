@@ -33,20 +33,26 @@ flash_all() {
         OrinNano4GB_SD|OrinNano8GB_SD)
                 #bazo modify "t186ref"|"generic"
                 echo "flashing nano sd FLASH_PARTITION: ${FLASH_PARTITION}, FLASH_BOARD: ${FLASH_BOARD}"
+                echo "ORIN_FLASH_CONFIG_FOLDER: ${ORIN_FLASH_CONFIG_FOLDER}"
+#                exit 0
                 sudo ./tools/kernel_flash/l4t_initrd_flash.sh \
                         --external-device ${FLASH_PARTITION} \
                         -c tools/kernel_flash/flash_l4t_external.xml \
-                        -p "-c bootloader/generic/cfg/flash_t234_qspi.xml" \
+                        -p "-c bootloader/${ORIN_FLASH_CONFIG_FOLDER}/cfg/flash_t234_qspi.xml" \
                         --network usb0 \
                         ${FLASH_BOARD} internal
                 ;;
 
         OrinNano4GB_NVME|OrinNano8GB_NVME|OrinNX8GB|OrinNX16GB)
+                #bazo modify "t186ref"|"generic"
+                echo "flashing nano nvme FLASH_PARTITION: ${FLASH_PARTITION}, FLASH_BOARD: ${FLASH_BOARD}"
+                echo "ORIN_FLASH_CONFIG_FOLDER: ${ORIN_FLASH_CONFIG_FOLDER}"
+                exit 0
                 sudo ADDITIONAL_DTB_OVERLAY_OPT="BootOrderNvme.dtbo" \
                         ./tools/kernel_flash/l4t_initrd_flash.sh \
                         --external-device ${FLASH_PARTITION} \
                         -c tools/kernel_flash/flash_l4t_external.xml \
-                        -p "-c bootloader/t186ref/cfg/flash_t234_qspi.xml" \
+                        -p "-c bootloader/${ORIN_FLASH_CONFIG_FOLDER}/cfg/flash_t234_qspi.xml" \
                         --network usb0 \
                         ${FLASH_BOARD} internal
                 ;;

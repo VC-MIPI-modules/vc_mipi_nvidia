@@ -21,31 +21,32 @@ AGXXavier|XavierNX|XavierNXSD|TX2|TX2i|TX2NX|OrinNano4GB_SD|OrinNano8GB_SD|OrinN
         ;;
 esac
 DOWNLOAD_DIR=$BSP_DIR/downloads
-#bazo modify
-#KERNEL_SOURCE=$BSP_DIR/Linux_for_Tegra/source/public
-KERNEL_SOURCE=$BSP_DIR/Linux_for_Tegra/source
-KERNEL_OUT=$KERNEL_SOURCE/build
-MODULES_OUT=$KERNEL_SOURCE/modules
-DRIVER_DST_DIR=$KERNEL_SOURCE/kernel/nvidia/drivers/media/i2c
-DRIVER_OOT_DST_DIR=$KERNEL_SOURCE/nvidia-oot/drivers/media/i2c
+
+L4T=$BIN_DIR/config/L4T/R$VC_MIPI_BSP.sh
+if [[ -e $L4T ]]; then
+        echo "sourcing L4T ($L4T)"
+        . $L4T
+        #Integrity check of the sourced L4T scripts
+        Common_check_for_functions
+else
+        echo "BSP $VC_MIPI_BSP not supported!"
+        exit 1
+fi
+
+#KERNEL_OUT=$KERNEL_SOURCE/build
+#MODULES_OUT=$KERNEL_SOURCE/modules
+
+
+#bazo kann glei weg
 case $VC_MIPI_BSP in
 36.2.0)
-        KERNEL_DIR=kernel/kernel-jammy-src/
-        MODULES_BSP=$BSP_DIR/Linux_for_Tegra/rootfs/usr
-        ROOTFS_DIR=$BSP_DIR/Linux_for_Tegra/rootfs
-        DTB_OUT=$KERNEL_OUT/arch/arm64/boot/dts/nvidia
         ;;
 35.1.0|35.2.1|35.3.1)
-        KERNEL_DIR=kernel/kernel-5.10/
-        MODULES_BSP=$BSP_DIR/Linux_for_Tegra/rootfs/usr
-        DTB_OUT=$KERNEL_OUT/arch/arm64/boot/dts/nvidia
         ;;
         *)
-        KERNEL_DIR=kernel/kernel-4.9/
-        MODULES_BSP=$BSP_DIR/Linux_for_Tegra/rootfs
-        DTB_OUT=$KERNEL_OUT/arch/arm64/boot/dts
         ;;
 esac
+
 
 TARGET_USER=$USER
 TARGET_PW=
@@ -66,13 +67,6 @@ echo "  Carrier Board:            $VC_MIPI_BOARD"
 echo "  L4T Driver Package (BSP): $VC_MIPI_BSP"
 echo "------------------------------------------------------------"
 
-L4T=$BIN_DIR/config/L4T/R$VC_MIPI_BSP.sh
-if [[ -e $L4T ]]; then
-        . $L4T
-else
-        echo "BSP $VC_MIPI_BSP not supported!"
-        exit 1
-fi
 
 DTSI_FILE_DICT=( 
          ["Auvidea_J20_AGXXavier"]="tegra194-camera-vc-mipi-cam.dtsi" 
@@ -137,56 +131,6 @@ then
                 exit 1
         fi
 fi
-
-PATCHES=('kernel_common_32.3.1+')
-case $VC_MIPI_SOM in
-Nano|NanoSD|Nano2GB)
-        case $VC_MIPI_BSP in
-        32.5.0|32.5.1|32.5.2)
-                PATCHES+=('kernel_Nano_32.5.0+')
-                ;;
-        32.6.1|32.7.1|32.7.2|32.7.3)
-                PATCHES+=('kernel_Nano_32.6.1+')
-                ;;
-        32.7.4)
-                PATCHES+=('kernel_Nano_32.6.1+')
-                PATCHES+=('kernel_Nano_32.7.4')
-                ;;
-        esac
-        ;;
-
-AGXXavier|XavierNX|XavierNXSD|TX2|TX2i|TX2NX|OrinNano4GB_SD|OrinNano8GB_SD|OrinNano4GB_NVME|OrinNano8GB_NVME|OrinNX8GB|OrinNX16GB)
-        case $VC_MIPI_BSP in
-        32.3.1)
-                PATCHES+=('kernel_Xavier_32.3.1+')
-                ;;
-        32.5.0)
-                PATCHES+=('kernel_Xavier_32.5.0+')
-                ;;
-        32.5.1|32.5.2)
-                PATCHES+=('kernel_Xavier_32.5.1+')
-                ;;
-        32.6.1|32.7.1|32.7.2)
-                PATCHES+=('kernel_Xavier_32.6.1+')
-                ;;
-        32.7.3)
-                PATCHES+=('kernel_Xavier_32.7.3+')
-                ;;
-        35.1.0)
-                PATCHES+=('kernel_Xavier_35.1.0+')
-                ;;
-        35.2.1)
-                PATCHES+=('kernel_Xavier_35.2.1+')
-                ;;
-        35.3.1)
-                PATCHES+=('kernel_Xavier_35.3.1+')
-                ;;
-        36.2.0)
-                PATCHES+=('kernel_Xavier_36.2.0+')
-                ;;
-        esac
-        
-esac
 
 case $VC_MIPI_SOM in
 Nano|NanoSD|Nano2GB)
@@ -283,29 +227,36 @@ OrinNano4GB_SD|OrinNano8GB_SD|OrinNano4GB_NVME|OrinNano8GB_NVME|OrinNX8GB|OrinNX
         case $VC_MIPI_SOM in
         OrinNano4GB_SD)
                 ORIN_DTB_SKU='0004'
-                FLASH_PARTITION='mmcblk1p1'
+#                FLASH_PARTITION='mmcblk1p1'
+                FLASH_PARTITION=$ORIN_FLASH_PARTITION_MMC
+#                FLASH_PARTITION='mmcblk0p1'     #36.2
                 ;;
         OrinNano8GB_SD)
                 ORIN_DTB_SKU='0003'
 #bazo modify
 #                FLASH_PARTITION='mmcblk1p1'
-                FLASH_PARTITION='mmcblk0p1'
+                FLASH_PARTITION=$ORIN_FLASH_PARTITION_MMC
+#                FLASH_PARTITION='mmcblk0p1'    #36.2
                 ;;
         OrinNano4GB_NVME)
                 ORIN_DTB_SKU='0004'
-                FLASH_PARTITION='nvme0n1p1'
+                FLASH_PARTITION=$ORIN_FLASH_PARTITION_NVME
+#                FLASH_PARTITION='nvme0n1p1'
                 ;;
         OrinNano8GB_NVME)
                 ORIN_DTB_SKU='0003'
-                FLASH_PARTITION='nvme0n1p1'
+                FLASH_PARTITION=$ORIN_FLASH_PARTITION_NVME
+#                FLASH_PARTITION='nvme0n1p1'
                 ;;
         OrinNX8GB)
                 ORIN_DTB_SKU='0001'
-                FLASH_PARTITION='nvme0n1p1'
+                FLASH_PARTITION=$ORIN_FLASH_PARTITION_NVME
+#                FLASH_PARTITION='nvme0n1p1'
                 ;;
         OrinNX16GB)
                 ORIN_DTB_SKU='0000'
-                FLASH_PARTITION='nvme0n1p1'
+                FLASH_PARTITION=$ORIN_FLASH_PARTITION_NVME
+#                FLASH_PARTITION='nvme0n1p1'
                 ;;
         esac
 
@@ -315,6 +266,17 @@ OrinNano4GB_SD|OrinNano8GB_SD|OrinNano4GB_NVME|OrinNano8GB_NVME|OrinNX8GB|OrinNX
         echo "SOM $VC_MIPI_SOM not supported!"
         ;;
 esac
+
+
+
+for patch in "${PATCHES[@]}"; do
+        echo "Listing patches from ${PATCH_DIR}/${patch}"
+        for patchfile in $PATCH_DIR/${patch}/*.patch; do
+                echo "${patchfile}"
+        done
+done
+echo "patch list ./configure.sh done"
+
 
 # PATCHES+=('develop')
 echo "  Using build directory:                       $BSP_DIR"
@@ -330,17 +292,7 @@ echo "  Using flash parameters:                      $FLASH_DT $FLASH_BOARD $FLA
 echo "  Using target user and ip address:            $TARGET_USER@$TARGET_IP"
 echo "------------------------------------------------------------"
 
-#bazo modify
-
-#GCC_URL=http://releases.linaro.org/components/toolchain/binaries/7.3-2018.05/aarch64-linux-gnu
-#GCC_FILE=gcc-linaro-7.3.1-2018.05-x86_64_aarch64-linux-gnu.tar.xz
-#export CROSS_COMPILE=$GCC_DIR/gcc-linaro-7.3.1-2018.05-x86_64_aarch64-linux-gnu/bin/aarch64-linux-gnu-
-#export LOCALVERSION=-tegra
-#export ARCH=arm64
-
-GCC_URL=https://snapshots.linaro.org/gnu-toolchain/11.3-2022.06-1/aarch64-linux-gnu
-GCC_FILE=gcc-linaro-11.3.1-2022.06-x86_64_aarch64-linux-gnu.tar.xz
-export CROSS_COMPILE=$GCC_DIR/gcc-linaro-11.3.1-2022.06-x86_64_aarch64-linux-gnu/bin/aarch64-linux-gnu-
 export LOCALVERSION=-tegra
 export ARCH=arm64
-export KERNEL_HEADERS=$KERNEL_SOURCE/kernel/kernel-jammy-src
+
+echo "bazo ende configure.sh"

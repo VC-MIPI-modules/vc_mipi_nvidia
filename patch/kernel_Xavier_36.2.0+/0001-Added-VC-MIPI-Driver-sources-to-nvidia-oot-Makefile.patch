@@ -1,21 +1,24 @@
-From 4f1b53395acd3dfd3fd876d92e631049062d6a8f Mon Sep 17 00:00:00 2001
+From 2c5b374f3a21bb14e3e36a9b369fba981a096da5 Mon Sep 17 00:00:00 2001
 From: "/setup.sh" <support@vision-components.com>
-Date: Tue, 2 Apr 2024 11:36:18 +0200
+Date: Tue, 23 Apr 2024 13:50:05 +0200
 Subject: [PATCH] Added VC MIPI Driver sources to nvidia-oot Makefile.
 
 ---
- nvidia-oot/drivers/media/i2c/Makefile | 1 +
- 1 file changed, 1 insertion(+)
+ nvidia-oot/drivers/media/i2c/Makefile | 4 ++++
+ 1 file changed, 4 insertions(+)
 
 diff --git a/nvidia-oot/drivers/media/i2c/Makefile b/nvidia-oot/drivers/media/i2c/Makefile
-index 866fc75..8c80122 100644
+index 866fc75..70c157c 100644
 --- a/nvidia-oot/drivers/media/i2c/Makefile
 +++ b/nvidia-oot/drivers/media/i2c/Makefile
-@@ -16,6 +16,7 @@ obj-m += nv_imx318.o
+@@ -16,6 +16,10 @@ obj-m += nv_imx318.o
  obj-m += nv_imx390.o
  obj-m += nv_imx477.o
  obj-m += nv_ov5693.o
-+obj-m += vc_mipi_camera.o vc_mipi_core.o vc_mipi_modules.o
++obj-m += vc_mipi_core.o
++vc_mipi_core-objs += vc_mipi_modules.o
++obj-m += vc_mipi_camera.o
++vc_mipi_camera-objs += vc_mipi_core.o
  obj-m += nv_ar0234.o
  obj-m += pca9570.o
  obj-m += nv_hawk_owl.o

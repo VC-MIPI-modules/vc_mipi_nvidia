@@ -242,8 +242,8 @@ setup_driver() {
         OrinNano4GB_SD|OrinNano8GB_SD|OrinNano4GB_NVME|OrinNano8GB_NVME)
 #                choose_board 3 5
                 choose_board 3
-#                choose_bsp 11 12
-                choose_bsp 12
+                choose_bsp 11 12
+#                choose_bsp 12
                 ;;
         OrinNX8GB|OrinNX16GB)
                 choose_board 5

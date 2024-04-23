@@ -1,0 +1,27 @@
+From 221c530b80c9cf6e645fa6ccf0e5ccb644291e2d Mon Sep 17 00:00:00 2001
+From: "/setup.sh" <support@vision-components.com>
+Date: Wed, 20 Mar 2024 15:33:54 +0100
+Subject: [PATCH 2/2] Reduced image size limitation from width 32 to 4 and
+ height from 4 to 1.
+
+---
+ nvidia-oot/drivers/media/platform/tegra/camera/vi/channel.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
+
+diff --git a/nvidia-oot/drivers/media/platform/tegra/camera/vi/channel.c b/nvidia-oot/drivers/media/platform/tegra/camera/vi/channel.c
+index d78196edb..a740cc18d 100644
+--- a/nvidia-oot/drivers/media/platform/tegra/camera/vi/channel.c
++++ b/nvidia-oot/drivers/media/platform/tegra/camera/vi/channel.c
+@@ -2149,8 +2149,7 @@ __tegra_channel_set_frame_size(struct tegra_channel *chan,
+ 	struct sensor_properties *sensor = &s_data->sensor_props;
+ 	int mode_idx = 0;
+ 
+-	pix->width = (pix->width / 32) * 32;
+-	pix->height = (pix->height / 4) * 4;
++	pix->width = (pix->width / 4) * 4;
+ 
+ 	s_data->def_width = pix->width;
+ 	s_data->def_height = pix->height;
+-- 
+2.34.1
+

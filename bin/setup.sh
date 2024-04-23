@@ -45,11 +45,14 @@ setup_toolchain() {
         echo "Setup tool chain ..."
         mkdir -p $BUILD_DIR
 
+        if [[ ! -e $TOOLCHAIN_DIR ]]; then
+                mkdir -p $TOOLCHAIN_DIR
+        fi
+        cd $TOOLCHAIN_DIR
+
         if [[ ! -e $GCC_DIR ]]; then
-                mkdir -p $GCC_DIR
-                cd $GCC_DIR
                 wget $GCC_URL/$GCC_FILE
-                tar xvf $GCC_FILE -C $GCC_DIR
+                tar xvf $GCC_FILE -C $TOOLCHAIN_DIR
                 rm $GCC_FILE
         fi
 }
@@ -66,28 +69,28 @@ setup_kernel() {
         cd $BSP_DIR
 #bazo modify
 #        rm -Rf $BSP_DIR/Linux_for_Tegra/source/public
-        rm -Rf $BSP_DIR/Linux_for_Tegra/source
+#        rm -Rf $BSP_DIR/Linux_for_Tegra/source
+        rm -Rf $KERNEL_SOURCE
+
         cd $DOWNLOAD_DIR
         tar xjvf $SRC_FILE -C $BSP_DIR
 
+#function L4T_extract_kernel_packages
 #bazo modify
 #        cd $BSP_DIR/Linux_for_Tegra/source/public
-        cd $BSP_DIR/Linux_for_Tegra/source
-        tar xvf kernel_src.tbz2
+#        cd $BSP_DIR/Linux_for_Tegra/source
+        cd $KERNEL_SOURCE
 
-        tar xvf kernel_oot_modules_src.tbz2
-
-        tar xvf nvidia_kernel_display_driver_source.tbz2
-#bazo modify
+        L4T_extract_kernel_packages
 
         git init
         git config gc.auto 0
         git config --local user.name "$0"
         git config --local user.email "support@vision-components.com"
 
-        git add hardware
-#        git add kernel
-        git add nvidia-oot
+#bazo modify
+        L4T_add_kernel_to_repo
+
         git commit -m "Initial commit"
 
         for patch in "${PATCHES[@]}"; do
@@ -108,7 +111,9 @@ repatch_kernel() {
         echo "Repatch kernel ..."
 #bazo modify
 #        cd $BSP_DIR/Linux_for_Tegra/source/public
-        cd $BSP_DIR/Linux_for_Tegra/source
+#        cd $BSP_DIR/Linux_for_Tegra/source
+        cd $KERNEL_SOURCE
+
         git am --abort
         FIRST_COMMIT=$(git rev-list --max-parents=0 --abbrev-commit HEAD)
         git reset --hard $FIRST_COMMIT
@@ -124,195 +129,23 @@ repatch_kernel() {
 }
 
 setup_nvidia_driver() {
-        # already included in 36.2.0
-        if [[ "36.2.0" == $VC_MIPI_BSP ]]
-        then
-                echo "nothing to do"
-                return 0
-        fi
-
-        # checking for Orin ...
-        case $VC_MIPI_SOM in
-        OrinNano4GB_SD|OrinNano8GB_SD|OrinNano4GB_NVME|OrinNano8GB_NVME|OrinNX8GB|OrinNX16GB)
-                ;;
-        *)
-                return 0
-                ;;
-        esac
-
-        echo "Preparing NVIDIA display driver ..."
-
-        cd $KERNEL_SOURCE
-        NVDD_FILE=nvidia_kernel_display_driver_source.tbz2
-        NVDD_DIR=""
-        case $VC_MIPI_BSP in
-        35.1.0|35.2.1|35.3.1)
-                NVDD_DIR=NVIDIA-kernel-module-source-TempVersion
-                ;;
-        35.5.0|36.2.0)
-                NVDD_DIR=nvdisplay
-                ;;
-        *)
-                return 1
-                ;;
-        esac
-#        NVDD_DIR=NVIDIA-kernel-module-source-TempVersion
-        if [ ! -e $NVDD_FILE ]
-        then
-                echo "Could not find NVIDIA display driver package ${NVDD_FILE}! (pwd $(pwd))"
-                exit 1
-        fi
-
-        # checking integrity of display driver...
-        SHA_SUM_FILE=${NVDD_FILE}.sha1sum
-        if [ ! -e $SHA_SUM_FILE ]
-        then
-                echo "Could not find NVIDIA display driver sha1 file! (pwd $(pwd))"
-                exit 1
-        fi
- 
-        SHA_SUM_FILE_VAR="$(cat $SHA_SUM_FILE | awk '{print $1}')"
-        if [ -z $SHA_SUM_FILE_VAR ]
-        then
-                echo "Could not get secure hash from ${SHA_SUM_FILE}!"
-                exit 1
-        fi
-
-        SHA_SUM_VAR="$(sha1sum $NVDD_FILE | awk '{print $1}')"
-        if [ -z $SHA_SUM_VAR ]
-        then
-                echo "Could not get secure hash from ${NVDD_FILE}!"
-                exit 1
-        fi
-
-        if [ $SHA_SUM_FILE_VAR != $SHA_SUM_VAR ]
-        then
-                echo "Secure hashes are not equal!"
-                exit 1
-        fi
-
-        echo "Secure hash of $NVDD_FILE seems to be ok ..."
-
-        # remove existing display driver source dir ...
-        if [ -d $NVDD_DIR ]
-        then
-                rm -rf $NVDD_DIR
-        fi
-
-        # extracting display driver sources ...
-        tar -xvf $NVDD_FILE
+        L4T_setup_nvidia_driver
 }
 
 setup_flash_prerequisites() {
-        case $VC_MIPI_SOM in
-        OrinNano4GB_SD|OrinNano8GB_SD|OrinNano4GB_NVME|OrinNano8GB_NVME|OrinNX8GB|OrinNX16GB)
-                echo "Setting up flash prerequisites ..."
-                sudo ./tools/l4t_flash_prerequisites.sh
-                ;;
-        *)
-                return 0
-                ;;
-        esac
+        L4T_setup_flash_prerequisites
 }
 
 setup_som_carrier_specifics() {
 
-        #bazo modify
-        case $VC_MIPI_SOM in
-        OrinNano4GB_SD|OrinNano8GB_SD|OrinNano4GB_NVME|OrinNano8GB_NVME|OrinNX8GB|OrinNX16GB)
-#                EPROM_FILE=${BSP_DIR}/Linux_for_Tegra/bootloader/t186ref/BCT/tegra234-mb2-bct-misc-p3767-0000.dts
-                EPROM_FILE=${BSP_DIR}/Linux_for_Tegra/bootloader/generic/BCT/tegra234-mb2-bct-misc-p3767-0000.dts
-                if [ ! -e ${EPROM_FILE} ]
-                then
-                        echo "Could not find ${EPROM_FILE}! (pwd $(pwd))"
-                        exit 1
-                fi
+        L4T_setup_eeprom_size
 
-                echo "Modifying ${EPROM_FILE} ..."
-                # JNX42 has no EEPROM
-                if [[ "Auvidea_JNX42" = $VC_MIPI_BOARD ]]
-                then
-                        # Setting EPROM size to 0x0
-                        sed -i 's/cvb_eeprom_read_size = <0x100>;/cvb_eeprom_read_size = <0x0>;/' ${EPROM_FILE}
-                else
-                        # Setting EPROM size to 100x0
-                        sed -i 's/cvb_eeprom_read_size = <0x0>;/cvb_eeprom_read_size = <0x100>;/' ${EPROM_FILE}
-                fi
+        L4T_setup_gpio_file
 
-                case $VC_MIPI_BSP in
-                35.4.1|35.5.0)
-                        GPIO_FILE=${BSP_DIR}/Linux_for_Tegra/bootloader/t186ref/BCT/tegra234-mb2-bct-scr-p3767-0000.dts
-                        if [ ! -e ${GPIO_FILE} ]
-                        then
-                                echo "Could not find ${GPIO_FILE}! (pwd $(pwd))"
-                                exit 1
-                        fi
-
-                        GPIO_PART_STR="reg@322 "
-
-                        GPIO_STR1="        reg@322 { /* GPIO_M_SCR_00_0 */"
-                        GPIO_STR2="            exclusion-info = <2>;"
-                        GPIO_STR3="            value = <0x38009696>;"
-                        GPIO_STR4="        };"
-
-                        FIND_RESULT=0
-                        FIND_RESULT=$(grep -q "${GPIO_PART_STR}" ${GPIO_FILE}; echo $?)
-
-                        if [[ "Auvidea_JNX42" = $VC_MIPI_BOARD ]]
-                        then
-                                if [[ 1 == $FIND_RESULT ]]
-                                then
-                                        echo "GPIO_M_SCR_00_0 missing, trying to insert..."
-
-                                        sed '/tfc {/r'<(
-                                                echo "$GPIO_STR1"
-                                                echo "$GPIO_STR2"
-                                                echo "$GPIO_STR3"
-                                                echo "$GPIO_STR4"
-                                                echo ""
-                                        ) -i -- ${GPIO_FILE}
-                                fi
-                        else
-                                if [[ 0 == $FIND_RESULT ]]
-                                then
-                                        echo "GPIO_M_SCR_00_0 already present, trying to remove..."
-
-                                        sed -i -e "/$GPIO_PART_STR/,+4d" ${GPIO_FILE}
-                                fi
-
-                        fi
-                        ;;
-                36.2.0)
-                        ORIN_NANO_CONF_FILE=${BSP_DIR}/Linux_for_Tegra/p3768-0000-p3767-0000-a0.conf
-                        if [ ! -e ${ORIN_NANO_CONF_FILE} ]
-                        then
-                                echo "Could not find ${ORIN_NANO_CONF_FILE}! (pwd $(pwd))"
-                                exit 1
-                        fi
-
-                        CONF_PART_STR='OVERLAY_DTB_FILE="${OVERLAY_DTB_FILE},tegra234-p3767-camera-p3768-vc_mipi-dual.dtbo";'
-
-                        echo "CONF_PART_STR: ${CONF_PART_STR}"
-                        FIND_RESULT=0
-                        FIND_RESULT=$(grep -q "${CONF_PART_STR}" ${ORIN_NANO_CONF_FILE}; echo $?)
-                        CONF_STRING=""
-                        if [[ 1 == $FIND_RESULT ]]
-                        then
-                                echo "conf_part_string missing, trying to insert..."
-                                echo ${CONF_PART_STR} >> ${ORIN_NANO_CONF_FILE}
-                        fi
-                ;;
-                *)
-                        #nothing to do
-                        ;;
-                esac
-                ;;
-        *)
-                return 0
-                ;;
-        esac
+        L4T_setup_conf_file
 }
 
+#bazo nur 36.2
 setup_nvidia_prereq_on_target() {
         if [[ "36.2.0" != $VC_MIPI_BSP ]]
         then
@@ -415,7 +248,7 @@ setup_bsp() {
         sudo tar xjvf $RFS_FILE -C $BSP_DIR/Linux_for_Tegra/rootfs
 
         cd $BSP_DIR/Linux_for_Tegra
-        setup_flash_prerequisites
+        L4T_setup_flash_prerequisites
 
         sudo ./apply_binaries.sh
 
@@ -461,6 +294,14 @@ setup_target() {
         $TARGET_SHELL chmod +x $TARGET_DIR/*.sh
 }
 
+make_test() {
+        NP=$(nproc)
+        echo "NP: $NP"
+        NP_=`expr $NP - 2`
+        echo "NP_: $NP_"
+        if [[ $NP_ -gt 0 ]]; then echo "ok"; fi
+}
+
 while [ $# != 0 ] ; do
         option="$1"
         shift
@@ -496,12 +337,12 @@ while [ $# != 0 ] ; do
                 ;;
         -n)
                 configure
-                setup_nvidia_driver
+#                setup_nvidia_driver
                 exit 0
                 ;;
         -b)
                 configure
-                setup_som_carrier_specifics
+#                setup_som_carrier_specifics
                 exit 0
                 ;;
         -z)
@@ -509,10 +350,15 @@ while [ $# != 0 ] ; do
                 setup_nvidia_prereq_on_target
                 exit 0
                 ;;
+        -q)
+                configure
+                make_test
+                exit 0
+                ;;
         -o|--host)
                 configure
-                install_system_tools
-                setup_toolchain
+#                install_system_tools
+#                setup_toolchain
                 setup_user_credentials
                 setup_bsp
 # If the user likes to pre-install the test directory with test scripts 
@@ -520,7 +366,8 @@ while [ $# != 0 ] ; do
 # the following function can be activated.
 #                setup_target_files
                 setup_kernel
-#                setup_nvidia_driver
+
+                setup_nvidia_driver
                 setup_som_carrier_specifics
                 setup_nvidia_prereq_on_target
                 exit 0

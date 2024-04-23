@@ -1,5 +1,7 @@
 #!/bin/bash
 
+. $BIN_DIR/config/L4T/common_functions.sh
+
 DEV_URL=https://developer.download.nvidia.com/embedded/L4T/r35_Release_v2.1
 
 case $VC_MIPI_SOM in
@@ -18,3 +20,4 @@ RFS_FILE_CHECKSUM="837219c3a0b080a224f77cc47118a938"
 SRC_FILE_CHECKSUM="7098c5a31cee5e849ae383887ce13a97"
 
 . $BIN_DIR/config/L4T/urls_35.1.0+.sh
+

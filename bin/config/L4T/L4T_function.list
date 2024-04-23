@@ -1,0 +1,12 @@
+L4T_extract_kernel_packages
+L4T_add_kernel_to_repo
+L4T_setup_nvidia_driver
+L4T_setup_flash_prerequisites
+L4T_setup_eeprom_size
+L4T_setup_gpio_file
+L4T_setup_conf_file
+L4T_build_device_tree
+L4T_build_kernel
+L4T_build_modules
+L4T_install_modules
+L4T_build_nvidia_driver

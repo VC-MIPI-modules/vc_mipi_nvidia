@@ -315,12 +315,13 @@ struct device *vc_core_get_sen_device(struct vc_cam *cam)
 {
         return &cam->ctrl.client_sen->dev;
 }
-EXPORT_SYMBOL_GPL(vc_core_get_sen_device);
+EXPORT_SYMBOL(vc_core_get_sen_device);
 
 struct device *vc_core_get_mod_device(struct vc_cam *cam)
 {
         return &cam->ctrl.client_mod->dev;
 }
+EXPORT_SYMBOL(vc_core_get_mod_device);
 
 static int vc_core_get_v4l2_fmt(__u32 code, char *buf)
 {
@@ -433,7 +434,7 @@ int vc_core_set_format(struct vc_cam *cam, __u32 code)
 
         return 0;
 }
-EXPORT_SYMBOL_GPL(vc_core_set_format);
+EXPORT_SYMBOL(vc_core_set_format);
 
 __u32 vc_core_get_format(struct vc_cam *cam)
 {
@@ -447,6 +448,7 @@ __u32 vc_core_get_format(struct vc_cam *cam)
 
         return code;
 }
+EXPORT_SYMBOL(vc_core_get_format);
 
 int vc_core_set_frame(struct vc_cam *cam, __u32 left, __u32 top, __u32 width, __u32 height)
 {
@@ -487,6 +489,7 @@ int vc_core_set_frame(struct vc_cam *cam, __u32 left, __u32 top, __u32 width, __
 
         return 0;
 }
+EXPORT_SYMBOL(vc_core_set_frame);
 
 struct vc_frame *vc_core_get_frame(struct vc_cam *cam)
 {
@@ -497,6 +500,7 @@ struct vc_frame *vc_core_get_frame(struct vc_cam *cam)
 
         return frame;
 }
+EXPORT_SYMBOL(vc_core_get_frame);
 
 int vc_core_set_num_lanes(struct vc_cam *cam, __u32 number)
 {
@@ -518,7 +522,7 @@ int vc_core_set_num_lanes(struct vc_cam *cam, __u32 number)
         vc_err(dev, "%s(): Number of lanes %u not supported!\n", __FUNCTION__, number);
         return -EINVAL;
 }
-EXPORT_SYMBOL_GPL(vc_core_set_num_lanes);
+EXPORT_SYMBOL(vc_core_set_num_lanes);
 
 __u32 vc_core_get_num_lanes(struct vc_cam *cam)
 {
@@ -528,6 +532,7 @@ __u32 vc_core_get_num_lanes(struct vc_cam *cam)
         vc_info(dev, "%s(): Get number of lanes: %u\n", __FUNCTION__, state->num_lanes);
         return state->num_lanes;
 }
+EXPORT_SYMBOL(vc_core_get_num_lanes);
 
 int vc_core_set_framerate(struct vc_cam *cam, __u32 framerate)
 {
@@ -547,7 +552,7 @@ int vc_core_set_framerate(struct vc_cam *cam, __u32 framerate)
 
         return vc_sen_set_exposure(cam, cam->state.exposure);
 }
-EXPORT_SYMBOL_GPL(vc_core_set_framerate);
+EXPORT_SYMBOL(vc_core_set_framerate);
 
 __u32 vc_core_get_framerate(struct vc_cam *cam)
 {
@@ -565,6 +570,7 @@ __u32 vc_core_get_framerate(struct vc_cam *cam)
         vc_info(dev, "%s(): Get framerate %u mHz\n", __FUNCTION__, framerate);
         return framerate;
 }
+EXPORT_SYMBOL(vc_core_get_framerate);
 
 __u32 vc_core_calculate_max_exposure(struct vc_cam *cam, __u8 num_lanes, __u8 format)
 {
@@ -714,6 +720,7 @@ static struct i2c_client *vc_mod_get_client(struct device *dev, struct i2c_adapt
 
         return NULL;
 }
+EXPORT_SYMBOL(vc_mod_get_client);
 
 int vc_mod_set_power(struct vc_cam *cam, int on)
 {
@@ -930,7 +937,7 @@ int vc_core_init(struct vc_cam *cam, struct i2c_client *client)
         vc_notice(&ctrl->client_mod->dev, "VC MIPI Core successfully initialized");
         return 0;
 }
-EXPORT_SYMBOL_GPL(vc_core_init);
+EXPORT_SYMBOL(vc_core_init);
 
 static int vc_mod_write_exposure(struct i2c_client *client, __u32 value)
 {
@@ -1017,6 +1024,7 @@ static int vc_mod_reset_module(struct vc_cam *cam, __u8 mode)
 
         return ret;
 }
+EXPORT_SYMBOL(vc_mod_reset_module);
 
 int vc_mod_set_mode(struct vc_cam *cam, int *reset)
 {
@@ -1081,7 +1089,7 @@ int vc_mod_set_mode(struct vc_cam *cam, int *reset)
 
         return ret;
 }
-EXPORT_SYMBOL_GPL(vc_mod_set_mode);
+EXPORT_SYMBOL(vc_mod_set_mode);
 
 int vc_mod_is_trigger_enabled(struct vc_cam *cam)
 {
@@ -1138,7 +1146,7 @@ int vc_mod_set_trigger_mode(struct vc_cam *cam, int mode)
 
         return 0;
 }
-EXPORT_SYMBOL_GPL(vc_mod_set_trigger_mode);
+EXPORT_SYMBOL(vc_mod_set_trigger_mode);
 
 int vc_mod_get_trigger_mode(struct vc_cam *cam)
 {
@@ -1154,6 +1162,7 @@ int vc_mod_get_trigger_mode(struct vc_cam *cam)
         }
         return 0;
 }
+EXPORT_SYMBOL(vc_mod_get_trigger_mode);
 
 int vc_mod_set_single_trigger(struct vc_cam *cam)
 {
@@ -1164,7 +1173,7 @@ int vc_mod_set_single_trigger(struct vc_cam *cam)
 
         return i2c_write_reg(dev, client, MOD_REG_EXTTRIG, REG_TRIGGER_SINGLE, __FUNCTION__);
 }
-EXPORT_SYMBOL_GPL(vc_mod_set_single_trigger);
+EXPORT_SYMBOL(vc_mod_set_single_trigger);
 
 int vc_mod_is_io_enabled(struct vc_cam *cam)
 {
@@ -1219,7 +1228,7 @@ int vc_mod_set_io_mode(struct vc_cam *cam, int mode)
 
         return 0;
 }
-EXPORT_SYMBOL_GPL(vc_mod_set_io_mode);
+EXPORT_SYMBOL(vc_mod_set_io_mode);
 
 int vc_mod_get_io_mode(struct vc_cam *cam)
 {
@@ -1229,6 +1238,7 @@ int vc_mod_get_io_mode(struct vc_cam *cam)
         }
         return 0;
 }
+EXPORT_SYMBOL(vc_mod_get_io_mode);
 
 
 // ------------------------------------------------------------------------------------------------
@@ -1266,6 +1276,7 @@ static int vc_sen_write_mode(struct vc_ctrl *ctrl, int mode)
 
         return ret;
 }
+EXPORT_SYMBOL(vc_sen_write_mode);
 
 static int vc_sen_read_image_size(struct vc_ctrl *ctrl, struct vc_frame *size)
 {
@@ -1330,7 +1341,7 @@ int vc_sen_set_roi(struct vc_cam *cam)
 
         return 0;
 }
-EXPORT_SYMBOL_GPL(vc_sen_set_roi);
+EXPORT_SYMBOL(vc_sen_set_roi);
 
 
 #ifdef READ_VMAX
@@ -1420,7 +1431,7 @@ int vc_sen_set_gain(struct vc_cam *cam, int gain)
         cam->state.gain = gain;
         return 0;
 }
-EXPORT_SYMBOL_GPL(vc_sen_set_gain);
+EXPORT_SYMBOL(vc_sen_set_gain);
 
 //int vc_sen_set_blacklevel(struct vc_cam *cam, int blacklevel)
 int vc_sen_set_blacklevel(struct vc_cam *cam, __u32 blacklevel_rel)
@@ -1448,7 +1459,7 @@ int vc_sen_set_blacklevel(struct vc_cam *cam, __u32 blacklevel_rel)
         cam->state.blacklevel = blacklevel_rel;
         return 0;
 }
-EXPORT_SYMBOL_GPL(vc_sen_set_blacklevel);
+EXPORT_SYMBOL(vc_sen_set_blacklevel);
 
 int vc_sen_start_stream(struct vc_cam *cam)
 {
@@ -1485,7 +1496,7 @@ int vc_sen_start_stream(struct vc_cam *cam)
 
         return ret;
 }
-EXPORT_SYMBOL_GPL(vc_sen_start_stream);
+EXPORT_SYMBOL(vc_sen_start_stream);
 
 int vc_sen_stop_stream(struct vc_cam *cam)
 {
@@ -1510,7 +1521,7 @@ int vc_sen_stop_stream(struct vc_cam *cam)
 
         return ret;
 }
-EXPORT_SYMBOL_GPL(vc_sen_stop_stream);
+EXPORT_SYMBOL(vc_sen_stop_stream);
 
 // ------------------------------------------------------------------------------------------------
 
@@ -1760,5 +1771,5 @@ int vc_sen_set_exposure(struct vc_cam *cam, int exposure_us)
 
         return ret;
 }
-EXPORT_SYMBOL_GPL(vc_sen_set_exposure);
+EXPORT_SYMBOL(vc_sen_set_exposure);
 MODULE_LICENSE("GPL v2");

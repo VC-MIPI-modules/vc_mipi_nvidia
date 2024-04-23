@@ -1,19 +1,19 @@
-From fcc04be7cd87dd852f2bc954822ff617b1e5fcc8 Mon Sep 17 00:00:00 2001
+From 9ed1a76da228d9b3eb9ec77ff417ecb5e5f6846d Mon Sep 17 00:00:00 2001
 From: "/setup.sh" <support@vision-components.com>
-Date: Wed, 20 Mar 2024 15:18:11 +0100
+Date: Mon, 27 Jun 2022 14:07:36 +0200
 Subject: [PATCH] Added cropping position (left, top) to sensor image
  properties.
 
 ---
  .../media/platform/tegra/camera/sensor_common.c    | 14 ++++++++++++++
- nvidia-oot/include/media/tegra-v4l2-camera.h       |  2 ++
+ kernel/nvidia/include/media/tegra-v4l2-camera.h    |  2 ++
  2 files changed, 16 insertions(+)
 
-diff --git a/nvidia-oot/drivers/media/platform/tegra/camera/sensor_common.c b/nvidia-oot/drivers/media/platform/tegra/camera/sensor_common.c
-index 92cc2fdf9..8465f9c12 100644
---- a/nvidia-oot/drivers/media/platform/tegra/camera/sensor_common.c
-+++ b/nvidia-oot/drivers/media/platform/tegra/camera/sensor_common.c
-@@ -286,6 +286,20 @@ static int sensor_common_parse_image_props(
+diff --git a/kernel/nvidia/drivers/media/platform/tegra/camera/sensor_common.c b/kernel/nvidia/drivers/media/platform/tegra/camera/sensor_common.c
+index 4d8cf4c..f02cd2e 100644
+--- a/kernel/nvidia/drivers/media/platform/tegra/camera/sensor_common.c
++++ b/kernel/nvidia/drivers/media/platform/tegra/camera/sensor_common.c
+@@ -264,6 +264,20 @@ static int sensor_common_parse_image_props(
  	char pix_format[24];
  	u32 value = 0;
  
@@ -34,11 +34,11 @@ index 92cc2fdf9..8465f9c12 100644
  	err = read_property_u32(node, "active_w",
  		&image->width);
  	if (err) {
-diff --git a/nvidia-oot/include/media/tegra-v4l2-camera.h b/nvidia-oot/include/media/tegra-v4l2-camera.h
-index 3521ed376..4605680d3 100644
---- a/nvidia-oot/include/media/tegra-v4l2-camera.h
-+++ b/nvidia-oot/include/media/tegra-v4l2-camera.h
-@@ -109,6 +109,8 @@ struct sensor_signal_properties {
+diff --git a/kernel/nvidia/include/media/tegra-v4l2-camera.h b/kernel/nvidia/include/media/tegra-v4l2-camera.h
+index a433ac0..bf419ea 100644
+--- a/kernel/nvidia/include/media/tegra-v4l2-camera.h
++++ b/kernel/nvidia/include/media/tegra-v4l2-camera.h
+@@ -117,6 +117,8 @@ struct sensor_signal_properties {
  };
  
  struct sensor_image_properties {
@@ -48,5 +48,5 @@ index 3521ed376..4605680d3 100644
  	__u32 height;
  	__u32 line_length;
 -- 
-2.34.1
+2.25.1
 

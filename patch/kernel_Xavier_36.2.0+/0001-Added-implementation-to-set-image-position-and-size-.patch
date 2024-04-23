@@ -1,18 +1,18 @@
-From 1c168b635ce32f0ccb6e2aed8a52151373d32165 Mon Sep 17 00:00:00 2001
+From 6c5472d652a5c079783e8bba1b4ca372a325c0d6 Mon Sep 17 00:00:00 2001
 From: "/setup.sh" <support@vision-components.com>
-Date: Thu, 7 Jul 2022 18:28:23 +0200
-Subject: [PATCH] Added implementation to set image position and size by
+Date: Wed, 20 Mar 2024 15:31:18 +0100
+Subject: [PATCH 1/2] Added implementation to set image position and size by
  v4l2-ctl --set-fmt-video and --set-selection.
 
 ---
  .../media/platform/tegra/camera/vi/channel.c  | 114 +++++++++++++++++-
  1 file changed, 113 insertions(+), 1 deletion(-)
 
-diff --git a/kernel/nvidia/drivers/media/platform/tegra/camera/vi/channel.c b/kernel/nvidia/drivers/media/platform/tegra/camera/vi/channel.c
-index 120b91328..eca2257b4 100644
---- a/kernel/nvidia/drivers/media/platform/tegra/camera/vi/channel.c
-+++ b/kernel/nvidia/drivers/media/platform/tegra/camera/vi/channel.c
-@@ -1973,6 +1973,56 @@ __tegra_channel_set_format(struct tegra_channel *chan,
+diff --git a/nvidia-oot/drivers/media/platform/tegra/camera/vi/channel.c b/nvidia-oot/drivers/media/platform/tegra/camera/vi/channel.c
+index c4da4119c..d78196edb 100644
+--- a/nvidia-oot/drivers/media/platform/tegra/camera/vi/channel.c
++++ b/nvidia-oot/drivers/media/platform/tegra/camera/vi/channel.c
+@@ -2120,6 +2120,56 @@ __tegra_channel_set_format(struct tegra_channel *chan,
  	return ret;
  }
  
@@ -69,7 +69,7 @@ index 120b91328..eca2257b4 100644
  static int
  tegra_channel_set_format(struct file *file, void *fh,
  			struct v4l2_format *format)
-@@ -1980,7 +2030,9 @@ tegra_channel_set_format(struct file *file, void *fh,
+@@ -2127,7 +2177,9 @@ tegra_channel_set_format(struct file *file, void *fh,
  	struct tegra_channel *chan = video_drvdata(file);
  	int ret = 0;
  
@@ -80,7 +80,7 @@ index 120b91328..eca2257b4 100644
  	ret = __tegra_channel_try_format(chan, &format->fmt.pix);
  	if (ret)
  		return ret;
-@@ -1991,6 +2043,64 @@ tegra_channel_set_format(struct file *file, void *fh,
+@@ -2138,6 +2190,64 @@ tegra_channel_set_format(struct file *file, void *fh,
  	return __tegra_channel_set_format(chan, &format->fmt.pix);
  }
  
@@ -145,7 +145,7 @@ index 120b91328..eca2257b4 100644
  static int tegra_channel_subscribe_event(struct v4l2_fh *fh,
  				  const struct v4l2_event_subscription *sub)
  {
-@@ -2097,6 +2207,8 @@ static const struct v4l2_ioctl_ops tegra_channel_ioctl_ops = {
+@@ -2226,6 +2336,8 @@ static const struct v4l2_ioctl_ops tegra_channel_ioctl_ops = {
  	.vidioc_g_fmt_vid_cap		= tegra_channel_get_format,
  	.vidioc_s_fmt_vid_cap		= tegra_channel_set_format,
  	.vidioc_try_fmt_vid_cap		= tegra_channel_try_format,
@@ -155,5 +155,5 @@ index 120b91328..eca2257b4 100644
  	.vidioc_prepare_buf		= vb2_ioctl_prepare_buf,
  	.vidioc_querybuf		= vb2_ioctl_querybuf,
 -- 
-2.25.1
+2.34.1
 
