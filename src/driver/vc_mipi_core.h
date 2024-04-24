@@ -204,6 +204,7 @@ struct vc_cam {
 // --- Helper functions to allow i2c communication for customization ----------
 int vc_read_i2c_reg(struct i2c_client *client, const __u16 addr);
 int vc_write_i2c_reg(struct i2c_client *client, const __u16 addr, const __u8 value);
+struct i2c_client *vc_mod_get_client(struct device *dev, struct i2c_adapter *adapter, __u8 i2c_addr);
 
 // --- Helper functions for internal data structures --------------------------
 void vc_core_print_debug(struct vc_cam *cam);
@@ -225,6 +226,7 @@ __u32 vc_core_get_retrigger(struct vc_cam *cam, __u8 num_lanes, __u8 format);
 // --- Function to initialize the vc core --------------------------------------
 int vc_core_init(struct vc_cam *cam, struct i2c_client *client);
 int vc_core_update_controls(struct vc_cam *cam);
+int vc_mod_reset_module(struct vc_cam *cam, __u8 mode);
 
 // --- Functions for the VC MIPI Controller Module ----------------------------
 int vc_mod_set_mode(struct vc_cam *cam, int *reset);

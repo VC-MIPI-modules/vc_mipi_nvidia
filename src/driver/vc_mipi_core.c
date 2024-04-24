@@ -679,7 +679,7 @@ __u32 vc_core_get_retrigger(struct vc_cam *cam, __u8 num_lanes, __u8 format)
 // ------------------------------------------------------------------------------------------------
 //  Helper Functions for the VC MIPI Controller Module
 
-static struct i2c_client *vc_mod_get_client(struct device *dev, struct i2c_adapter *adapter, __u8 i2c_addr)
+struct i2c_client *vc_mod_get_client(struct device *dev, struct i2c_adapter *adapter, __u8 i2c_addr)
 {
         struct i2c_client *client;
         struct i2c_board_info info = {
@@ -1008,7 +1008,7 @@ static int vc_mod_write_mode(struct i2c_client *client, __u8 mode)
         return ret;
 }
 
-static int vc_mod_reset_module(struct vc_cam *cam, __u8 mode)
+int vc_mod_reset_module(struct vc_cam *cam, __u8 mode)
 {
         struct vc_ctrl *ctrl = &cam->ctrl;
         struct i2c_client *client = ctrl->client_mod;
@@ -1244,7 +1244,7 @@ EXPORT_SYMBOL(vc_mod_get_io_mode);
 // ------------------------------------------------------------------------------------------------
 //  Helper Functions for the VC MIPI Sensors
 
-static int vc_sen_write_mode(struct vc_ctrl *ctrl, int mode)
+int vc_sen_write_mode(struct vc_ctrl *ctrl, int mode)
 {
         struct i2c_client *client = ctrl->client_sen;
         struct device *dev = &client->dev;
