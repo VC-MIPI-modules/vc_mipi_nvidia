@@ -393,7 +393,8 @@ If you want to change some settings of a camera in the device tree, please follo
      ./flash.sh --dt
    ```
 
-   > Regarding to Jetpack5 and higher, please have a look at the section Annotations.
+   > Regarding to Jetpack5 and higher, please have a look at the section Annotations.<br>
+   > **[Flashing the device](doc/DEVICE_FLASHING.md)** 
 
 ## Using long exposure times or external trigger mode with long waiting times (> 5 seconds)
 
