@@ -1,0 +1,39 @@
+From b8b1334f347d2bf1104b4df1a4b971e4605c9efb Mon Sep 17 00:00:00 2001
+From: "/setup.sh" <support@vision-components.com>
+Date: Thu, 15 Feb 2024 12:15:10 +0100
+Subject: [PATCH] Increased tegra channel timeout.
+
+---
+ kernel/nvidia/drivers/media/platform/tegra/camera/vi/vi4_fops.c | 2 +-
+ kernel/nvidia/drivers/media/platform/tegra/camera/vi/vi5_fops.c | 2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/kernel/nvidia/drivers/media/platform/tegra/camera/vi/vi4_fops.c b/kernel/nvidia/drivers/media/platform/tegra/camera/vi/vi4_fops.c
+index 9bae5563c..75a0fa48a 100644
+--- a/kernel/nvidia/drivers/media/platform/tegra/camera/vi/vi4_fops.c
++++ b/kernel/nvidia/drivers/media/platform/tegra/camera/vi/vi4_fops.c
+@@ -1106,7 +1106,7 @@ static int vi4_channel_start_streaming(struct vb2_queue *vq, u32 count)
+ 	}
+ 
+ 	chan->sequence = 0;
+-	chan->timeout = msecs_to_jiffies(200);
++	chan->timeout = msecs_to_jiffies(5000);
+ 	if (!chan->low_latency)
+ 		tegra_channel_init_ring_buffer(chan);
+ 
+diff --git a/kernel/nvidia/drivers/media/platform/tegra/camera/vi/vi5_fops.c b/kernel/nvidia/drivers/media/platform/tegra/camera/vi/vi5_fops.c
+index fc0079738..b31cdd3ce 100644
+--- a/kernel/nvidia/drivers/media/platform/tegra/camera/vi/vi5_fops.c
++++ b/kernel/nvidia/drivers/media/platform/tegra/camera/vi/vi5_fops.c
+@@ -39,7 +39,7 @@
+ #define VI_CHANNEL_DEV "/dev/capture-vi-channel"
+ #define VI_CHAN_PATH_MAX 40
+ 
+-#define CAPTURE_TIMEOUT_MS	2500
++#define CAPTURE_TIMEOUT_MS	5000
+ 
+ static const struct vi_capture_setup default_setup = {
+ 	.channel_flags = 0
+-- 
+2.34.1
+

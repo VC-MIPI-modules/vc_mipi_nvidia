@@ -1,0 +1,37 @@
+From 2b0fbfe19c1d0a924e86b1a741720b961e7d00f3 Mon Sep 17 00:00:00 2001
+From: "/setup.sh" <support@vision-components.com>
+Date: Thu, 15 Feb 2024 12:22:42 +0100
+Subject: [PATCH] Modified tegra194-p2888-0001-p2822-0000.dts to integrate VC
+ Mipi driver.
+
+---
+ .../kernel-dts/tegra194-p2888-0001-p2822-0000.dts    | 12 +++++++++++-
+ 1 file changed, 11 insertions(+), 1 deletion(-)
+
+diff --git a/hardware/nvidia/platform/t19x/galen/kernel-dts/tegra194-p2888-0001-p2822-0000.dts b/hardware/nvidia/platform/t19x/galen/kernel-dts/tegra194-p2888-0001-p2822-0000.dts
+index a46befcb8..d6cd9c535 100644
+--- a/hardware/nvidia/platform/t19x/galen/kernel-dts/tegra194-p2888-0001-p2822-0000.dts
++++ b/hardware/nvidia/platform/t19x/galen/kernel-dts/tegra194-p2888-0001-p2822-0000.dts
+@@ -17,8 +17,18 @@
+ /*
+  * Top level DTS file for CVM:P2888-0001 and CVB:P2822-0000.
+  */
++
++#define VC_MIPI 1
++
+ #include "common/tegra194-p2888-0001-p2822-0000-common.dtsi"
+-#include "common/tegra194-p2822-camera-modules.dtsi"
++
++#ifdef VC_MIPI
++	#include <t19x-common-modules/tegra194-camera-vc-mipi-cam.dtsi>
++#else
++	#include "common/tegra194-p2822-camera-modules.dtsi"
++	#include "t19x-common-modules/tegra194-camera-plugin-manager.dtsi"
++#endif
++
+ #include "common/tegra194-audio-p2822-0000.dtsi"
+ 
+ #if defined(LINUX_VERSION) && LINUX_VERSION >= 419
+-- 
+2.34.1
+

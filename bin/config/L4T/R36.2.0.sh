@@ -31,9 +31,13 @@ SRC_FILE_CHECKSUM="b80b2a2394f7b7abdea6161becfe345a"
 #configure
 PATCHES+=('kernel_Xavier_36.2.0+')
 
-#setup
 KERNEL_SOURCE=$BSP_DIR/Linux_for_Tegra/source
-DRIVER_DST_DIR=$KERNEL_SOURCE/nvidia-oot/drivers/media/i2c
+
+DTSI_FILE_DICT+=(["NV_DevKit_OrinNano"]="tegra234-p3767-camera-p3768-vc_mipi-dual.dts")
+DTSI_DEST_DICT+=(["NV_DevKit_OrinNano"]="$KERNEL_SOURCE/hardware/nvidia/t23x/nv-public/overlay")
+
+#setup
+DRIVER_DST_DIR=$KERNEL_SOURCE/nvidia-oot/drivers/media/i2c/vc_mipi
 export KERNEL_HEADERS=$KERNEL_SOURCE/kernel/kernel-jammy-src
 
 KERNEL_DIR=kernel/kernel-jammy-src/
@@ -41,15 +45,12 @@ MODULES_BSP=$BSP_DIR/Linux_for_Tegra/rootfs/usr
 
 DTB_OUT=$KERNEL_OUT/arch/arm64/boot/dts/nvidia
 
-#bazo vorerst nur hier
 ROOTFS_DIR=$BSP_DIR/Linux_for_Tegra/rootfs
-
 
 ORIN_FLASH_CONFIG_FOLDER="generic"
 ORIN_FLASH_PARTITION_MMC="mmcblk0p1"
 ORIN_FLASH_PARTITION_NVME="nvme0n0p1"
 
-#setup
 function L4T_extract_kernel_packages {
         echo "Extracting kernel packages ($VC_MIPI_BSP) ..."
 

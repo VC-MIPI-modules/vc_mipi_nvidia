@@ -33,6 +33,69 @@ else
         exit 1
 fi
 
+DTSI_FILE_DICT+=( 
+         ["Auvidea_J20_AGXXavier"]="tegra194-camera-vc-mipi-cam.dtsi" 
+               ["Auvidea_J20_TX2"]="tegra186-camera-vc-mipi-cam.dtsi"
+            ["Auvidea_JNX30_Nano"]="tegra210-camera-vc-mipi-cam.dtsi"
+            ["Auvidea_JNX42_Nano"]="tegra210-camera-vc-mipi-cam.dtsi"
+        ["Auvidea_JNX30_XavierNX"]="tegra194-camera-vc-mipi-cam.dtsi"
+        ["Auvidea_JNX42_XavierNX"]="tegra194-camera-vc-mipi-cam.dtsi"
+#          ["Auvidea_JNX42_OrinNX"]="tegra234-camera-vc-mipi-cam.dtsi"
+#        ["Auvidea_JNX42_OrinNano"]="tegra234-camera-vc-mipi-cam.dtsi"
+                ["NV_DevKit_Nano"]="tegra210-camera-vc-mipi-cam.dtsi" 
+#bazo modify
+#            ["NV_DevKit_OrinNano"]="tegra234-camera-vc-mipi-cam.dtsi"
+#            ["NV_DevKit_OrinNano"]="tegra234-p3767-camera-p3768-vc_mipi-dual.dts"
+            ["NV_DevKit_XavierNX"]="tegra194-camera-vc-mipi-cam.dtsi"
+          ["Auvidea_JNX30D_TX2NX"]="tegra186-camera-vc-mipi-cam.dtsi"
+)
+
+DTSI_DEST_DICT+=( 
+         ["Auvidea_J20_AGXXavier"]="$KERNEL_SOURCE/hardware/nvidia/platform/t19x/common/kernel-dts/t19x-common-modules" 
+               ["Auvidea_J20_TX2"]="$KERNEL_SOURCE/hardware/nvidia/platform/t18x/common/kernel-dts/t18x-common-modules"
+            ["Auvidea_JNX30_Nano"]="$KERNEL_SOURCE/hardware/nvidia/platform/t210/porg/kernel-dts/porg-platforms"
+            ["Auvidea_JNX42_Nano"]="$KERNEL_SOURCE/hardware/nvidia/platform/t210/porg/kernel-dts/porg-platforms"
+        ["Auvidea_JNX30_XavierNX"]="$KERNEL_SOURCE/hardware/nvidia/platform/t19x/jakku/kernel-dts/common"
+        ["Auvidea_JNX42_XavierNX"]="$KERNEL_SOURCE/hardware/nvidia/platform/t19x/jakku/kernel-dts/common"
+#          ["Auvidea_JNX42_OrinNX"]="$KERNEL_SOURCE/hardware/nvidia/platform/t23x/p3768/kernel-dts/cvb"
+#        ["Auvidea_JNX42_OrinNano"]="$KERNEL_SOURCE/hardware/nvidia/platform/t23x/p3768/kernel-dts/cvb"
+                ["NV_DevKit_Nano"]="$KERNEL_SOURCE/hardware/nvidia/platform/t210/porg/kernel-dts/porg-platforms" 
+#bazo modify
+#            ["NV_DevKit_OrinNano"]="$KERNEL_SOURCE/hardware/nvidia/platform/t23x/p3768/kernel-dts/cvb"
+#            ["NV_DevKit_OrinNano"]="$KERNEL_SOURCE/hardware/nvidia/t23x/nv-public/overlay"
+            ["NV_DevKit_XavierNX"]="$KERNEL_SOURCE/hardware/nvidia/platform/t19x/jakku/kernel-dts/common"
+          ["Auvidea_JNX30D_TX2NX"]="$KERNEL_SOURCE/hardware/nvidia/platform/t18x/lanai/kernel-dts/common"
+)
+
+
+
+
+
+#echo "bazo KERNEL_SOURCE after source: ${KERNEL_SOURCE}"
+
+for key in "${!DTSI_FILE_DICT[@]}" 
+do 
+        echo "key: ${key}        value: ${DTSI_FILE_DICT[$key]}"
+#        echo "value: ${DTSI_FILE_DICT[$key]}"
+done
+
+for key in "${!DTSI_DEST_DICT[@]}" 
+do 
+        echo "key: ${key}        value: ${DTSI_DEST_DICT[$key]}"
+#        echo "value: ${DTSI_DEST_DICT[$key]}"
+done
+
+
+
+if [[ ${!DTSI_FILE_DICT[@]} != ${!DTSI_DEST_DICT[@]} ]]
+then
+        echo "Integrity check of the dtsi dictionaries failed. Key list seems to be not consistent. Exiting."
+        exit 1
+fi
+
+
+
+
 #KERNEL_OUT=$KERNEL_SOURCE/build
 #MODULES_OUT=$KERNEL_SOURCE/modules
 
@@ -41,7 +104,7 @@ fi
 case $VC_MIPI_BSP in
 36.2.0)
         ;;
-35.1.0|35.2.1|35.3.1)
+35.1.0|35.2.1|35.3.1|35.4.1)
         ;;
         *)
         ;;
@@ -68,45 +131,6 @@ echo "  L4T Driver Package (BSP): $VC_MIPI_BSP"
 echo "------------------------------------------------------------"
 
 
-DTSI_FILE_DICT=( 
-         ["Auvidea_J20_AGXXavier"]="tegra194-camera-vc-mipi-cam.dtsi" 
-               ["Auvidea_J20_TX2"]="tegra186-camera-vc-mipi-cam.dtsi"
-            ["Auvidea_JNX30_Nano"]="tegra210-camera-vc-mipi-cam.dtsi"
-            ["Auvidea_JNX42_Nano"]="tegra210-camera-vc-mipi-cam.dtsi"
-        ["Auvidea_JNX30_XavierNX"]="tegra194-camera-vc-mipi-cam.dtsi"
-        ["Auvidea_JNX42_XavierNX"]="tegra194-camera-vc-mipi-cam.dtsi"
-          ["Auvidea_JNX42_OrinNX"]="tegra234-camera-vc-mipi-cam.dtsi"
-        ["Auvidea_JNX42_OrinNano"]="tegra234-camera-vc-mipi-cam.dtsi"
-                ["NV_DevKit_Nano"]="tegra210-camera-vc-mipi-cam.dtsi" 
-#bazo modify
-#            ["NV_DevKit_OrinNano"]="tegra234-camera-vc-mipi-cam.dtsi"
-            ["NV_DevKit_OrinNano"]="tegra234-p3767-camera-p3768-vc_mipi-dual.dts"
-            ["NV_DevKit_XavierNX"]="tegra194-camera-vc-mipi-cam.dtsi"
-          ["Auvidea_JNX30D_TX2NX"]="tegra186-camera-vc-mipi-cam.dtsi"
-)
-
-DTSI_DEST_DICT=( 
-         ["Auvidea_J20_AGXXavier"]="$KERNEL_SOURCE/hardware/nvidia/platform/t19x/common/kernel-dts/t19x-common-modules" 
-               ["Auvidea_J20_TX2"]="$KERNEL_SOURCE/hardware/nvidia/platform/t18x/common/kernel-dts/t18x-common-modules"
-            ["Auvidea_JNX30_Nano"]="$KERNEL_SOURCE/hardware/nvidia/platform/t210/porg/kernel-dts/porg-platforms"
-            ["Auvidea_JNX42_Nano"]="$KERNEL_SOURCE/hardware/nvidia/platform/t210/porg/kernel-dts/porg-platforms"
-        ["Auvidea_JNX30_XavierNX"]="$KERNEL_SOURCE/hardware/nvidia/platform/t19x/jakku/kernel-dts/common"
-        ["Auvidea_JNX42_XavierNX"]="$KERNEL_SOURCE/hardware/nvidia/platform/t19x/jakku/kernel-dts/common"
-          ["Auvidea_JNX42_OrinNX"]="$KERNEL_SOURCE/hardware/nvidia/platform/t23x/p3768/kernel-dts/cvb"
-        ["Auvidea_JNX42_OrinNano"]="$KERNEL_SOURCE/hardware/nvidia/platform/t23x/p3768/kernel-dts/cvb"
-                ["NV_DevKit_Nano"]="$KERNEL_SOURCE/hardware/nvidia/platform/t210/porg/kernel-dts/porg-platforms" 
-#bazo modify
-#            ["NV_DevKit_OrinNano"]="$KERNEL_SOURCE/hardware/nvidia/platform/t23x/p3768/kernel-dts/cvb"
-            ["NV_DevKit_OrinNano"]="$KERNEL_SOURCE/hardware/nvidia/t23x/nv-public/overlay"
-            ["NV_DevKit_XavierNX"]="$KERNEL_SOURCE/hardware/nvidia/platform/t19x/jakku/kernel-dts/common"
-          ["Auvidea_JNX30D_TX2NX"]="$KERNEL_SOURCE/hardware/nvidia/platform/t18x/lanai/kernel-dts/common"
-)
-
-if [[ ${!DTSI_FILE_DICT[@]} != ${!DTSI_DEST_DICT[@]} ]]
-then
-        echo "Integrity check of the dtsi dictionaries failed. Key list seems to be not consistent. Exiting."
-        exit 1
-fi
 
 extract_and_set_key_from_config
 DT_CAM_FILE="${DT_CAM_DIR}/${DTSI_KEY}/${DTSI_FILE_DICT[$DTSI_KEY]}"
@@ -171,7 +195,7 @@ XavierNX|XavierNXSD)
                 32.5.0|32.5.1|32.5.2|32.6.1|32.7.1|32.7.2|32.7.3)
                         PATCHES+=('dt_Auvidea_JNX30_XavierNX_32.5.0+')
                         ;;
-                35.1.0|35.2.1|35.3.1|36.2.0)
+                35.1.0|35.2.1|35.3.1|35.4.1|36.2.0)
                         # Comment
                 ;;
                 esac

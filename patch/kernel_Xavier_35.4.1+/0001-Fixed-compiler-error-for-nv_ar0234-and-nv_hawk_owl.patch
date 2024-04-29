@@ -1,0 +1,71 @@
+From b77b06339280a3df41e7172a7e18845cfa62cbb9 Mon Sep 17 00:00:00 2001
+From: "/setup.sh" <support@vision-components.com>
+Date: Thu, 15 Feb 2024 14:18:43 +0100
+Subject: [PATCH] Fixed compiler error for nv_ar0234 and nv_hawk_owl.
+
+---
+ kernel/nvidia/drivers/media/i2c/nv_ar0234.c     | 4 +---
+ kernel/nvidia/drivers/media/i2c/nv_hawk_owl.c   | 4 +---
+ kernel/nvidia/include/media/tegra-v4l2-camera.h | 2 +-
+ 3 files changed, 3 insertions(+), 7 deletions(-)
+
+diff --git a/kernel/nvidia/drivers/media/i2c/nv_ar0234.c b/kernel/nvidia/drivers/media/i2c/nv_ar0234.c
+index fd1d93372..7e656320b 100644
+--- a/kernel/nvidia/drivers/media/i2c/nv_ar0234.c
++++ b/kernel/nvidia/drivers/media/i2c/nv_ar0234.c
+@@ -75,8 +75,6 @@ static const u32 ctrl_cid_list[] = {
+ 	TEGRA_CAMERA_CID_ALTERNATING_EXPOSURE,
+ };
+ 
+-const u16 alternating_exposure_cfg_size = sizeof(struct alternating_exposure_cfg);
+-
+ // Coefficients as per distortion model (wide FOV) being used
+ typedef struct
+ {
+@@ -818,7 +816,7 @@ static struct tegracam_ctrl_ops ar0234_ctrl_ops = {
+ 	.numctrls = ARRAY_SIZE(ctrl_cid_list),
+ 	.ctrl_cid_list = ctrl_cid_list,
+ 	.string_ctrl_size = {AR0234_EEPROM_STR_SIZE},
+-	.compound_ctrl_size = {sizeof(NvCamSyncSensorCalibData), alternating_exposure_cfg_size},
++	.compound_ctrl_size = {sizeof(NvCamSyncSensorCalibData), ALTERNATING_EXPOSURE_CID_SIZE},
+ 	.set_gain = ar0234_set_gain,
+ 	.set_exposure = ar0234_set_exposure,
+ 	.set_exposure_short = ar0234_set_exposure,
+diff --git a/kernel/nvidia/drivers/media/i2c/nv_hawk_owl.c b/kernel/nvidia/drivers/media/i2c/nv_hawk_owl.c
+index 06bd58122..2e2b67100 100644
+--- a/kernel/nvidia/drivers/media/i2c/nv_hawk_owl.c
++++ b/kernel/nvidia/drivers/media/i2c/nv_hawk_owl.c
+@@ -84,8 +84,6 @@ static const u32 ctrl_cid_list[] = {
+ 	TEGRA_CAMERA_CID_ALTERNATING_EXPOSURE,
+ };
+ 
+-const u16 alternating_exposure_cfg_size = sizeof(struct alternating_exposure_cfg);
+-
+ // Coefficients as per distortion model (wide FOV) being used
+ typedef struct
+ {
+@@ -977,7 +975,7 @@ static struct tegracam_ctrl_ops ar0234_ctrl_ops = {
+ 	.numctrls = ARRAY_SIZE(ctrl_cid_list),
+ 	.ctrl_cid_list = ctrl_cid_list,
+ 	.string_ctrl_size = {AR0234_EEPROM_STR_SIZE},
+-	.compound_ctrl_size = {sizeof(NvCamSyncSensorCalibData), alternating_exposure_cfg_size},
++	.compound_ctrl_size = {sizeof(NvCamSyncSensorCalibData), ALTERNATING_EXPOSURE_CID_SIZE},
+ 	.set_gain = ar0234_set_gain,
+ 	.set_exposure = ar0234_set_exposure,
+ 	.set_exposure_short = ar0234_set_exposure,
+diff --git a/kernel/nvidia/include/media/tegra-v4l2-camera.h b/kernel/nvidia/include/media/tegra-v4l2-camera.h
+index e0242dcfd..cf9d5798a 100644
+--- a/kernel/nvidia/include/media/tegra-v4l2-camera.h
++++ b/kernel/nvidia/include/media/tegra-v4l2-camera.h
+@@ -88,7 +88,7 @@
+ #define TEGRA_CAM_STRING_CTRL_FUSEID_INDEX 1
+ #define TEGRA_CAM_STRING_CTRL_OTP_INDEX 2
+ 
+-#define TEGRA_CAM_MAX_COMPOUND_CONTROLS 4
++#define TEGRA_CAM_MAX_COMPOUND_CONTROLS 2
+ #define TEGRA_CAM_COMPOUND_CTRL_EEPROM_INDEX 0
+ #define TEGRA_CAM_COMPOUND_CTRL_ALT_EXP_INDEX 1
+ 
+-- 
+2.34.1
+

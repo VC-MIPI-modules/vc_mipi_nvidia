@@ -8,33 +8,38 @@ GCC_FILE=gcc-linaro-7.3.1-2018.05-x86_64_aarch64-linux-gnu.tar.xz
 GCC_DIR=$TOOLCHAIN_DIR/gcc-linaro-7.3.1-2018.05-x86_64_aarch64-linux-gnu
 export CROSS_COMPILE=$GCC_DIR/bin/aarch64-linux-gnu-
 
-DEV_URL=https://developer.download.nvidia.com/embedded/L4T/r35_Release_v2.1
+#downloads
+DEV_URL=https://developer.nvidia.com/downloads/embedded/l4t/r35_release_v4.1
 
 case $VC_MIPI_SOM in
-	AGXXavier|XavierNX|XavierNXSD|AGXOrin|OrinNX8GB|OrinNX16GB)
-                BSP_FILE=Jetson_Linux_R35.2.1_aarch64.tbz2
+        AGXXavier|XavierNX|XavierNXSD|AGXOrin|OrinNX8GB|OrinNX16GB|OrinNano4GB_SD|OrinNano8GB_SD|OrinNano4GB_NVME|OrinNano8GB_NVME)
+                BSP_FILE=jetson_linux_r35.4.1_aarch64.tbz2
                 ;;
 esac
 
-RFS_FILE=Tegra_Linux_Sample-Root-Filesystem_R35.2.1_aarch64.tbz2
+RFS_FILE=tegra_linux_sample-root-filesystem_r35.4.1_aarch64.tbz2
 SRC_FILE=public_sources.tbz2
 
 CHECK4MD5=1
 
-BSP_FILE_CHECKSUM="2937f56e61c94a403e5a65614a5dc678"
-RFS_FILE_CHECKSUM="837219c3a0b080a224f77cc47118a938"
-SRC_FILE_CHECKSUM="7098c5a31cee5e849ae383887ce13a97"
+BSP_FILE_CHECKSUM="78ab6da96c1da2da5f855c59bbcae791"
+RFS_FILE_CHECKSUM="f25931d1b15cc10d11b60395bd33ec1a"
+SRC_FILE_CHECKSUM="dd9b85e4f8b3c82604d01f3906193d69"
 
 . $BIN_DIR/config/L4T/urls_35.1.0+.sh
 
 #configure
 PATCHES=('kernel_common_32.3.1+')
-PATCHES+=('kernel_Xavier_35.2.1+')
+PATCHES+=('kernel_Xavier_35.4.1+')
 
 KERNEL_SOURCE=$BSP_DIR/Linux_for_Tegra/source/public
 
+DTSI_FILE_DICT+=(    ["NV_DevKit_OrinNano"]="tegra234-camera-vc-mipi-cam.dtsi")
 DTSI_FILE_DICT+=(  ["Auvidea_JNX42_OrinNX"]="tegra234-camera-vc-mipi-cam.dtsi")
+DTSI_FILE_DICT+=(["Auvidea_JNX42_OrinNano"]="tegra234-camera-vc-mipi-cam.dtsi")
+DTSI_DEST_DICT+=(    ["NV_DevKit_OrinNano"]="$KERNEL_SOURCE/hardware/nvidia/platform/t23x/p3768/kernel-dts/cvb")
 DTSI_DEST_DICT+=(  ["Auvidea_JNX42_OrinNX"]="$KERNEL_SOURCE/hardware/nvidia/platform/t23x/p3768/kernel-dts/cvb")
+DTSI_DEST_DICT+=(["Auvidea_JNX42_OrinNano"]="$KERNEL_SOURCE/hardware/nvidia/platform/t23x/p3768/kernel-dts/cvb")
 
 #setup
 DRIVER_DST_DIR=$KERNEL_SOURCE/kernel/nvidia/drivers/media/i2c
@@ -86,16 +91,16 @@ function L4T_setup_eeprom_size {
         Common_setup_eeprom_size
 }
 
-#GPIO_FILE=${BSP_DIR}/Linux_for_Tegra/bootloader/t186ref/BCT/tegra234-mb2-bct-scr-p3767-0000.dts
+GPIO_FILE=${BSP_DIR}/Linux_for_Tegra/bootloader/t186ref/BCT/tegra234-mb2-bct-scr-p3767-0000.dts
 function L4T_setup_gpio_file {
-#        Common_setup_gpio_file
-        return 0;
+        Common_setup_gpio_file
 }
 
 function L4T_setup_conf_file {
 # not necessary for this L4T
         return 0;
 }
+
 
 #build
 function L4T_build_device_tree {

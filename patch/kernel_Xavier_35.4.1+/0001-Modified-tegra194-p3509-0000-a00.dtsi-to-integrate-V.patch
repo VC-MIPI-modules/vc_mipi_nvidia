@@ -1,0 +1,43 @@
+From 6d55b9d5aa7a98ef3fa92e22789dcca13ee1f64a Mon Sep 17 00:00:00 2001
+From: "/setup.sh" <support@vision-components.com>
+Date: Thu, 15 Feb 2024 13:31:11 +0100
+Subject: [PATCH] Modified tegra194-p3509-0000-a00.dtsi to integrate VC MIPI
+ Driver and deactivate IMX219 and IM477 driver.
+
+---
+ .../kernel-dts/common/tegra194-p3509-0000-a00.dtsi  | 13 +++++++++++--
+ 1 file changed, 11 insertions(+), 2 deletions(-)
+
+diff --git a/hardware/nvidia/platform/t19x/jakku/kernel-dts/common/tegra194-p3509-0000-a00.dtsi b/hardware/nvidia/platform/t19x/jakku/kernel-dts/common/tegra194-p3509-0000-a00.dtsi
+index 6f411e3c1..834824a79 100644
+--- a/hardware/nvidia/platform/t19x/jakku/kernel-dts/common/tegra194-p3509-0000-a00.dtsi
++++ b/hardware/nvidia/platform/t19x/jakku/kernel-dts/common/tegra194-p3509-0000-a00.dtsi
+@@ -10,14 +10,23 @@
+  * FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for
+  * more details.
+  */
++
++#define VC_MIPI 1
++
+ #include <dt-bindings/gpio/tegra194-gpio.h>
+ #include "dt-bindings/input/input.h"
+ #include "tegra194-fixed-regulator-p3509-0000-a00.dtsi"
+ #include "tegra194-p3509-disp.dtsi"
+ #include "tegra194-audio-p3668.dtsi"
+ #include "tegra194-super-module-e2614-p3509.dtsi"
+-#include "tegra194-camera-jakku-rbpcv3-imx477.dtsi"
+-#include "tegra194-camera-jakku-rbpcv2-imx219.dtsi"
++
++#ifdef VC_MIPI
++	#include "tegra194-camera-vc-mipi-cam.dtsi"
++#else
++        #include "tegra194-camera-jakku-rbpcv3-imx477.dtsi"
++        #include "tegra194-camera-jakku-rbpcv2-imx219.dtsi"
++#endif
++
+ / {
+ 	gpio-keys {
+ 		compatible = "gpio-keys";
+-- 
+2.34.1
+

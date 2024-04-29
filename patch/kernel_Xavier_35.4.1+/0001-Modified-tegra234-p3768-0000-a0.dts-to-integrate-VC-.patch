@@ -1,0 +1,56 @@
+From 7b3dd30e00ea7ea9fdc7b1b0c7d5d0923e5fe70d Mon Sep 17 00:00:00 2001
+From: "/setup.sh" <support@vision-components.com>
+Date: Thu, 15 Feb 2024 13:44:16 +0100
+Subject: [PATCH] Modified tegra234-p3768-0000-a0.dts to integrate VC MIPI
+ Driver and deactivate IMX219 and IMX477 driver.
+
+---
+ .../kernel-dts/cvb/tegra234-p3768-0000-a0.dtsi     | 14 ++++++++++++--
+ 1 file changed, 12 insertions(+), 2 deletions(-)
+
+diff --git a/hardware/nvidia/platform/t23x/p3768/kernel-dts/cvb/tegra234-p3768-0000-a0.dtsi b/hardware/nvidia/platform/t23x/p3768/kernel-dts/cvb/tegra234-p3768-0000-a0.dtsi
+index 95d737541..90ccbf832 100644
+--- a/hardware/nvidia/platform/t23x/p3768/kernel-dts/cvb/tegra234-p3768-0000-a0.dtsi
++++ b/hardware/nvidia/platform/t23x/p3768/kernel-dts/cvb/tegra234-p3768-0000-a0.dtsi
+@@ -10,14 +10,22 @@
+  * FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for
+  * more details.
+  */
++
++#define VC_MIPI
++
+ #include <dt-bindings/gpio/tegra234-gpio.h>
+ #include "dt-bindings/input/input.h"
+ #include "tegra234-p3768-0000-a0-pwm-fan.dtsi"
+ #include "tegra234-p3768-0000-a0-pcie.dtsi"
+ #include "tegra234-p3768-0000-a0-fixed-regulator.dtsi"
+ #include "tegra234-p3768-audio.dtsi"
+-#include "tegra234-p3768-camera-rbpcv3-imx477.dtsi"
+-#include "tegra234-p3768-camera-rbpcv2-imx219.dtsi"
++
++#ifdef VC_MIPI
++	#include "tegra234-camera-vc-mipi-cam.dtsi"
++#else
++        #include "tegra234-p3768-camera-rbpcv3-imx477.dtsi"
++        #include "tegra234-p3768-camera-rbpcv2-imx219.dtsi"
++#endif
+ 
+ / {
+ 	gpio-keys {
+@@ -289,6 +297,7 @@
+ 		};
+ 	};
+ 
++#ifndef VC_MIPI
+ 	cam_i2cmux{
+ 		i2c@0 {
+ 			rbpcv2_imx219_a@10 {
+@@ -340,4 +349,5 @@
+ 			};
+ 		};
+ 	};
++#endif
+ };
+-- 
+2.34.1
+

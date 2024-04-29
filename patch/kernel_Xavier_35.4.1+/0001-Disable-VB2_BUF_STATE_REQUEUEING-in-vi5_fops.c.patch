@@ -1,0 +1,54 @@
+From 1f90deafa7271fe97a7f7e0195f2e997720da557 Mon Sep 17 00:00:00 2001
+From: "/setup.sh" <support@vision-components.com>
+Date: Thu, 15 Feb 2024 15:18:12 +0100
+Subject: [PATCH] Disable VB2_BUF_STATE_REQUEUEING in vi5_fops.c.
+
+---
+ .../media/platform/tegra/camera/vi/vi5_fops.c | 24 +++++++++----------
+ 1 file changed, 12 insertions(+), 12 deletions(-)
+
+diff --git a/kernel/nvidia/drivers/media/platform/tegra/camera/vi/vi5_fops.c b/kernel/nvidia/drivers/media/platform/tegra/camera/vi/vi5_fops.c
+index bd3798063..16c813f68 100644
+--- a/kernel/nvidia/drivers/media/platform/tegra/camera/vi/vi5_fops.c
++++ b/kernel/nvidia/drivers/media/platform/tegra/camera/vi/vi5_fops.c
+@@ -525,17 +525,17 @@ static void vi5_capture_dequeue(struct tegra_channel *chan,
+ 				dev_err(vi->dev, "uncorr_err: flags %d, err_data %d\n",
+ 					descr->status.flags, descr->status.err_data);
+ 			} else {
+-				dev_warn(vi->dev,
+-					"corr_err: discarding frame %d, flags: %d, "
+-					"err_data %d\n",
+-					descr->status.frame_id, descr->status.flags,
+-					descr->status.err_data);
+-#if LINUX_VERSION_CODE < KERNEL_VERSION(5, 4, 0)
+-					buf->vb2_state = VB2_BUF_STATE_REQUEUEING;
+-#else
+-					buf->vb2_state = VB2_BUF_STATE_ERROR;
+-#endif
+-			goto done;
++//				dev_warn(vi->dev,
++//					"corr_err: discarding frame %d, flags: %d, "
++//					"err_data %d\n",
++//					descr->status.frame_id, descr->status.flags,
++//					descr->status.err_data);
++//#if LINUX_VERSION_CODE < KERNEL_VERSION(5, 4, 0)
++//					buf->vb2_state = VB2_BUF_STATE_REQUEUEING;
++//#else
++//					buf->vb2_state = VB2_BUF_STATE_ERROR;
++//#endif
++//			goto done;
+ 			}
+ 		} else if (!vi_port) {
+ 			gang_prev_frame_id = descr->status.frame_id;
+@@ -580,7 +580,7 @@ static void vi5_capture_dequeue(struct tegra_channel *chan,
+ 	trace_tegra_channel_capture_frame("eof", &ts);
+ #endif
+ 
+-done:
++//done:
+ 	goto rel_buf;
+ 
+ uncorr_err:
+-- 
+2.34.1
+

@@ -31,11 +31,13 @@ flash_all() {
 
         case $VC_MIPI_SOM in
         OrinNano4GB_SD|OrinNano8GB_SD)
-                #bazo modify "t186ref"|"generic"
-                echo "flashing nano sd FLASH_PARTITION: ${FLASH_PARTITION}, FLASH_BOARD: ${FLASH_BOARD}"
+                echo "flashing sd FLASH_PARTITION: ${FLASH_PARTITION}, FLASH_BOARD: ${FLASH_BOARD}"
                 echo "ORIN_FLASH_CONFIG_FOLDER: ${ORIN_FLASH_CONFIG_FOLDER}"
 #                exit 0
-                sudo ./tools/kernel_flash/l4t_initrd_flash.sh \
+                # The given parameter $1 might be used for the EXT_NUM_SECTORS variable
+                # which has been introduced with 35.4.1
+                # sudo ./flash.sh -a EXT_NUM_SECTORS="121536512"
+                sudo $1 ./tools/kernel_flash/l4t_initrd_flash.sh \
                         --external-device ${FLASH_PARTITION} \
                         -c tools/kernel_flash/flash_l4t_external.xml \
                         -p "-c bootloader/${ORIN_FLASH_CONFIG_FOLDER}/cfg/flash_t234_qspi.xml" \
@@ -44,10 +46,9 @@ flash_all() {
                 ;;
 
         OrinNano4GB_NVME|OrinNano8GB_NVME|OrinNX8GB|OrinNX16GB)
-                #bazo modify "t186ref"|"generic"
-                echo "flashing nano nvme FLASH_PARTITION: ${FLASH_PARTITION}, FLASH_BOARD: ${FLASH_BOARD}"
+                echo "flashing nvme FLASH_PARTITION: ${FLASH_PARTITION}, FLASH_BOARD: ${FLASH_BOARD}"
                 echo "ORIN_FLASH_CONFIG_FOLDER: ${ORIN_FLASH_CONFIG_FOLDER}"
-                exit 0
+#                exit 0
                 sudo ADDITIONAL_DTB_OVERLAY_OPT="BootOrderNvme.dtbo" \
                         ./tools/kernel_flash/l4t_initrd_flash.sh \
                         --external-device ${FLASH_PARTITION} \
@@ -113,8 +114,8 @@ while [ $# != 0 ] ; do
         case "${option}" in
         -a|--all)
                 configure
-#                check_recovery_mode
-                flash_all
+                check_recovery_mode
+                flash_all $1
                 exit 0
                 ;;
         -d|--dt)

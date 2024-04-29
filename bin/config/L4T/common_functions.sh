@@ -11,7 +11,6 @@ function Common_check_for_functions {
         while IFS= read -r func_str
         do
                 ret=$(type -t ${func_str})
-#                echo "ret: ${ret}, func_str: ${func_str}"
                 if [[ "function" != $ret ]]
                 then
                         echo "Function ${func_str} missing in ${VC_MIPI_BSP}"
@@ -111,7 +110,6 @@ function Common_setup_conf_file {
                 echo "Modifying ${ORIN_NANO_CONF_FILE} ($VC_MIPI_BSP) ..."
                 CONF_PART_STR='OVERLAY_DTB_FILE="${OVERLAY_DTB_FILE},tegra234-p3767-camera-p3768-vc_mipi-dual.dtbo";'
 
-                echo "CONF_PART_STR: ${CONF_PART_STR}"
                 FIND_RESULT=0
                 FIND_RESULT=$(grep -q "${CONF_PART_STR}" ${ORIN_NANO_CONF_FILE}; echo $?)
                 CONF_STRING=""
@@ -127,11 +125,6 @@ function Common_setup_conf_file {
                 ;;
         esac
 }
-
-#        35.1.0|35.2.1|35.3.1|35.4.1)
-#                NVDD_DIR=NVIDIA-kernel-module-source-TempVersion
-#        35.5.0)
-#                NVDD_DIR=nvdisplay
 
 function Common_setup_nvidia_driver {
         # checking for Orin ...

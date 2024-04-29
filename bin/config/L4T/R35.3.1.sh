@@ -32,8 +32,16 @@ SRC_FILE_CHECKSUM="71f31135cf18255be97182d6521bc59d"
 PATCHES=('kernel_common_32.3.1+')
 PATCHES+=('kernel_Xavier_35.3.1+')
 
-#setup
 KERNEL_SOURCE=$BSP_DIR/Linux_for_Tegra/source/public
+
+DTSI_FILE_DICT+=(    ["NV_DevKit_OrinNano"]="tegra234-camera-vc-mipi-cam.dtsi")
+DTSI_FILE_DICT+=(  ["Auvidea_JNX42_OrinNX"]="tegra234-camera-vc-mipi-cam.dtsi")
+DTSI_FILE_DICT+=(["Auvidea_JNX42_OrinNano"]="tegra234-camera-vc-mipi-cam.dtsi")
+DTSI_DEST_DICT+=(    ["NV_DevKit_OrinNano"]="$KERNEL_SOURCE/hardware/nvidia/platform/t23x/p3768/kernel-dts/cvb")
+DTSI_DEST_DICT+=(  ["Auvidea_JNX42_OrinNX"]="$KERNEL_SOURCE/hardware/nvidia/platform/t23x/p3768/kernel-dts/cvb")
+DTSI_DEST_DICT+=(["Auvidea_JNX42_OrinNano"]="$KERNEL_SOURCE/hardware/nvidia/platform/t23x/p3768/kernel-dts/cvb")
+
+#setup
 DRIVER_DST_DIR=$KERNEL_SOURCE/kernel/nvidia/drivers/media/i2c
 KERNEL_OUT=$KERNEL_SOURCE/build
 MODULES_OUT=$KERNEL_SOURCE/modules
@@ -81,7 +89,6 @@ function L4T_setup_flash_prerequisites {
 EPROM_FILE=${BSP_DIR}/Linux_for_Tegra/bootloader/t186ref/BCT/tegra234-mb2-bct-misc-p3767-0000.dts
 function L4T_setup_eeprom_size {
         Common_setup_eeprom_size
-        return 0;
 }
 
 #GPIO_FILE=${BSP_DIR}/Linux_for_Tegra/bootloader/t186ref/BCT/tegra234-mb2-bct-scr-p3767-0000.dts
@@ -130,4 +137,3 @@ function L4T_install_modules {
 function L4T_build_nvidia_driver {
         Common_build_nvidia_driver
 }
-

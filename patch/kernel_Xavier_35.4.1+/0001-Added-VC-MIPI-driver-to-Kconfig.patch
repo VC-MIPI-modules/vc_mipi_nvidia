@@ -1,0 +1,33 @@
+From 615f976a16a8449ec0b2ccf0ecaada045b2d7ab9 Mon Sep 17 00:00:00 2001
+From: "/setup.sh" <support@vision-components.com>
+Date: Thu, 15 Feb 2024 12:06:57 +0100
+Subject: [PATCH] Added VC MIPI driver to Kconfig.
+
+---
+ kernel/nvidia/drivers/media/i2c/Kconfig | 10 ++++++++++
+ 1 file changed, 10 insertions(+)
+
+diff --git a/kernel/nvidia/drivers/media/i2c/Kconfig b/kernel/nvidia/drivers/media/i2c/Kconfig
+index 5ec3c683c..dbc4fc473 100644
+--- a/kernel/nvidia/drivers/media/i2c/Kconfig
++++ b/kernel/nvidia/drivers/media/i2c/Kconfig
+@@ -99,6 +99,16 @@ config NV_VIDEO_OV9281
+ 	  To compile this driver as a module, choose M here: the module
+ 	  will be called ov9281.
+ 
++config NV_VIDEO_VC_MIPI
++	tristate "Vision Components MIPI CSI-2 camera sensor support"
++	depends on I2C && VIDEO_V4L2 && VIDEO_V4L2_SUBDEV_API
++	help
++	  This is a Video4Linux2 sensor driver for the Vision Components
++	  MIPI CSI-2 camera sensor, for use with the tegra isp.
++
++	  To compile this driver as a module, choose M here: the module
++	  will be called vc_mipi.
++
+ config NV_VIDEO_OV10823
+ 	tristate "OmniVision OV10823 camera sensor support"
+ 	depends on I2C && VIDEO_V4L2 && VIDEO_V4L2_SUBDEV_API
+-- 
+2.34.1
+

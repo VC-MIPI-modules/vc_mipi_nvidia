@@ -1,0 +1,35 @@
+From f7ad7dc7cbde999e04dd59c14b3e85d5181d17ff Mon Sep 17 00:00:00 2001
+From: "/setup.sh" <support@vision-components.com>
+Date: Thu, 15 Feb 2024 14:25:10 +0100
+Subject: [PATCH] The function tegracam_v4l2subdev_register did not load when
+ the min_gain_val or min_exp_time has been set to 0 in the device tree.
+
+---
+ .../drivers/media/platform/tegra/camera/tegracam_ctrls.c      | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/kernel/nvidia/drivers/media/platform/tegra/camera/tegracam_ctrls.c b/kernel/nvidia/drivers/media/platform/tegra/camera/tegracam_ctrls.c
+index bae92fdbb..2b736bce5 100644
+--- a/kernel/nvidia/drivers/media/platform/tegra/camera/tegracam_ctrls.c
++++ b/kernel/nvidia/drivers/media/platform/tegra/camera/tegracam_ctrls.c
+@@ -673,7 +673,7 @@ int tegracam_init_ctrl_ranges_by_mode(
+ 		switch (ctrl->id) {
+ 		case TEGRA_CAMERA_CID_GAIN:
+ 			err = v4l2_ctrl_modify_range(ctrl,
+-				ctrlprops->min_gain_val - 1,
++				ctrlprops->min_gain_val,
+ 				ctrlprops->max_gain_val,
+ 				ctrlprops->step_gain_val,
+ 				ctrlprops->default_gain);
+@@ -687,7 +687,7 @@ int tegracam_init_ctrl_ranges_by_mode(
+ 			break;
+ 		case TEGRA_CAMERA_CID_EXPOSURE:
+ 			err = v4l2_ctrl_modify_range(ctrl,
+-				ctrlprops->min_exp_time.val - 1,
++				ctrlprops->min_exp_time.val,
+ 				ctrlprops->max_exp_time.val,
+ 				ctrlprops->step_exp_time.val,
+ 				ctrlprops->default_exp_time.val);
+-- 
+2.34.1
+

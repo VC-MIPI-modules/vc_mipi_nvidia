@@ -1,0 +1,234 @@
+From c2ffcd4647594bec6f2fe97ee89e91a5a36be4dc Mon Sep 17 00:00:00 2001
+From: "/setup.sh" <support@vision-components.com>
+Date: Wed, 24 Apr 2024 15:05:10 +0200
+Subject: [PATCH] Stability patch. work_struct refactored to kthread.
+
+---
+ .../kernel-5.10/drivers/mailbox/tegra-hsp.c   |  3 +-
+ .../media/platform/tegra/camera/vi/vi5_fops.c | 11 +++-
+ .../platform/tegra/rtcpu/capture-ivc-priv.h   | 12 ++--
+ .../platform/tegra/rtcpu/capture-ivc.c        | 58 +++++++++++++++----
+ 4 files changed, 67 insertions(+), 17 deletions(-)
+
+diff --git a/kernel/kernel-5.10/drivers/mailbox/tegra-hsp.c b/kernel/kernel-5.10/drivers/mailbox/tegra-hsp.c
+index a5c8c29e7..b8dca0238 100644
+--- a/kernel/kernel-5.10/drivers/mailbox/tegra-hsp.c
++++ b/kernel/kernel-5.10/drivers/mailbox/tegra-hsp.c
+@@ -390,7 +390,6 @@ static void tegra_hsp_mailbox_receive_32bit_data(
+ 	value = tegra_hsp_channel_readl(channel, HSP_SM_SHRD_MBOX);
+ 	value &= ~HSP_SM_SHRD_MBOX_FULL;
+ 	msg = (void *)(unsigned long)value;
+-	mbox_chan_received_data(channel->chan, msg);
+ 
+ 	/*
+ 	 * Need to clear all bits here since some
+@@ -402,6 +401,8 @@ static void tegra_hsp_mailbox_receive_32bit_data(
+ 	 * make sure we cover all possible cases.
+ 	 */
+ 	tegra_hsp_channel_writel(channel, 0x0, HSP_SM_SHRD_MBOX);
++
++	mbox_chan_received_data(channel->chan, msg);
+ }
+ 
+ static const struct tegra_hsp_sm_ops tegra_hsp_sm_32bit_ops = {
+diff --git a/kernel/nvidia/drivers/media/platform/tegra/camera/vi/vi5_fops.c b/kernel/nvidia/drivers/media/platform/tegra/camera/vi/vi5_fops.c
+index 16c813f68..ffe78b043 100644
+--- a/kernel/nvidia/drivers/media/platform/tegra/camera/vi/vi5_fops.c
++++ b/kernel/nvidia/drivers/media/platform/tegra/camera/vi/vi5_fops.c
+@@ -487,6 +487,7 @@ static void vi5_capture_dequeue(struct tegra_channel *chan,
+ 	struct tegra_channel_buffer *buf)
+ {
+ 	int err = 0;
++	bool frame_err = false;
+ 	int vi_port = 0;
+ 	int gang_prev_frame_id = 0;
+ 	unsigned long flags;
+@@ -536,6 +537,7 @@ static void vi5_capture_dequeue(struct tegra_channel *chan,
+ //					buf->vb2_state = VB2_BUF_STATE_ERROR;
+ //#endif
+ //			goto done;
++				frame_err = true;
+ 			}
+ 		} else if (!vi_port) {
+ 			gang_prev_frame_id = descr->status.frame_id;
+@@ -567,7 +569,14 @@ static void vi5_capture_dequeue(struct tegra_channel *chan,
+ #endif
+ 	vb->vb2_buf.timestamp = descr->status.sof_timestamp;
+ 
+-	buf->vb2_state = VB2_BUF_STATE_DONE;
++	if (frame_err)
++#if LINUX_VERSION_CODE < KERNEL_VERSION(5, 4, 0)
++		buf->vb2_state = VB2_BUF_STATE_REQUEUEING;
++#else
++		buf->vb2_state = VB2_BUF_STATE_ERROR;
++#endif
++	else
++		buf->vb2_state = VB2_BUF_STATE_DONE;
+ 	/* Read EOF from capture descriptor */
+ #if LINUX_VERSION_CODE < KERNEL_VERSION(5, 4, 0)
+ 	ts = ns_to_timespec((s64)descr->status.eof_timestamp);
+diff --git a/kernel/nvidia/drivers/platform/tegra/rtcpu/capture-ivc-priv.h b/kernel/nvidia/drivers/platform/tegra/rtcpu/capture-ivc-priv.h
+index 04c95aef3..4b4aa0275 100644
+--- a/kernel/nvidia/drivers/platform/tegra/rtcpu/capture-ivc-priv.h
++++ b/kernel/nvidia/drivers/platform/tegra/rtcpu/capture-ivc-priv.h
+@@ -2,7 +2,7 @@
+  * @file drivers/platform/tegra/rtcpu/capture-ivc-priv.h
+  * @brief Capture IVC driver private header for T186/T194
+  *
+- * Copyright (c) 2017-2019 NVIDIA Corporation.  All rights reserved.
++ * Copyright (c) 2017-2022 NVIDIA Corporation.  All rights reserved.
+  *
+  * This program is free software; you can redistribute it and/or modify it
+  * under the terms and conditions of the GNU General Public License,
+@@ -50,7 +50,11 @@ struct tegra_capture_ivc {
+ 	/** Channel write lock */
+ 	struct mutex ivc_wr_lock;
+ 	/** Deferred work */
+-	struct work_struct work;
++	struct kthread_work work;
++	/** ivc worker thread **/
++	struct kthread_worker ivc_worker;
++	/** task struct **/
++	struct task_struct *ivc_kthread;
+ 	/** Channel work queue head */
+ 	wait_queue_head_t write_q;
+ 	/** Array holding callbacks registered by each channel */
+@@ -95,10 +99,10 @@ static struct tegra_capture_ivc *__scivc_capture;
+  * @brief Worker thread to handle the asynchronous msgs on the IVC channel.
+ 	This will further calls callbacks registered by Channel drivers.
+  *
+- * @param[in]	work	work_struct pointer
++ * @param[in]	work	kthread_work pointer
+  */
+ static void tegra_capture_ivc_worker(
+-	struct work_struct *work);
++	struct kthread_work *work);
+ 
+ /**
+  * @brief Implementation of IVC notify operation which gets called when we any
+diff --git a/kernel/nvidia/drivers/platform/tegra/rtcpu/capture-ivc.c b/kernel/nvidia/drivers/platform/tegra/rtcpu/capture-ivc.c
+index c5e1bc519..5bae2edb7 100644
+--- a/kernel/nvidia/drivers/platform/tegra/rtcpu/capture-ivc.c
++++ b/kernel/nvidia/drivers/platform/tegra/rtcpu/capture-ivc.c
+@@ -28,7 +28,12 @@
+ #include <linux/tegra-ivc.h>
+ #include <linux/tegra-ivc-bus.h>
+ #include <linux/nospec.h>
+-
++#include <linux/kthread.h>
++#include <linux/sched.h>
++#include <linux/version.h>
++#if KERNEL_VERSION(4, 14, 0) < LINUX_VERSION_CODE
++#include <uapi/linux/sched/types.h>
++#endif
+ #include <asm/barrier.h>
+ 
+ #include "capture-ivc-priv.h"
+@@ -356,7 +361,7 @@ static inline void tegra_capture_ivc_recv(struct tegra_capture_ivc *civc)
+ 	}
+ }
+ 
+-static void tegra_capture_ivc_worker(struct work_struct *work)
++static void tegra_capture_ivc_worker(struct kthread_work *work)
+ {
+ 	struct tegra_capture_ivc *civc;
+ 	struct tegra_ivc_channel *chan;
+@@ -386,7 +391,7 @@ static void tegra_capture_ivc_notify(struct tegra_ivc_channel *chan)
+ 
+ 	/* Only 1 thread can wait on write_q, rest wait for write_lock */
+ 	wake_up(&civc->write_q);
+-	schedule_work(&civc->work);
++	kthread_queue_work(&civc->ivc_worker, &civc->work);
+ }
+ 
+ #define NV(x) "nvidia," #x
+@@ -398,6 +403,8 @@ static int tegra_capture_ivc_probe(struct tegra_ivc_channel *chan)
+ 	const char *service;
+ 	int ret;
+ 	uint32_t i;
++	int32_t prio = 0;
++	struct sched_param sparm = {.sched_priority = 99};
+ 
+ 	civc = devm_kzalloc(dev, (sizeof(*civc)), GFP_KERNEL);
+ 	if (unlikely(civc == NULL))
+@@ -410,13 +417,31 @@ static int tegra_capture_ivc_probe(struct tegra_ivc_channel *chan)
+ 		return ret;
+ 	}
+ 
++	if (of_property_read_u32(dev->of_node, NV(priority), &prio)) {
++		dev_info(dev, "no priority specified, using 99 as default\n");
++		prio = 99;
++	}
++	sparm.sched_priority = prio;
++
+ 	civc->chan = chan;
+ 
+ 	mutex_init(&civc->cb_ctx_lock);
+ 	mutex_init(&civc->ivc_wr_lock);
+ 
+-	/* Initialize ivc_work */
+-	INIT_WORK(&civc->work, tegra_capture_ivc_worker);
++	/* Initialize kworker */
++	kthread_init_work(&civc->work, tegra_capture_ivc_worker);
++
++	kthread_init_worker(&civc->ivc_worker);
++
++	civc->ivc_kthread = kthread_create(&kthread_worker_fn,
++			&civc->ivc_worker, service);
++	if (IS_ERR(civc->ivc_kthread)) {
++		dev_err(dev, "Cannot allocate ivc worker thread\n");
++		ret = PTR_ERR(civc->ivc_kthread);
++		goto err;
++	}
++	sched_setscheduler(civc->ivc_kthread, SCHED_RR, &sparm);
++	wake_up_process(civc->ivc_kthread);
+ 
+ 	/* Initialize wait queue */
+ 	init_waitqueue_head(&civc->write_q);
+@@ -432,26 +457,37 @@ static int tegra_capture_ivc_probe(struct tegra_ivc_channel *chan)
+ 	tegra_ivc_channel_set_drvdata(chan, civc);
+ 
+ 	if (!strcmp("capture-control", service)) {
+-		if (WARN_ON(__scivc_control != NULL))
+-			return -EEXIST;
++		if (WARN_ON(__scivc_control != NULL)) {
++			ret = -EEXIST;
++			goto err_service;
++		}
+ 		__scivc_control = civc;
+ 	} else if (!strcmp("capture", service)) {
+-		if (WARN_ON(__scivc_capture != NULL))
+-			return -EEXIST;
++		if (WARN_ON(__scivc_capture != NULL)) {
++			ret = -EEXIST;
++			goto err_service;
++		}
+ 		__scivc_capture = civc;
+ 	} else {
+ 		dev_err(dev, "Unknown ivc channel %s\n", service);
+-		return -EINVAL;
++		ret = -EINVAL;
++		goto err_service;
+ 	}
+ 
+ 	return 0;
++
++err_service:
++	kthread_stop(civc->ivc_kthread);
++err:
++	return ret;
+ }
+ 
+ static void tegra_capture_ivc_remove(struct tegra_ivc_channel *chan)
+ {
+ 	struct tegra_capture_ivc *civc = tegra_ivc_channel_get_drvdata(chan);
+ 
+-	cancel_work_sync(&civc->work);
++	kthread_flush_worker(&civc->ivc_worker);
++	kthread_stop(civc->ivc_kthread);
+ 
+ 	if (__scivc_control == civc)
+ 		__scivc_control = NULL;
+-- 
+2.34.1
+
