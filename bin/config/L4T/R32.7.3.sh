@@ -1,10 +1,12 @@
 #!/bin/bash
 
+. $BIN_DIR/config/L4T/common_functions.sh
+
 #toolchain
 GCC_URL=http://releases.linaro.org/components/toolchain/binaries/7.3-2018.05/aarch64-linux-gnu
 GCC_FILE=gcc-linaro-7.3.1-2018.05-x86_64_aarch64-linux-gnu.tar.xz
 GCC_DIR=$TOOLCHAIN_DIR/gcc-linaro-7.3.1-2018.05-x86_64_aarch64-linux-gnu
-export CROSS_COMPILE=$GCC_DIR/gcc-linaro-7.3.1-2018.05-x86_64_aarch64-linux-gnu/bin/aarch64-linux-gnu-
+export CROSS_COMPILE=$GCC_DIR/bin/aarch64-linux-gnu-
 
 #downloads
 DEV_URL=https://developer.nvidia.com/downloads
@@ -44,12 +46,27 @@ BSP_URL=$DEV_URL
 RFS_URL=$DEV_URL
 SRC_URL=$DEV_URL
 
+#configure
+PATCHES=('kernel_common_32.3.1+')
+case $VC_MIPI_SOM in
+Nano|NanoSD|Nano2GB)
+        PATCHES+=('kernel_Nano_32.6.1+')
+        ;;
+
+AGXXavier|XavierNX|XavierNXSD|TX2|TX2i|TX2NX)
+        PATCHES+=('kernel_Xavier_32.7.3+')
+        ;;
+esac
+
 #setup
 KERNEL_SOURCE=$BSP_DIR/Linux_for_Tegra/source/public
 DRIVER_DST_DIR=$KERNEL_SOURCE/kernel/nvidia/drivers/media/i2c
+KERNEL_OUT=$KERNEL_SOURCE/build
+MODULES_OUT=$KERNEL_SOURCE/modules
 
 KERNEL_DIR=kernel/kernel-4.9/
 MODULES_BSP=$BSP_DIR/Linux_for_Tegra/rootfs
+
 DTB_OUT=$KERNEL_OUT/arch/arm64/boot/dts
 
 #setup
@@ -76,6 +93,21 @@ function L4T_setup_flash_prerequisites {
         return 0
 }
 
+function L4T_setup_eeprom_size {
+# not necessary for this L4T
+        return 0;
+}
+
+function L4T_setup_gpio_file {
+# not necessary for this L4T
+        return 0;
+}
+
+function L4T_setup_conf_file {
+# not necessary for this L4T
+        return 0;
+}
+
 function L4T_setup_som_carrier_specifics {
 # not necessary for this L4T
         return 0
@@ -94,6 +126,7 @@ function L4T_build_kernel {
         echo "Build kernel ($VC_MIPI_BSP) ..."
 
         make -C $KERNEL_DIR O=$KERNEL_OUT -j$(nproc) --output-sync=target Image
+
         cp -rfv $KERNEL_OUT/arch/arm64/boot/Image $BSP_DIR/Linux_for_Tegra/kernel/
 }
 
