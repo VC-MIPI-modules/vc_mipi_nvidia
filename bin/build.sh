@@ -43,7 +43,7 @@ configure_kernel() {
 
         cd $KERNEL_SOURCE
 
-        make -C $KERNEL_DIR O=$KERNEL_OUT -j$(nproc) defconfig
+        make -C $KERNEL_DIR O=$KERNEL_OUT -j$(nproc) tegra_defconfig
 }
 
 build_kernel() {
@@ -57,7 +57,6 @@ build_kernel() {
         
         cd $KERNEL_SOURCE
 
-#bazo modify
         L4T_build_kernel
 }
 
@@ -67,15 +66,6 @@ build_nvidia_driver() {
 
 build_modules() {
         echo "Build kernel modules ..."
-
-#bazo modify
-#        make -C $KERNEL_DIR O=$KERNEL_OUT -j$(nproc) --output-sync=target modules
-#
-#        build_nvidia_driver
-#
-#        cd $KERNEL_SOURCE
-#        make -C $KERNEL_DIR O=$KERNEL_OUT INSTALL_MOD_PATH=$MODULES_OUT modules_install 
-#        sudo cp -arfv $MODULES_OUT/lib $MODULES_BSP
 
         echo "KERNEL_SOURCE: $KERNEL_SOURCE"
         echo "KERNEL_DIR: $KERNEL_DIR"
@@ -98,14 +88,6 @@ build_modules() {
 
 build_device_tree() {
         cd $KERNEL_SOURCE
-#bazo modify
-#        make -C $KERNEL_DIR O=$KERNEL_OUT -j$(nproc) --output-sync=target dtbs
-#        cp -rfv $DTB_OUT/*.dtb $BSP_DIR/Linux_for_Tegra/kernel/dtb/
-        
-#        make dtbs
-
-#        cp nvidia-oot/device-tree/platform/generic-dts/dtbs/* \
-#        $BSP_DIR/Linux_for_Tegra/kernel/dtb/
 
         L4T_build_device_tree
 }

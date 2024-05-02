@@ -28,6 +28,11 @@ if [[ -e $L4T ]]; then
         . $L4T
         #Integrity check of the sourced L4T scripts
         Common_check_for_functions
+        if [[ $? != 0 ]]
+        then 
+                echo "Could not source common_functions!"
+                exit 1
+        fi
 else
         echo "BSP $VC_MIPI_BSP not supported!"
         exit 1
