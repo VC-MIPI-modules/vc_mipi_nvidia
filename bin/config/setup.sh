@@ -133,11 +133,11 @@ choose_board() {
 
 bsp=
 bsps=(
-"NVIDIA L4T 32.3.1 (https://developer.nvidia.com/l4t-3231-archive)"
-"NVIDIA L4T 32.5.0 (https://developer.nvidia.com/embedded/linux-tegra-r325)"
-"NVIDIA L4T 32.5.1 (https://developer.nvidia.com/embedded/linux-tegra-r3251)"
-"NVIDIA L4T 32.5.2 (https://developer.nvidia.com/embedded/linux-tegra-r3251)"
-"NVIDIA L4T 32.6.1 (https://developer.nvidia.com/embedded/linux-tegra-r3261)"
+#"NVIDIA L4T 32.3.1 (https://developer.nvidia.com/l4t-3231-archive)"
+#"NVIDIA L4T 32.5.0 (https://developer.nvidia.com/embedded/linux-tegra-r325)"
+#"NVIDIA L4T 32.5.1 (https://developer.nvidia.com/embedded/linux-tegra-r3251)"
+#"NVIDIA L4T 32.5.2 (https://developer.nvidia.com/embedded/linux-tegra-r3251)"
+#"NVIDIA L4T 32.6.1 (https://developer.nvidia.com/embedded/linux-tegra-r3261)"
 "NVIDIA L4T 32.7.1 (https://developer.nvidia.com/embedded/linux-tegra-r3271)"
 "NVIDIA L4T 32.7.2 (https://developer.nvidia.com/embedded/linux-tegra-r3272)"
 "NVIDIA L4T 32.7.3 (https://developer.nvidia.com/embedded/linux-tegra-r3273)"
@@ -150,11 +150,11 @@ bsps=(
 )
 
 bsps_keys=(
-"32.3.1"
-"32.5.0"
-"32.5.1"
-"32.5.2"
-"32.6.1"
+#"32.3.1"
+#"32.5.0"
+#"32.5.1"
+#"32.5.2"
+#"32.6.1"
 "32.7.1"
 "32.7.2"
 "32.7.3"
@@ -218,35 +218,35 @@ setup_driver() {
         case ${som} in
         Nano2GB)
                 choose_board 0
-                choose_bsp 1 2 3 4 5 6 7 8
+                choose_bsp 0 1 2 3
                 ;;
         Nano|NanoSD)
                 choose_board 1 4 5
-                choose_bsp 1 2 3 4 5 6 7 8
+                choose_bsp 0 1 2 3
                 ;;
         XavierNX|XavierNXSD) 
                 choose_board 2 4 5
-                choose_bsp 1 2 3 4 5 6 7 9 10 11 12
+                choose_bsp 0 1 2 4 5 6 7
                 ;;
         AGXXavier)
                 choose_board 6
-                choose_bsp 0 1 2 3 4 5 6 7 9 10 11 12
+                choose_bsp 0 1 2 4 5 6 7
                 ;;
         TX2|TX2i)
                 choose_board 6
-                choose_bsp 1 2 3 4 5 6 7
+                choose_bsp 0 1 2
                 ;;
         TX2NX)
                 choose_board 4
-                choose_bsp 2 3 4 5 6 7
+                choose_bsp 0 1 2
                 ;;
         OrinNano4GB_SD|OrinNano8GB_SD|OrinNano4GB_NVME|OrinNano8GB_NVME)
                 choose_board 3 5
-                choose_bsp 11 12 13
+                choose_bsp 6 7 8
                 ;;
         OrinNX8GB|OrinNX16GB)
                 choose_board 5
-                choose_bsp 10 11 12 13
+                choose_bsp 5 6 7 8
         esac
         check_configuration $1 $2
         write_configuration
