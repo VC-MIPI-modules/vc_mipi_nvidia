@@ -82,7 +82,6 @@ setup_kernel() {
         git config --local user.name "$0"
         git config --local user.email "support@vision-components.com"
 
-#bazo modify
         L4T_add_kernel_to_repo
 
         git commit -m "Initial commit"
