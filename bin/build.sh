@@ -19,20 +19,11 @@ configure() {
 
 patch_kernel() {
         echo "Copying driver sources into kernel sources ..."
-#bazo modify
-#        cp -Ruv $DRIVER_DIR/* $DRIVER_DST_DIR
-#        cp -Ruv $DRIVER_DIR/* $DRIVER_OOT_DST_DIR
-
-#        echo "DRIVER_DIR: ${DRIVER_DIR}"
-#        ls -la $DRIVER_DIR
-#        echo "DRIVER_DST_DIR: ${DRIVER_DST_DIR}"
-#        ls -la $DRIVER_DST_DIR
 
         mkdir -p $DRIVER_DST_DIR
         cp -Ruv $DRIVER_DIR/* $DRIVER_DST_DIR
 
         copy_dtsi_files
-#        exit 0
 }
 
 configure_kernel() {
@@ -47,14 +38,6 @@ configure_kernel() {
 }
 
 build_kernel() {
-#        echo "KERNEL_SOURCE: $KERNEL_SOURCE"
-#        echo "KERNEL_DIR: $KERNEL_DIR"
-#        echo "KERNEL_OUT: $KERNEL_OUT"
-#        echo "MODULES_OUT: $MODULES_OUT"
-#        echo "KERNEL_HEADERS: $KERNEL_HEADERS"
-#        echo "ROOTFS_DIR: $ROOTFS_DIR"
-#        echo "CROSS_COMPILE: $CROSS_COMPILE"
-        
         cd $KERNEL_SOURCE
 
         L4T_build_kernel
@@ -66,15 +49,6 @@ build_nvidia_driver() {
 
 build_modules() {
         echo "Build kernel modules ..."
-
-        echo "KERNEL_SOURCE: $KERNEL_SOURCE"
-        echo "KERNEL_DIR: $KERNEL_DIR"
-        echo "KERNEL_OUT: $KERNEL_OUT"
-        echo "MODULES_OUT: $MODULES_OUT"
-        echo "KERNEL_HEADERS: $KERNEL_HEADERS"
-        echo "ROOTFS_DIR: $ROOTFS_DIR"
-        echo "CROSS_COMPILE: $CROSS_COMPILE"
-
 
         cd $KERNEL_SOURCE
         L4T_build_modules

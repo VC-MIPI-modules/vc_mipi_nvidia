@@ -521,33 +521,12 @@ To test the camera you can use [v4l2-test](https://github.com/pmliquify/v4l2-tes
   sudo ./max_speed.sh -m
   ```
 
-* For changing device trees only (./build.sh -d and ./flash.sh -d) there must be a differentiation between Orin and Non-Orin Targets:
-  * For targets like Xavier NX and AGX Xavier, you will have to modify your /boot/extlinux/extlinux.conf on your target machine by removing the FDT entry or by commenting out with '#'. Otherwise you will have to flash your complete linux image for every device tree change to take effect.
-
-    ```bash
-    # FDT /boot/dtb/kernel_tegra194-p3668-0000-p3509-0000.dtb
-    ```
-
-    > When calling the flash script with the option -d (flash the device tree only), the device must be in force recovery mode!
-  * For OrinNano and Orin NX the FDT entry must be present in the /boot/extlinux/extlinux.conf file. The ./flash -d command will copy the proper file (e.g. tegra234-p3767-0003-p3768-0000-a0.dtb for OrinNano 8GB on NVIDIA DevKit) into the /boot/dtb/ directory.
-  
-    Therefore, the extlinux.conf FDT entry must be renamed e.g.:<br>
-    from
-
-    ```bash
-    FDT /boot/dtb/<b>kernel_</b>tegra234-p3767-0003-p3768-0000-a0.dtb 
-    ```
-
-    to
-
-    ```bash
-    FDT /boot/dtb/tegra234-p3767-0003-p3768-0000-a0.dtb
-    ```
-
-    > When calling the flash script with the option -d (flash the device tree only), the device must be running. It must **not** be in force recovery mode!
-
 ### For NVIDIA Jetson TX2 NX
 
 * Currently the following camera modules do not work with the TX2 NX
   * IMX178, IMX183
   * IMX250, IMX252, IMX264, IMX265, IMX273, IMX392
+
+### Troubleshooting
+
+Regarding to flashing issues, please have a look at **[Flashing the device](doc/DEVICE_FLASHING.md)** 

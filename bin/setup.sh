@@ -67,18 +67,12 @@ setup_kernel() {
         download_and_check_file SRC
 
         cd $BSP_DIR
-#bazo modify
-#        rm -Rf $BSP_DIR/Linux_for_Tegra/source/public
-#        rm -Rf $BSP_DIR/Linux_for_Tegra/source
+
         rm -Rf $KERNEL_SOURCE
 
         cd $DOWNLOAD_DIR
         tar xjvf $SRC_FILE -C $BSP_DIR
 
-#function L4T_extract_kernel_packages
-#bazo modify
-#        cd $BSP_DIR/Linux_for_Tegra/source/public
-#        cd $BSP_DIR/Linux_for_Tegra/source
         cd $KERNEL_SOURCE
 
         L4T_extract_kernel_packages
@@ -101,17 +95,11 @@ setup_kernel() {
         done
 
         git config gc.auto 1
-
-#bazo modify
-#        cp -R $DRIVER_DIR/* $DRIVER_DST_DIR
-#        copy_dtsi_files
 }
 
 repatch_kernel() {
         echo "Repatch kernel ..."
-#bazo modify
-#        cd $BSP_DIR/Linux_for_Tegra/source/public
-#        cd $BSP_DIR/Linux_for_Tegra/source
+
         cd $KERNEL_SOURCE
 
         git am --abort
@@ -145,7 +133,6 @@ setup_som_carrier_specifics() {
         L4T_setup_conf_file
 }
 
-#bazo nur 36.2
 setup_nvidia_prereq_on_target() {
         if [[ "36.2.0" != $VC_MIPI_BSP ]]
         then
@@ -294,14 +281,6 @@ setup_target() {
         $TARGET_SHELL chmod +x $TARGET_DIR/*.sh
 }
 
-make_test() {
-        NP=$(nproc)
-        echo "NP: $NP"
-        NP_=`expr $NP - 2`
-        echo "NP_: $NP_"
-        if [[ $NP_ -gt 0 ]]; then echo "ok"; fi
-}
-
 while [ $# != 0 ] ; do
         option="$1"
         shift
@@ -343,16 +322,6 @@ while [ $# != 0 ] ; do
         -b)
                 configure
 #                setup_som_carrier_specifics
-                exit 0
-                ;;
-        -z)
-                configure
-                setup_nvidia_prereq_on_target
-                exit 0
-                ;;
-        -q)
-                configure
-                make_test
                 exit 0
                 ;;
         -o|--host)

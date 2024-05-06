@@ -45,12 +45,7 @@ DTSI_FILE_DICT+=(
             ["Auvidea_JNX42_Nano"]="tegra210-camera-vc-mipi-cam.dtsi"
         ["Auvidea_JNX30_XavierNX"]="tegra194-camera-vc-mipi-cam.dtsi"
         ["Auvidea_JNX42_XavierNX"]="tegra194-camera-vc-mipi-cam.dtsi"
-#          ["Auvidea_JNX42_OrinNX"]="tegra234-camera-vc-mipi-cam.dtsi"
-#        ["Auvidea_JNX42_OrinNano"]="tegra234-camera-vc-mipi-cam.dtsi"
                 ["NV_DevKit_Nano"]="tegra210-camera-vc-mipi-cam.dtsi" 
-#bazo modify
-#            ["NV_DevKit_OrinNano"]="tegra234-camera-vc-mipi-cam.dtsi"
-#            ["NV_DevKit_OrinNano"]="tegra234-p3767-camera-p3768-vc_mipi-dual.dts"
             ["NV_DevKit_XavierNX"]="tegra194-camera-vc-mipi-cam.dtsi"
           ["Auvidea_JNX30D_TX2NX"]="tegra186-camera-vc-mipi-cam.dtsi"
 )
@@ -62,59 +57,16 @@ DTSI_DEST_DICT+=(
             ["Auvidea_JNX42_Nano"]="$KERNEL_SOURCE/hardware/nvidia/platform/t210/porg/kernel-dts/porg-platforms"
         ["Auvidea_JNX30_XavierNX"]="$KERNEL_SOURCE/hardware/nvidia/platform/t19x/jakku/kernel-dts/common"
         ["Auvidea_JNX42_XavierNX"]="$KERNEL_SOURCE/hardware/nvidia/platform/t19x/jakku/kernel-dts/common"
-#          ["Auvidea_JNX42_OrinNX"]="$KERNEL_SOURCE/hardware/nvidia/platform/t23x/p3768/kernel-dts/cvb"
-#        ["Auvidea_JNX42_OrinNano"]="$KERNEL_SOURCE/hardware/nvidia/platform/t23x/p3768/kernel-dts/cvb"
                 ["NV_DevKit_Nano"]="$KERNEL_SOURCE/hardware/nvidia/platform/t210/porg/kernel-dts/porg-platforms" 
-#bazo modify
-#            ["NV_DevKit_OrinNano"]="$KERNEL_SOURCE/hardware/nvidia/platform/t23x/p3768/kernel-dts/cvb"
-#            ["NV_DevKit_OrinNano"]="$KERNEL_SOURCE/hardware/nvidia/t23x/nv-public/overlay"
             ["NV_DevKit_XavierNX"]="$KERNEL_SOURCE/hardware/nvidia/platform/t19x/jakku/kernel-dts/common"
           ["Auvidea_JNX30D_TX2NX"]="$KERNEL_SOURCE/hardware/nvidia/platform/t18x/lanai/kernel-dts/common"
 )
-
-
-
-
-
-#echo "bazo KERNEL_SOURCE after source: ${KERNEL_SOURCE}"
-
-for key in "${!DTSI_FILE_DICT[@]}" 
-do 
-        echo "key: ${key}        value: ${DTSI_FILE_DICT[$key]}"
-#        echo "value: ${DTSI_FILE_DICT[$key]}"
-done
-
-for key in "${!DTSI_DEST_DICT[@]}" 
-do 
-        echo "key: ${key}        value: ${DTSI_DEST_DICT[$key]}"
-#        echo "value: ${DTSI_DEST_DICT[$key]}"
-done
-
-
 
 if [[ ${!DTSI_FILE_DICT[@]} != ${!DTSI_DEST_DICT[@]} ]]
 then
         echo "Integrity check of the dtsi dictionaries failed. Key list seems to be not consistent. Exiting."
         exit 1
 fi
-
-
-
-
-#KERNEL_OUT=$KERNEL_SOURCE/build
-#MODULES_OUT=$KERNEL_SOURCE/modules
-
-
-#bazo kann glei weg
-case $VC_MIPI_BSP in
-36.2.0)
-        ;;
-35.1.0|35.2.1|35.3.1|35.4.1)
-        ;;
-        *)
-        ;;
-esac
-
 
 TARGET_USER=$USER
 TARGET_PW=
@@ -256,36 +208,27 @@ OrinNano4GB_SD|OrinNano8GB_SD|OrinNano4GB_NVME|OrinNano8GB_NVME|OrinNX8GB|OrinNX
         case $VC_MIPI_SOM in
         OrinNano4GB_SD)
                 ORIN_DTB_SKU='0004'
-#                FLASH_PARTITION='mmcblk1p1'
                 FLASH_PARTITION=$ORIN_FLASH_PARTITION_MMC
-#                FLASH_PARTITION='mmcblk0p1'     #36.2
                 ;;
         OrinNano8GB_SD)
                 ORIN_DTB_SKU='0003'
-#bazo modify
-#                FLASH_PARTITION='mmcblk1p1'
                 FLASH_PARTITION=$ORIN_FLASH_PARTITION_MMC
-#                FLASH_PARTITION='mmcblk0p1'    #36.2
                 ;;
         OrinNano4GB_NVME)
                 ORIN_DTB_SKU='0004'
                 FLASH_PARTITION=$ORIN_FLASH_PARTITION_NVME
-#                FLASH_PARTITION='nvme0n1p1'
                 ;;
         OrinNano8GB_NVME)
                 ORIN_DTB_SKU='0003'
                 FLASH_PARTITION=$ORIN_FLASH_PARTITION_NVME
-#                FLASH_PARTITION='nvme0n1p1'
                 ;;
         OrinNX8GB)
                 ORIN_DTB_SKU='0001'
                 FLASH_PARTITION=$ORIN_FLASH_PARTITION_NVME
-#                FLASH_PARTITION='nvme0n1p1'
                 ;;
         OrinNX16GB)
                 ORIN_DTB_SKU='0000'
                 FLASH_PARTITION=$ORIN_FLASH_PARTITION_NVME
-#                FLASH_PARTITION='nvme0n1p1'
                 ;;
         esac
 
@@ -323,5 +266,3 @@ echo "------------------------------------------------------------"
 
 export LOCALVERSION=-tegra
 export ARCH=arm64
-
-echo "bazo ende configure.sh"

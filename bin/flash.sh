@@ -31,9 +31,6 @@ flash_all() {
 
         case $VC_MIPI_SOM in
         OrinNano4GB_SD|OrinNano8GB_SD)
-                echo "flashing sd FLASH_PARTITION: ${FLASH_PARTITION}, FLASH_BOARD: ${FLASH_BOARD}"
-                echo "ORIN_FLASH_CONFIG_FOLDER: ${ORIN_FLASH_CONFIG_FOLDER}"
-#                exit 0
                 # The given parameter $1 might be used for the EXT_NUM_SECTORS variable
                 # which has been introduced with 35.4.1
                 # sudo ./flash.sh -a EXT_NUM_SECTORS="121536512"
@@ -46,9 +43,6 @@ flash_all() {
                 ;;
 
         OrinNano4GB_NVME|OrinNano8GB_NVME|OrinNX8GB|OrinNX16GB)
-                echo "flashing nvme FLASH_PARTITION: ${FLASH_PARTITION}, FLASH_BOARD: ${FLASH_BOARD}"
-                echo "ORIN_FLASH_CONFIG_FOLDER: ${ORIN_FLASH_CONFIG_FOLDER}"
-#                exit 0
                 sudo ADDITIONAL_DTB_OVERLAY_OPT="BootOrderNvme.dtbo" \
                         ./tools/kernel_flash/l4t_initrd_flash.sh \
                         --external-device ${FLASH_PARTITION} \
