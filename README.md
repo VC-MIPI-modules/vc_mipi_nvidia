@@ -66,11 +66,6 @@ LABEL secondary
   * [Auvidea JNX42 LM](https://auvidea.eu/product/70784) *(only NVIDIA Jetson Nano, Xavier NX, Orin Nano, Orin NX)*
   * [Auvidea J20 on Devkit Jetson AGX Xavier or TX2](https://auvidea.eu/j20/) *(only connector 2+3)*
 * Supported board support packages
-  * [NVIDIA L4T 32.3.1](https://developer.nvidia.com/l4t-3231-archive) *(only NVIDIA Jetson AGX Xavier)*
-  * [NVIDIA L4T 32.5.0](https://developer.nvidia.com/embedded/linux-tegra-r325)
-  * [NVIDIA L4T 32.5.1](https://developer.nvidia.com/embedded/linux-tegra-r3251)
-  * [NVIDIA L4T 32.5.2](https://developer.nvidia.com/embedded/linux-tegra-r3251)
-  * [NVIDIA L4T 32.6.1](https://developer.nvidia.com/embedded/linux-tegra-r3261)
   * [NVIDIA L4T 32.7.1](https://developer.nvidia.com/embedded/linux-tegra-r3271)
   * [NVIDIA L4T 32.7.2](https://developer.nvidia.com/embedded/linux-tegra-r3272)
   * [NVIDIA L4T 32.7.3](https://developer.nvidia.com/embedded/linux-tegra-r3273)
@@ -136,7 +131,6 @@ LABEL secondary
    > During the setup process of the quickstart.sh script, there will be executed the l4t_create_default_user.sh script from NVIDIA, which will create a default user with the credentials given by the user.
    > * After setting up the toolchain, the user is prompted to this credentials mask.
    > * This script has been available since L4T 32.6.1 and will be applied accordingly.
-   > * For older version (L4T 32.3.1 - L4T 32.5.2), the user has to setup the default user by hand after the flashing process. This procedure is guided by the ubuntu setup dialogs immediately after the first boot.
 
 4. (Optional)
 
@@ -439,49 +433,35 @@ If you have your own BSP, you have to integrate the driver into it. Please follo
 
    | system on module         | carrier board  | BSP             | all patches in folder patch/... |
    | ------------------------ | -------------- | --------------- | --------------------- |
-   | NVIDIA Jetson Nano       | NVIDIA DevKit  | 32.5.0 - 32.5.2 | kernel_Nano_32.5.0+   |
-   |                          |                | 32.6.1 - 32.7.3 | kernel_Nano_32.6.1+   |
+   | NVIDIA Jetson Nano       | NVIDIA DevKit  | 32.7.1 - 32.7.3 | kernel_Nano_32.6.1+   |
    |                          |                | 32.7.4          | kernel_Nano_32.6.1+ <br> kernel_Nano_32.7.4 |
-   |                          | Auvidea JNX30  | 32.5.0 - 32.5.2 | kernel_Nano_32.5.0+ <br> dt_Auvidea_JNX30_Nano_32.5.0+ |
-   |                          |                | 32.6.1 - 32.7.3 | kernel_Nano_32.6.1+ <br> dt_Auvidea_JNX30_Nano_32.5.0+ |
+   |                          | Auvidea JNX30  | 32.7.1 - 32.7.3 | kernel_Nano_32.6.1+ <br> dt_Auvidea_JNX30_Nano_32.5.0+ |
    |                          |                | 32.7.4          | kernel_Nano_32.6.1+ <br> kernel_Nano_32.7.4 <br> dt_Auvidea_JNX30_Nano_32.5.0+ |
-   |                          | Auvidea JNX42  | 32.5.0 - 32.5.2 | kernel_Nano_32.5.0+ <br> dt_Auvidea_JNX30_Nano_32.5.0+ |
-   |                          |                | 32.6.1 - 32.7.3 | kernel_Nano_32.6.1+ <br> dt_Auvidea_JNX30_Nano_32.5.0+ |
+   |                          | Auvidea JNX42  | 32.7.1 - 32.7.3 | kernel_Nano_32.6.1+ <br> dt_Auvidea_JNX30_Nano_32.5.0+ |
    |                          |                | 32.7.4          | kernel_Nano_32.6.1+ <br> kernel_Nano_32.7.4 <br> dt_Auvidea_JNX30_Nano_32.5.0+ |
-   | NVIDIA Jetson Xavier NX  | NVIDIA DevKit  | 32.5.0          | kernel_Xavier_32.5.0+ |
-   |                          |                | 32.5.1 - 32.5.2 | kernel_Xavier_32.5.1+ |
-   |                          |                | 32.6.1 - 32.7.2 | kernel_Xavier_32.6.1+ |
+   | NVIDIA Jetson Xavier NX  | NVIDIA DevKit  | 32.7.1 - 32.7.2 | kernel_Xavier_32.6.1+ |
    |                          |                | 32.7.3          | kernel_Xavier_32.7.3+ |
    |                          |                | 35.1.0          | kernel_Xavier_35.1.0+ |
    |                          |                | 35.2.1          | kernel_Xavier_35.2.1+ |
    |                          |                | 35.3.1          | kernel_Xavier_35.3.1+ |
-   |                          | Auvidea JNX30  | 32.5.0          | kernel_Xavier_32.5.0+ <br> dt_Auvidea_JNX30_XavierNX_32.5.0+ |
-   |                          |                | 32.5.1 - 32.5.2 | kernel_Xavier_32.5.1+ <br> dt_Auvidea_JNX30_XavierNX_32.5.0+ |
-   |                          |                | 32.6.1 - 32.7.2 | kernel_Xavier_32.6.1+ <br> dt_Auvidea_JNX30_XavierNX_32.5.0+ |
+   |                          | Auvidea JNX30  | 32.7.1 - 32.7.2 | kernel_Xavier_32.6.1+ <br> dt_Auvidea_JNX30_XavierNX_32.5.0+ |
    |                          |                | 32.7.3          | kernel_Xavier_32.7.3+ <br> dt_Auvidea_JNX30_XavierNX_32.5.0+ |
    |                          |                | 35.1.0          | kernel_Xavier_35.1.0+ <br> dt_Auvidea_JNX30_XavierNX_32.5.0+ |
    |                          |                | 35.2.1          | kernel_Xavier_35.2.1+ <br> dt_Auvidea_JNX30_XavierNX_32.5.0+ |
    |                          |                | 35.3.1          | kernel_Xavier_35.3.1+ <br> dt_Auvidea_JNX30_XavierNX_32.5.0+ |
-   |                          | Auvidea JNX42  | 32.5.0          | kernel_Xavier_32.5.0+ <br> dt_Auvidea_JNX30_XavierNX_32.5.0+ |
-   |                          |                | 32.5.1 - 32.5.2 | kernel_Xavier_32.5.1+ <br> dt_Auvidea_JNX30_XavierNX_32.5.0+ |
-   |                          |                | 32.6.1 - 32.7.2 | kernel_Xavier_32.6.1+ <br> dt_Auvidea_JNX30_XavierNX_32.5.0+ |
+   |                          | Auvidea JNX42  | 32.7.1 - 32.7.2 | kernel_Xavier_32.6.1+ <br> dt_Auvidea_JNX30_XavierNX_32.5.0+ |
    |                          |                | 32.7.3          | kernel_Xavier_32.7.3+ <br> dt_Auvidea_JNX30_XavierNX_32.5.0+ |
    |                          |                | 35.1.0          | kernel_Xavier_35.1.0+ <br> dt_Auvidea_JNX30_XavierNX_32.5.0+ |
    |                          |                | 35.2.1          | kernel_Xavier_35.2.1+ <br> dt_Auvidea_JNX30_XavierNX_32.5.0+ |
    |                          |                | 35.3.1          | kernel_Xavier_35.3.1+ <br> dt_Auvidea_JNX30_XavierNX_32.5.0+ |
-   | NVIDIA Jetson AGX Xavier | DevKit + J20   | 32.5.0          | kernel_Xavier_32.5.0+ |
-   |                          |                | 32.5.1 - 32.5.2 | kernel_Xavier_32.5.1+ |
-   |                          |                | 32.6.1 - 32.7.2 | kernel_Xavier_32.6.1+ |
+   | NVIDIA Jetson AGX Xavier | DevKit + J20   | 32.7.1 - 32.7.2 | kernel_Xavier_32.6.1+ |
    |                          |                | 32.7.3          | kernel_Xavier_32.7.3+ |
    |                          |                | 35.1.0          | kernel_Xavier_35.1.0+ |
    |                          |                | 35.2.1          | kernel_Xavier_35.2.1+ |
    |                          |                | 35.3.1          | kernel_Xavier_35.3.1+ |
-   | NVIDIA Jetson TX2        | DevKit + J20   | 32.5.0          | kernel_Xavier_32.5.0+ |
-   |                          |                | 32.5.1 - 32.5.2 | kernel_Xavier_32.5.1+ |
-   |                          |                | 32.6.1 - 32.7.2 | kernel_Xavier_32.6.1+ |
+   | NVIDIA Jetson TX2        | DevKit + J20   | 32.7.1 - 32.7.2 | kernel_Xavier_32.6.1+ |
    |                          |                | 32.7.3          | kernel_Xavier_32.7.3+ |
-   | NVIDIA Jetson TX2 NX     | Auvidea JNX30D | 32.5.1 - 32.5.2 | kernel_Xavier_32.5.1+ |
-   |                          |                | 32.6.1 - 32.7.2 | kernel_Xavier_32.6.1+ |
+   | NVIDIA Jetson TX2 NX     | Auvidea JNX30D | 32.7.1 - 32.7.2 | kernel_Xavier_32.6.1+ |
    |                          |                | 32.7.3          | kernel_Xavier_32.7.3+ |
    | NVIDIA Jetson Orin Nano  | NVIDIA DevKit  | 35.3.1          | kernel_Xavier_35.3.1+ |
    |                          | Auvidea JNX42  | 35.3.1          | kernel_Xavier_35.3.1+ |
