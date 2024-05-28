@@ -133,11 +133,6 @@ choose_board() {
 
 bsp=
 bsps=(
-#"NVIDIA L4T 32.3.1 (https://developer.nvidia.com/l4t-3231-archive)"
-#"NVIDIA L4T 32.5.0 (https://developer.nvidia.com/embedded/linux-tegra-r325)"
-#"NVIDIA L4T 32.5.1 (https://developer.nvidia.com/embedded/linux-tegra-r3251)"
-#"NVIDIA L4T 32.5.2 (https://developer.nvidia.com/embedded/linux-tegra-r3251)"
-#"NVIDIA L4T 32.6.1 (https://developer.nvidia.com/embedded/linux-tegra-r3261)"
 "NVIDIA L4T 32.7.1 (https://developer.nvidia.com/embedded/linux-tegra-r3271)"
 "NVIDIA L4T 32.7.2 (https://developer.nvidia.com/embedded/linux-tegra-r3272)"
 "NVIDIA L4T 32.7.3 (https://developer.nvidia.com/embedded/linux-tegra-r3273)"
@@ -150,11 +145,6 @@ bsps=(
 )
 
 bsps_keys=(
-#"32.3.1"
-#"32.5.0"
-#"32.5.1"
-#"32.5.2"
-#"32.6.1"
 "32.7.1"
 "32.7.2"
 "32.7.3"

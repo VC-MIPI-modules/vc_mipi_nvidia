@@ -35,12 +35,15 @@
 #define FLAG_TRIGGER_SLAVE              (1 << 17)
 
 #define FLAG_PREGIUS_S                  (1 << 18)
+#define FLAG_USE_BINNING_INDEX          (1 << 19)
 
 #define FORMAT_RAW08                    0x2a
 #define FORMAT_RAW10                    0x2b
 #define FORMAT_RAW12                    0x2c
 #define FORMAT_RAW14                    0x2d
 
+#define MAX_VC_MODES                    16
+#define MAX_BINNING_MODE_REGS           16
 
 struct vc_desc_mode {
         __u8 data_rate[4];
@@ -132,6 +135,8 @@ struct vc_sen_csr {
         struct vc_csr2 v_start;
         struct vc_csr2 h_end;
         struct vc_csr2 v_end;
+        struct vc_csr2 w_width;
+        struct vc_csr2 w_height;
         struct vc_csr2 o_width;
         struct vc_csr2 o_height;
         struct vc_csr4 flash_duration;
@@ -142,14 +147,33 @@ struct vc_csr {
         struct vc_sen_csr sen;
 };
 
+typedef struct vc_reg {
+        __u16 address;
+        __u8 value;
+} vc_reg;
+
 typedef struct vc_mode {
         __u8       num_lanes;
         __u8       format;
+        __u8       binning;
         __u32      hmax;
         vc_control vmax;
         vc_control blacklevel;
         __u32      retrigger_min;
+        struct vc_reg binning_mode_regs[MAX_BINNING_MODE_REGS];
 } vc_mode;
+
+typedef struct vc_binning {
+        __u8 h_factor;
+        __u8 v_factor;
+        struct vc_reg regs[8];
+} vc_binning;
+
+#define BINNING_START(binning, h, v) \
+        binning = (vc_binning) { .h_factor = h, .v_factor = v }; \
+        { const struct vc_reg regs [] = {
+#define BINNING_END(binning) \
+        , {0, 0} }; memcpy(&binning.regs, regs, sizeof(regs)); }
 
 struct vc_ctrl {
         // Communication
@@ -157,12 +181,14 @@ struct vc_ctrl {
         struct i2c_client *client_sen;
         struct i2c_client *client_mod;
         // Controls
-        struct vc_mode mode[8];
+        struct vc_mode mode[MAX_VC_MODES];
         struct vc_control exposure;
         struct vc_control gain;
         struct vc_control framerate;
         // Modes & Frame Formats
         struct vc_frame frame;          // Pixel
+        struct vc_binning binnings[8];
+        __u8 max_binning_modes_used;
         // Control and status registers
         struct vc_csr csr;
         // Exposure
@@ -190,6 +216,8 @@ struct vc_state {
         __u8 num_lanes;
         __u8 io_mode;
         __u8 trigger_mode;
+        __u8 binning_mode;
+        __u8 former_binning_mode;
         int power_on;
         int streaming;
         __u8 flags;
@@ -213,15 +241,19 @@ struct device *vc_core_get_mod_device(struct vc_cam *cam);
 int vc_core_try_format(struct vc_cam *cam, __u32 code);
 int vc_core_set_format(struct vc_cam *cam, __u32 code);
 __u32 vc_core_get_format(struct vc_cam *cam);
-int vc_core_set_frame(struct vc_cam *cam, __u32 x, __u32 y, __u32 width, __u32 height);
+int vc_core_set_frame(struct vc_cam *cam, __u32 left, __u32 top, __u32 width, __u32 height);
+int vc_core_set_frame_size(struct vc_cam *cam, __u32 width, __u32 height);
+int vc_core_set_frame_position(struct vc_cam *cam, __u32 left, __u32 top);
 struct vc_frame *vc_core_get_frame(struct vc_cam *cam);
 int vc_core_set_num_lanes(struct vc_cam *cam, __u32 number);
 __u32 vc_core_get_num_lanes(struct vc_cam *cam);
 int vc_core_set_framerate(struct vc_cam *cam, __u32 framerate);
 __u32 vc_core_get_framerate(struct vc_cam *cam);
-vc_control vc_core_get_vmax(struct vc_cam *cam, __u8 num_lanes, __u8 format);
-vc_control vc_core_get_blacklevel(struct vc_cam *cam, __u8 num_lanes, __u8 format);
-__u32 vc_core_get_retrigger(struct vc_cam *cam, __u8 num_lanes, __u8 format);
+int vc_core_get_mode_index(struct vc_cam *cam, __u8 num_lanes, __u8 format, __u8 binning);
+int write_binning_mode_regs(struct vc_cam *cam, __u8 num_lanes, __u8 format, __u8 binning);
+vc_control vc_core_get_vmax(struct vc_cam *cam, __u8 num_lanes, __u8 format, __u8 binning);
+vc_control vc_core_get_blacklevel(struct vc_cam *cam, __u8 num_lanes, __u8 format, __u8 binning);
+__u32 vc_core_get_retrigger(struct vc_cam *cam, __u8 num_lanes, __u8 format, __u8 binning);
 
 // --- Function to initialize the vc core --------------------------------------
 int vc_core_init(struct vc_cam *cam, struct i2c_client *client);
@@ -243,8 +275,9 @@ int vc_sen_set_roi(struct vc_cam *cam);
 int vc_sen_set_exposure(struct vc_cam *cam, int exposure);
 int vc_sen_set_gain(struct vc_cam *cam, int gain);
 
-//int vc_sen_set_blacklevel(struct vc_cam *cam, int blacklevel);
 int vc_sen_set_blacklevel(struct vc_cam *cam, __u32 blacklevel);
+
+int vc_sen_set_binning_mode(struct vc_cam *cam, int mode);
 int vc_sen_start_stream(struct vc_cam *cam);
 int vc_sen_stop_stream(struct vc_cam *cam);
 

@@ -42,7 +42,7 @@ LABEL secondary
 ```
 
 **Warnings:**
-- this version has been tested with two identical IMX565 sensors only
+- this version has been tested with two identical IMX565, IMX567/8, IMX296, IMX226, IMX415 sensors
 - there might be problems when using only a single sensor
 
 ![VC MIPI camera](https://www.vision-components.com/fileadmin/external/documentation/hardware/VC_MIPI_Camera_Module/VC_MIPI_Camera_Module-Dateien/mipi_sensor_front_back.png)

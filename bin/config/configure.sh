@@ -239,17 +239,6 @@ OrinNano4GB_SD|OrinNano8GB_SD|OrinNano4GB_NVME|OrinNano8GB_NVME|OrinNX8GB|OrinNX
         ;;
 esac
 
-
-
-for patch in "${PATCHES[@]}"; do
-        echo "Listing patches from ${PATCH_DIR}/${patch}"
-        for patchfile in $PATCH_DIR/${patch}/*.patch; do
-                echo "${patchfile}"
-        done
-done
-echo "patch list ./configure.sh done"
-
-
 # PATCHES+=('develop')
 echo "  Using build directory:                       $BSP_DIR"
 echo "  Using L4T Driver Package (BSP) URL:          $BSP_URL"

@@ -320,7 +320,7 @@ while [ $# != 0 ] ; do
                 ;;
         -b)
                 configure
-#                setup_som_carrier_specifics
+                setup_som_carrier_specifics
                 exit 0
                 ;;
         -o|--host)
