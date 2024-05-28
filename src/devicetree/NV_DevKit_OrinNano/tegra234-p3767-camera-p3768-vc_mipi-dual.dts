@@ -25,18 +25,18 @@
 //  1   | OV7251, IMX296, IMX297
 //  2   | OV9281, IMX264, IMX265
 //  2,4 | IMX178, IMX183, IMX226, IMX250, IMX252, IMX273, IMX290, IMX327, IMX335, IMX392, 
-//      | IMX412, IMX415, IMX462, IMX565, IMX566, IMX567, IMX568
+//      | IMX412, IMX415, IMX462, IMX565, IMX566, IMX567, IMX568, IMX900
 // -----+------------------------------------------------------------------------------------------
 #define VC_MIPI_LANES       2   // 1, 2, 4 Lanes
 // ------------------------------------------------------------------------------------------------
 //  Embedded Metadata Height
 // -----+------------------------------------------------------------------------------------------
 //  0   | IMX178, IMX183, IMX226, IMX250, IMX252, IMX264, IMX265, IMX273, IMX392, OV7251, OV9281
-//  1   | IMX290, IMX327, IMX335, IMX415, IMX462
+//  1   | IMX290, IMX327, IMX335, IMX415, IMX462, IMX900
 //  2   | IMX296, IMX297, IMX412
 //  4   | IMX565, IMX566, IMX567, IMX568
 // -----+------------------------------------------------------------------------------------------
-#define VC_MIPI_METADATA_H  "0" // "0", "1", "2", "4" Lines of meta data
+#define VC_MIPI_METADATA_H  "2" // "0", "1", "2", "4" Lines of meta data
 // ------------------------------------------------------------------------------------------------
 //   Sensor Manufacturer
 // -----+------------------------------------------------------------------------------------------
@@ -92,7 +92,7 @@
                                 ports {
                                         #address-cells = <1>;
                                         #size-cells = <0>;
-#if VC_MIPI_CAM_1 == 1
+#if VC_MIPI_CAM_0 == 1
                                         vc_vi_port0: port@0 {
                                                 reg = <0>;
                                                 vc_vi_in0: endpoint {
@@ -102,7 +102,7 @@
                                                 };
                                         };
 #endif
-#if VC_MIPI_CAM_0 == 1
+#if VC_MIPI_CAM_1 == 1
                                         vc_vi_port1: port@1 {
                                                 reg = <1>;
                                                 vc_vi_in1: endpoint {
@@ -122,23 +122,12 @@
                                 min_bits_per_pixel = <10>;
                                 vi_peak_byte_per_pixel = <2>;
                                 vi_bw_margin_pct = <25>;
-//				max_pixel_rate = <7500000>;
                                 max_pixel_rate = <240000>;
                                 isp_peak_byte_per_pixel = <5>;
                                 isp_bw_margin_pct = <25>;
 
-
-				/**
-				 * The general guideline for naming badge_info contains 3 parts, and is as follows,
-				 * The first part is the camera_board_id for the module; if the module is in a FFD
-				 * platform, then use the platform name for this part.
-				 * The second part contains the position of the module, ex. "rear" or "front".
-				 * The third part contains the last 6 characters of a part number which is found
-				 * in the module's specsheet from the vendor.
-				 */
-
                                 modules {
-#if VC_MIPI_CAM_1 == 1
+#if VC_MIPI_CAM_0 == 1
                                         cam_module0: module0 {
                                                 badge = "jakku_front_vc_mipi";
                                                 position = "front";
@@ -147,25 +136,20 @@
                                                         pcl_id = "v4l2_sensor";
 #if VC_MIPI_MANUFACTURER == 1
                                                         devname = "vc_mipi 10-001a";
-//                                                        devname = "vc_mipi 9-001a";   //orig
-                                                        proc-device-tree = "/proc/device-tree/cam_i2cmux/i2c@0/vc_mipi@1a";
                                                         sysfs-device-tree = "/sys/firmware/devicetree/base/bus@0/cam_i2cmux/i2c@0/vc_mipi@1a";
 #else
                                                         devname = "vc_mipi 10-0060";
-//                                                        devname = "vc_mipi 9-0060";   //orig
-                                                        proc-device-tree = "/proc/device-tree/cam_i2cmux/i2c@0/vc_mipi@60";
                                                         sysfs-device-tree = "/sys/firmware/devicetree/base/bus@0/cam_i2cmux/i2c@0/vc_mipi@60";
 #endif
                                                 };
                                                 cam_module0_drivernode1: drivernode1 {
                                                         pcl_id = "v4l2_lens";
-                                                        proc-device-tree = "/proc/device-tree/lens@vc_mipi/";
                                                         sysfs-device-tree = "/sys/firmware/devicetree/base/bus@0/lens@vc_mipi";
                                                 };
                                         };
-#endif // VC_MIPI_CAM_1
+#endif // VC_MIPI_CAM_0
 
-#if VC_MIPI_CAM_0 == 1
+#if VC_MIPI_CAM_1 == 1
                                         cam_module1: module1 {
                                                 badge = "jakku_rear_vc_mipi";
                                                 position = "rear";
@@ -174,23 +158,18 @@
                                                         pcl_id = "v4l2_sensor";
 #if VC_MIPI_MANUFACTURER == 1
                                                         devname = "vc_mipi 9-001a";
-//                                                        devname = "vc_mipi 10-001a";  //orig
-                                                        proc-device-tree = "/proc/device-tree/cam_i2cmux/i2c@1/vc_mipi@1a";
                                                         sysfs-device-tree = "/sys/firmware/devicetree/base/bus@0/cam_i2cmux/i2c@1/vc_mipi@1a";
 #else
                                                         devname = "vc_mipi 9-0060";
-//                                                        devname = "vc_mipi 10-0060";  //orig
-                                                        proc-device-tree = "/proc/device-tree/cam_i2cmux/i2c@1/vc_mipi@60";
                                                         sysfs-device-tree = "/sys/firmware/devicetree/base/bus@0/cam_i2cmux/i2c@1/vc_mipi@60";
 #endif	
                                                 };
                                                 cam_module1_drivernode1: drivernode1 {
                                                         pcl_id = "v4l2_lens";
-                                                        proc-device-tree = "/proc/device-tree/lens@vc_mipi/";
                                                         sysfs-device-tree = "/sys/firmware/devicetree/base/bus@0/lens@vc_mipi/";
                                                 };
                                         };
-#endif // VC_MIPI_CAM_0
+#endif // VC_MIPI_CAM_1
                                 };
                         };
                         bus@0 {
@@ -200,7 +179,7 @@
                                                 #address-cells = <1>;
                                                 #size-cells = <0>;
 
-#if VC_MIPI_CAM_1 == 1
+#if VC_MIPI_CAM_0 == 1
                                                 vc_csi_chan0: channel@0 {
                                                         reg = <0>;
                                                         ports {
@@ -223,7 +202,7 @@
                                                         };
                                                 };
 #endif
-#if VC_MIPI_CAM_0 == 1
+#if VC_MIPI_CAM_1 == 1
                                                 vc_csi_chan1: channel@1 {
                                                         reg = <1>;
                                                         ports {
@@ -257,7 +236,7 @@
                                         mux-gpios = <&gpio_aon CAM_I2C_MUX GPIO_ACTIVE_HIGH>;
                                         i2c-parent = <&cam_i2c>;
 
-#if VC_MIPI_CAM_1 == 1
+#if VC_MIPI_CAM_0 == 1
                                         i2c@0 {
                                                 status = "okay";
                                                 reg = <0>;
@@ -275,7 +254,7 @@
 
                                                         compatible              = "nvidia,vc_mipi";
                                                         devnode                 = "video0";
-                                                        use_sensor_mode_id      = "true";
+                                                        use_sensor_mode_id      = "false";
                                                         sensor_model            = "vc_mipi";
 
                                                         num_lanes               = NUM_LANES;
@@ -358,13 +337,12 @@
                                                                         };
                                                                 };
                                                         };
-
-						};
-					};
+                                                };
+                                        };
 #endif
 
-#if VC_MIPI_CAM_0 == 1
-					i2c@1 {
+#if VC_MIPI_CAM_1 == 1
+                                        i2c@1 {
                                                 status = "okay";
                                                 reg = <1>;
                                                 #address-cells = <1>;
@@ -381,7 +359,7 @@
 
                                                         compatible              = "nvidia,vc_mipi";
                                                         devnode                 = "video1";
-                                                        use_sensor_mode_id      = "true";
+                                                        use_sensor_mode_id      = "false";
                                                         sensor_model            = "vc_mipi";
 
                                                         num_lanes               = NUM_LANES;
@@ -462,11 +440,11 @@
                                                                         };
                                                                 };
                                                         };
-						};
-					};
+                                                };
+                                        };
 #endif
 
-				};
+                                };
 
                                 lens@vc_mipi {
                                         min_focus_distance  = "0.0";
@@ -476,7 +454,6 @@
                                         aperture            = "0.0";
                                 };
 
-                        // IMX219 example
                                 gpio@2200000 {
                                         camera-control-output-low {
                                                 gpio-hog;
@@ -485,18 +462,6 @@
                                                 label = "cam0-pwdn","cam1-pwdn";
                                         };
                                 };
-
-			// IMX477 example
-                        /*
-                                gpio@6000d000 {
-                                        camera-control-output-low {
-                                                gpio-hog;
-                                                output-low;
-                                                gpios = <CAM1_PWDN 0  CAM0_PWDN 0>;
-                                                label = "cam1-pwdn", "cam0-pwdn";
-                                        };
-                                };
-                        */
                         };
                 };
         };

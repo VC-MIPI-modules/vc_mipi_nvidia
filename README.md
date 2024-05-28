@@ -1,53 +1,8 @@
 # Vision Components MIPI CSI-2 driver for NVIDIA Jetson Nano, Xavier NX, AGX Xavier, TX2, Orin Nano and Orin NX
 
-## L4T 36.2 JetPack 6 Developers Preview Test Branch
-Flashing tested with NVIDIA OrinNano + NVIDIA DevKit only <br>
-For the time beeing, this branch is dedicated for advanced users, who already worked with this repo. Beginners should not use this branch until it is tested and documented.
-
-**ToDo:**
-- Documenting the flashing process
-- Documenting the build process with differences to previous versions
-
-**Hints:**
-- due to numerous changes, this branch is serving the L4T 36.2 and OrinNano only. When using `quickstart.sh` or `setup.sh -o`, the choices will be limited to that
-  - with this L4T 36.2 version, the tegra part is completely separated from the kernel
-  - VC Mipi driver is now running as a couple of kernel modules
-  - modifications to the camera device tree are realised with device tree overlays
-
-- nvarguscamerasrc+nvvidconv must be installed separately (gst-nvarguscamera_src.tbz2 and gst-nvvidconv_src.tbz2 are residing in the Linux_for_Tegra/source folder and will be copied automatically into the home directory of the target device)
-  - the argus_camera sample application (nvidia-l4t-jetson-multimedia-api) can be used alternatively
-- a convenience script setup_nvidia.sh can be called on the running jetson to install some prerequisites (an internet connection must be present)
-  - this script will install build essentials, nvidia-l4t-jetson-multimedia-api, lib-cuda-dev and v4l-utils
-  - the nvarguscamerasrc and nvvidconv will be generated
-  - the NVIDIA samples (including argus_camera) will be built and installed
-
-- device tree handling
-  - the file tegra234-p3767-camera-p3768-vc_mipi-dual.dts can be edited with `./setup.sh -c`
-  - the tegra234-p3767-camera-p3768-vc_mipi-dual.dtbo file will be generated with `./build.sh -d` | this step is automatically done by `./build.sh -a`
-  - the dtbo will be generated into the kernel/dtb directory on the host pc
-  - when flashing the first time with `sudo ./flash.sh -a`, the overlay file will be flashed into uefi
-  - to modify the camera-settings via tegra234-p3767-camera-p3768-vc_mipi-dual.dtbo file, the /boot/extlinux/extlinux.conf entry must be modified/duplicated and the <br>
-  OVERLAYS /boot/tegra234-p3767-camera-p3768-vc_mipi-dual.dtbo
-entry must be added. This will override the initial uefi dtbo and modifications can take effect
-  - the dtbo file must be copied into the specified location before the restart
-```
-LABEL secondary
-      MENU LABEL secondary kernel
-      LINUX /boot/Image
-      FDT /boot/dtb/kernel_tegra234-p3768-0000+p3767-0005-nv.dtb
-      INITRD /boot/initrd
-      APPEND ...
-
-      OVERLAYS /boot/tegra234-p3767-camera-p3768-vc_mipi-dual.dtbo
-```
-
-**Warnings:**
-- this version has been tested with two identical IMX565, IMX567/8, IMX296, IMX226, IMX415 sensors
-- there might be problems when using only a single sensor
-
 ![VC MIPI camera](https://www.vision-components.com/fileadmin/external/documentation/hardware/VC_MIPI_Camera_Module/VC_MIPI_Camera_Module-Dateien/mipi_sensor_front_back.png)
 
-## Version 0.17.1 ([History](VERSION.md))
+## Version 0.18.0 ([History](VERSION.md))
 
 * Supported system on modules
   * [NVIDIA Jetson Nano 4GB/2GB (production + devkit)](https://developer.nvidia.com/embedded/jetson-nano)
@@ -73,6 +28,8 @@ LABEL secondary
   * [NVIDIA L4T 35.1.0](https://developer.nvidia.com/embedded/jetson-linux-r351) *(only NVIDIA Jetson Xavier NX and AGX Xavier)*
   * [NVIDIA L4T 35.2.1](https://developer.nvidia.com/embedded/jetson-linux-r3521) *(only NVIDIA Jetson Xavier NX, AGX Xavier and Orin NX, experimental)*
   * [NVIDIA L4T 35.3.1](https://developer.nvidia.com/embedded/jetson-linux-r3531) *(only NVIDIA Jetson Xavier NX, AGX Xavier, Orin NX and Orin Nano, experimental)*
+  * [NVIDIA L4T 35.4.1](https://developer.nvidia.com/embedded/jetson-linux-r3541) *(only NVIDIA Jetson Xavier NX, AGX Xavier, Orin NX and Orin Nano, experimental)*
+  * [NVIDIA L4T 36.2.0](https://developer.nvidia.com/embedded/jetson-linux-r362) *(only NVIDIA Jetson Orin Nano + Orin Nano DevKit, experimental)*
 * Supported [VC MIPI Camera Modules](https://www.vision-components.com/fileadmin/external/documentation/hardware/VC_MIPI_Camera_Module/index.html) 
   * IMX178, IMX183, IMX226
   * IMX250, IMX252, IMX264, IMX265, IMX273, IMX392
@@ -82,6 +39,7 @@ LABEL secondary
   * IMX412
   * IMX415
   * IMX565, IMX566, IMX567, IMX568
+  * IMX900
   * OV7251, OV9281
 * Features
   * Quickstart script for an easier installation process
@@ -92,9 +50,10 @@ LABEL secondary
   * **[Trigger mode](doc/TRIGGER_MODE.md)** '0: disabled', '1: external', '2: pulsewidth', '3: self', '4: single', '5: sync', '6: stream_edge', '7: stream_level' can be set via device tree or V4L2 control 'trigger_mode'
     * **Software trigger** can be executed by V4L2 control 'single_trigger'
   * **[IO mode](doc/IO_MODE.md)** '0: disabled', '1: flash active high', '2: flash active low', '3: trigger active low', '4: trigger active low and flash active high', '5: trigger and flash active low' can be set via device tree or V4L2 control 'flash_mode'
-  * **Frame rate** can be set via V4L2 control 'frame_rate' *(except IMX412 and OV9281)*
+  * **Frame rate** can be set via V4L2 control 'frame_rate' *(except OV9281)*
   * **[Black level](doc/BLACK_LEVEL.md)** can be set via V4L2 control 'black_level' *(except IMX412, OV7251 and OV9281)*
   * **[ROI cropping](doc/ROI_CROPPING.md)** can be set via device tree properties active_l, active_t, active_w and active_h or v4l2-ctl.
+  * **[Binning](doc/BINNING.md)** can be set via V4L2 control 'binning_mode' *(IMX412, IMX565, IMX566, IMX567, IMX568 only)*
 
 ## Prerequisites for cross-compiling
 
@@ -278,25 +237,24 @@ The property *max_framerate* is given for the number of lanes and the pixel form
 </details>
 
 <details>
-  <summary>GStreamer properties for IMX565, IMX566, IMX567 and IMX568 (cameras with 2 and 4 lanes support)</summary>
+  <summary>GStreamer properties for IMX565, IMX566, IMX567, IMX568 and IMX900 (cameras with 2 and 4 lanes support)</summary>
 
-| Property             | IMX565     | IMX566     | IMX567/568 |
-| -------------------- | ---------: | ---------: | ---------: |
-| physical_w           |     11.311 |      7.804 |      6.752 |
-| physical_h           |      8.220 |      7.804 |      5.655 |
-| active_w             |       4128 |       2848 |       2464 |
-| active_h             |       3000 |       2848 |       2064 |
-| pixel_t              | RG 8,10,12 | RG 8,10,12 | RG 8,10,12 |
-| max_gain_val         |         48 |         48 |         48 |
-| step_gain_val        |      0.100 |      0.100 |      0.100 |
-| max_framerate (2L08) |       21.1 |       33.3 |       49.8 |
-| max_framerate (2L10) |       17.0 |       26.9 |       41.3 |
-| max_framerate (2L12) |       14.2 |       22.6 |       34.6 |
-| max_framerate (4L08) |       40.7 |       68.2 |       96.2 |
-| max_framerate (4L10) |       18.8*|       51.6 |       78.8 |
-| max_framerate (4L12) |       27.8 |       43.6 |       66.7 |
+| Property             | IMX565     | IMX566     | IMX567/568 | IMX900     |
+| -------------------- | ---------: | ---------: | ---------: | ---------: |
+| physical_w           |     11.311 |      7.804 |      6.752 |      4.608 |
+| physical_h           |      8.220 |      7.804 |      5.655 |      3.456 |
+| active_w             |       4128 |       2848 |       2464 |       2048 |
+| active_h             |       3000 |       2848 |       2064 |       1536 |
+| pixel_t              | RG 8,10,12 | RG 8,10,12 | RG 8,10,12 | RG 8,10,12 |
+| max_gain_val         |         48 |         48 |         48 |         48 |
+| step_gain_val        |      0.100 |      0.100 |      0.100 |      0.100 |
+| max_framerate (2L08) |       21.1 |       33.3 |       49.8 |        |
+| max_framerate (2L10) |       17.0 |       26.9 |       41.3 |        |
+| max_framerate (2L12) |       14.2 |       22.6 |       34.6 |        |
+| max_framerate (4L08) |       40.7 |       68.2 |       96.2 |        |
+| max_framerate (4L10) |       34.3 |       51.6 |       78.8 |        |
+| max_framerate (4L12) |       27.8 |       43.6 |       66.7 |        |
 
-*) max_framerate (4L10) will be increased with next sensor revision
 </details>
 
 ### Example
@@ -325,10 +283,10 @@ As an example the device tree for the IMX226 with 4 lanes and pixel format RAW10
       active_w                 = "3904";
       active_h                 = "3000";
 #if LINUX_VERSION < 500
-      pixel_t                  = "bayer_rggb";
+      pixel_t                  = "bayer_gbrg";
 #else
       mode_type                = "bayer";
-      pixel_phase              = "rggb";
+      pixel_phase              = "gbrg";
       csi_pixel_bit_depth      = "10";
 #endif
 
@@ -366,7 +324,8 @@ If you want to change some settings of a camera in the device tree, please follo
    | NVIDIA Jetson AGX Xavier | Auvidea J20 on DevKit | src/devicetree/Auvidea_J20_AGXXavier/tegra194-camera-vc-mipi-cam.dtsi |
    | NVIDIA Jetson TX2 | Auvidea J20 on DevKit | src/devicetree/Auvidea_J20_TX2/tegra186-camera-vc-mipi-cam.dtsi |
    | NVIDIA Jetson TX2 NX | Auvidea JNX30D | src/devicetree/Auvidea_JNX30D_TX2NX/tegra186-camera-vc-mipi-cam.dtsi |
-   | NVIDIA Jetson Orin Nano | NVIDIA Jetson Orin Nano Developer Kit | src/devicetree/NV_DevKit_OrinNano/tegra234-camera-vc-mipi-cam.dtsi |
+   | NVIDIA Jetson Orin Nano | NVIDIA Jetson Orin Nano Developer Kit | src/devicetree/NV_DevKit_OrinNano/tegra234-camera-vc-mipi-cam.dtsi <br> Jetpack 5 (L4T 35.3.1, L4 T35.4.1)|
+   | NVIDIA Jetson Orin Nano | NVIDIA Jetson Orin Nano Developer Kit | src/devicetree/NV_DevKit_OrinNano/tegra234-camera-vc-mipi-cam.dtsi <br> Jetpack 6 (L4T 36.2.0 DP)|
    | NVIDIA Jetson Orin Nano | Auvidea JNX42 | src/devicetree/Auvidea_JNX42_OrinNano/tegra234-camera-vc-mipi-cam.dtsi |
    | NVIDIA Jetson Orin NX | Auvidea JNX42 | src/devicetree/Auvidea_JNX42_OrinNX/tegra234-camera-vc-mipi-cam.dtsi |
 
@@ -464,9 +423,14 @@ If you have your own BSP, you have to integrate the driver into it. Please follo
    | NVIDIA Jetson TX2 NX     | Auvidea JNX30D | 32.7.1 - 32.7.2 | kernel_Xavier_32.6.1+ |
    |                          |                | 32.7.3          | kernel_Xavier_32.7.3+ |
    | NVIDIA Jetson Orin Nano  | NVIDIA DevKit  | 35.3.1          | kernel_Xavier_35.3.1+ |
+   |                          |                | 35.4.1          | kernel_Xavier_35.4.1+ |
+   |                          |                | 36.2.0          | kernel_Xavier_36.2.0+ * |
    |                          | Auvidea JNX42  | 35.3.1          | kernel_Xavier_35.3.1+ |
+   |                          |                | 35.4.1          | kernel_Xavier_35.4.1+ |
    | NVIDIA Jetson Orin NX    | Auvidea JNX42  | 35.2.1          | kernel_Xavier_35.2.1+ |
    |                          |                | 35.3.1          | kernel_Xavier_35.3.1+ |
+   |                          |                | 35.4.1          | kernel_Xavier_35.4.1+ |
+*) For L4T 36.2.0, the kernel_common_32.3.1+ must be left out.
 
 2. Copy the camera device tree to the folder listed in the following table
 
@@ -493,13 +457,52 @@ To test the camera you can use [v4l2-test](https://github.com/pmliquify/v4l2-tes
 
 ## Annotations
 
-### For Jetpack 5 (L4T 35.1.0, 35.2.1, 35.3.1):
+### For Jetpack 5 (L4T 35.1.0, 35.2.1, 35.3.1, 35.4.1):
 
 * When the system has booted successfully, it is necessary to run the script max_speed.sh from the /target folder as superuser. It will read out the maximum frequencies and set them as the current ones. This is a recommendation from nvidia.
 
   ```bash
   sudo ./max_speed.sh -m
   ```
+
+### For Jetpack 6 (L4T 36.2.0 DP):
+
+**Hints:**
+- with this L4T 36.2 version, the tegra part is completely separated from the kernel
+- VC Mipi driver is now running as a couple of kernel modules
+- modifications to the camera device tree are realised with device tree overlays
+
+- nvarguscamerasrc+nvvidconv must be installed separately (gst-nvarguscamera_src.tbz2 and gst-nvvidconv_src.tbz2 are residing in the Linux_for_Tegra/source folder and will be copied automatically into the home directory of the target device)
+  - the argus_camera sample application (nvidia-l4t-jetson-multimedia-api) can be used alternatively
+- a convenience script setup_nvidia.sh can be called on the running jetson to install some prerequisites (an internet connection must be present)
+  - this script will install build essentials, nvidia-l4t-jetson-multimedia-api, lib-cuda-dev and v4l-utils
+  - the nvarguscamerasrc and nvvidconv will be generated
+  - the NVIDIA samples (including argus_camera) will be built and installed
+
+- device tree handling
+  - the file tegra234-p3767-camera-p3768-vc_mipi-dual.dts can be edited with `./setup.sh -c`
+  - the tegra234-p3767-camera-p3768-vc_mipi-dual.dtbo file will be generated with `./build.sh -d` | this step is automatically done by `./build.sh -a`
+  - the dtbo will be generated into the kernel/dtb directory on the host pc
+  - when flashing the first time with `sudo ./flash.sh -a`, the overlay file will be flashed into uefi
+  - to modify the camera-settings via tegra234-p3767-camera-p3768-vc_mipi-dual.dtbo file, the /boot/extlinux/extlinux.conf entry must be modified/duplicated and the <br>
+  OVERLAYS /boot/tegra234-p3767-camera-p3768-vc_mipi-dual.dtbo
+entry must be added. This will override the initial uefi dtbo and modifications can take effect
+  - the dtbo file must be copied into the specified location before the restart
+```
+LABEL secondary
+      MENU LABEL secondary kernel
+      LINUX /boot/Image
+      FDT /boot/dtb/kernel_tegra234-p3768-0000+p3767-0005-nv.dtb
+      INITRD /boot/initrd
+      APPEND ...
+
+      OVERLAYS /boot/tegra234-p3767-camera-p3768-vc_mipi-dual.dtbo
+```
+
+**Warnings:**
+- this version has been tested with two identical IMX565, IMX567/8, IMX296, IMX226, IMX415 sensors
+- there might be problems when using only a single sensor
+
 
 ### For NVIDIA Jetson TX2 NX
 
