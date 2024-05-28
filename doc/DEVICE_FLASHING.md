@@ -94,7 +94,7 @@ If your system has been successfully flashed and you want to modify your camera 
 
 For flashing the device tree only, the JetPack version must be considered:
 
-### JetPack 4 (L4T 32.3.1 - L4T 32.7.4)
+### JetPack 4 (L4T 32.7.1 - L4T 32.7.4)
 
 This applies to Jetson Nano, Jetson Xavier NX and Jetson AGX Xavier.
 The device must be in forced recovery mode! Just call:

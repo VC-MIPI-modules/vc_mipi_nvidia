@@ -1,5 +1,19 @@
 # Version History
 
+## v0.18.0 (L4T 36.2.0, L4T 35.4.1, Support IMX900, Binning)
+
+* New Features
+  * Added support for board support package
+    * NVIDIA L4T 36.2.0 for NVIDIA Jetson Orin Nano + Orin Nano DevKit
+    * NVIDIA L4T 35.4.1 
+  * Added support for VC MIPI Camera Module
+    * IMX900 (exposure not working correctly when the exposure is less than the frametime)
+  * Added support for binning *(IMX412, IMX565, IMX566, IMX567, IMX568 only)*
+* Bugfix
+  * Stability patch for L4T 35.4.1 implemented. Nvargus daemon got stuck sporadically after several hours of streaming via ISP. Fixed. 
+* Improvements
+  * Removed old L4T versions 32.3.1 - 32.6.1
+
 ## v0.17.1 (L4T 35.3.1)
 
 * Bugfix

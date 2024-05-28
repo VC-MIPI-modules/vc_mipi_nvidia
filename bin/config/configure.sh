@@ -119,10 +119,7 @@ Nano|NanoSD|Nano2GB)
         case $VC_MIPI_BOARD in
         Auvidea_JNX30|Auvidea_JNX42)
                 case $VC_MIPI_BSP in
-                32.3.1)
-                        PATCHES+=('dt_Auvidea_JNX30_Nano_32.3.1+')
-                        ;;
-                32.5.0|32.5.1|32.5.2|32.6.1|32.7.1|32.7.2|32.7.3|32.7.4)
+                32.7.1|32.7.2|32.7.3|32.7.4)
                         PATCHES+=('dt_Auvidea_JNX30_Nano_32.5.0+')
                         ;;
                 esac
@@ -149,7 +146,7 @@ XavierNX|XavierNXSD)
         case $VC_MIPI_BOARD in
         Auvidea_JNX30|Auvidea_JNX42)
                 case $VC_MIPI_BSP in
-                32.5.0|32.5.1|32.5.2|32.6.1|32.7.1|32.7.2|32.7.3)
+                32.7.1|32.7.2|32.7.3)
                         PATCHES+=('dt_Auvidea_JNX30_XavierNX_32.5.0+')
                         ;;
                 35.1.0|35.2.1|35.3.1|35.4.1|36.2.0)

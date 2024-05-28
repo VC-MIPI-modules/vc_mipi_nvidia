@@ -190,7 +190,7 @@ create_target_user() {
         echo "Create target user ..."
         cd $BSP_DIR/Linux_for_Tegra
         case $VC_MIPI_BSP in
-        32.6.1|32.7.1|32.7.2|32.7.3|32.7.4|35.1.0|35.2.1|35.3.1|35.4.1|36.2.0)
+        32.7.1|32.7.2|32.7.3|32.7.4|35.1.0|35.2.1|35.3.1|35.4.1|36.2.0)
 
                 sudo ./tools/l4t_create_default_user.sh --username ${TARGET_USER} --password ${TARGET_PW} \
                         --hostname nvidia --autologin --accept-license
@@ -315,7 +315,7 @@ while [ $# != 0 ] ; do
                 ;;
         -n)
                 configure
-#                setup_nvidia_driver
+                setup_nvidia_driver
                 exit 0
                 ;;
         -b)
