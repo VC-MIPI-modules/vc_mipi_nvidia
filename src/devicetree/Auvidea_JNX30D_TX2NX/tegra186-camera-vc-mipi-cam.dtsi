@@ -29,14 +29,14 @@
 //  1   | OV7251, IMX296, IMX297
 //  2   | OV9281, IMX264, IMX265
 //  2,4 | IMX178, IMX183, IMX226, IMX250, IMX252, IMX273, IMX290, IMX327, IMX335, IMX392, 
-//      | IMX412, IMX415, IMX462, IMX565, IMX566, IMX567, IMX568
+//      | IMX412, IMX415, IMX462, IMX565, IMX566, IMX567, IMX568, IMX900
 // -----+------------------------------------------------------------------------------------------
 #define VC_MIPI_LANES       4   // 1, 2, 4 Lanes
 // ------------------------------------------------------------------------------------------------
 //  Embedded Metadata Height
 // -----+------------------------------------------------------------------------------------------
 //  0   | IMX178, IMX183, IMX226, IMX250, IMX252, IMX264, IMX265, IMX273, IMX392, OV7251, OV9281
-//  1   | IMX290, IMX327, IMX335, IMX415, IMX462
+//  1   | IMX290, IMX327, IMX335, IMX415, IMX462, IMX900
 //  2   | IMX296, IMX297, IMX412
 //  4   | IMX565, IMX566, IMX567, IMX568
 // -----+------------------------------------------------------------------------------------------
@@ -251,8 +251,8 @@
                         // ----------------------------------------------------
                         // If you want to use GStreamer with nvarguscamerasrc
                         // you have to adjust this settings
-                        physical_w              = "5.602";
-                        physical_h              = "3.155";
+                        physical_w              = "1.000";
+                        physical_h              = "1.000";
                         // ----------------------------------------------------
 
                         // This node is needed by the Tegra framework.
@@ -268,13 +268,13 @@
                                 // you have to adjust this settings. 
                                 active_l                 = "0";
                                 active_t                 = "0";
-                                active_w                 = "3840";
-                                active_h                 = "2160";
+                                active_w                 = "0";
+                                active_h                 = "0";
                                 pixel_t                  = "bayer_rggb";
 
                                 min_gain_val             = "0";         // mdB
-                                max_gain_val             = "72000";     // mdB
-                                step_gain_val            = "300";       // mdB
+                                max_gain_val             = "48000";     // mdB
+                                step_gain_val            = "100";       // mdB
                                 default_gain             = "0";         // mdB
 
                                 min_exp_time             = "1";         // us
@@ -285,9 +285,9 @@
                                 // For applications like argus_camera, there should
                                 // be a minimal frame rate greater than zero!
                                 min_framerate            = "1000";      // mHz
-                                max_framerate            = "59900";     // mHz
+                                max_framerate            = "60000";     // mHz
                                 step_framerate           = "100";       // mHz
-                                default_framerate        = "59900";     // mHz
+                                default_framerate        = "60000";     // mHz
                                 // ----------------------------------------------------
 
                                 gain_factor              = "1000";
@@ -343,8 +343,8 @@
                         // ----------------------------------------------------
                         // If you want to use GStreamer with nvarguscamerasrc
                         // you have to adjust this settings
-                        physical_w              = "5.602";
-                        physical_h              = "3.155";
+                        physical_w              = "1.000";
+                        physical_h              = "1.000";
                         // ----------------------------------------------------
 
                         // This node is needed by the Tegra framework.
@@ -360,13 +360,13 @@
                                 // you have to adjust this settings. 
                                 active_l                 = "0";
                                 active_t                 = "0";
-                                active_w                 = "3840";
-                                active_h                 = "2160";
+                                active_w                 = "0";
+                                active_h                 = "0";
                                 pixel_t                  = "bayer_rggb";
 
                                 min_gain_val             = "0";         // mdB
-                                max_gain_val             = "72000";     // mdB
-                                step_gain_val            = "300";       // mdB
+                                max_gain_val             = "48000";     // mdB
+                                step_gain_val            = "100";       // mdB
                                 default_gain             = "0";         // mdB
 
                                 min_exp_time             = "1";         // us
@@ -377,9 +377,9 @@
                                 // For applications like argus_camera, there should
                                 // be a minimal frame rate greater than zero!
                                 min_framerate            = "1000";      // mHz
-                                max_framerate            = "59900";     // mHz
+                                max_framerate            = "60000";     // mHz
                                 step_framerate           = "100";       // mHz
-                                default_framerate        = "59900";     // mHz
+                                default_framerate        = "60000";     // mHz
                                 // ----------------------------------------------------
 
                                 gain_factor              = "1000";
@@ -709,97 +709,3 @@
                 };
         };
 };
-
-// #define CAM0_PWDN	TEGRA_MAIN_GPIO(N, 0)
-// #define CAM1_PWDN	TEGRA_MAIN_GPIO(N, 3)
-// #define CAM2_PWDN	TEGRA_AON_GPIO(EE, 2)
-// #define CAM3_PWDN	TEGRA_MAIN_GPIO(N, 1)
-// #define CAM_TRIGGER	TEGRA_AON_GPIO(U, 0)
-// #define CAM_I2C_MUX 	TEGRA_MAIN_GPIO(C, 4)
-
-// / {
-// 	/delete-node/ cam_i2cmux;
-
-// #if VC_MIPI_CAM_AB == 1
-// 	i2c@3180000 {
-// 		status = "okay";
-// 		vc_mipi@1a {
-// 			reset-gpios = <&tegra_main_gpio CAM0_PWDN GPIO_ACTIVE_HIGH>;
-// 		};
-// 	};
-// #endif
-// #if VC_MIPI_CAM_CD == 1
-// 	i2c@3160000 {
-// 		status = "okay";
-// 		vc_mipi@1a {
-// 			reset-gpios = <&tegra_main_gpio CAM0_PWDN GPIO_ACTIVE_HIGH>;
-// 		};
-// 	};
-// #endif
-// #if VC_MIPI_CAM_E == 1
-// 	i2c@c240000 {
-// 		status = "okay";
-// 		vc_mipi@1a {
-// 			reset-gpios = <&tegra_main_gpio CAM0_PWDN GPIO_ACTIVE_HIGH>;
-// 		};
-// 	};
-// #endif
-// #if VC_MIPI_CAM_F == 1
-// 	i2c@c250000 {
-// 		status = "okay";
-// 		vc_mipi@1a {
-// 			reset-gpios = <&tegra_main_gpio CAM0_PWDN GPIO_ACTIVE_HIGH>;
-// 		};
-// 	};
-// #endif
-
-// 	pinmux@2430000 {
-// 		pinmux_default: common {
-// 			gpio_dis0_pu0 {
-// 				nvidia,pins = "gpio_dis0_pu0";
-// 				nvidia,function = "rsvd2";
-// 				nvidia,pull = <TEGRA_PIN_PULL_UP>;
-// 				nvidia,tristate = <TEGRA_PIN_DISABLE>;
-// 				nvidia,enable-input = <TEGRA_PIN_DISABLE>;
-// 				nvidia,io-high-voltage = <TEGRA_PIN_DISABLE>;
-// 				nvidia,lpdr = <TEGRA_PIN_DISABLE>;
-// 			};
-// 			uart5_tx_px4 {				//add for sd card card detect pin(fd)
-// 				nvidia,pins = "uart5_tx_px4";
-// 				nvidia,function = "sdmmc3";
-// 				nvidia,pull = <TEGRA_PIN_PULL_UP>;
-// 				nvidia,tristate = <TEGRA_PIN_DISABLE>;
-// 				nvidia,enable-input = <TEGRA_PIN_ENABLE>;
-// 				nvidia,lpdr = <TEGRA_PIN_DISABLE>;
-// 			};
-
-
-// 		};
-// 	};
-
-// 	gpio@2200000 {
-// 		camera-control-output-low {
-// 			status = "okay";
-// 			gpio-hog;
-// 			output-low;
-// 			gpios = <CAM0_PWDN 0 CAM1_PWDN 0 CAM3_PWDN 0>;
-// 			label = "cam0-pwdn","cam1-pwdn", "cam3-pwdn";
-// 		};
-// 	};
-// 	gpio@c2f0000 {
-// 		camera-trigger-high {
-// 			status = "okay";
-// 			gpio-hog;
-// 			output-high;
-// 			gpios = <CAM_TRIGGER 0>; 
-// 			label = "cam-trigger";
-// 		};
-// 		camera-control-output-low {
-// 			status = "okay";
-// 			gpio-hog;
-// 			output-low;
-// 			gpios = <CAM2_PWDN 0>;
-// 			label = "cam2-pwdn";
-// 		};
-// 	};
-// };

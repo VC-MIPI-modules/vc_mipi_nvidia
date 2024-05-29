@@ -29,14 +29,14 @@
 //  1   | OV7251, IMX296, IMX297
 //  2   | OV9281, IMX264, IMX265
 //  2,4 | IMX178, IMX183, IMX226, IMX250, IMX252, IMX273, IMX290, IMX327, IMX335, IMX392, 
-//      | IMX412, IMX415, IMX462, IMX565, IMX566, IMX567, IMX568
+//      | IMX412, IMX415, IMX462, IMX565, IMX566, IMX567, IMX568, IMX900
 // -----+------------------------------------------------------------------------------------------
 #define VC_MIPI_LANES       4   // 1, 2, 4 Lanes
 // ------------------------------------------------------------------------------------------------
 //  Embedded Metadata Height
 // -----+------------------------------------------------------------------------------------------
 //  0   | IMX178, IMX183, IMX226, IMX250, IMX252, IMX264, IMX265, IMX273, IMX392, OV7251, OV9281
-//  1   | IMX290, IMX327, IMX335, IMX415, IMX462
+//  1   | IMX290, IMX327, IMX335, IMX415, IMX462, IMX900
 //  2   | IMX296, IMX297, IMX412
 //  4   | IMX565, IMX566, IMX567, IMX568
 // -----+------------------------------------------------------------------------------------------
@@ -219,8 +219,8 @@
                                 // ----------------------------------------------------
                                 // If you want to use GStreamer with nvarguscamerasrc
                                 // you have to adjust this settings
-                                physical_w              = "0.000";
-                                physical_h              = "0.000";
+                                physical_w              = "1.000";
+                                physical_h              = "1.000";
                                 // ----------------------------------------------------
 
                                 // This node is needed by the Tegra framework.
@@ -316,8 +316,8 @@
                                 // ----------------------------------------------------
                                 // If you want to use GStreamer with nvarguscamerasrc
                                 // you have to adjust this settings
-                                physical_w              = "0.000";
-                                physical_h              = "0.000";
+                                physical_w              = "1.000";
+                                physical_h              = "1.000";
                                 // ----------------------------------------------------
 
                                 // This node is needed by the Tegra framework.

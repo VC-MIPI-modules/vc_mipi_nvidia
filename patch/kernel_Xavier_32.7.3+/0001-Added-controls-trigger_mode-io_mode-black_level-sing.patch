@@ -1,20 +1,20 @@
-From 0b5d6f56a74c009297adbe4aeb04dfbbeb8656a9 Mon Sep 17 00:00:00 2001
+From f2ade78729dc9dbfff5116eb12a8cdf4b4991c92 Mon Sep 17 00:00:00 2001
 From: "/setup.sh" <support@vision-components.com>
-Date: Wed, 5 Jul 2023 09:58:55 +0200
-Subject: [PATCH] Added controls 'trigger_mode', 'io_mode', 'black_level' and
- 'single_trigger' to the tegra framework.
+Date: Fri, 24 May 2024 09:44:27 +0200
+Subject: [PATCH] Added controls 'trigger_mode', 'io_mode', 'black_level',
+ 'single_trigger' and 'binning_mode' to the tegra framework.
 
 ---
- .../platform/tegra/camera/tegracam_ctrls.c    | 118 ++++++++++++++++++
- kernel/nvidia/include/media/camera_common.h   |   4 +
- .../nvidia/include/media/tegra-v4l2-camera.h  |   4 +
- 3 files changed, 126 insertions(+)
+ .../platform/tegra/camera/tegracam_ctrls.c    | 148 ++++++++++++++++++
+ kernel/nvidia/include/media/camera_common.h   |   5 +
+ .../nvidia/include/media/tegra-v4l2-camera.h  |   5 +
+ 3 files changed, 158 insertions(+)
 
 diff --git a/kernel/nvidia/drivers/media/platform/tegra/camera/tegracam_ctrls.c b/kernel/nvidia/drivers/media/platform/tegra/camera/tegracam_ctrls.c
-index 4bca039d4..60116ca6a 100644
+index 4bca039..e56be98 100644
 --- a/kernel/nvidia/drivers/media/platform/tegra/camera/tegracam_ctrls.c
 +++ b/kernel/nvidia/drivers/media/platform/tegra/camera/tegracam_ctrls.c
-@@ -174,6 +174,48 @@ static struct v4l2_ctrl_config ctrl_cfg_list[] = {
+@@ -174,6 +174,59 @@ static struct v4l2_ctrl_config ctrl_cfg_list[] = {
  		.max = STEREO_EEPROM_SIZE,
  		.step = 2,
  	},
@@ -60,10 +60,21 @@ index 4bca039d4..60116ca6a 100644
 +		.def = 0,
 +		.step = 1,
 +	},
++	{
++		.ops = &tegracam_ctrl_ops,
++		.id = TEGRA_CAMERA_CID_BINNING_MODE,
++		.name = "Binning Mode",
++		.type = V4L2_CTRL_TYPE_INTEGER,
++		.flags = 0,
++		.min = 0,
++		.max = 7,
++		.def = 0,
++		.step = 1,
++	},
  };
  
  static int tegracam_get_ctrl_index(u32 cid)
-@@ -307,6 +349,18 @@ static int tegracam_set_ctrls(struct tegracam_ctrl_handler *handler,
+@@ -307,6 +360,21 @@ static int tegracam_set_ctrls(struct tegracam_ctrl_handler *handler,
  
  	/* For controls that require sensor to be on */
  	switch (ctrl->id) {
@@ -79,10 +90,13 @@ index 4bca039d4..60116ca6a 100644
 +	case TEGRA_CAMERA_CID_SINGLE_TRIGGER:
 +		err = ops->set_single_trigger(tc_dev, ctrl->val);
 +		break;
++        case TEGRA_CAMERA_CID_BINNING_MODE:
++                err = ops->set_binning_mode(tc_dev, ctrl->val);
++                break;
  	case TEGRA_CAMERA_CID_GAIN:
  		err = ops->set_gain(tc_dev, *ctrl->p_new.p_s64);
  		break;
-@@ -649,6 +703,34 @@ static int tegracam_check_ctrl_ops(
+@@ -649,6 +717,41 @@ static int tegracam_check_ctrl_ops(
  	/* Find missing sensor controls */
  	for (i = 0; i < ops->numctrls; i++) {
  		switch (cids[i]) {
@@ -114,10 +128,17 @@ index 4bca039d4..60116ca6a 100644
 +			if (ops->set_single_trigger != NULL)
 +				sensor_ops++;
 +			break;
++		case TEGRA_CAMERA_CID_BINNING_MODE:
++			if (ops->set_binning_mode == NULL)
++				dev_err(dev,
++					"Missing TEGRA_CAMERA_CID_BINNING_MODE implementation\n");
++			if (ops->set_binning_mode != NULL)
++				sensor_ops++;
++			break;
  		case TEGRA_CAMERA_CID_GAIN:
  			if (ops->set_gain == NULL && ops->set_gain_ex == NULL)
  				dev_err(dev,
-@@ -819,6 +901,42 @@ static int tegracam_check_ctrl_cids(struct tegracam_ctrl_handler *handler)
+@@ -819,6 +922,51 @@ static int tegracam_check_ctrl_cids(struct tegracam_ctrl_handler *handler)
  	int errors_found = 0;
  
  	/* Find missing sensor control IDs */
@@ -157,14 +178,23 @@ index 4bca039d4..60116ca6a 100644
 +		}
 +	}
 +
++	if (ops->set_binning_mode != NULL) {
++		if (!find_matching_cid(ops->ctrl_cid_list,
++			ops->numctrls,
++			TEGRA_CAMERA_CID_BINNING_MODE)) {
++			dev_err(dev, "Missing TEGRA_CAMERA_CID_BINNING_MODE registration\n");
++			errors_found++;
++		}
++	}
++
  	if (ops->set_gain != NULL || ops->set_gain_ex != NULL) {
  		if (!find_matching_cid(ops->ctrl_cid_list,
  			ops->numctrls,
 diff --git a/kernel/nvidia/include/media/camera_common.h b/kernel/nvidia/include/media/camera_common.h
-index d2d7906c2..672a0ce38 100644
+index 22a41bc..a00f81e 100644
 --- a/kernel/nvidia/include/media/camera_common.h
 +++ b/kernel/nvidia/include/media/camera_common.h
-@@ -191,6 +191,10 @@ struct tegracam_ctrl_ops {
+@@ -192,6 +192,11 @@ struct tegracam_ctrl_ops {
  	u32 compound_ctrl_size[TEGRA_CAM_MAX_COMPOUND_CONTROLS];
  	const u32 *ctrl_cid_list;
  	bool is_blob_supported;
@@ -172,14 +202,15 @@ index d2d7906c2..672a0ce38 100644
 +	int (*set_io_mode)(struct tegracam_device *tc_dev, s64 val);
 +	int (*set_black_level)(struct tegracam_device *tc_dev, s64 val);
 +	int (*set_single_trigger)(struct tegracam_device *tc_dev, bool val);
++        int (*set_binning_mode)(struct tegracam_device *tc_dev, s64 val);
  	int (*set_gain)(struct tegracam_device *tc_dev, s64 val);
  	int (*set_exposure)(struct tegracam_device *tc_dev, s64 val);
  	int (*set_exposure_short)(struct tegracam_device *tc_dev, s64 val);
 diff --git a/kernel/nvidia/include/media/tegra-v4l2-camera.h b/kernel/nvidia/include/media/tegra-v4l2-camera.h
-index fb0b89033..cae3a52d4 100644
+index 619218d..685f775 100644
 --- a/kernel/nvidia/include/media/tegra-v4l2-camera.h
 +++ b/kernel/nvidia/include/media/tegra-v4l2-camera.h
-@@ -38,6 +38,10 @@
+@@ -38,6 +38,11 @@
  #define TEGRA_CAMERA_CID_FRAME_RATE		(TEGRA_CAMERA_CID_BASE+11)
  #define TEGRA_CAMERA_CID_EXPOSURE_SHORT		(TEGRA_CAMERA_CID_BASE+12)
  #define TEGRA_CAMERA_CID_STEREO_EEPROM		(TEGRA_CAMERA_CID_BASE+13)
@@ -187,9 +218,10 @@ index fb0b89033..cae3a52d4 100644
 +#define TEGRA_CAMERA_CID_IO_MODE		(TEGRA_CAMERA_CID_BASE+15)
 +#define TEGRA_CAMERA_CID_BLACK_LEVEL		(TEGRA_CAMERA_CID_BASE+16)
 +#define TEGRA_CAMERA_CID_SINGLE_TRIGGER		(TEGRA_CAMERA_CID_BASE+17)
++#define TEGRA_CAMERA_CID_BINNING_MODE           (TEGRA_CAMERA_CID_BASE+18)
  
  #define TEGRA_CAMERA_CID_SENSOR_CONFIG		(TEGRA_CAMERA_CID_BASE+50)
  #define TEGRA_CAMERA_CID_SENSOR_MODE_BLOB	(TEGRA_CAMERA_CID_BASE+51)
 -- 
-2.25.1
+2.34.1
 

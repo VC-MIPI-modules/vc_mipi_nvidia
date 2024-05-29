@@ -266,8 +266,8 @@ As an example the device tree for the IMX226 with 4 lanes and pixel format RAW10
   // ----------------------------------------------------
   // If you want to use GStreamer with nvarguscamerasrc
   // you have to adjust this settings
-  physical_w              = "7.533";
-  physical_h              = "5.635";
+  physical_w              = "7.222";
+  physical_h              = "5.550";
   // ----------------------------------------------------
 
   // This node is needed by the Tegra framework.
@@ -300,7 +300,7 @@ As an example the device tree for the IMX226 with 4 lanes and pixel format RAW10
       step_exp_time            = "1";         //       1 us
       default_exp_time         = "10000";     //   10000 us
 
-      min_framerate            = "0";         //       0 Hz
+      min_framerate            = "1000";      //       1 Hz
       max_framerate            = "43600";     //    43.6 Hz
       step_framerate           = "100";       //     0.1 Hz
       default_framerate        = "43600";     //    43.6 Hz
@@ -325,7 +325,7 @@ If you want to change some settings of a camera in the device tree, please follo
    | NVIDIA Jetson TX2 | Auvidea J20 on DevKit | src/devicetree/Auvidea_J20_TX2/tegra186-camera-vc-mipi-cam.dtsi |
    | NVIDIA Jetson TX2 NX | Auvidea JNX30D | src/devicetree/Auvidea_JNX30D_TX2NX/tegra186-camera-vc-mipi-cam.dtsi |
    | NVIDIA Jetson Orin Nano | NVIDIA Jetson Orin Nano Developer Kit | src/devicetree/NV_DevKit_OrinNano/tegra234-camera-vc-mipi-cam.dtsi <br> Jetpack 5 (L4T 35.3.1, L4T 35.4.1)|
-   | NVIDIA Jetson Orin Nano | NVIDIA Jetson Orin Nano Developer Kit | src/devicetree/NV_DevKit_OrinNano/tegra234-camera-vc-mipi-cam.dtsi <br> Jetpack 6 (L4T 36.2.0 DP)|
+   | NVIDIA Jetson Orin Nano | NVIDIA Jetson Orin Nano Developer Kit | src/devicetree/NV_DevKit_OrinNano/tegra234-p3767-camera-p3768-vc_mipi-dual.dts <br> Jetpack 6 (L4T 36.2.0 DP)|
    | NVIDIA Jetson Orin Nano | Auvidea JNX42 | src/devicetree/Auvidea_JNX42_OrinNano/tegra234-camera-vc-mipi-cam.dtsi |
    | NVIDIA Jetson Orin NX | Auvidea JNX42 | src/devicetree/Auvidea_JNX42_OrinNX/tegra234-camera-vc-mipi-cam.dtsi |
 
@@ -371,6 +371,7 @@ If you want to use your camera in an application with long exposure times or ext
 * IMX412 (Rev.05)
 * IMX415 (Rev.02)
 * IMX565 (Rev.03), IMX566 (Rev.03), IMX567 (Rev.03), IMX568 (Rev.04)
+* IMX900 (Rev.00)
 * OV7251 (Rev.01), OV9281 (Rev.02)
 
 You can find the revision of the camera module in the dmesg log.
@@ -472,7 +473,6 @@ To test the camera you can use [v4l2-test](https://github.com/pmliquify/v4l2-tes
 
 ### For Jetpack 6 (L4T 36.2.0 DP):
 
-**Hints:**
 - with this L4T 36.2 version, the tegra part is completely separated from the kernel
 - VC Mipi driver is now running as a couple of kernel modules
 - modifications to the camera device tree are realised with device tree overlays
@@ -504,9 +504,8 @@ LABEL secondary
       OVERLAYS /boot/tegra234-p3767-camera-p3768-vc_mipi-dual.dtbo
 ```
 
-**Warnings:**
-- this version has been tested with two identical IMX565, IMX567/8, IMX296, IMX226, IMX415 sensors
-- there might be problems when using only a single sensor
+   > * this version has been tested with two identical IMX565, IMX567/8, IMX296, IMX226, IMX415 sensors
+   > * there might be problems when using only a single sensor
 
 
 ### For NVIDIA Jetson TX2 NX
