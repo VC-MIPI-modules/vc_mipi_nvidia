@@ -886,6 +886,11 @@ static void vc_init_ctrl_imx900(struct vc_ctrl *ctrl, struct vc_desc* desc)
         ctrl->flags                    |= FLAG_IO_ENABLED;
         ctrl->flags                    |= FLAG_TRIGGER_EXTERNAL | FLAG_TRIGGER_PULSEWIDTH |
                                           FLAG_TRIGGER_SELF | FLAG_TRIGGER_SINGLE;
+
+        BINNING_START(ctrl->binnings[0], 0, 0)
+                { IMX56X_HV_MODE, IMX56X_BINNING_MODE_DISABLE },
+                { IMX56X_EAV_SELECT, IMX56X_EAV_SELECT_VALUE }
+        BINNING_END(ctrl->binnings[0])
 }
 
 // ------------------------------------------------------------------------------------------------
