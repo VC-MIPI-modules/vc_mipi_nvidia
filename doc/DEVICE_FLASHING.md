@@ -4,10 +4,6 @@
 In order to use your selected Linux4Tegra distribution, it must be flashed to the target. <br>
 The call
 ```
-./flash.sh -a
-```
-or
-```
 ./flash.sh --all
 ```
 will perform the initial flash of the target device.
@@ -16,9 +12,9 @@ If the quickstart script has been executed, the `flash.sh` script is called auto
 Simplified structure of the quickstart script:
 ```
   quickstart.sh
-    ./setup.sh -o
-    ./build.sh -a
-    ./flash.sh -a
+    ./setup.sh --host
+    ./build.sh --all
+    ./flash.sh --all
 ```
 
 If you have set up your system without the `quickstart.sh` script, then you must call the initial flash procedure manually after the build process.
@@ -59,7 +55,7 @@ Especially with Orin devices there are some difficulties to expect, like timeout
    (if your sd card is mounted as sda)<br>
    You should see a number of sectors for your device e.g.: 121536512. With the obtained number you could try to flash your Jetson device again:
    ```
-   sudo ./flash.sh -a EXT_NUM_SECTORS="121536512"
+   sudo ./flash.sh --all EXT_NUM_SECTORS="121536512"
    ```
 
 
@@ -68,26 +64,14 @@ Especially with Orin devices there are some difficulties to expect, like timeout
 If your system has been successfully flashed and you want to modify your camera settings (e.g. number of lanes), then you should perform the following steps:
 1. Change the camera settings
    ```
-   ./setup.sh -c
-   ```
-   or
-   ```
    ./setup.sh --camera
    ```
 
 2. Compile the device tree
    ```
-   ./build.sh -d
-   ```
-   or
-   ```
    ./build.sh --dt
    ```
 3. Flash the device tree
-   ```
-   ./flash.sh -d
-   ```
-   or
    ```
    ./flash.sh --dt
    ```
@@ -99,7 +83,7 @@ For flashing the device tree only, the JetPack version must be considered:
 This applies to Jetson Nano, Jetson Xavier NX and Jetson AGX Xavier.
 The device must be in forced recovery mode! Just call:
 ```
-./flash.sh -d
+./flash.sh --dt
 ```
 
 ### JetPack 5 (L4T 35.1.0 - L4T 35.4.1)
@@ -135,13 +119,13 @@ This applies to Jetson Orin Nano and Jetson Orin NX. Modifications to the camera
 
 When modifying the camera settings by calling
 ```
-./setup.sh -c
+./setup.sh --camera
 ```
 , the file `tegra234-p3767-camera-p3768-vc_mipi-dual.dts` will be changed.
 
 The build step
 ```
-./build.sh -d
+./build.sh --dt
 ```
 will generate the file `tegra234-p3767-camera-p3768-vc_mipi-dual.dtbo` into the kernel/dtb directory on the host pc.
 

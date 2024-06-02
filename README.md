@@ -100,31 +100,24 @@
    ./setup.sh --target
    ```
 
-   or
-
-   ```bash
-   cd vc_mipi_nvidia/bin
-   ./setup.sh -t
-   ```
-
    This function will configure a connection with the running target. It will backup the users known_hosts file and copy the users public rsa key, so that every time when a ssh connection to the device is opened, the user don't need to enter the password again. It will also copy the demo.sh and max_speed.sh script into the /home/username/test/ folder on the device.
 
-   For more information about the mentioned scripts, please run the appropriate script with the option "-h" in a shell on the running device.
+   For more information about the mentioned scripts, please run the appropriate script with the option "--help" in a shell on the running device.
 
    ```bash
-   vc@nvidia $./test/demo.sh -h
+   vc@nvidia $./test/demo.sh --help
    ```
 
    or
 
    ```bash
-   vc@nvidia $ ./test/max_speed.sh -h
+   vc@nvidia $ ./test/max_speed.sh --help
    ```
 
    When operating with the max_speed.sh script, it should be run as root.<br> E.g. speeding up the clocks:
 
    ```bash
-   vc@nvidia $ sudo ./test/max_speed.sh -m
+   vc@nvidia $ sudo ./test/max_speed.sh --max
    ```
 
 ## Changing camera settings in the device tree
@@ -468,7 +461,7 @@ To test the camera you can use [v4l2-test](https://github.com/pmliquify/v4l2-tes
 * When the system has booted successfully, it is necessary to run the script max_speed.sh from the /target folder as superuser. It will read out the maximum frequencies and set them as the current ones. This is a recommendation from nvidia.
 
   ```bash
-  sudo ./max_speed.sh -m
+  sudo ./max_speed.sh --max
   ```
 
 ### For Jetpack 6 (L4T 36.2.0 DP):
@@ -485,10 +478,10 @@ To test the camera you can use [v4l2-test](https://github.com/pmliquify/v4l2-tes
   - the NVIDIA samples (including argus_camera) will be built and installed
 
 - device tree handling
-  - the file tegra234-p3767-camera-p3768-vc_mipi-dual.dts can be edited with `./setup.sh -c`
-  - the tegra234-p3767-camera-p3768-vc_mipi-dual.dtbo file will be generated with `./build.sh -d` | this step is automatically done by `./build.sh -a`
+  - the file tegra234-p3767-camera-p3768-vc_mipi-dual.dts can be edited with `./setup.sh --camera`
+  - the tegra234-p3767-camera-p3768-vc_mipi-dual.dtbo file will be generated with `./build.sh --dt` | this step is automatically done by `./build.sh --all`
   - the dtbo will be generated into the kernel/dtb directory on the host pc
-  - when flashing the first time with `sudo ./flash.sh -a`, the overlay file will be flashed into uefi
+  - when flashing the first time with `sudo ./flash.sh --all`, the overlay file will be flashed into uefi
   - to modify the camera-settings via tegra234-p3767-camera-p3768-vc_mipi-dual.dtbo file, the /boot/extlinux/extlinux.conf entry must be modified/duplicated and the <br>
   OVERLAYS /boot/tegra234-p3767-camera-p3768-vc_mipi-dual.dtbo
 entry must be added. This will override the initial uefi dtbo and modifications can take effect
