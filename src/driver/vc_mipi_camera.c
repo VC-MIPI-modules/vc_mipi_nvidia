@@ -28,13 +28,16 @@ static struct sensor_mode_properties *tegracam_to_mode(struct tegracam_device *t
 void vc_update_image_size_from_mode(struct tegracam_device *tc_dev,  __u32 *left, __u32 *top, __u32 *width, __u32 *height)
 {
         struct vc_cam *cam = tegracam_to_cam(tc_dev);
+        struct vc_ctrl *ctrl = NULL;
+        
         struct device *dev = vc_core_get_sen_device(cam);
         struct sensor_mode_properties *mode = NULL;
         struct sensor_image_properties *image = NULL;
         int mode_idx = 0;
 
-        if (tc_dev->s_data->use_sensor_mode_id) 
+        if (tc_dev->s_data->use_sensor_mode_id) {
                 mode_idx = tc_dev->s_data->sensor_mode_id;
+        }
 
         mode = tegracam_to_mode(tc_dev, mode_idx);
         if (mode == NULL)
@@ -49,6 +52,23 @@ void vc_update_image_size_from_mode(struct tegracam_device *tc_dev,  __u32 *left
 
                 vc_notice(dev, "%s(): Update image size from mode%u (l: %u, t: %u, w: %u, h: %u)\n",
                         __FUNCTION__, mode_idx, *left, *top, *width, *height);
+
+                if (NULL == cam) {
+                        vc_err(dev, "%s(): Could not get cam device!\n", __FUNCTION__);
+                        return;
+                }
+
+                ctrl = &cam->ctrl;
+                if (NULL == ctrl) {
+                        vc_err(dev, "%s(): Could not get control!\n", __FUNCTION__);
+                        return;
+                }
+
+                if (ctrl->dt_binning_modes[mode_idx].mode_set) {
+                        vc_notice(dev, "%s(): Using binning_mode=%d from device tree mode%u \n",
+                        __FUNCTION__, ctrl->dt_binning_modes[mode_idx].binning_mode, mode_idx);
+                        vc_sen_set_binning_mode(cam, ctrl->dt_binning_modes[mode_idx].binning_mode);
+                }
         }
 }
 
@@ -635,6 +655,38 @@ static void vc_init_io(struct device *dev, struct vc_cam *cam)
         }
 }
 
+static void vc_init_binning(struct device *dev, struct vc_cam *cam)
+{
+        struct vc_ctrl *ctrl = &cam->ctrl;
+        struct device_node *np = dev->of_node;
+        struct device_node *node_tmp = NULL;
+        char temp_str[OF_MAX_STR_LEN];
+        int err = 0;
+        int i = 0;
+
+        vc_notice(dev, "%s(): Init binning modes\n", __FUNCTION__);
+
+        for (i = 0; i < MAX_NUM_SENSOR_MODES; i++) {
+                ctrl->dt_binning_modes[i].mode_set = false;
+                snprintf(temp_str, sizeof(temp_str), "%s%d", OF_SENSORMODE_PREFIX, i);
+                node_tmp = of_get_child_by_name(np, temp_str);
+                of_node_put(node_tmp);
+                if (NULL == node_tmp) {
+                        vc_dbg(dev, "%s(): Could not get child node pointer from device tree mode%d!\n", __FUNCTION__, i);
+                        continue;
+                }
+
+                // The binning_mode info is optional, so there is no problem
+                // when it is missing.
+                err = read_property_u32(node_tmp, "binning_mode", 10, &ctrl->dt_binning_modes[i].binning_mode);
+                if (err) {
+                        vc_dbg(dev, "%s(): Unable to read binning_mode from device tree mode%d!\n", __FUNCTION__, i);
+                        continue;
+                }
+                ctrl->dt_binning_modes[i].mode_set = true;
+        }
+}
+
 void vc_init_tegra_controls(struct tegracam_device *tc_dev) 
 {
         struct vc_cam *cam = tegracam_to_cam(tc_dev);
@@ -750,6 +802,7 @@ static int vc_probe(struct i2c_client *client, const struct i2c_device_id *id)
         }
         vc_init_io(dev, cam);
         vc_init_frmfmt(dev, cam);
+        vc_init_binning(dev, cam);
 
         // Defined in tegracam_core.c
         // Initializes 

@@ -6,6 +6,7 @@
 #include <linux/types.h>
 #include <linux/i2c.h>
 #include <linux/videodev2.h>
+#include <media/tegra-v4l2-camera.h>
 
 #define vc_dbg(dev, fmt, ...) dev_dbg(dev, fmt, ##__VA_ARGS__)
 #define vc_info(dev, fmt, ...) dev_info(dev, fmt, ##__VA_ARGS__)
@@ -175,6 +176,11 @@ typedef struct vc_binning {
 #define BINNING_END(binning) \
         , {0, 0} }; memcpy(&binning.regs, regs, sizeof(regs)); }
 
+typedef struct dt_binning_mode {
+        __u32 binning_mode;
+        bool  mode_set;
+} dt_binning_mode;
+
 struct vc_ctrl {
         // Communication
         int mod_i2c_addr;
@@ -189,6 +195,10 @@ struct vc_ctrl {
         struct vc_frame frame;          // Pixel
         struct vc_binning binnings[8];
         __u8 max_binning_modes_used;
+        
+        // Array for binning_mode property read from device tree
+        dt_binning_mode dt_binning_modes[MAX_NUM_SENSOR_MODES];
+
         // Control and status registers
         struct vc_csr csr;
         // Exposure

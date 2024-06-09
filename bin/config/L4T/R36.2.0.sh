@@ -36,6 +36,9 @@ KERNEL_SOURCE=$BSP_DIR/Linux_for_Tegra/source
 DTSI_FILE_DICT+=(["NV_DevKit_OrinNano"]="tegra234-p3767-camera-p3768-vc_mipi-dual.dts")
 DTSI_DEST_DICT+=(["NV_DevKit_OrinNano"]="$KERNEL_SOURCE/hardware/nvidia/t23x/nv-public/overlay")
 
+DTSI_FILE_DICT+=(["Auvidea_JNX42_OrinNano"]="tegra234-p3767-camera-p3768-vc_mipi-dual.dts")
+DTSI_DEST_DICT+=(["Auvidea_JNX42_OrinNano"]="$KERNEL_SOURCE/hardware/nvidia/t23x/nv-public/overlay")
+
 #setup
 DRIVER_DST_DIR=$KERNEL_SOURCE/nvidia-oot/drivers/media/i2c/vc_mipi
 export KERNEL_HEADERS=$KERNEL_SOURCE/kernel/kernel-jammy-src
@@ -49,7 +52,13 @@ ROOTFS_DIR=$BSP_DIR/Linux_for_Tegra/rootfs
 
 ORIN_FLASH_CONFIG_FOLDER="generic"
 ORIN_FLASH_PARTITION_MMC="mmcblk0p1"
-ORIN_FLASH_PARTITION_NVME="nvme0n0p1"
+
+if [[ "Auvidea_JNX42" == $VC_MIPI_BOARD ]]
+then
+        ORIN_FLASH_PARTITION_NVME="nvme0n1p1"
+else
+        ORIN_FLASH_PARTITION_NVME="nvme0n0p1"
+fi
 
 function L4T_extract_kernel_packages {
         echo "Extracting kernel packages ($VC_MIPI_BSP) ..."

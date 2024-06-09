@@ -193,7 +193,13 @@ OrinNano4GB_SD|OrinNano8GB_SD|OrinNano4GB_NVME|OrinNano8GB_NVME|OrinNX8GB|OrinNX
         ORIN_DTB_SUFFIX=''
         case $VC_MIPI_BOARD in
         Auvidea_JNX42)
-                FLASH_BOARD='p3509-a02+p3767-0000'
+                if [[ "36.2.0" == $VC_MIPI_BSP ]]
+                then
+                        FLASH_BOARD='p3509-a02-p3767-0000'
+                else
+                        FLASH_BOARD='p3509-a02+p3767-0000'
+                fi
+
                 ORIN_DTB_SUFFIX='-p3509-a02.dtb'
                 ;;
         NV_DevKit_OrinNano)
