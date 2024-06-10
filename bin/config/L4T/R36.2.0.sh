@@ -52,13 +52,7 @@ ROOTFS_DIR=$BSP_DIR/Linux_for_Tegra/rootfs
 
 ORIN_FLASH_CONFIG_FOLDER="generic"
 ORIN_FLASH_PARTITION_MMC="mmcblk0p1"
-
-if [[ "Auvidea_JNX42" == $VC_MIPI_BOARD ]]
-then
-        ORIN_FLASH_PARTITION_NVME="nvme0n1p1"
-else
-        ORIN_FLASH_PARTITION_NVME="nvme0n0p1"
-fi
+ORIN_FLASH_PARTITION_NVME="nvme0n1p1"
 
 function L4T_extract_kernel_packages {
         echo "Extracting kernel packages ($VC_MIPI_BSP) ..."
