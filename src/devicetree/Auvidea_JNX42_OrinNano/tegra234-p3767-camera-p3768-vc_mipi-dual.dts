@@ -9,12 +9,10 @@
 #include <dt-bindings/clock/tegra234-clock.h>
 #include <dt-bindings/gpio/tegra234-gpio.h>
 
-#define CAM0_PWDN	TEGRA234_MAIN_GPIO(H, 6)
-#define CAM1_PWDN	TEGRA234_MAIN_GPIO(AC, 0)
 #define CAM_I2C_MUX	TEGRA234_AON_GPIO(CC, 3)
 
 // ------------------------------------------------------------------------------------------------
-//  Driver Configuration for NVIDIA Jetson Orin Nano on Auvidea JNX42 LM Developer Kit
+//  Driver Configuration for NVIDIA Jetson Orin Nano on Auvidea JNX42 LM
 // ------------------------------------------------------------------------------------------------
 #define VC_MIPI_CAM_0       1   // 1: Enabled, 0: Disabled  (serial_a => CSI Port 0 => VI Stream 0)
 #define VC_MIPI_CAM_1       1   // 1: Enabled, 0: Disabled  (serial_c => CSI Port 2 => VI Stream 2)
