@@ -102,7 +102,7 @@ You can define the binning_mode property in the device tree and also use it with
                 };
         }
 ```
-> Please be aware if the binning_mode property is set in the device tree for one or more of the modes, then the v4l control won't have an effect for that mode(s) anylonger.
+> Please be aware if the binning_mode property is set in the device tree for one or more of the modes, then the v4l binning_mode control won't have an effect for that mode(s) anylonger.
 
 > The minimum sizes for the argus pipe is 256x256 pixel. That means, the following configuration will lead to a crash of the argus daemon:
 ```
@@ -116,3 +116,14 @@ You can define the binning_mode property in the device tree and also use it with
                 ...
         };
 ```
+
+There is also the option to use the sensor_mode property. When there is more than one mode defined in the device tree, then the sensor_mode=\<index\> can be set for the streaming
+<pre>
+v4l2-ctl -d /dev/video0 --set-selection=left=0,top=0,width=2016,height=1520 -c <b>sensor_mode=2</b>
+</pre>
+The call above shows the usage of the sensor_mode property instead of the binning_mode property. The width and height should be committed, too.
+<br>
+<pre>
+gst-launch-1.0 nvarguscamerasrc sensor-id=0 <b>sensor-mode=2</b> ! 'video/x-raw(memory:NVMM), format=(string)NV12, framerate=(fraction)40/1' ! nvvidconv ! queue ! xvimagesink
+</pre>
+This call demonstrates the usage of the nvargus gestreamer pipe line. The width and height property can be omitted in that case, because these values are read from the device tree.

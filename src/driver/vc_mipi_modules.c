@@ -465,6 +465,7 @@ static void vc_init_ctrl_imx392(struct vc_ctrl *ctrl, struct vc_desc* desc)
 #define IMX412_BINNING_WEIGHTING_AVG   0x00
 #define IMX412_BINNING_TYPE_EXT_EN     0x3f42
 #define IMX412_BINNING_TYPE_H_EXT      0x3f43
+#define IMX412_BLACKLEVEL_ENABLE       0x3030
 
 static void vc_init_ctrl_imx412(struct vc_ctrl *ctrl, struct vc_desc* desc)
 {
@@ -472,7 +473,8 @@ static void vc_init_ctrl_imx412(struct vc_ctrl *ctrl, struct vc_desc* desc)
         
         ctrl->gain                      = (vc_control) { .min =   0, .max =      1023, .def =      0 };
 
-        ctrl->csr.sen.blacklevel        = (vc_csr2) { .l = 0x0009, .m = 0x0008 };
+        ctrl->csr.sen.blacklevel        = (vc_csr2) { .l = 0x3033, .m = 0x3032 };
+
         ctrl->csr.sen.vmax              = (vc_csr4) { .l = 0x0341, .m = 0x0340, .h = 0x0000, .u = 0x0000 };
         ctrl->csr.sen.shs               = (vc_csr4) { .l = 0x0203, .m = 0x0202, .h = 0x0000, .u = 0x0000 };
 
@@ -487,27 +489,32 @@ static void vc_init_ctrl_imx412(struct vc_ctrl *ctrl, struct vc_desc* desc)
 
         BINNING_START(ctrl->binnings[0], 0, 0)
                 { IMX412_BINNING_MODE, IMX412_BINNING_MODE_DISABLE },
-                { IMX412_BINNING_TYPE, 0x11 }
+                { IMX412_BINNING_TYPE, 0x11 },
+                { IMX412_BLACKLEVEL_ENABLE, 0x01 }
         BINNING_END(ctrl->binnings[0])
         BINNING_START(ctrl->binnings[1], 1, 2)
                 { IMX412_BINNING_MODE, IMX412_BINNING_MODE_ENABLE },
                 { IMX412_BINNING_WEIGHTING, IMX412_BINNING_WEIGHTING_AVG },
-                { IMX412_BINNING_TYPE, 0x12 }
+                { IMX412_BINNING_TYPE, 0x12 },
+                { IMX412_BLACKLEVEL_ENABLE, 0x01 }
         BINNING_END(ctrl->binnings[1])
         BINNING_START(ctrl->binnings[2], 2, 2)
                 { IMX412_BINNING_MODE, IMX412_BINNING_MODE_ENABLE },
                 { IMX412_BINNING_WEIGHTING, IMX412_BINNING_WEIGHTING_AVG },
-                { IMX412_BINNING_TYPE, 0x22 }
+                { IMX412_BINNING_TYPE, 0x22 },
+                { IMX412_BLACKLEVEL_ENABLE, 0x01 }
         BINNING_END(ctrl->binnings[2])
         BINNING_START(ctrl->binnings[3], 4, 2)
                 { IMX412_BINNING_MODE, IMX412_BINNING_MODE_ENABLE },
                 { IMX412_BINNING_WEIGHTING, IMX412_BINNING_WEIGHTING_AVG },
-                { IMX412_BINNING_TYPE, 0x42 }
+                { IMX412_BINNING_TYPE, 0x42 },
+                { IMX412_BLACKLEVEL_ENABLE, 0x01 }
         BINNING_END(ctrl->binnings[3])
         BINNING_START(ctrl->binnings[4], 8, 2)
                 { IMX412_BINNING_MODE, IMX412_BINNING_MODE_ENABLE },
                 { IMX412_BINNING_WEIGHTING, IMX412_BINNING_WEIGHTING_AVG },
-                { IMX412_BINNING_TYPE, 0x82 }
+                { IMX412_BINNING_TYPE, 0x82 },
+                { IMX412_BLACKLEVEL_ENABLE, 0x01 }
         BINNING_END(ctrl->binnings[4])
 
         BINNING_START(ctrl->binnings[5], 16, 2)
@@ -515,7 +522,8 @@ static void vc_init_ctrl_imx412(struct vc_ctrl *ctrl, struct vc_desc* desc)
                 { IMX412_BINNING_WEIGHTING, IMX412_BINNING_WEIGHTING_AVG },
                 { IMX412_BINNING_TYPE, 0x02 },
                 { IMX412_BINNING_TYPE_EXT_EN, 0x01 },
-                { IMX412_BINNING_TYPE_H_EXT, 0x01 }
+                { IMX412_BINNING_TYPE_H_EXT, 0x01 },
+                { IMX412_BLACKLEVEL_ENABLE, 0x01 }
         BINNING_END(ctrl->binnings[5])
 
         ctrl->max_binning_modes_used = 5;

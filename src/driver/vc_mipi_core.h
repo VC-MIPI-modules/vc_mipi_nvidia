@@ -252,8 +252,6 @@ int vc_core_try_format(struct vc_cam *cam, __u32 code);
 int vc_core_set_format(struct vc_cam *cam, __u32 code);
 __u32 vc_core_get_format(struct vc_cam *cam);
 int vc_core_set_frame(struct vc_cam *cam, __u32 left, __u32 top, __u32 width, __u32 height);
-int vc_core_set_frame_size(struct vc_cam *cam, __u32 width, __u32 height);
-int vc_core_set_frame_position(struct vc_cam *cam, __u32 left, __u32 top);
 struct vc_frame *vc_core_get_frame(struct vc_cam *cam);
 int vc_core_set_num_lanes(struct vc_cam *cam, __u32 number);
 __u32 vc_core_get_num_lanes(struct vc_cam *cam);
