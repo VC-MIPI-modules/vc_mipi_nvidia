@@ -25,6 +25,65 @@ static struct sensor_mode_properties *tegracam_to_mode(struct tegracam_device *t
         return NULL;
 }
 
+struct tegra_channel *get_tegra_channel(struct tegracam_device *tc_dev)
+{
+        struct vc_cam *cam = tegracam_to_cam(tc_dev);
+        struct device *dev = vc_core_get_sen_device(cam);
+        struct vc_ctrl *ctrl = &cam->ctrl;
+        struct i2c_client *client_sen = ctrl->client_sen;
+        struct camera_common_data *s_data = NULL;
+        struct v4l2_subdev *sd = NULL;
+        struct media_pad *pad_csi = NULL;
+        struct media_pad *pad_vi = NULL;
+        struct v4l2_subdev *sd_csi = NULL;
+        struct v4l2_subdev *sd_vi = NULL;
+        struct video_device *vdev_vi = NULL;
+
+        s_data = to_camera_common_data(&client_sen->dev);
+        if (NULL == s_data) {
+                vc_err(dev, "%s(): s_data is NULL!\n", __FUNCTION__);
+                return NULL;
+        }
+
+        sd = &s_data->subdev;
+        if (NULL == sd) {
+                vc_err(dev, "%s(): sd is NULL!\n", __FUNCTION__);
+                return NULL;
+        }
+
+        pad_csi = media_entity_remote_pad(&sd->entity.pads[0]);
+        if (NULL == pad_csi) {
+                vc_err(dev, "%s(): pad_csi is NULL!\n", __FUNCTION__);
+                return NULL;
+        }
+
+        sd_csi = media_entity_to_v4l2_subdev(pad_csi->entity);
+        if (NULL == sd_csi) {
+                vc_err(dev, "%s(): sd_csi is NULL!\n", __FUNCTION__);
+                return NULL;
+        }
+
+        pad_vi = media_entity_remote_pad(&sd_csi->entity.pads[1]);
+        if (NULL == pad_vi) {
+                vc_err(dev, "%s(): pad_vi is NULL!\n", __FUNCTION__);
+                return NULL;
+        }
+
+        sd_vi = media_entity_to_v4l2_subdev(pad_vi->entity);
+        if (NULL == sd_vi) {
+                vc_err(dev, "%s(): sd_vi is NULL!\n", __FUNCTION__);
+                return NULL;
+        }
+        
+        vdev_vi = media_entity_to_video_device(pad_vi->entity);
+        if (NULL == vdev_vi) {
+                vc_err(dev, "%s(): vdev_vi is NULL!\n", __FUNCTION__);
+                return NULL;
+        }
+
+        return video_get_drvdata(vdev_vi);
+}
+
 void vc_update_image_size_from_mode(struct tegracam_device *tc_dev,  __u32 *left, __u32 *top, __u32 *width, __u32 *height)
 {
         struct vc_cam *cam = tegracam_to_cam(tc_dev);
@@ -33,9 +92,19 @@ void vc_update_image_size_from_mode(struct tegracam_device *tc_dev,  __u32 *left
         struct device *dev = vc_core_get_sen_device(cam);
         struct sensor_mode_properties *mode = NULL;
         struct sensor_image_properties *image = NULL;
+        struct tegra_channel *chan = NULL;
         int mode_idx = 0;
+        bool bypass_mode = false;
 
-        if (tc_dev->s_data->use_sensor_mode_id) {
+        chan = get_tegra_channel(tc_dev);
+        if (NULL == chan) {
+                vc_err(dev, "%s(): Could not get tegra channel!\n", __FUNCTION__);
+                return;
+        }
+
+        bypass_mode = chan->bypass;
+
+        if (bypass_mode) {
                 mode_idx = tc_dev->s_data->sensor_mode_id;
         }
 
@@ -64,10 +133,12 @@ void vc_update_image_size_from_mode(struct tegracam_device *tc_dev,  __u32 *left
                         return;
                 }
 
-                if (ctrl->dt_binning_modes[mode_idx].mode_set) {
-                        vc_notice(dev, "%s(): Using binning_mode=%d from device tree mode%u \n",
-                        __FUNCTION__, ctrl->dt_binning_modes[mode_idx].binning_mode, mode_idx);
-                        vc_sen_set_binning_mode(cam, ctrl->dt_binning_modes[mode_idx].binning_mode);
+                if (bypass_mode) {
+                        if (ctrl->dt_binning_modes[mode_idx].mode_set) {
+                                vc_notice(dev, "%s(): Using binning_mode=%d from device tree mode%u \n",
+                                __FUNCTION__, ctrl->dt_binning_modes[mode_idx].binning_mode, mode_idx);
+                                vc_sen_set_binning_mode(cam, ctrl->dt_binning_modes[mode_idx].binning_mode);
+                        }
                 }
         }
 }
@@ -75,62 +146,11 @@ void vc_update_image_size_from_mode(struct tegracam_device *tc_dev,  __u32 *left
 #if defined(VC_MIPI_JETSON_NANO) && defined(VC_MIPI_L4T_32_7_4)
 int vc_set_channel_trigger_mode(struct tegracam_device *tc_dev, __u8 trigger_mode)
 {
+        struct tegra_channel *chan = NULL;
         struct vc_cam *cam = tegracam_to_cam(tc_dev);
         struct device *dev = vc_core_get_sen_device(cam);
-        struct vc_ctrl *ctrl = &cam->ctrl;
-        struct i2c_client *client_sen = ctrl->client_sen;
-        struct camera_common_data *s_data = NULL;
-        struct v4l2_subdev *sd = NULL;
-        struct tegra_channel *chan = NULL;
-        struct media_pad *pad_csi = NULL;
-        struct media_pad *pad_vi = NULL;
-        struct v4l2_subdev *sd_csi = NULL;
-        struct v4l2_subdev *sd_vi = NULL;
-        struct video_device *vdev_vi = NULL;
 
-        s_data = to_camera_common_data(&client_sen->dev);
-        if (NULL == s_data) {
-                vc_err(dev, "%s(): s_data is NULL!\n", __FUNCTION__);
-                return -EINVAL;
-        }
-
-        sd = &s_data->subdev;
-        if (NULL == sd) {
-                vc_err(dev, "%s(): sd is NULL!\n", __FUNCTION__);
-                return -EINVAL;
-        }
-
-	pad_csi = media_entity_remote_pad(&sd->entity.pads[0]);
-        if (NULL == pad_csi) {
-                vc_err(dev, "%s(): pad_csi is NULL!\n", __FUNCTION__);
-                return -EINVAL;
-        }
-
-	sd_csi = media_entity_to_v4l2_subdev(pad_csi->entity);
-        if (NULL == sd_csi) {
-                vc_err(dev, "%s(): sd_csi is NULL!\n", __FUNCTION__);
-                return -EINVAL;
-        }
-
-	pad_vi = media_entity_remote_pad(&sd_csi->entity.pads[1]);
-        if (NULL == pad_vi) {
-                vc_err(dev, "%s(): pad_vi is NULL!\n", __FUNCTION__);
-                return -EINVAL;
-        }
-
-	sd_vi = media_entity_to_v4l2_subdev(pad_vi->entity);
-        if (NULL == sd_vi) {
-                vc_err(dev, "%s(): sd_vi is NULL!\n", __FUNCTION__);
-                return -EINVAL;
-        }
-        
-	vdev_vi = media_entity_to_video_device(pad_vi->entity);
-        if (NULL == vdev_vi) {
-                vc_err(dev, "%s(): vdev_vi is NULL!\n", __FUNCTION__);
-                return -EINVAL;
-        }
-
-	chan = video_get_drvdata(vdev_vi);
+        chan = get_tegra_channel(tc_dev);
         if (NULL == chan) {
                 vc_err(dev, "%s(): channel is NULL!\n", __FUNCTION__);
                 return -EINVAL;
