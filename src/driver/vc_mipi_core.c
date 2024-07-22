@@ -468,63 +468,6 @@ __u32 vc_core_get_format(struct vc_cam *cam)
 }
 EXPORT_SYMBOL(vc_core_get_format);
 
-void vc_core_limit_frame_position(struct vc_cam *cam, __u32 left, __u32 top)
-{
-        struct vc_ctrl *ctrl = &cam->ctrl;
-        struct vc_state *state = &cam->state;
-
-        if (left > ctrl->frame.width - state->frame.width) {
-                state->frame.left = ctrl->frame.width - state->frame.width;
-        } else {
-                state->frame.left = left;
-        }
-
-        if (top > ctrl->frame.height - state->frame.height) {
-                state->frame.top = ctrl->frame.height - state->frame.height;
-        } else {
-                state->frame.top = top;
-        }
-}
-EXPORT_SYMBOL(vc_core_limit_frame_position);
-
-void vc_core_limit_frame_size(struct vc_cam *cam, __u32 width, __u32 height)
-{
-        struct vc_ctrl *ctrl = &cam->ctrl;
-        struct vc_state *state = &cam->state;
-
-        if (width > ctrl->frame.width) {
-                state->frame.width = ctrl->frame.width;
-        } else {
-                state->frame.width = width;
-        }
-
-        if (height > ctrl->frame.height) {
-                state->frame.height = ctrl->frame.height;
-        } else {
-                state->frame.height = height;
-        }
-}
-EXPORT_SYMBOL(vc_core_limit_frame_size);
-
-int vc_core_set_frame(struct vc_cam *cam, __u32 left, __u32 top, __u32 width, __u32 height)
-{
-        struct vc_state *state = &cam->state;
-        struct device *dev = vc_core_get_sen_device(cam);
-
-        vc_notice(dev, "%s(): Set frame (left: %u, top: %u, width: %u, height: %u)\n", __FUNCTION__, left, top, width, height);
-
-        vc_core_limit_frame_size(cam, width, height);
-        vc_core_limit_frame_position(cam, left, top);
-
-        if (state->frame.left != left || state->frame.top != top || state->frame.width != width || state->frame.height != height) {
-                vc_warn(dev, "%s(): Adjusted frame (left: %u, top: %u, width: %u, height: %u)\n", __FUNCTION__,
-                state->frame.left, state->frame.top, state->frame.width, state->frame.height);
-        }
-
-        return 0;
-}
-EXPORT_SYMBOL(vc_core_set_frame);
-
 struct vc_frame *vc_core_get_frame(struct vc_cam *cam)
 {
         struct vc_frame* frame = &cam->state.frame;
@@ -642,27 +585,31 @@ __u32 vc_core_get_optimized_vmax(struct vc_cam *cam)
         struct vc_ctrl *ctrl = &cam->ctrl;
         struct vc_state *state = &cam->state;
         struct device *dev = &ctrl->client_sen->dev;
+        struct vc_binning *binning = vc_core_get_binning(cam);
 
-        __u8 binning = state->binning_mode;
+        __u8 binning_mode = state->binning_mode;
         __u8 num_lanes = state->num_lanes;
         __u8 format = vc_core_v4l2_code_to_format(state->format_code);
-        __u32 vmax_def = vc_core_get_vmax(cam, num_lanes, format, binning).def;
+        __u32 vmax_def = vc_core_get_vmax(cam, num_lanes, format, binning_mode).def;
         __u32 vmax_res = vmax_def;
+        __u32 state_height = state->frame.height;
+        __u32 ctrl_height = ctrl->frame.height;
 
         if ( 0 == vmax_def) {
                 return vmax_def;
         }
 
-        if (0 == state->binning_mode)
-        {
-                // Increase the frame rate when image height is reduced.
-                if (ctrl->flags & FLAG_INCREASE_FRAME_RATE && state->frame.height < ctrl->frame.height) {
-                        vmax_res = vmax_def - (ctrl->frame.height - state->frame.height);
-                        vc_dbg(dev, "%s(): Increased frame rate: vmax %u/%u, height: %u/%u, vmax result: %u \n", __FUNCTION__,
-                                state->vmax, vmax_def, state->frame.height, ctrl->frame.height, vmax_res);
+        if (binning->v_factor > 0) {
+                ctrl_height = ctrl_height / binning->v_factor;
+        }
+
+        // Increase the frame rate when image height is reduced.
+        if (ctrl->flags & FLAG_INCREASE_FRAME_RATE && (state_height < ctrl_height)) {
+                vmax_res = vmax_def - (ctrl_height - state_height);
+                vc_dbg(dev, "%s(): Increased frame rate: vmax %u/%u, height: %u/%u, vmax result: %u \n", __FUNCTION__,
+                        state->vmax, vmax_def, state->frame.height, ctrl->frame.height, vmax_res);
 
                         return vmax_res;
-                }
         }
 
         return vmax_def;

@@ -35,6 +35,7 @@ void vc_update_image_size_from_mode(struct tegracam_device *tc_dev,  __u32 *left
         struct sensor_image_properties *image = NULL;
         int mode_idx = 0;
 
+//bazo if entfernen
         if (tc_dev->s_data->use_sensor_mode_id) {
                 mode_idx = tc_dev->s_data->sensor_mode_id;
         }
@@ -582,7 +583,7 @@ int vc_init_frmfmt(struct device *dev, struct vc_cam *cam)
         frmfmt->num_framerates = 1;
 
         fps[0] = cam->ctrl.framerate.def;
-        
+
         frmfmt->size.width = cam->ctrl.frame.width;
         frmfmt->size.height = cam->ctrl.frame.height;
         frmfmt->hdr_en = 0;

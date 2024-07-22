@@ -484,6 +484,17 @@ static void vc_init_ctrl_imx412(struct vc_ctrl *ctrl, struct vc_desc* desc)
         MODE( 0, 2, FORMAT_RAW10, 0,     436,   10,   0xffff, 0x0c14, 1023,   40,         0)
         MODE( 1, 4, FORMAT_RAW10, 0,     218,   10,   0xffff, 0x0c14, 1023,   40,         0)
 
+        MODE( 2, 2, FORMAT_RAW10, 1,     436,   10,   0xffff, 0x0624, 1023,   40,         0)
+        MODE( 3, 4, FORMAT_RAW10, 1,     218,   10,   0xffff, 0x0624, 1023,   40,         0)
+        MODE( 4, 2, FORMAT_RAW10, 2,     436,   10,   0xffff, 0x0624, 1023,   40,         0)
+        MODE( 5, 4, FORMAT_RAW10, 2,     218,   10,   0xffff, 0x0624, 1023,   40,         0)
+        MODE( 6, 2, FORMAT_RAW10, 3,     436,   10,   0xffff, 0x0624, 1023,   40,         0)
+        MODE( 7, 4, FORMAT_RAW10, 3,     218,   10,   0xffff, 0x0624, 1023,   40,         0)
+        MODE( 8, 2, FORMAT_RAW10, 4,     436,   10,   0xffff, 0x0624, 1023,   40,         0)
+        MODE( 9, 4, FORMAT_RAW10, 4,     218,   10,   0xffff, 0x0624, 1023,   40,         0)
+        MODE(10, 2, FORMAT_RAW10, 5,     436,   10,   0xffff, 0x0624, 1023,   40,         0)
+        MODE(11, 4, FORMAT_RAW10, 5,     218,   10,   0xffff, 0x0624, 1023,   40,         0)
+
         ctrl->clk_ext_trigger           = 27000000;
         ctrl->clk_pixel                 = 27000000;
 
@@ -533,6 +544,7 @@ static void vc_init_ctrl_imx412(struct vc_ctrl *ctrl, struct vc_desc* desc)
         ctrl->flags                    |= FLAG_INCREASE_FRAME_RATE;
         ctrl->flags                    |= FLAG_IO_ENABLED;
         ctrl->flags                    |= FLAG_TRIGGER_SLAVE;
+        ctrl->flags                    |= FLAG_USE_BINNING_INDEX;
 }
 
 // ------------------------------------------------------------------------------------------------
