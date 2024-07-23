@@ -64,6 +64,7 @@ __u32 vc_core_calculate_max_frame_rate(struct vc_cam *cam, __u8 num_lanes, __u8 
 static __u32 vc_core_calculate_period_1H(struct vc_cam *cam, __u8 num_lanes, __u8 format, __u8 binning);
 void vc_core_calculate_roi(struct vc_cam *cam, __u32 *w_left, __u32 *w_right, __u32 *w_width,
         __u32 *w_top, __u32 *w_bottom, __u32 *w_height, __u32 *o_width, __u32 *o_height);
+struct vc_binning *vc_core_get_binning(struct vc_cam *cam);
 
 static int vc_sen_read_image_size(struct vc_ctrl *ctrl, struct vc_frame *size);
 #ifdef READ_VMAX

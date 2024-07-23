@@ -6,7 +6,6 @@
 #include <linux/types.h>
 #include <linux/i2c.h>
 #include <linux/videodev2.h>
-#include <media/tegra-v4l2-camera.h>
 
 #define vc_dbg(dev, fmt, ...) dev_dbg(dev, fmt, ##__VA_ARGS__)
 #define vc_info(dev, fmt, ...) dev_info(dev, fmt, ##__VA_ARGS__)
@@ -197,7 +196,7 @@ struct vc_ctrl {
         __u8 max_binning_modes_used;
         
         // Array for binning_mode property read from device tree
-        dt_binning_mode dt_binning_modes[MAX_NUM_SENSOR_MODES];
+        struct dt_binning_mode *dt_binning_modes;
 
         // Control and status registers
         struct vc_csr csr;
@@ -288,7 +287,5 @@ int vc_sen_set_blacklevel(struct vc_cam *cam, __u32 blacklevel);
 int vc_sen_set_binning_mode(struct vc_cam *cam, int mode);
 int vc_sen_start_stream(struct vc_cam *cam);
 int vc_sen_stop_stream(struct vc_cam *cam);
-
-struct vc_binning *vc_core_get_binning(struct vc_cam *cam);
 
 #endif // _VC_MIPI_CORE_H
