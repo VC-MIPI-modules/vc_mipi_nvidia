@@ -25,7 +25,7 @@ static struct sensor_mode_properties *tegracam_to_mode(struct tegracam_device *t
         return NULL;
 }
 
-struct tegra_channel *get_tegra_channel(struct tegracam_device *tc_dev)
+static struct tegra_channel *get_tegra_channel(struct tegracam_device *tc_dev)
 {
         struct vc_cam *cam = tegracam_to_cam(tc_dev);
         struct device *dev = vc_core_get_sen_device(cam);
@@ -84,7 +84,7 @@ struct tegra_channel *get_tegra_channel(struct tegracam_device *tc_dev)
         return video_get_drvdata(vdev_vi);
 }
 
-void vc_update_image_size_from_mode(struct tegracam_device *tc_dev,  __u32 *left, __u32 *top, __u32 *width, __u32 *height)
+static void vc_update_image_size_from_mode(struct tegracam_device *tc_dev,  __u32 *left, __u32 *top, __u32 *width, __u32 *height)
 {
         struct vc_cam *cam = tegracam_to_cam(tc_dev);
         struct vc_ctrl *ctrl = NULL;
@@ -244,7 +244,7 @@ __u32 g_tegra_width = 0;
 __u32 g_tegra_height = 0;
 __u32 g_tegra_line_length = 0;
 
-void vc_overwrite_image_size(struct tegracam_device *tc_dev, __u32 *width, __u32 *height, 
+static void vc_overwrite_image_size(struct tegracam_device *tc_dev, __u32 *width, __u32 *height, 
         __u32 *tegra_width, __u32 *tegra_height, __u32 *tegra_line_length)
 {
         if (g_width != 0) {
@@ -264,7 +264,7 @@ void vc_overwrite_image_size(struct tegracam_device *tc_dev, __u32 *width, __u32
         }
 }
 
-void vc_update_tegra_image_size(struct tegracam_device *tc_dev, __u32 width, __u32 height, __u32 line_length)
+static void vc_update_tegra_image_size(struct tegracam_device *tc_dev, __u32 width, __u32 height, __u32 line_length)
 {
         struct camera_common_frmfmt *frmfmt1 = (struct camera_common_frmfmt *)tc_dev->sensor_ops->frmfmt_table;
         struct camera_common_frmfmt *frmfmt2 = (struct camera_common_frmfmt *)tc_dev->s_data->frmfmt;
@@ -285,7 +285,7 @@ void vc_update_tegra_image_size(struct tegracam_device *tc_dev, __u32 width, __u
         }
 }
 
-void vc_update_tegra_controls(struct tegracam_device *tc_dev) 
+static void vc_update_tegra_controls(struct tegracam_device *tc_dev) 
 {
         struct vc_cam *cam = tegracam_to_cam(tc_dev);
         struct sensor_mode_properties *mode = tegracam_to_mode(tc_dev, 0);
@@ -579,7 +579,7 @@ static struct camera_common_sensor_ops vc_sensor_ops = {
         .parse_dt = vc_parse_dt,
 };
 
-int vc_init_frmfmt(struct device *dev, struct vc_cam *cam)
+static int vc_init_frmfmt(struct device *dev, struct vc_cam *cam)
 {
         struct camera_common_frmfmt *frmfmt = NULL;
         int *fps = NULL;
@@ -707,7 +707,7 @@ static void vc_init_binning(struct device *dev, struct vc_cam *cam)
         }
 }
 
-void vc_init_tegra_controls(struct tegracam_device *tc_dev) 
+static void vc_init_tegra_controls(struct tegracam_device *tc_dev)
 {
         struct vc_cam *cam = tegracam_to_cam(tc_dev);
         struct device *dev = tc_dev->dev;

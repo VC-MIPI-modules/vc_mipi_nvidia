@@ -130,7 +130,7 @@ static int i2c_write_reg(struct device *dev, struct i2c_client *client, const __
         return ret == 1 ? 0 : -EIO;
 }
 
-int i2c_write_regs(struct i2c_client *client, const struct vc_reg *regs, const char* func)
+static int i2c_write_regs(struct i2c_client *client, const struct vc_reg *regs, const char* func)
 {
         int i;
 
@@ -637,7 +637,7 @@ __u32 vc_core_calculate_max_exposure(struct vc_cam *cam, __u8 num_lanes, __u8 fo
         }
 }
 
-__u32 vc_core_get_optimized_vmax(struct vc_cam *cam)
+static __u32 vc_core_get_optimized_vmax(struct vc_cam *cam)
 {
         struct vc_ctrl *ctrl = &cam->ctrl;
         struct vc_state *state = &cam->state;
@@ -681,7 +681,7 @@ __u32 vc_core_calculate_max_frame_rate(struct vc_cam *cam, __u8 num_lanes, __u8 
         return 1000000000 / (((__u64)period_1H_ns * vmax) / 1000);
 }
 
-vc_mode vc_core_get_mode(struct vc_cam *cam, __u8 num_lanes, __u8 format, __u8 binning)
+static vc_mode vc_core_get_mode(struct vc_cam *cam, __u8 num_lanes, __u8 format, __u8 binning)
 {
         struct device *dev = vc_core_get_sen_device(cam);
         struct vc_ctrl *ctrl = &cam->ctrl;
@@ -813,7 +813,7 @@ struct i2c_client *vc_mod_get_client(struct device *dev, struct i2c_adapter *ada
 }
 EXPORT_SYMBOL(vc_mod_get_client);
 
-int vc_mod_set_power(struct vc_cam *cam, int on)
+static int vc_mod_set_power(struct vc_cam *cam, int on)
 {
         struct vc_ctrl *ctrl = &cam->ctrl;
         struct i2c_client *client_mod = ctrl->client_mod;
@@ -1391,7 +1391,7 @@ static int vc_sen_read_image_size(struct vc_ctrl *ctrl, struct vc_frame *size)
         return 0;
 }
 
-struct vc_binning *vc_core_get_binning(struct vc_cam *cam)
+static struct vc_binning *vc_core_get_binning(struct vc_cam *cam)
 {
         struct vc_ctrl *ctrl = &cam->ctrl;
         struct vc_state *state = &cam->state;

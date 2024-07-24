@@ -262,6 +262,8 @@ int write_binning_mode_regs(struct vc_cam *cam, __u8 num_lanes, __u8 format, __u
 vc_control vc_core_get_vmax(struct vc_cam *cam, __u8 num_lanes, __u8 format, __u8 binning);
 vc_control vc_core_get_blacklevel(struct vc_cam *cam, __u8 num_lanes, __u8 format, __u8 binning);
 __u32 vc_core_get_retrigger(struct vc_cam *cam, __u8 num_lanes, __u8 format, __u8 binning);
+void vc_core_limit_frame_size(struct vc_cam *cam, __u32 width, __u32 height);
+void vc_core_limit_frame_position(struct vc_cam *cam, __u32 left, __u32 top);
 
 // --- Function to initialize the vc core --------------------------------------
 int vc_core_init(struct vc_cam *cam, struct i2c_client *client);
@@ -282,6 +284,7 @@ int vc_mod_get_io_mode(struct vc_cam *cam);
 int vc_sen_set_roi(struct vc_cam *cam);
 int vc_sen_set_exposure(struct vc_cam *cam, int exposure);
 int vc_sen_set_gain(struct vc_cam *cam, int gain);
+int vc_sen_write_mode(struct vc_ctrl *ctrl, int mode);
 
 int vc_sen_set_blacklevel(struct vc_cam *cam, __u32 blacklevel);
 
