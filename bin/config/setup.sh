@@ -236,7 +236,7 @@ setup_driver() {
                 ;;
         OrinNX8GB|OrinNX16GB)
                 choose_board 5
-                choose_bsp 5 6 7
+                choose_bsp 5 6 7 8
         esac
         check_configuration $1 $2
         write_configuration

@@ -100,7 +100,7 @@ function Common_setup_gpio_file {
 
 function Common_setup_conf_file {
         case $VC_MIPI_SOM in
-        OrinNano4GB_SD|OrinNano8GB_SD|OrinNano4GB_NVME|OrinNano8GB_NVME)
+        OrinNano4GB_SD|OrinNano8GB_SD|OrinNano4GB_NVME|OrinNano8GB_NVME|OrinNX8GB|OrinNX16GB)
                 if [ ! -e ${ORIN_NANO_CONF_FILE} ]
                 then
                         echo "Could not find ${ORIN_NANO_CONF_FILE}! (pwd $(pwd))"
