@@ -29,7 +29,7 @@ SRC_FILE_CHECKSUM="b80b2a2394f7b7abdea6161becfe345a"
 . $BIN_DIR/config/L4T/urls_35.1.0+.sh
 
 #configure
-PATCHES+=('kernel_Xavier_36.2.0+')
+PATCHES=('kernel_Xavier_36.2.0+')
 
 KERNEL_SOURCE=$BSP_DIR/Linux_for_Tegra/source
 
