@@ -241,12 +241,12 @@ The property *max_framerate* is given for the number of lanes and the pixel form
 | pixel_t              | RG 8,10,12 | RG 8,10,12 | RG 8,10,12 | RG 8,10,12 |
 | max_gain_val         |         48 |         48 |         48 |         48 |
 | step_gain_val        |      0.100 |      0.100 |      0.100 |      0.100 |
-| max_framerate (2L08) |       21.1 |       33.3 |       49.8 |       94,0 |
-| max_framerate (2L10) |       17.0 |       26.9 |       41.3 |       76,7 |
-| max_framerate (2L12) |       14.2 |       22.6 |       34.6 |       64,8 |
-| max_framerate (4L08) |       40.7 |       68.2 |       96.2 |      128,0 |
-| max_framerate (4L10) |       34.3 |       51.6 |       78.8 |      118,9 |
-| max_framerate (4L12) |       27.8 |       43.6 |       66.7 |       70,9 |
+| max_framerate (2L08) |       21.1 |       33.3 |       49.8 |       88.8 |
+| max_framerate (2L10) |       17.0 |       26.9 |       41.3 |       72.5 |
+| max_framerate (2L12) |       14.2 |       22.6 |       34.6 |       61.3 |
+| max_framerate (4L08) |       40.7 |       68.2 |       96.2 |      121.0 |
+| max_framerate (4L10) |       34.3 |       51.6 |       78.8 |      112.3 |
+| max_framerate (4L12) |       27.8 |       43.6 |       66.7 |       67.0 |
 
 </details>
 
