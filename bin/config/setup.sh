@@ -235,8 +235,13 @@ setup_driver() {
                 choose_bsp 6 7 8
                 ;;
         OrinNX8GB|OrinNX16GB)
-                choose_board 5
-                choose_bsp 5 6 7 8
+                choose_board 3 5
+                if [[ "NV_DevKit_OrinNano" == $board ]]
+                then
+                        choose_bsp 8
+                else
+                        choose_bsp 5 6 7 8
+                fi
         esac
         check_configuration $1 $2
         write_configuration

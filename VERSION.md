@@ -1,5 +1,12 @@
 # Version History
 
+## v0.18.1 (L4T 36.2.0, Support IMX900)
+* New Features
+  * Added support for board support package
+    * NVIDIA L4T 36.2.0 for NVIDIA Jetson Orin NX + Orin Nano DevKit
+  * Added support for VC MIPI Camera Module
+    * IMX900 adjusted values for Rev02 (exposure fix + static noise pattern removed)
+
 ## v0.18.0 (L4T 36.2.0, L4T 35.4.1, Support IMX900, Binning)
 
 * New Features

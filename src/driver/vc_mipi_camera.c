@@ -7,7 +7,7 @@
 #include "vc_mipi_core.h"
 #include "vc_mipi_modules.h"
 
-#define VERSION "0.18.0"
+#define VERSION "0.18.1"
 // #define VC_CTRL_VALUE
 
 static struct vc_cam *tegracam_to_cam(struct tegracam_device *tc_dev)

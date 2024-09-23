@@ -15,7 +15,7 @@
 #define CAM_I2C_MUX	TEGRA234_AON_GPIO(CC, 3)
 
 // ------------------------------------------------------------------------------------------------
-//  Driver Configuration for NVIDIA Jetson Orin Nano on NVIDIA Jetson Orin Nano Developer Kit
+//  Driver Configuration for NVIDIA Jetson Orin Nano/Orin NX on NVIDIA Jetson Orin Nano Developer Kit
 // ------------------------------------------------------------------------------------------------
 #define VC_MIPI_CAM_0       1   // 1: Enabled, 0: Disabled  (serial_b => CSI Port 1 => VI Stream 0)
 #define VC_MIPI_CAM_1       1   // 1: Enabled, 0: Disabled  (serial_c => CSI Port 2 => VI Stream 2)
