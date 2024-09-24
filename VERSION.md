@@ -6,6 +6,8 @@
     * NVIDIA L4T 36.2.0 for NVIDIA Jetson Orin NX + Orin Nano DevKit
   * Added support for VC MIPI Camera Module
     * IMX900 adjusted values for Rev02 (exposure fix + static noise pattern removed)
+  * Bugfix
+    * L4T 36.2.0 script had a problem with the patch folder. Fixed.
 
 ## v0.18.0 (L4T 36.2.0, L4T 35.4.1, Support IMX900, Binning)
 
