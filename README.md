@@ -1,6 +1,6 @@
 # Vision Components MIPI CSI-2 driver for NVIDIA Jetson Nano, Xavier NX, AGX Xavier, TX2, Orin Nano and Orin NX
 
-![VC MIPI camera](https://www.vision-components.com/fileadmin/external/documentation/hardware/VC_MIPI_Camera_Module/VC_MIPI_Camera_Module-Dateien/mipi_sensor_front_back.png)
+![VC MIPI camera](doc/images/mipi_sensor_front_back.png)
 
 ## Version 0.18.1 ([History](VERSION.md))
 
