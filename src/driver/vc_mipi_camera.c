@@ -602,7 +602,7 @@ int vc_init_frmfmt(struct device *dev, struct vc_cam *cam)
         frmfmt->num_framerates = 1;
 
         fps[0] = cam->ctrl.framerate.def;
-        
+
         frmfmt->size.width = cam->ctrl.frame.width;
         frmfmt->size.height = cam->ctrl.frame.height;
         frmfmt->hdr_en = 0;
@@ -687,7 +687,6 @@ static void vc_init_binning(struct device *dev, struct vc_cam *cam)
         vc_notice(dev, "%s(): Init binning modes\n", __FUNCTION__);
 
         for (i = 0; i < MAX_NUM_SENSOR_MODES; i++) {
-                ctrl->dt_binning_modes[i].mode_set = false;
                 snprintf(temp_str, sizeof(temp_str), "%s%d", OF_SENSORMODE_PREFIX, i);
                 node_tmp = of_get_child_by_name(np, temp_str);
                 of_node_put(node_tmp);
@@ -703,6 +702,7 @@ static void vc_init_binning(struct device *dev, struct vc_cam *cam)
                         vc_dbg(dev, "%s(): Unable to read binning_mode from device tree mode%d!\n", __FUNCTION__, i);
                         continue;
                 }
+
                 ctrl->dt_binning_modes[i].mode_set = true;
         }
 }
@@ -795,14 +795,22 @@ static int vc_probe(struct i2c_client *client, const struct i2c_device_id *id)
 #if defined(VC_MIPI_JETSON_NANO) && defined(VC_MIPI_L4T_32_7_4)
         struct camera_common_data *common_data;
 #endif
+        struct dt_binning_mode *dt_binning_modes = NULL;
         int ret;
 
         vc_notice(dev, "%s(): Probing UNIVERSAL VC MIPI Driver (v%s)\n", __func__, VERSION);
         // --------------------------------------------------------------------
 
-         cam = devm_kzalloc(dev, sizeof(struct vc_cam), GFP_KERNEL);
+        cam = devm_kzalloc(dev, sizeof(struct vc_cam), GFP_KERNEL);
         if (!cam)
                 return -ENOMEM;
+
+        dt_binning_modes = devm_kzalloc(dev, (MAX_NUM_SENSOR_MODES * sizeof(struct dt_binning_mode)), GFP_KERNEL);
+        if (NULL == dt_binning_modes) {
+                return -ENOMEM;
+        }
+
+        cam->ctrl.dt_binning_modes = &dt_binning_modes[0];
 
         tc_dev = devm_kzalloc(dev, sizeof(struct tegracam_device), GFP_KERNEL);
         if (!tc_dev)
