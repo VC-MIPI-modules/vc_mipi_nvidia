@@ -255,15 +255,15 @@ setup_driver() {
 setup_target() {
         TARGET_USER=$USER
         TARGET_PW=
-        TARGET_IP=
-        TARGET_RSA=
+        TARGET_IP="nvidia"
+        TARGET_RSA="id_rsa.pub"
         if [[ -e $TARGET_FILE ]]; then
                 . $TARGET_FILE
         fi
         echo "------------------------------------------------------------"
         echo ""
         echo "  Choose your target settings. "
-        echo "  Do not enter anything if you want to accept the entry."
+        echo "  Do not enter anything if you want to accept the entry surrounded by the braces."
         echo ""
         echo -n "  USER ($TARGET_USER): "
         read user
@@ -280,6 +280,17 @@ setup_target() {
         if [[ -n ${ip} ]]; then
                 TARGET_IP=${ip}
         fi
+        echo ""
+        echo "------------------------------------------------------------"
+        echo "  Your available .pub files:"
+        echo "------------------------------------------------------------"
+        KEYFILES="$(find ~/.ssh -name *.pub)"
+        for keyfile in ${KEYFILES[@]}; do
+                echo "  $keyfile"
+        done
+
+        echo "------------------------------------------------------------"
+
         echo -n "  RSA ($TARGET_RSA):"
         read rsa
         if [[ -n ${rsa} ]]; then

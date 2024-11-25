@@ -271,7 +271,7 @@ setup_target() {
 
         # Copy User's public rsa file into the target authorized_keys file.
         echo "Copy public rsa key..."
-        ssh-copy-id -i ~/.ssh/${TARGET_RSA}.pub $TARGET_USER@$TARGET_IP
+        ssh-copy-id -i ~/.ssh/${TARGET_RSA} $TARGET_USER@$TARGET_IP
 
         TARGET_DIR=/home/$TARGET_USER/test
         $TARGET_SHELL rm -Rf $TARGET_DIR
