@@ -1,6 +1,6 @@
-From abc7ca2b381b2655d42a680dc754952aadc331e7 Mon Sep 17 00:00:00 2001
+From ceed27ff203334213d66cdf5e1f8a56b1da2dbd0 Mon Sep 17 00:00:00 2001
 From: "/setup.sh" <support@vision-components.com>
-Date: Fri, 26 Nov 2021 13:23:26 +0100
+Date: Wed, 27 Nov 2024 14:31:39 +0100
 Subject: [PATCH] Bugfix in destroy_buffer_table(). When the
  capture_buffer_table isn't created before, the function crashed because of a
  NULL pointer dereferencing.
@@ -24,5 +24,5 @@ index 9a9525f..9c4c1b6 100644
  
  	hash_for_each_safe(tab->hhead, bkt, next, pin, hnode) {
 -- 
-2.25.1
+2.34.1
 
