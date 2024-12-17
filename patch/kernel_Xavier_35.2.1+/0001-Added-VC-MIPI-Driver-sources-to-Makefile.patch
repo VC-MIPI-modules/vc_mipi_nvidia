@@ -1,6 +1,6 @@
-From 536cc7abd0c1a771862afc466e7ef717f6413f82 Mon Sep 17 00:00:00 2001
+From 5393743d9961f5be1bdf0c3be70f558a7d511a78 Mon Sep 17 00:00:00 2001
 From: "/setup.sh" <support@vision-components.com>
-Date: Tue, 6 Sep 2022 14:25:38 +0200
+Date: Tue, 3 Dec 2024 16:00:59 +0100
 Subject: [PATCH] Added VC MIPI Driver sources to Makefile.
 
 ---
@@ -10,10 +10,10 @@ Subject: [PATCH] Added VC MIPI Driver sources to Makefile.
  3 files changed, 3 insertions(+)
 
 diff --git a/kernel/kernel-5.10/arch/arm64/configs/defconfig b/kernel/kernel-5.10/arch/arm64/configs/defconfig
-index c49c5c304..850e547b3 100644
+index de31fed..8c590c8 100644
 --- a/kernel/kernel-5.10/arch/arm64/configs/defconfig
 +++ b/kernel/kernel-5.10/arch/arm64/configs/defconfig
-@@ -885,6 +885,7 @@ CONFIG_NV_VIDEO_IMX318=m
+@@ -889,6 +889,7 @@ CONFIG_NV_VIDEO_IMX318=m
  CONFIG_NV_VIDEO_LC898212=m
  CONFIG_NV_VIDEO_OV5693=m
  CONFIG_NV_VIDEO_OV9281=m
@@ -22,7 +22,7 @@ index c49c5c304..850e547b3 100644
  CONFIG_NV_VIDEO_OV23850=m
  CONFIG_I2C_IOEXPANDER_PCA9570=m
 diff --git a/kernel/kernel-5.10/arch/arm64/configs/tegra_android_defconfig b/kernel/kernel-5.10/arch/arm64/configs/tegra_android_defconfig
-index c1016393e..501a4a899 100644
+index af88d50..c7b6354 100644
 --- a/kernel/kernel-5.10/arch/arm64/configs/tegra_android_defconfig
 +++ b/kernel/kernel-5.10/arch/arm64/configs/tegra_android_defconfig
 @@ -892,6 +892,7 @@ CONFIG_NV_VIDEO_IMX318=m
@@ -34,7 +34,7 @@ index c1016393e..501a4a899 100644
  CONFIG_NV_VIDEO_OV23850=m
  CONFIG_I2C_IOEXPANDER_PCA9570=m
 diff --git a/kernel/nvidia/drivers/media/i2c/Makefile b/kernel/nvidia/drivers/media/i2c/Makefile
-index af6122bca..97541f880 100644
+index f8f6c3b..e67d745 100644
 --- a/kernel/nvidia/drivers/media/i2c/Makefile
 +++ b/kernel/nvidia/drivers/media/i2c/Makefile
 @@ -13,6 +13,7 @@ obj-$(CONFIG_NV_VIDEO_IMX318) += nv_imx318.o
@@ -46,5 +46,5 @@ index af6122bca..97541f880 100644
  obj-$(CONFIG_NV_VIDEO_OV23850) += nv_ov23850.o
  obj-$(CONFIG_I2C_IOEXPANDER_PCA9570) += pca9570.o
 -- 
-2.25.1
+2.34.1
 

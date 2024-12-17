@@ -1,0 +1,262 @@
+From 36dfe94c7ffccdebe702fe6145c59a58033ffb41 Mon Sep 17 00:00:00 2001
+From: "/setup.sh" <support@vision-components.com>
+Date: Tue, 3 Dec 2024 17:30:03 +0100
+Subject: [PATCH] Handler function ready_to_stream introduced.
+
+---
+ .../media/common/videobuf2/videobuf2-v4l2.c   |  3 +-
+ .../kernel-5.10/include/media/v4l2-subdev.h   |  1 +
+ .../include/media/videobuf2-v4l2.h            |  1 +
+ .../platform/tegra/camera/tegracam_v4l2.c     | 37 ++++++++++++++++++
+ .../media/platform/tegra/camera/vi/channel.c  | 39 ++++++++++++++++++-
+ .../media/platform/tegra/camera/vi/vi4_fops.c | 17 +++++++-
+ .../media/platform/tegra/camera/vi/vi5_fops.c | 16 ++++++++
+ kernel/nvidia/include/media/camera_common.h   |  1 +
+ kernel/nvidia/include/media/mc_common.h       |  1 +
+ 9 files changed, 113 insertions(+), 3 deletions(-)
+
+diff --git a/kernel/kernel-5.10/drivers/media/common/videobuf2/videobuf2-v4l2.c b/kernel/kernel-5.10/drivers/media/common/videobuf2/videobuf2-v4l2.c
+index 3f61f58..af7b0c5 100644
+--- a/kernel/kernel-5.10/drivers/media/common/videobuf2/videobuf2-v4l2.c
++++ b/kernel/kernel-5.10/drivers/media/common/videobuf2/videobuf2-v4l2.c
+@@ -972,10 +972,11 @@ EXPORT_SYMBOL_GPL(vb2_poll);
+  */
+ 
+ /* The queue is busy if there is a owner and you are not that owner. */
+-static inline bool vb2_queue_is_busy(struct video_device *vdev, struct file *file)
++bool vb2_queue_is_busy(struct video_device *vdev, struct file *file)
+ {
+ 	return vdev->queue->owner && vdev->queue->owner != file->private_data;
+ }
++EXPORT_SYMBOL_GPL(vb2_queue_is_busy);
+ 
+ /* vb2 ioctl helpers */
+ 
+diff --git a/kernel/kernel-5.10/include/media/v4l2-subdev.h b/kernel/kernel-5.10/include/media/v4l2-subdev.h
+index 28d68ce..2d3066f 100644
+--- a/kernel/kernel-5.10/include/media/v4l2-subdev.h
++++ b/kernel/kernel-5.10/include/media/v4l2-subdev.h
+@@ -446,6 +446,7 @@ struct v4l2_subdev_video_ops {
+ 			struct v4l2_dv_timings *timings);
+ 	int (*s_rx_buffer)(struct v4l2_subdev *sd, void *buf,
+ 			   unsigned int *size);
++	int (*g_ready_to_stream)(struct v4l2_subdev *sd);
+ };
+ 
+ /**
+diff --git a/kernel/kernel-5.10/include/media/videobuf2-v4l2.h b/kernel/kernel-5.10/include/media/videobuf2-v4l2.h
+index c203047..a55879d 100644
+--- a/kernel/kernel-5.10/include/media/videobuf2-v4l2.h
++++ b/kernel/kernel-5.10/include/media/videobuf2-v4l2.h
+@@ -291,6 +291,7 @@ __poll_t vb2_poll(struct vb2_queue *q, struct file *file, poll_table *wait);
+  */
+ 
+ /* struct v4l2_ioctl_ops helpers */
++bool vb2_queue_is_busy(struct video_device *vdev, struct file *file);
+ 
+ int vb2_ioctl_reqbufs(struct file *file, void *priv,
+ 			  struct v4l2_requestbuffers *p);
+diff --git a/kernel/nvidia/drivers/media/platform/tegra/camera/tegracam_v4l2.c b/kernel/nvidia/drivers/media/platform/tegra/camera/tegracam_v4l2.c
+index 8d0d16c..b5363f2 100644
+--- a/kernel/nvidia/drivers/media/platform/tegra/camera/tegracam_v4l2.c
++++ b/kernel/nvidia/drivers/media/platform/tegra/camera/tegracam_v4l2.c
+@@ -107,6 +107,42 @@ error:
+ 	return err;
+ }
+ 
++static int v4l2sd_ready_to_stream(struct v4l2_subdev *sd)
++{
++	struct i2c_client *client = v4l2_get_subdevdata(sd);
++	struct camera_common_data *s_data = to_camera_common_data(&client->dev);
++	struct camera_common_sensor_ops *sensor_ops;
++	struct tegracam_device *tc_dev;
++	int err = 0;
++
++	if (!s_data) {
++		dev_err(&client->dev, "Could not get s_data! \n");
++		return -EINVAL;
++	}
++
++	sensor_ops = s_data->ops;
++	tc_dev = to_tegracam_device(s_data);
++
++	if (!try_module_get(s_data->owner)) {
++		dev_err(&client->dev, "Could not get module! \n");
++		return -ENODEV;
++	}
++
++	if (NULL == sensor_ops->ready_to_stream) {
++		dev_err(&client->dev, "Callback ready_to_stream is null! \n");
++		return -ENODEV;
++	}
++
++	err = sensor_ops->ready_to_stream(tc_dev);
++	if (err) {
++		dev_err(&client->dev, "Error calling ready_to_stream \n");
++	}
++
++	module_put(s_data->owner);
++
++	return err;
++}
++
+ static int v4l2sd_g_input_status(struct v4l2_subdev *sd, u32 *status)
+ {
+ 	struct i2c_client *client = v4l2_get_subdevdata(sd);
+@@ -127,6 +163,7 @@ static struct v4l2_subdev_video_ops v4l2sd_video_ops = {
+ 	.g_mbus_config	= camera_common_g_mbus_config,
+ #endif
+ 	.g_input_status = v4l2sd_g_input_status,
++	.g_ready_to_stream = v4l2sd_ready_to_stream,
+ };
+ 
+ static struct v4l2_subdev_core_ops v4l2sd_core_ops = {
+diff --git a/kernel/nvidia/drivers/media/platform/tegra/camera/vi/channel.c b/kernel/nvidia/drivers/media/platform/tegra/camera/vi/channel.c
+index db215d3..08a0ee1 100644
+--- a/kernel/nvidia/drivers/media/platform/tegra/camera/vi/channel.c
++++ b/kernel/nvidia/drivers/media/platform/tegra/camera/vi/channel.c
+@@ -2314,6 +2314,43 @@ static int tegra_channel_s_input(struct file *file, void *priv, unsigned int i)
+ 	return 0;
+ }
+ 
++static int tegra_channel_streamon(struct file *file, void *priv, enum v4l2_buf_type i)
++{
++	struct video_device *vdev = video_devdata(file);
++
++	struct tegra_channel *chan = vb2_get_drv_priv(vdev->queue);
++	struct tegra_mc_vi *vi = chan->vi;
++
++	struct v4l2_subdev *sd = chan->subdev_on_csi;
++	struct camera_common_data *s_data = to_camera_common_data(sd->dev);
++
++	int ret = 0;
++
++	dev_dbg(chan->vi->dev, "%s: s_data->mode=%d, s_data->mode_prop_idx=%d, s_data->sensor_mode_id=%d \n", __func__,
++		s_data->mode, s_data->mode_prop_idx, s_data->sensor_mode_id);
++
++	if (NULL == vi->fops) {
++		dev_err(chan->vi->dev, "%s: Could not get fops! \n", __func__);
++		return -ENODEV;
++	}
++
++	if (NULL == vi->fops->vi_ready_to_stream){
++		dev_err(chan->vi->dev, "%s: Could not get vi_ready_to_stream! \n", __func__);
++		return -ENODEV;
++	}
++
++	ret = vi->fops->vi_ready_to_stream(chan);
++
++	if (0 > ret) {
++		return -EINVAL;
++	}
++
++	if (vb2_queue_is_busy(vdev, file))
++		return -EBUSY;
++
++	return vb2_streamon(vdev->queue, i);
++}
++
+ static int tegra_channel_log_status(struct file *file, void *priv)
+ {
+ 	struct tegra_channel *chan = video_drvdata(file);
+@@ -2378,7 +2415,7 @@ static const struct v4l2_ioctl_ops tegra_channel_ioctl_ops = {
+ 	.vidioc_dqbuf			= vb2_ioctl_dqbuf,
+ 	.vidioc_create_bufs		= vb2_ioctl_create_bufs,
+ 	.vidioc_expbuf			= vb2_ioctl_expbuf,
+-	.vidioc_streamon		= vb2_ioctl_streamon,
++	.vidioc_streamon		= tegra_channel_streamon,
+ 	.vidioc_streamoff		= vb2_ioctl_streamoff,
+ 	.vidioc_g_edid			= tegra_channel_g_edid,
+ 	.vidioc_s_edid			= tegra_channel_s_edid,
+diff --git a/kernel/nvidia/drivers/media/platform/tegra/camera/vi/vi4_fops.c b/kernel/nvidia/drivers/media/platform/tegra/camera/vi/vi4_fops.c
+index 75a0fa4..c902542 100644
+--- a/kernel/nvidia/drivers/media/platform/tegra/camera/vi/vi4_fops.c
++++ b/kernel/nvidia/drivers/media/platform/tegra/camera/vi/vi4_fops.c
+@@ -1326,6 +1326,21 @@ static void vi4_stride_align(unsigned int *bpl)
+ 			~((RM_SURFACE_ALIGNMENT) - 1));
+ }
+ 
++static int vi4_channel_ready_to_stream(struct tegra_channel *chan)
++{
++	struct v4l2_subdev *sd;
++	struct tegra_mc_vi *vi;
++	int num_sd = 1;
++	int err = 0;
++
++	sd = chan->subdev[num_sd];
++	vi = chan->vi;
++
++	err = v4l2_subdev_call(sd, video, g_ready_to_stream);
++
++	return err;
++}
++
+ struct tegra_vi_fops vi4_fops = {
+ 	.vi_power_on = vi4_power_on,
+ 	.vi_power_off = vi4_power_off,
+@@ -1336,5 +1351,5 @@ struct tegra_vi_fops vi4_fops = {
+ 	.vi_init_video_formats = vi4_init_video_formats,
+ 	.vi_mfi_work = vi4_mfi_work,
+ 	.vi_stride_align = vi4_stride_align,
+-
++	.vi_ready_to_stream = vi4_channel_ready_to_stream,
+ };
+diff --git a/kernel/nvidia/drivers/media/platform/tegra/camera/vi/vi5_fops.c b/kernel/nvidia/drivers/media/platform/tegra/camera/vi/vi5_fops.c
+index 16c813f..d331511 100644
+--- a/kernel/nvidia/drivers/media/platform/tegra/camera/vi/vi5_fops.c
++++ b/kernel/nvidia/drivers/media/platform/tegra/camera/vi/vi5_fops.c
+@@ -1057,6 +1057,21 @@ static void vi5_power_off(struct tegra_channel *chan)
+ 	tegra_vi5_disable(vi);
+ }
+ 
++static int vi5_channel_ready_to_stream(struct tegra_channel *chan)
++{
++	struct v4l2_subdev *sd;
++	struct tegra_mc_vi *vi;
++	int num_sd = 1;
++	int err = 0;
++
++	sd = chan->subdev[num_sd];
++	vi = chan->vi;
++
++	err = v4l2_subdev_call(sd, video, g_ready_to_stream);
++
++	return err;
++}
++
+ struct tegra_vi_fops vi5_fops = {
+ 	.vi_power_on = vi5_power_on,
+ 	.vi_power_off = vi5_power_off,
+@@ -1067,4 +1082,5 @@ struct tegra_vi_fops vi5_fops = {
+ 	.vi_add_ctrls = vi5_add_ctrls,
+ 	.vi_init_video_formats = vi5_init_video_formats,
+ 	.vi_unit_get_device_handle = vi5_unit_get_device_handle,
++	.vi_ready_to_stream = vi5_channel_ready_to_stream,
+ };
+diff --git a/kernel/nvidia/include/media/camera_common.h b/kernel/nvidia/include/media/camera_common.h
+index a039a6b..7823e50 100644
+--- a/kernel/nvidia/include/media/camera_common.h
++++ b/kernel/nvidia/include/media/camera_common.h
+@@ -181,6 +181,7 @@ struct camera_common_sensor_ops {
+ 	int (*set_mode)(struct tegracam_device *tc_dev);
+ 	int (*start_streaming)(struct tegracam_device *tc_dev);
+ 	int (*stop_streaming)(struct tegracam_device *tc_dev);
++	int (*ready_to_stream)(struct tegracam_device *tc_dev);
+ };
+ 
+ struct tegracam_sensor_data {
+diff --git a/kernel/nvidia/include/media/mc_common.h b/kernel/nvidia/include/media/mc_common.h
+index 18328db..a9286c8 100644
+--- a/kernel/nvidia/include/media/mc_common.h
++++ b/kernel/nvidia/include/media/mc_common.h
+@@ -431,6 +431,7 @@ struct tegra_vi_fops {
+ 	void (*vi_stride_align)(unsigned int *bpl);
+ 	void (*vi_unit_get_device_handle)(struct platform_device *pdev,
+ 		uint32_t csi_steam_id, struct device **dev);
++	int (*vi_ready_to_stream)(struct tegra_channel *chan);
+ };
+ 
+ struct tegra_csi_fops {
+-- 
+2.34.1
+
