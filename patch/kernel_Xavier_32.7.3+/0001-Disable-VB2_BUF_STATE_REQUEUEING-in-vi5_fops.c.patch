@@ -1,6 +1,6 @@
-From 306a75d7c88f361479e39747463f96352202af14 Mon Sep 17 00:00:00 2001
+From a3982844519d14d36fc501a8ee2d02423f3f8c8a Mon Sep 17 00:00:00 2001
 From: "/setup.sh" <support@vision-components.com>
-Date: Tue, 19 Oct 2021 20:39:15 +0200
+Date: Wed, 27 Nov 2024 17:21:41 +0100
 Subject: [PATCH] Disable VB2_BUF_STATE_REQUEUEING in vi5_fops.c
 
 ---
@@ -8,10 +8,10 @@ Subject: [PATCH] Disable VB2_BUF_STATE_REQUEUEING in vi5_fops.c
  1 file changed, 8 insertions(+), 8 deletions(-)
 
 diff --git a/kernel/nvidia/drivers/media/platform/tegra/camera/vi/vi5_fops.c b/kernel/nvidia/drivers/media/platform/tegra/camera/vi/vi5_fops.c
-index 6b00bfb..f849e21 100644
+index 9c7b847..e3a3e41 100644
 --- a/kernel/nvidia/drivers/media/platform/tegra/camera/vi/vi5_fops.c
 +++ b/kernel/nvidia/drivers/media/platform/tegra/camera/vi/vi5_fops.c
-@@ -423,13 +423,13 @@ static void vi5_capture_dequeue(struct tegra_channel *chan,
+@@ -496,13 +496,13 @@ static void vi5_capture_dequeue(struct tegra_channel *chan,
  				dev_err(vi->dev, "uncorr_err: flags %d, err_data %d\n",
  					descr->status.flags, descr->status.err_data);
  			} else {
@@ -22,25 +22,25 @@ index 6b00bfb..f849e21 100644
 -					descr->status.err_data);
 -				buf->vb2_state = VB2_BUF_STATE_REQUEUEING;
 -				goto done;
-+				// dev_warn(vi->dev,
-+				// 	"corr_err: discarding frame %d, flags: %d, "
-+				// 	"err_data %d\n",
-+				// 	descr->status.frame_id, descr->status.flags,
-+				// 	descr->status.err_data);
-+				// buf->vb2_state = VB2_BUF_STATE_REQUEUEING;
-+				// goto done;
++//				dev_warn(vi->dev,
++//					"corr_err: discarding frame %d, flags: %d, "
++//					"err_data %d\n",
++//					descr->status.frame_id, descr->status.flags,
++//					descr->status.err_data);
++//				buf->vb2_state = VB2_BUF_STATE_REQUEUEING;
++//				goto done;
  			}
  		} else if (!vi_port) {
  			gang_prev_frame_id = descr->status.frame_id;
-@@ -464,7 +464,7 @@ static void vi5_capture_dequeue(struct tegra_channel *chan,
+@@ -537,7 +537,7 @@ static void vi5_capture_dequeue(struct tegra_channel *chan,
  	ts = ns_to_timespec((s64)descr->status.eof_timestamp);
  	trace_tegra_channel_capture_frame("eof", ts);
  
 -done:
-+// done:
++//done:
  	goto rel_buf;
  
  uncorr_err:
 -- 
-2.25.1
+2.34.1
 

@@ -1,20 +1,20 @@
-From 779a11a92814c4594ebb4f793ef31ba605378dc1 Mon Sep 17 00:00:00 2001
+From a7579ccec794920f15414ccbde87aab40d2dafa6 Mon Sep 17 00:00:00 2001
 From: "/setup.sh" <support@vision-components.com>
-Date: Tue, 4 Jul 2023 16:03:52 +0200
-Subject: [PATCH] Added RAW8 (grey), RAW10 (y10), RAW12 (y12) and RAW14 (y14)
- format to the tegra framework.
+Date: Wed, 27 Nov 2024 17:13:45 +0100
+Subject: [PATCH] Added RAW8 (grey), RAW10 (y10), RAW12 (y12), RAW14 (y14),
+ rggb8 and gbrg8 format to the tegra framework.
 
 ---
  .../media/uapi/v4l/pixfmt-y14.rst             | 65 +++++++++++++++++++
  .../media/uapi/v4l/yuv-formats.rst            |  1 +
  .../drivers/media/v4l2-core/v4l2-ioctl.c      |  1 +
- .../include/uapi/linux/media-bus-format.h     |  1 +
+ .../include/uapi/linux/media-bus-format.h     |  3 +-
  .../kernel-4.9/include/uapi/linux/videodev2.h |  1 +
- .../platform/tegra/camera/camera_common.c     | 20 ++++++
- .../platform/tegra/camera/sensor_common.c     | 10 +++
+ .../platform/tegra/camera/camera_common.c     | 25 +++++++
+ .../platform/tegra/camera/sensor_common.c     | 12 ++++
  .../platform/tegra/camera/vi/vi4_formats.h    | 10 +++
  .../platform/tegra/camera/vi/vi5_formats.h    | 10 +++
- 9 files changed, 119 insertions(+)
+ 9 files changed, 127 insertions(+), 1 deletion(-)
  create mode 100644 kernel/kernel-4.9/Documentation/media/uapi/v4l/pixfmt-y14.rst
 
 diff --git a/kernel/kernel-4.9/Documentation/media/uapi/v4l/pixfmt-y14.rst b/kernel/kernel-4.9/Documentation/media/uapi/v4l/pixfmt-y14.rst
@@ -90,19 +90,19 @@ index 0000000..58c9013
 +      - Y'\ :sub:`33high`
 \ No newline at end of file
 diff --git a/kernel/kernel-4.9/Documentation/media/uapi/v4l/yuv-formats.rst b/kernel/kernel-4.9/Documentation/media/uapi/v4l/yuv-formats.rst
-index 3334ea4..b2e7e4a 100644
+index 3334ea4..08687bb 100644
 --- a/kernel/kernel-4.9/Documentation/media/uapi/v4l/yuv-formats.rst
 +++ b/kernel/kernel-4.9/Documentation/media/uapi/v4l/yuv-formats.rst
-@@ -28,6 +28,7 @@ to brightness information.
-     pixfmt-grey
+@@ -29,6 +29,7 @@ to brightness information.
      pixfmt-y10
      pixfmt-y12
-+    pixfmt-y14
      pixfmt-y10b
++    pixfmt-y14
      pixfmt-y16
      pixfmt-y16-be
+     pixfmt-y8i
 diff --git a/kernel/kernel-4.9/drivers/media/v4l2-core/v4l2-ioctl.c b/kernel/kernel-4.9/drivers/media/v4l2-core/v4l2-ioctl.c
-index 222b270..715f21d 100644
+index 1bc3128..f70fb11 100644
 --- a/kernel/kernel-4.9/drivers/media/v4l2-core/v4l2-ioctl.c
 +++ b/kernel/kernel-4.9/drivers/media/v4l2-core/v4l2-ioctl.c
 @@ -1171,6 +1171,7 @@ static void v4l_fill_fmtdesc(struct v4l2_fmtdesc *fmt)
@@ -114,9 +114,18 @@ index 222b270..715f21d 100644
  	case V4L2_PIX_FMT_Y16_BE:	descr = "16-bit Greyscale BE"; break;
  	case V4L2_PIX_FMT_Y10BPACK:	descr = "10-bit Greyscale (Packed)"; break;
 diff --git a/kernel/kernel-4.9/include/uapi/linux/media-bus-format.h b/kernel/kernel-4.9/include/uapi/linux/media-bus-format.h
-index 0882827..13e7594 100644
+index 0882827..e6b98f7 100644
 --- a/kernel/kernel-4.9/include/uapi/linux/media-bus-format.h
 +++ b/kernel/kernel-4.9/include/uapi/linux/media-bus-format.h
+@@ -58,7 +58,7 @@
+ #define MEDIA_BUS_FMT_ARGB8888_1X32		0x100d
+ #define MEDIA_BUS_FMT_RGB888_1X32_PADHI		0x100f
+ 
+-/* YUV (including grey) - next is	0x2026 */
++/* YUV (including grey) - next is	0x2027 */
+ #define MEDIA_BUS_FMT_Y8_1X8			0x2001
+ #define MEDIA_BUS_FMT_UV8_1X8			0x2015
+ #define MEDIA_BUS_FMT_UYVY8_1_5X8		0x2002
 @@ -79,6 +79,7 @@
  #define MEDIA_BUS_FMT_VYUY12_2X12		0x201d
  #define MEDIA_BUS_FMT_YUYV12_2X12		0x201e
@@ -138,10 +147,22 @@ index ae04e9e..59ec98f 100644
  #define V4L2_PIX_FMT_Y16_BE  v4l2_fourcc_be('Y', '1', '6', ' ') /* 16  Greyscale BE  */
  
 diff --git a/kernel/nvidia/drivers/media/platform/tegra/camera/camera_common.c b/kernel/nvidia/drivers/media/platform/tegra/camera/camera_common.c
-index 7feee16..0893e19 100644
+index ce1f254..4fd335e 100644
 --- a/kernel/nvidia/drivers/media/platform/tegra/camera/camera_common.c
 +++ b/kernel/nvidia/drivers/media/platform/tegra/camera/camera_common.c
-@@ -121,6 +121,26 @@ static const struct camera_common_colorfmt camera_common_color_fmts[] = {
+@@ -81,6 +81,11 @@ static const struct camera_common_colorfmt camera_common_color_fmts[] = {
+ 		V4L2_COLORSPACE_SRGB,
+ 		V4L2_PIX_FMT_SRGGB8,
+ 	},
++	{
++		MEDIA_BUS_FMT_SGBRG8_1X8,
++		V4L2_COLORSPACE_SRGB,
++		V4L2_PIX_FMT_SGBRG8,
++	},
+ 	{
+ 		MEDIA_BUS_FMT_YUYV8_1X16,
+ 		V4L2_COLORSPACE_SRGB,
+@@ -126,6 +131,26 @@ static const struct camera_common_colorfmt camera_common_color_fmts[] = {
  		V4L2_COLORSPACE_SRGB,
  		V4L2_PIX_FMT_VYUY,
  	},
@@ -169,10 +190,10 @@ index 7feee16..0893e19 100644
  	 * The below two formats are not supported by VI4,
  	 * keep them at the last to ensure they get discarded
 diff --git a/kernel/nvidia/drivers/media/platform/tegra/camera/sensor_common.c b/kernel/nvidia/drivers/media/platform/tegra/camera/sensor_common.c
-index 97010d4..ec109cf 100644
+index d47c4a4..638823a 100644
 --- a/kernel/nvidia/drivers/media/platform/tegra/camera/sensor_common.c
 +++ b/kernel/nvidia/drivers/media/platform/tegra/camera/sensor_common.c
-@@ -227,6 +227,16 @@ static int extract_pixel_format(
+@@ -235,6 +235,18 @@ static int extract_pixel_format(
  		*format = V4L2_PIX_FMT_UYVY;
  	else if (strncmp(pixel_t, "yuv_vyuy16", size) == 0)
  		*format = V4L2_PIX_FMT_VYUY;
@@ -182,10 +203,12 @@ index 97010d4..ec109cf 100644
 +		*format = V4L2_PIX_FMT_Y10;
 +	else if (strncmp(pixel_t, "y12", size) == 0)
 +		*format = V4L2_PIX_FMT_Y12;
-+        else if (strncmp(pixel_t, "y14", size) == 0)
++	else if (strncmp(pixel_t, "y14", size) == 0)
 +		*format = V4L2_PIX_FMT_Y14;
 +	else if (strncmp(pixel_t, "bayer_rggb8", size) == 0)
 +		*format = V4L2_PIX_FMT_SRGGB8;
++	else if (strncmp(pixel_t, "bayer_gbrg8", size) == 0)
++		*format = V4L2_PIX_FMT_SGBRG8;
  	else {
  		pr_err("%s: Need to extend format%s\n", __func__, pixel_t);
  		return -EINVAL;
@@ -260,5 +283,5 @@ index 51cbbad..0e6111d 100644
  	/* RGB888 */
  	TEGRA_VIDEO_FORMAT(RGB888, 24, RGB888_1X24, 4, 1, T_A8R8G8B8,
 -- 
-2.25.1
+2.34.1
 

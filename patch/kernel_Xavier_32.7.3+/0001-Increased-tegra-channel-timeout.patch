@@ -1,6 +1,6 @@
-From 5c2525b708a16d21dc039b2d23a7bbff1b30eb36 Mon Sep 17 00:00:00 2001
+From 25ad9133b05fea1dea7a504218c23cf1a57feeb0 Mon Sep 17 00:00:00 2001
 From: "/setup.sh" <support@vision-components.com>
-Date: Tue, 4 Jul 2023 17:57:37 +0200
+Date: Wed, 27 Nov 2024 17:18:32 +0100
 Subject: [PATCH] Increased tegra channel timeout.
 
 ---
@@ -9,7 +9,7 @@ Subject: [PATCH] Increased tegra channel timeout.
  2 files changed, 2 insertions(+), 2 deletions(-)
 
 diff --git a/kernel/nvidia/drivers/media/platform/tegra/camera/vi/vi4_fops.c b/kernel/nvidia/drivers/media/platform/tegra/camera/vi/vi4_fops.c
-index 5278a4d47..f46a2afc6 100644
+index 5278a4d..f46a2af 100644
 --- a/kernel/nvidia/drivers/media/platform/tegra/camera/vi/vi4_fops.c
 +++ b/kernel/nvidia/drivers/media/platform/tegra/camera/vi/vi4_fops.c
 @@ -1086,7 +1086,7 @@ static int vi4_channel_start_streaming(struct vb2_queue *vq, u32 count)
@@ -22,7 +22,7 @@ index 5278a4d47..f46a2afc6 100644
  		tegra_channel_init_ring_buffer(chan);
  
 diff --git a/kernel/nvidia/drivers/media/platform/tegra/camera/vi/vi5_fops.c b/kernel/nvidia/drivers/media/platform/tegra/camera/vi/vi5_fops.c
-index 9fbd76fb0..444bd3bf6 100644
+index 129df2e..9c7b847 100644
 --- a/kernel/nvidia/drivers/media/platform/tegra/camera/vi/vi5_fops.c
 +++ b/kernel/nvidia/drivers/media/platform/tegra/camera/vi/vi5_fops.c
 @@ -40,7 +40,7 @@
@@ -35,5 +35,5 @@ index 9fbd76fb0..444bd3bf6 100644
  	(CAPTURE_STATUS_SUCCESS \
  	| CAPTURE_STATUS_CSIMUX_FRAME \
 -- 
-2.25.1
+2.34.1
 
