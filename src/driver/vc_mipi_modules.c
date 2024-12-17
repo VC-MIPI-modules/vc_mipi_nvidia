@@ -219,6 +219,7 @@ static void vc_init_ctrl_imx226(struct vc_ctrl *ctrl, struct vc_desc* desc)
         ctrl->clk_pixel                 = 72000000;
 
         ctrl->flags                    |= FLAG_FORMAT_GBRG;
+        ctrl->flags                    |= FLAG_RESET_ALWAYS;
         ctrl->flags                    |= FLAG_TRIGGER_STREAM_EDGE | FLAG_TRIGGER_STREAM_LEVEL;
 }
 
@@ -418,10 +419,10 @@ static void vc_init_ctrl_imx335(struct vc_ctrl *ctrl, struct vc_desc* desc)
         FRAME(7, 52, 2592, 1944)
         //all read out         binning  hmax  vmax      vmax   vmax  blkl  blkl  retrigger
         //                      mode           min       max    def   max   def
-        MODE( 0, 2, FORMAT_RAW10, 0,   0x113,    9,  0xfffff,  4500, 1023,   50,         0)
+        MODE( 0, 2, FORMAT_RAW10, 0,   0x226,    9,  0xfffff,  4500, 1023,   50,         0)
         MODE( 1, 2, FORMAT_RAW12, 0,   0x226,    9,  0xfffff,  4500, 1023,   50,         0)
         MODE( 2, 4, FORMAT_RAW10, 0,   0x113,    9,  0xfffff,  4500, 1023,   50,         0)
-        MODE( 3, 4, FORMAT_RAW12, 0,   0x226,    9,  0xfffff,  4500, 1023,   50,         0)
+        MODE( 3, 4, FORMAT_RAW12, 0,   0x113,    9,  0xfffff,  4500, 1023,   50,         0)
 
         ctrl->flags                    |= FLAG_EXPOSURE_SONY;
         ctrl->flags                    |= FLAG_INCREASE_FRAME_RATE;
