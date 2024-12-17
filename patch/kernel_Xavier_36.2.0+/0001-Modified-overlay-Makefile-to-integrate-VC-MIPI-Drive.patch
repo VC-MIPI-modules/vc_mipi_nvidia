@@ -1,6 +1,6 @@
-From 8a8810c60fa16da80a09e971cfd7e3eeec693042 Mon Sep 17 00:00:00 2001
+From 20f95eb6aba0b88c81b7c637dbe91a7dbd09b199 Mon Sep 17 00:00:00 2001
 From: "/setup.sh" <support@vision-components.com>
-Date: Mon, 8 Apr 2024 09:42:54 +0200
+Date: Mon, 16 Dec 2024 11:11:51 +0100
 Subject: [PATCH] Modified overlay/Makefile to integrate VC MIPI Driver in
  tegra234-p3767-camera-p3768-vc_mipi-dual.dtbo.
 

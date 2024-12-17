@@ -1,6 +1,6 @@
-From fcc04be7cd87dd852f2bc954822ff617b1e5fcc8 Mon Sep 17 00:00:00 2001
+From 44a2221219aaa0dceff7edd848741633a418dfaa Mon Sep 17 00:00:00 2001
 From: "/setup.sh" <support@vision-components.com>
-Date: Wed, 20 Mar 2024 15:18:11 +0100
+Date: Mon, 16 Dec 2024 10:24:04 +0100
 Subject: [PATCH] Added cropping position (left, top) to sensor image
  properties.
 
@@ -10,7 +10,7 @@ Subject: [PATCH] Added cropping position (left, top) to sensor image
  2 files changed, 16 insertions(+)
 
 diff --git a/nvidia-oot/drivers/media/platform/tegra/camera/sensor_common.c b/nvidia-oot/drivers/media/platform/tegra/camera/sensor_common.c
-index 92cc2fdf9..8465f9c12 100644
+index 92cc2fd..8465f9c 100644
 --- a/nvidia-oot/drivers/media/platform/tegra/camera/sensor_common.c
 +++ b/nvidia-oot/drivers/media/platform/tegra/camera/sensor_common.c
 @@ -286,6 +286,20 @@ static int sensor_common_parse_image_props(
@@ -35,7 +35,7 @@ index 92cc2fdf9..8465f9c12 100644
  		&image->width);
  	if (err) {
 diff --git a/nvidia-oot/include/media/tegra-v4l2-camera.h b/nvidia-oot/include/media/tegra-v4l2-camera.h
-index 3521ed376..4605680d3 100644
+index 3521ed3..4605680 100644
 --- a/nvidia-oot/include/media/tegra-v4l2-camera.h
 +++ b/nvidia-oot/include/media/tegra-v4l2-camera.h
 @@ -109,6 +109,8 @@ struct sensor_signal_properties {

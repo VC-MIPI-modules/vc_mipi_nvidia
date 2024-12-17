@@ -71,6 +71,7 @@ function L4T_add_kernel_to_repo {
         echo "Adding kernel sources to local repository ($VC_MIPI_BSP) ..."
 
         git add hardware
+        git add kernel
         git add nvidia-oot
 }
 

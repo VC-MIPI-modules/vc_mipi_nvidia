@@ -1,6 +1,6 @@
-From a0fd03d60d64e6024204a68a848da044723f00ff Mon Sep 17 00:00:00 2001
+From 3a75f148bddd0056bb66f5eb22d48c30ffcd6fd0 Mon Sep 17 00:00:00 2001
 From: "/setup.sh" <support@vision-components.com>
-Date: Wed, 24 Apr 2024 12:39:15 +0200
+Date: Mon, 16 Dec 2024 10:19:32 +0100
 Subject: [PATCH] Added VC MIPI Driver sources to nvidia-oot Makefile.
 
 ---

@@ -1,6 +1,6 @@
-From 5b8f03b563177ea05f0872f28d15f175fbfe4f6a Mon Sep 17 00:00:00 2001
+From e187f939e2c985d8b11bb11d45c15f77846a42af Mon Sep 17 00:00:00 2001
 From: "/setup.sh" <support@vision-components.com>
-Date: Tue, 28 May 2024 10:47:23 +0200
+Date: Mon, 16 Dec 2024 10:39:48 +0100
 Subject: [PATCH] Added controls 'trigger_mode', 'io_mode', 'black_level',
  'single_trigger' and 'binning_mode' to the tegra framework.
 
@@ -11,7 +11,7 @@ Subject: [PATCH] Added controls 'trigger_mode', 'io_mode', 'black_level',
  3 files changed, 158 insertions(+)
 
 diff --git a/nvidia-oot/drivers/media/platform/tegra/camera/tegracam_ctrls.c b/nvidia-oot/drivers/media/platform/tegra/camera/tegracam_ctrls.c
-index a906316..1a19fa7 100644
+index a906316..827954e 100644
 --- a/nvidia-oot/drivers/media/platform/tegra/camera/tegracam_ctrls.c
 +++ b/nvidia-oot/drivers/media/platform/tegra/camera/tegracam_ctrls.c
 @@ -182,6 +182,59 @@ static struct v4l2_ctrl_config ctrl_cfg_list[] = {
@@ -90,9 +90,9 @@ index a906316..1a19fa7 100644
 +	case TEGRA_CAMERA_CID_SINGLE_TRIGGER:
 +		err = ops->set_single_trigger(tc_dev, ctrl->val);
 +		break;
-+        case TEGRA_CAMERA_CID_BINNING_MODE:
-+                err = ops->set_binning_mode(tc_dev, ctrl->val);
-+                break;
++	case TEGRA_CAMERA_CID_BINNING_MODE:
++		err = ops->set_binning_mode(tc_dev, ctrl->val);
++		break;
  	case TEGRA_CAMERA_CID_GAIN:
  		if (*ctrl->p_new.p_s64 == ctrlprops->max_gain_val + 1)
  			return 0;
@@ -191,7 +191,7 @@ index a906316..1a19fa7 100644
  		if (!find_matching_cid(ops->ctrl_cid_list,
  			ops->numctrls,
 diff --git a/nvidia-oot/include/media/camera_common.h b/nvidia-oot/include/media/camera_common.h
-index 6b5ae91..f9ca23d 100644
+index 6b5ae91..d14c822 100644
 --- a/nvidia-oot/include/media/camera_common.h
 +++ b/nvidia-oot/include/media/camera_common.h
 @@ -181,6 +181,11 @@ struct tegracam_ctrl_ops {
@@ -202,12 +202,12 @@ index 6b5ae91..f9ca23d 100644
 +	int (*set_io_mode)(struct tegracam_device *tc_dev, s64 val);
 +	int (*set_black_level)(struct tegracam_device *tc_dev, s64 val);
 +	int (*set_single_trigger)(struct tegracam_device *tc_dev, bool val);
-+        int (*set_binning_mode)(struct tegracam_device *tc_dev, s64 val);
++	int (*set_binning_mode)(struct tegracam_device *tc_dev, s64 val);
  	int (*set_gain)(struct tegracam_device *tc_dev, s64 val);
  	int (*set_exposure)(struct tegracam_device *tc_dev, s64 val);
  	int (*set_exposure_short)(struct tegracam_device *tc_dev, s64 val);
 diff --git a/nvidia-oot/include/media/tegra-v4l2-camera.h b/nvidia-oot/include/media/tegra-v4l2-camera.h
-index 3521ed3..819df2b 100644
+index 4605680..9e9ca43 100644
 --- a/nvidia-oot/include/media/tegra-v4l2-camera.h
 +++ b/nvidia-oot/include/media/tegra-v4l2-camera.h
 @@ -28,6 +28,11 @@

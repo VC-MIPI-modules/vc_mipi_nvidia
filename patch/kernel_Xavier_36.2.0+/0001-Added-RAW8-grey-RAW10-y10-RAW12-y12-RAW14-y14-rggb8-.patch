@@ -1,20 +1,32 @@
-From d177cab2127dfe13c5ae4c746154b3014591b4b4 Mon Sep 17 00:00:00 2001
+From f288117c2954d66d71816bc3fdee449ddca9d6a2 Mon Sep 17 00:00:00 2001
 From: "/setup.sh" <support@vision-components.com>
-Date: Wed, 20 Mar 2024 16:14:12 +0100
-Subject: [PATCH] Added RAW8 (grey), RAW10 (y10), RAW12 (y12) and RAW14 (y14)
- format to the tegra framework.
+Date: Mon, 16 Dec 2024 10:48:11 +0100
+Subject: [PATCH] Added RAW8 (grey), RAW10 (y10), RAW12 (y12), RAW14 (y14),
+ rggb8 and gbrg8 format to the tegra framework.
 
 ---
- .../platform/tegra/camera/camera_common.c     | 20 +++++++++++++++++++
- .../platform/tegra/camera/sensor_common.c     | 10 ++++++++++
- .../platform/tegra/camera/vi/vi5_formats.h    | 10 ++++++++++
- 3 files changed, 40 insertions(+)
+ .../platform/tegra/camera/camera_common.c     | 25 +++++++++++++++++++
+ .../platform/tegra/camera/sensor_common.c     | 12 +++++++++
+ .../platform/tegra/camera/vi/vi5_formats.h    | 10 ++++++++
+ 3 files changed, 47 insertions(+)
 
 diff --git a/nvidia-oot/drivers/media/platform/tegra/camera/camera_common.c b/nvidia-oot/drivers/media/platform/tegra/camera/camera_common.c
-index 97552c860..b0cb50f8f 100644
+index 97552c8..2b7cd7d 100644
 --- a/nvidia-oot/drivers/media/platform/tegra/camera/camera_common.c
 +++ b/nvidia-oot/drivers/media/platform/tegra/camera/camera_common.c
-@@ -114,6 +114,26 @@ static const struct camera_common_colorfmt camera_common_color_fmts[] = {
+@@ -69,6 +69,11 @@ static const struct camera_common_colorfmt camera_common_color_fmts[] = {
+ 		V4L2_COLORSPACE_SRGB,
+ 		V4L2_PIX_FMT_SRGGB8,
+ 	},
++	{
++		MEDIA_BUS_FMT_SGBRG8_1X8,
++		V4L2_COLORSPACE_SRGB,
++		V4L2_PIX_FMT_SGBRG8,
++	},
+ 	{
+ 		MEDIA_BUS_FMT_YUYV8_1X16,
+ 		V4L2_COLORSPACE_SRGB,
+@@ -114,6 +119,26 @@ static const struct camera_common_colorfmt camera_common_color_fmts[] = {
  		V4L2_COLORSPACE_SRGB,
  		V4L2_PIX_FMT_VYUY,
  	},
@@ -42,10 +54,10 @@ index 97552c860..b0cb50f8f 100644
  
  struct camera_common_csi_io_pad_ctx {
 diff --git a/nvidia-oot/drivers/media/platform/tegra/camera/sensor_common.c b/nvidia-oot/drivers/media/platform/tegra/camera/sensor_common.c
-index 8465f9c12..ef7237209 100644
+index 8465f9c..85a00bc 100644
 --- a/nvidia-oot/drivers/media/platform/tegra/camera/sensor_common.c
 +++ b/nvidia-oot/drivers/media/platform/tegra/camera/sensor_common.c
-@@ -267,6 +267,16 @@ static int extract_pixel_format(
+@@ -267,6 +267,18 @@ static int extract_pixel_format(
  		*format = V4L2_PIX_FMT_UYVY;
  	else if (strncmp(pixel_t, "yuv_vyuy16", size) == 0)
  		*format = V4L2_PIX_FMT_VYUY;
@@ -55,15 +67,17 @@ index 8465f9c12..ef7237209 100644
 +		*format = V4L2_PIX_FMT_Y10;
 +	else if (strncmp(pixel_t, "y12", size) == 0)
 +		*format = V4L2_PIX_FMT_Y12;
-+        else if (strncmp(pixel_t, "y14", size) == 0)
++	else if (strncmp(pixel_t, "y14", size) == 0)
 +		*format = V4L2_PIX_FMT_Y14;
 +	else if (strncmp(pixel_t, "bayer_rggb8", size) == 0)
 +		*format = V4L2_PIX_FMT_SRGGB8;
++	else if (strncmp(pixel_t, "bayer_gbrg8", size) == 0)
++		*format = V4L2_PIX_FMT_SGBRG8;
  	else {
  		pr_err("%s: Need to extend format%s\n", __func__, pixel_t);
  		return -EINVAL;
 diff --git a/nvidia-oot/drivers/media/platform/tegra/camera/vi/vi5_formats.h b/nvidia-oot/drivers/media/platform/tegra/camera/vi/vi5_formats.h
-index 1d0c1133c..8b11f4561 100644
+index 1d0c113..8b11f45 100644
 --- a/nvidia-oot/drivers/media/platform/tegra/camera/vi/vi5_formats.h
 +++ b/nvidia-oot/drivers/media/platform/tegra/camera/vi/vi5_formats.h
 @@ -90,6 +90,8 @@ static const struct tegra_video_format vi5_video_formats[] = {

@@ -1,7 +1,7 @@
-From 6c5472d652a5c079783e8bba1b4ca372a325c0d6 Mon Sep 17 00:00:00 2001
+From 1c3bec35eda1de1411d069940c0043a219f0bb94 Mon Sep 17 00:00:00 2001
 From: "/setup.sh" <support@vision-components.com>
-Date: Wed, 20 Mar 2024 15:31:18 +0100
-Subject: [PATCH 1/2] Added implementation to set image position and size by
+Date: Mon, 16 Dec 2024 10:30:12 +0100
+Subject: [PATCH] Added implementation to set image position and size by
  v4l2-ctl --set-fmt-video and --set-selection.
 
 ---
@@ -9,7 +9,7 @@ Subject: [PATCH 1/2] Added implementation to set image position and size by
  1 file changed, 113 insertions(+), 1 deletion(-)
 
 diff --git a/nvidia-oot/drivers/media/platform/tegra/camera/vi/channel.c b/nvidia-oot/drivers/media/platform/tegra/camera/vi/channel.c
-index c4da4119c..d78196edb 100644
+index c4da411..d78196e 100644
 --- a/nvidia-oot/drivers/media/platform/tegra/camera/vi/channel.c
 +++ b/nvidia-oot/drivers/media/platform/tegra/camera/vi/channel.c
 @@ -2120,6 +2120,56 @@ __tegra_channel_set_format(struct tegra_channel *chan,

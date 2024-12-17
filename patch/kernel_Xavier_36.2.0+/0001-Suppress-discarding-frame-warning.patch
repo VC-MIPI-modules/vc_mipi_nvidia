@@ -1,6 +1,6 @@
-From 46d40eacf1ef1ce7b14ec493b1f9afca05ea87ac Mon Sep 17 00:00:00 2001
+From 6ba47cae2ec8507924e00f1c98b8e4dee0a6447a Mon Sep 17 00:00:00 2001
 From: "/setup.sh" <support@vision-components.com>
-Date: Mon, 8 Apr 2024 17:06:29 +0200
+Date: Mon, 16 Dec 2024 11:09:44 +0100
 Subject: [PATCH] Suppress discarding frame warning.
 
 ---
