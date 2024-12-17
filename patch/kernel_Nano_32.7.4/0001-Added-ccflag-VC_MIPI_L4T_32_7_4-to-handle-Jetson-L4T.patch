@@ -1,6 +1,6 @@
-From 18f52333970587c248436ccdee2ab5f3f862e64e Mon Sep 17 00:00:00 2001
+From 06c297f31504ed9db4cd159f6f51d399b2bb1309 Mon Sep 17 00:00:00 2001
 From: "/setup.sh" <support@vision-components.com>
-Date: Wed, 14 Feb 2024 10:03:29 +0100
+Date: Wed, 27 Nov 2024 12:30:54 +0100
 Subject: [PATCH] Added ccflag VC_MIPI_L4T_32_7_4 to handle Jetson L4T 32.7.4
  specific driver code.
 
