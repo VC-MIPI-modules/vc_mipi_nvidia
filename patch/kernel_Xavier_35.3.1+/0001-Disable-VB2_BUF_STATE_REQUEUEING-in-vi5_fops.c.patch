@@ -1,6 +1,6 @@
-From 50e612e9789251d6313c2e8a6e3a890d34c10584 Mon Sep 17 00:00:00 2001
+From dcfdb489a83633110da076a0caacdb808987ab01 Mon Sep 17 00:00:00 2001
 From: "/setup.sh" <support@vision-components.com>
-Date: Thu, 29 Sep 2022 16:19:01 +0200
+Date: Wed, 4 Dec 2024 11:18:58 +0100
 Subject: [PATCH] Disable VB2_BUF_STATE_REQUEUEING in vi5_fops.c
 
 ---
@@ -8,10 +8,10 @@ Subject: [PATCH] Disable VB2_BUF_STATE_REQUEUEING in vi5_fops.c
  1 file changed, 12 insertions(+), 12 deletions(-)
 
 diff --git a/kernel/nvidia/drivers/media/platform/tegra/camera/vi/vi5_fops.c b/kernel/nvidia/drivers/media/platform/tegra/camera/vi/vi5_fops.c
-index 575444c..1c5e60d 100644
+index bd37980..16c813f 100644
 --- a/kernel/nvidia/drivers/media/platform/tegra/camera/vi/vi5_fops.c
 +++ b/kernel/nvidia/drivers/media/platform/tegra/camera/vi/vi5_fops.c
-@@ -474,17 +474,17 @@ static void vi5_capture_dequeue(struct tegra_channel *chan,
+@@ -525,17 +525,17 @@ static void vi5_capture_dequeue(struct tegra_channel *chan,
  				dev_err(vi->dev, "uncorr_err: flags %d, err_data %d\n",
  					descr->status.flags, descr->status.err_data);
  			} else {
@@ -26,29 +26,29 @@ index 575444c..1c5e60d 100644
 -					buf->vb2_state = VB2_BUF_STATE_ERROR;
 -#endif
 -			goto done;
-+// 				dev_warn(vi->dev,
-+// 					"corr_err: discarding frame %d, flags: %d, "
-+// 					"err_data %d\n",
-+// 					descr->status.frame_id, descr->status.flags,
-+// 					descr->status.err_data);
-+// #if LINUX_VERSION_CODE < KERNEL_VERSION(5, 4, 0)
-+// 					buf->vb2_state = VB2_BUF_STATE_REQUEUEING;
-+// #else
-+// 					buf->vb2_state = VB2_BUF_STATE_ERROR;
-+// #endif
-+// 			goto done;
++//				dev_warn(vi->dev,
++//					"corr_err: discarding frame %d, flags: %d, "
++//					"err_data %d\n",
++//					descr->status.frame_id, descr->status.flags,
++//					descr->status.err_data);
++//#if LINUX_VERSION_CODE < KERNEL_VERSION(5, 4, 0)
++//					buf->vb2_state = VB2_BUF_STATE_REQUEUEING;
++//#else
++//					buf->vb2_state = VB2_BUF_STATE_ERROR;
++//#endif
++//			goto done;
  			}
  		} else if (!vi_port) {
  			gang_prev_frame_id = descr->status.frame_id;
-@@ -529,7 +529,7 @@ static void vi5_capture_dequeue(struct tegra_channel *chan,
+@@ -580,7 +580,7 @@ static void vi5_capture_dequeue(struct tegra_channel *chan,
  	trace_tegra_channel_capture_frame("eof", &ts);
  #endif
  
 -done:
-+// done:
++//done:
  	goto rel_buf;
  
  uncorr_err:
 -- 
-2.25.1
+2.34.1
 

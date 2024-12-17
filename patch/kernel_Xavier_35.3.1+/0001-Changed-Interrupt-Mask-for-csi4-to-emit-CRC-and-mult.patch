@@ -1,15 +1,15 @@
-From 004b2535412a3184b74e1ee92a21c300ce7ad5b0 Mon Sep 17 00:00:00 2001
-From: Peter Martienssen <peter.martienssen@liquify-consulting.de>
-Date: Tue, 28 Sep 2021 15:04:11 +0200
-Subject: [PATCH 3/4] Changed Interrupt Mask for csi4 to emit CRC and
- multi-bit errors.
+From 46697db56b967cea3744888e3b99c2714a64365a Mon Sep 17 00:00:00 2001
+From: "/setup.sh" <support@vision-components.com>
+Date: Wed, 4 Dec 2024 11:14:41 +0100
+Subject: [PATCH] Changed Interrupt Mask for csi4 to emit CRC and multi-bit
+ errors.
 
 ---
  .../drivers/media/platform/tegra/camera/csi/csi4_fops.c       | 4 ++++
  1 file changed, 4 insertions(+)
 
 diff --git a/kernel/nvidia/drivers/media/platform/tegra/camera/csi/csi4_fops.c b/kernel/nvidia/drivers/media/platform/tegra/camera/csi/csi4_fops.c
-index 66557f127..b9e5e2ead 100644
+index 1647ff4..9230674 100644
 --- a/kernel/nvidia/drivers/media/platform/tegra/camera/csi/csi4_fops.c
 +++ b/kernel/nvidia/drivers/media/platform/tegra/camera/csi/csi4_fops.c
 @@ -91,6 +91,10 @@ static void csi4_stream_init(struct tegra_csi_channel *chan, int csi_port)
@@ -24,5 +24,5 @@ index 66557f127..b9e5e2ead 100644
  
  static void csi4_stream_config(struct tegra_csi_channel *chan, int port_idx)
 -- 
-2.25.1
+2.34.1
 
