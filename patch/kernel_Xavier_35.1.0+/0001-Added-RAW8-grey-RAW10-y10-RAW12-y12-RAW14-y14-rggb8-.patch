@@ -1,21 +1,33 @@
-From cef73d2208279dd8908b7e7632c38809ec2ea13f Mon Sep 17 00:00:00 2001
+From fa2490d1117ab9d610f3d94cdcb2078750cae15a Mon Sep 17 00:00:00 2001
 From: "/setup.sh" <support@vision-components.com>
-Date: Tue, 4 Jul 2023 18:17:01 +0200
-Subject: [PATCH] Added RAW8 (grey), RAW10 (y10), RAW12 (y12) and RAW14 (y14)
- format to the tegra framework.
+Date: Tue, 3 Dec 2024 10:35:45 +0100
+Subject: [PATCH] Added RAW8 (grey), RAW10 (y10), RAW12 (y12), RAW14 (y14),
+ rggb8 and gbrg8 format to the tegra framework.
 
 ---
- .../platform/tegra/camera/camera_common.c     | 20 +++++++++++++++++++
- .../platform/tegra/camera/sensor_common.c     | 10 ++++++++++
- .../platform/tegra/camera/vi/vi4_formats.h    | 10 ++++++++++
- .../platform/tegra/camera/vi/vi5_formats.h    | 10 ++++++++++
- 4 files changed, 50 insertions(+)
+ .../platform/tegra/camera/camera_common.c     | 25 +++++++++++++++++++
+ .../platform/tegra/camera/sensor_common.c     | 12 +++++++++
+ .../platform/tegra/camera/vi/vi4_formats.h    | 10 ++++++++
+ .../platform/tegra/camera/vi/vi5_formats.h    | 10 ++++++++
+ 4 files changed, 57 insertions(+)
 
 diff --git a/kernel/nvidia/drivers/media/platform/tegra/camera/camera_common.c b/kernel/nvidia/drivers/media/platform/tegra/camera/camera_common.c
-index 2b0b341..c1b5059 100644
+index 2b0b341..ff87548 100644
 --- a/kernel/nvidia/drivers/media/platform/tegra/camera/camera_common.c
 +++ b/kernel/nvidia/drivers/media/platform/tegra/camera/camera_common.c
-@@ -131,6 +131,26 @@ static const struct camera_common_colorfmt camera_common_color_fmts[] = {
+@@ -86,6 +86,11 @@ static const struct camera_common_colorfmt camera_common_color_fmts[] = {
+ 		V4L2_COLORSPACE_SRGB,
+ 		V4L2_PIX_FMT_SRGGB8,
+ 	},
++	{
++		MEDIA_BUS_FMT_SGBRG8_1X8,
++		V4L2_COLORSPACE_SRGB,
++		V4L2_PIX_FMT_SGBRG8,
++	},
+ 	{
+ 		MEDIA_BUS_FMT_YUYV8_1X16,
+ 		V4L2_COLORSPACE_SRGB,
+@@ -131,6 +136,26 @@ static const struct camera_common_colorfmt camera_common_color_fmts[] = {
  		V4L2_COLORSPACE_SRGB,
  		V4L2_PIX_FMT_VYUY,
  	},
@@ -43,10 +55,10 @@ index 2b0b341..c1b5059 100644
  	 * The below two formats are not supported by VI4,
  	 * keep them at the last to ensure they get discarded
 diff --git a/kernel/nvidia/drivers/media/platform/tegra/camera/sensor_common.c b/kernel/nvidia/drivers/media/platform/tegra/camera/sensor_common.c
-index 0009ecf..7faf975 100644
+index 0009ecf..0ef5b0f 100644
 --- a/kernel/nvidia/drivers/media/platform/tegra/camera/sensor_common.c
 +++ b/kernel/nvidia/drivers/media/platform/tegra/camera/sensor_common.c
-@@ -265,6 +265,16 @@ static int extract_pixel_format(
+@@ -265,6 +265,18 @@ static int extract_pixel_format(
  		*format = V4L2_PIX_FMT_UYVY;
  	else if (strncmp(pixel_t, "yuv_vyuy16", size) == 0)
  		*format = V4L2_PIX_FMT_VYUY;
@@ -56,15 +68,17 @@ index 0009ecf..7faf975 100644
 +		*format = V4L2_PIX_FMT_Y10;
 +	else if (strncmp(pixel_t, "y12", size) == 0)
 +		*format = V4L2_PIX_FMT_Y12;
-+        else if (strncmp(pixel_t, "y14", size) == 0)
++	else if (strncmp(pixel_t, "y14", size) == 0)
 +		*format = V4L2_PIX_FMT_Y14;
 +	else if (strncmp(pixel_t, "bayer_rggb8", size) == 0)
 +		*format = V4L2_PIX_FMT_SRGGB8;
++	else if (strncmp(pixel_t, "bayer_gbrg8", size) == 0)
++		*format = V4L2_PIX_FMT_SGBRG8;
  	else {
  		pr_err("%s: Need to extend format%s\n", __func__, pixel_t);
  		return -EINVAL;
 diff --git a/kernel/nvidia/drivers/media/platform/tegra/camera/vi/vi4_formats.h b/kernel/nvidia/drivers/media/platform/tegra/camera/vi/vi4_formats.h
-index de33c42..efe7272 100644
+index de33c42..d65d319 100644
 --- a/kernel/nvidia/drivers/media/platform/tegra/camera/vi/vi4_formats.h
 +++ b/kernel/nvidia/drivers/media/platform/tegra/camera/vi/vi4_formats.h
 @@ -95,6 +95,8 @@ static const struct tegra_video_format vi4_video_formats[] = {
@@ -134,5 +148,5 @@ index 51cbbad..0e6111d 100644
  	/* RGB888 */
  	TEGRA_VIDEO_FORMAT(RGB888, 24, RGB888_1X24, 4, 1, T_A8R8G8B8,
 -- 
-2.25.1
+2.34.1
 

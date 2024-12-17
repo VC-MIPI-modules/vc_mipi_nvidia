@@ -1,7 +1,7 @@
-From aa0b998085be767ed233752af4d266c28a68fdfa Mon Sep 17 00:00:00 2001
+From 502b7aebc701c30d9fb5248012436a2b23f166d3 Mon Sep 17 00:00:00 2001
 From: "/setup.sh" <support@vision-components.com>
-Date: Tue, 27 Sep 2022 19:52:43 +0200
-Subject: [PATCH] Added VC MIPI driver to Kconfig
+Date: Wed, 27 Nov 2024 18:40:09 +0100
+Subject: [PATCH] Added VC MIPI driver to Kconfig.
 
 ---
  kernel/nvidia/drivers/media/i2c/Kconfig | 10 ++++++++++
@@ -29,5 +29,5 @@ index 8362bc8..da3ff99 100644
  	tristate "OmniVision OV10823 camera sensor support"
  	depends on I2C && VIDEO_V4L2 && VIDEO_V4L2_SUBDEV_API
 -- 
-2.25.1
+2.34.1
 
