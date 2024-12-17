@@ -1,18 +1,17 @@
-From a3948f145cc68e2c119345221b7bdaa66fe4d487 Mon Sep 17 00:00:00 2001
-From: Peter Martienssen <peter.martienssen@liquify-consulting.de>
-Date: Fri, 13 Aug 2021 16:58:40 +0200
-Subject: [PATCH 3/9] Changed error messages from csi2 for resolution and
- multi-bit errors to more meaningfull and verbose messages. Changed some debug
- messages from vi to error messages to get better feedback on errors.
+From 8eff2ed5b0ed350ac6a13b02e00b71b6b18d0f0f Mon Sep 17 00:00:00 2001
+From: "/setup.sh" <support@vision-components.com>
+Date: Tue, 26 Nov 2024 17:06:46 +0100
+Subject: [PATCH] Changed error messages from csi2 for resolution and multi-bit
+ errors to more meaningfull and verbose messages. Changed some debug messages
+ from vi to error messages to get better feedback on errors.
 
-Signed-off-by: Peter Martienssen <peter.martienssen@liquify-consulting.de>
 ---
  .../platform/tegra/camera/csi/csi2_fops.c     | 13 ++++++---
  .../media/platform/tegra/camera/vi/vi2_fops.c | 27 ++++++++++++++++---
  2 files changed, 34 insertions(+), 6 deletions(-)
 
 diff --git a/kernel/nvidia/drivers/media/platform/tegra/camera/csi/csi2_fops.c b/kernel/nvidia/drivers/media/platform/tegra/camera/csi/csi2_fops.c
-index f026d2359..aef15aa28 100644
+index f026d23..aef15aa 100644
 --- a/kernel/nvidia/drivers/media/platform/tegra/camera/csi/csi2_fops.c
 +++ b/kernel/nvidia/drivers/media/platform/tegra/camera/csi/csi2_fops.c
 @@ -98,6 +98,13 @@ int tegra_csi_error(struct tegra_csi_channel *chan, int port_idx)
@@ -50,7 +49,7 @@ index f026d2359..aef15aa28 100644
  	}
  }
 diff --git a/kernel/nvidia/drivers/media/platform/tegra/camera/vi/vi2_fops.c b/kernel/nvidia/drivers/media/platform/tegra/camera/vi/vi2_fops.c
-index 6afd16ef8..881211d4b 100644
+index 47eb17e..684b7bd 100644
 --- a/kernel/nvidia/drivers/media/platform/tegra/camera/vi/vi2_fops.c
 +++ b/kernel/nvidia/drivers/media/platform/tegra/camera/vi/vi2_fops.c
 @@ -350,13 +350,34 @@ static int tegra_channel_error_status(struct tegra_channel *chan)
@@ -92,5 +91,5 @@ index 6afd16ef8..881211d4b 100644
  }
  
 -- 
-2.25.1
+2.34.1
 

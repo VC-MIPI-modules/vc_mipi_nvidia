@@ -1,7 +1,8 @@
-From 6792604320890e704b50144efe57fc17826079f8 Mon Sep 17 00:00:00 2001
+From d4036c4b70c5b8e2b694fcf3e3df8c815e2c37e2 Mon Sep 17 00:00:00 2001
 From: "/setup.sh" <support@vision-components.com>
-Date: Fri, 11 Feb 2022 11:48:57 +0100
-Subject: [PATCH] Added RAW14 (y14) format to the tegra framework.
+Date: Tue, 26 Nov 2024 16:56:03 +0100
+Subject: [PATCH] Added RAW8 (grey), RAW10 (y10), RAW12 (y12), RAW14 (y14),
+ rggb8 and gbrg8 format to the tegra framework.
 
 ---
  .../media/uapi/v4l/pixfmt-y14.rst             | 65 +++++++++++++++++++
@@ -9,10 +10,10 @@ Subject: [PATCH] Added RAW14 (y14) format to the tegra framework.
  .../drivers/media/v4l2-core/v4l2-ioctl.c      |  1 +
  .../include/uapi/linux/media-bus-format.h     |  3 +-
  .../kernel-4.9/include/uapi/linux/videodev2.h |  1 +
- .../platform/tegra/camera/camera_common.c     |  5 ++
- .../platform/tegra/camera/sensor_common.c     |  2 +
- .../platform/tegra/camera/vi/vi2_formats.h    |  4 ++
- 8 files changed, 81 insertions(+), 1 deletion(-)
+ .../platform/tegra/camera/camera_common.c     | 33 +++++++++-
+ .../platform/tegra/camera/sensor_common.c     | 12 ++++
+ .../platform/tegra/camera/vi/vi2_formats.h    | 10 +++
+ 8 files changed, 122 insertions(+), 4 deletions(-)
  create mode 100644 kernel/kernel-4.9/Documentation/media/uapi/v4l/pixfmt-y14.rst
 
 diff --git a/kernel/kernel-4.9/Documentation/media/uapi/v4l/pixfmt-y14.rst b/kernel/kernel-4.9/Documentation/media/uapi/v4l/pixfmt-y14.rst
@@ -99,14 +100,14 @@ index 3334ea4..b2e7e4a 100644
      pixfmt-y16
      pixfmt-y16-be
 diff --git a/kernel/kernel-4.9/drivers/media/v4l2-core/v4l2-ioctl.c b/kernel/kernel-4.9/drivers/media/v4l2-core/v4l2-ioctl.c
-index 222b270..e0b514f 100644
+index 1bc3128..f70fb11 100644
 --- a/kernel/kernel-4.9/drivers/media/v4l2-core/v4l2-ioctl.c
 +++ b/kernel/kernel-4.9/drivers/media/v4l2-core/v4l2-ioctl.c
 @@ -1171,6 +1171,7 @@ static void v4l_fill_fmtdesc(struct v4l2_fmtdesc *fmt)
  	case V4L2_PIX_FMT_Y6:		descr = "6-bit Greyscale"; break;
  	case V4L2_PIX_FMT_Y10:		descr = "10-bit Greyscale"; break;
  	case V4L2_PIX_FMT_Y12:		descr = "12-bit Greyscale"; break;
-+        case V4L2_PIX_FMT_Y14:		descr = "14-bit Greyscale"; break;
++	case V4L2_PIX_FMT_Y14:		descr = "14-bit Greyscale"; break;
  	case V4L2_PIX_FMT_Y16:		descr = "16-bit Greyscale"; break;
  	case V4L2_PIX_FMT_Y16_BE:	descr = "16-bit Greyscale BE"; break;
  	case V4L2_PIX_FMT_Y10BPACK:	descr = "10-bit Greyscale (Packed)"; break;
@@ -132,7 +133,7 @@ index 0882827..e6b98f7 100644
  #define MEDIA_BUS_FMT_VYUY8_1X16		0x2010
  #define MEDIA_BUS_FMT_YUYV8_1X16		0x2011
 diff --git a/kernel/kernel-4.9/include/uapi/linux/videodev2.h b/kernel/kernel-4.9/include/uapi/linux/videodev2.h
-index ae04e9e..59ec98f 100644
+index c28b891..40b3111 100644
 --- a/kernel/kernel-4.9/include/uapi/linux/videodev2.h
 +++ b/kernel/kernel-4.9/include/uapi/linux/videodev2.h
 @@ -497,6 +497,7 @@ struct v4l2_pix_format {
@@ -144,14 +145,41 @@ index ae04e9e..59ec98f 100644
  #define V4L2_PIX_FMT_Y16_BE  v4l2_fourcc_be('Y', '1', '6', ' ') /* 16  Greyscale BE  */
  
 diff --git a/kernel/nvidia/drivers/media/platform/tegra/camera/camera_common.c b/kernel/nvidia/drivers/media/platform/tegra/camera/camera_common.c
-index b038463..1f51193 100644
+index ce1f254..08ed434 100644
 --- a/kernel/nvidia/drivers/media/platform/tegra/camera/camera_common.c
 +++ b/kernel/nvidia/drivers/media/platform/tegra/camera/camera_common.c
-@@ -141,6 +141,11 @@ static const struct camera_common_colorfmt camera_common_color_fmts[] = {
- 		V4L2_COLORSPACE_RAW,
- 		V4L2_PIX_FMT_Y12,
+@@ -81,6 +81,11 @@ static const struct camera_common_colorfmt camera_common_color_fmts[] = {
+ 		V4L2_COLORSPACE_SRGB,
+ 		V4L2_PIX_FMT_SRGGB8,
  	},
-+        {
++	{
++		MEDIA_BUS_FMT_SGBRG8_1X8,
++		V4L2_COLORSPACE_SRGB,
++		V4L2_PIX_FMT_SGBRG8,
++	},
+ 	{
+ 		MEDIA_BUS_FMT_YUYV8_1X16,
+ 		V4L2_COLORSPACE_SRGB,
+@@ -126,6 +131,26 @@ static const struct camera_common_colorfmt camera_common_color_fmts[] = {
+ 		V4L2_COLORSPACE_SRGB,
+ 		V4L2_PIX_FMT_VYUY,
+ 	},
++	{
++		MEDIA_BUS_FMT_Y8_1X8,
++		V4L2_COLORSPACE_RAW,
++		V4L2_PIX_FMT_GREY,
++	},
++	{
++		MEDIA_BUS_FMT_Y10_1X10,
++		V4L2_COLORSPACE_RAW,
++		V4L2_PIX_FMT_Y10,
++	},
++	{
++		MEDIA_BUS_FMT_Y12_1X12,
++		V4L2_COLORSPACE_RAW,
++		V4L2_PIX_FMT_Y12,
++	},
++	{
 +		MEDIA_BUS_FMT_Y14_1X14,
 +		V4L2_COLORSPACE_RAW,
 +		V4L2_PIX_FMT_Y14,
@@ -159,34 +187,86 @@ index b038463..1f51193 100644
  	/*
  	 * The below two formats are not supported by VI4,
  	 * keep them at the last to ensure they get discarded
+@@ -633,8 +658,10 @@ int camera_common_try_fmt(struct v4l2_subdev *sd, struct v4l2_mbus_framefmt *mf)
+ 			mf->width = s_data->fmt_width;
+ 			mf->height = s_data->fmt_height;
+ 			dev_dbg(sd->dev,
+-				"%s: invalid resolution %d x %d\n",
+-				__func__, mf->width, mf->height);
++				"%s: invalid resolution %d x %d (expected: %d x %d)\n",
++				__func__, mf->width, mf->height,
++				frmfmt[s_data->sensor_mode_id].size.width,
++				frmfmt[s_data->sensor_mode_id].size.height);
+ 			goto verify_code;
+ 		}
+ 	} else {
+@@ -654,7 +681,7 @@ int camera_common_try_fmt(struct v4l2_subdev *sd, struct v4l2_mbus_framefmt *mf)
+ 		if (i == s_data->numfmts) {
+ 			mf->width = s_data->fmt_width;
+ 			mf->height = s_data->fmt_height;
+-			dev_dbg(sd->dev,
++			dev_err(sd->dev,
+ 				"%s: invalid resolution supplied to set mode %d %d\n",
+ 				__func__, mf->width, mf->height);
+ 			goto verify_code;
 diff --git a/kernel/nvidia/drivers/media/platform/tegra/camera/sensor_common.c b/kernel/nvidia/drivers/media/platform/tegra/camera/sensor_common.c
-index 84c3a81..4d8cf4c 100644
+index d47c4a4..638823a 100644
 --- a/kernel/nvidia/drivers/media/platform/tegra/camera/sensor_common.c
 +++ b/kernel/nvidia/drivers/media/platform/tegra/camera/sensor_common.c
-@@ -241,6 +241,8 @@ static int extract_pixel_format(
- 		*format = V4L2_PIX_FMT_Y10;
- 	else if (strncmp(pixel_t, "y12", size) == 0)
- 		*format = V4L2_PIX_FMT_Y12;
+@@ -235,6 +235,18 @@ static int extract_pixel_format(
+ 		*format = V4L2_PIX_FMT_UYVY;
+ 	else if (strncmp(pixel_t, "yuv_vyuy16", size) == 0)
+ 		*format = V4L2_PIX_FMT_VYUY;
++	else if (strncmp(pixel_t, "gray", size) == 0)
++		*format = V4L2_PIX_FMT_GREY;
++	else if (strncmp(pixel_t, "y10", size) == 0)
++		*format = V4L2_PIX_FMT_Y10;
++	else if (strncmp(pixel_t, "y12", size) == 0)
++		*format = V4L2_PIX_FMT_Y12;
 +	else if (strncmp(pixel_t, "y14", size) == 0)
 +		*format = V4L2_PIX_FMT_Y14;
- 	else if (strncmp(pixel_t, "bayer_rggb8", size) == 0)
- 		*format = V4L2_PIX_FMT_SRGGB8;
++	else if (strncmp(pixel_t, "bayer_rggb8", size) == 0)
++		*format = V4L2_PIX_FMT_SRGGB8;
++	else if (strncmp(pixel_t, "bayer_gbrg8", size) == 0)
++		*format = V4L2_PIX_FMT_SGBRG8;
  	else {
+ 		pr_err("%s: Need to extend format%s\n", __func__, pixel_t);
+ 		return -EINVAL;
 diff --git a/kernel/nvidia/drivers/media/platform/tegra/camera/vi/vi2_formats.h b/kernel/nvidia/drivers/media/platform/tegra/camera/vi/vi2_formats.h
-index c1ee052..e0ffe52 100644
+index fed27b9..e6cc98b 100644
 --- a/kernel/nvidia/drivers/media/platform/tegra/camera/vi/vi2_formats.h
 +++ b/kernel/nvidia/drivers/media/platform/tegra/camera/vi/vi2_formats.h
-@@ -113,6 +113,10 @@ static const struct tegra_video_format vi2_video_formats[] = {
+@@ -81,6 +81,8 @@ static const struct tegra_video_format vi2_video_formats[] = {
+ 				RAW8, SGBRG8, "GBGB.. RGRG.."),
+ 	TEGRA_VIDEO_FORMAT(RAW8, 8, SBGGR8_1X8, 1, 1, T_L8,
+ 				RAW8, SBGGR8, "BGBG.. GRGR.."),
++	TEGRA_VIDEO_FORMAT(RAW8, 8, Y8_1X8, 1, 1, T_L8,
++				RAW8, GREY, "GRAY8"),
+ 
+ 	/* RAW 10 */
+ 	TEGRA_VIDEO_FORMAT(RAW10, 10, SRGGB10_1X10, 2, 1, T_R16_I,
+@@ -91,6 +93,8 @@ static const struct tegra_video_format vi2_video_formats[] = {
+ 				RAW10, SGBRG10, "GBGB.. RGRG.."),
+ 	TEGRA_VIDEO_FORMAT(RAW10, 10, SBGGR10_1X10, 2, 1, T_R16_I,
+ 				RAW10, SBGGR10, "BGBG.. GRGR.."),
++	TEGRA_VIDEO_FORMAT(RAW10, 10, Y10_1X10, 2, 1, T_R16_I,
++				RAW10, Y10, "GRAY10"),
+ 
+ 	/* RAW 10 Packed format */
+ 	TEGRA_VIDEO_FORMAT(RAW10, 10, XBGGR10P_3X10, 4, 3, T_X2Lc10Lb10La10,
+@@ -107,6 +111,12 @@ static const struct tegra_video_format vi2_video_formats[] = {
+ 				RAW12, SGBRG12, "GBGB.. RGRG.."),
+ 	TEGRA_VIDEO_FORMAT(RAW12, 12, SBGGR12_1X12, 2, 1, T_R16_I,
  				RAW12, SBGGR12, "BGBG.. GRGR.."),
- 	TEGRA_VIDEO_FORMAT(RAW12, 12, Y12_1X12, 2, 1, T_R16_I,
- 				RAW12, Y12, "GRAY12"),
-+      
-+        /* RAW 14 */
-+        TEGRA_VIDEO_FORMAT(RAW14, 14, Y14_1X14, 2, 1, T_R16_I,
++	TEGRA_VIDEO_FORMAT(RAW12, 12, Y12_1X12, 2, 1, T_R16_I,
++				RAW12, Y12, "GRAY12"),
++
++	/* RAW 14 */
++	TEGRA_VIDEO_FORMAT(RAW14, 14, Y14_1X14, 2, 1, T_R16_I,
 +				RAW14, Y14, "GRAY14"),
  
  	/* RGB888 */
  	TEGRA_VIDEO_FORMAT(RGB888, 24, RGB888_1X24, 4, 1, T_A8R8G8B8,
 -- 
-2.25.1
+2.34.1
 

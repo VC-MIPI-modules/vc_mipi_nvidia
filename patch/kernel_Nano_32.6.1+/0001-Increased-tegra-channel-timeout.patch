@@ -1,15 +1,14 @@
-From 18892daac69a6054a833492bd030aae201f0efd2 Mon Sep 17 00:00:00 2001
-From: Peter Martienssen <peter.martienssen@liquify-consulting.de>
-Date: Fri, 13 Aug 2021 17:03:59 +0200
-Subject: [PATCH 5/9] Increased tegra channel timeout.
+From 9127561caa6f1dea0fe24f86ca6730aaaf373755 Mon Sep 17 00:00:00 2001
+From: "/setup.sh" <support@vision-components.com>
+Date: Tue, 26 Nov 2024 17:15:21 +0100
+Subject: [PATCH] Increased tegra channel timeout.
 
-Signed-off-by: Peter Martienssen <peter.martienssen@liquify-consulting.de>
 ---
  .../nvidia/drivers/media/platform/tegra/camera/vi/vi2_fops.c | 5 ++++-
  1 file changed, 4 insertions(+), 1 deletion(-)
 
 diff --git a/kernel/nvidia/drivers/media/platform/tegra/camera/vi/vi2_fops.c b/kernel/nvidia/drivers/media/platform/tegra/camera/vi/vi2_fops.c
-index 881211d4b..b04efda3f 100644
+index 684b7bd..1af3e07 100644
 --- a/kernel/nvidia/drivers/media/platform/tegra/camera/vi/vi2_fops.c
 +++ b/kernel/nvidia/drivers/media/platform/tegra/camera/vi/vi2_fops.c
 @@ -225,8 +225,11 @@ static void tegra_channel_ec_init(struct tegra_channel *chan)
@@ -26,5 +25,5 @@ index 881211d4b..b04efda3f 100644
  	/*
  	 * Sync point FIFO full blocks host interface
 -- 
-2.25.1
+2.34.1
 

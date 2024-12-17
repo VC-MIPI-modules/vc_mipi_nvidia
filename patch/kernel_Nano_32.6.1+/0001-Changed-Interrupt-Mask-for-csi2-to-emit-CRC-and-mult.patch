@@ -1,24 +1,21 @@
-From 4a9b2615b7074220ab3e32842c84c71a1ecca430 Mon Sep 17 00:00:00 2001
-From: Peter Martienssen <peter.martienssen@liquify-consulting.de>
-Date: Fri, 13 Aug 2021 17:02:55 +0200
-Subject: [PATCH 4/9] Changed Interrupt Mask for csi2 to emit CRC and
- multi-bit errors.
+From f58835604e6e3498b5e40b372dd9ff8f8597d461 Mon Sep 17 00:00:00 2001
+From: "/setup.sh" <support@vision-components.com>
+Date: Tue, 26 Nov 2024 17:12:51 +0100
+Subject: [PATCH] Changed Interrupt Mask for csi2 to emit CRC and multi-bit
+ errors.
 
-Signed-off-by: Peter Martienssen <peter.martienssen@liquify-consulting.de>
 ---
- .../media/platform/tegra/camera/csi/csi4_fops.c       | 11 +++++++++--
- 1 file changed, 9 insertions(+), 2 deletions(-)
+ .../drivers/media/platform/tegra/camera/csi/csi4_fops.c  | 9 +++++++++
+ 1 file changed, 9 insertions(+)
 
 diff --git a/kernel/nvidia/drivers/media/platform/tegra/camera/csi/csi4_fops.c b/kernel/nvidia/drivers/media/platform/tegra/camera/csi/csi4_fops.c
-index 66557f127..9997ec070 100644
+index 66557f1..4c1dc08 100644
 --- a/kernel/nvidia/drivers/media/platform/tegra/camera/csi/csi4_fops.c
 +++ b/kernel/nvidia/drivers/media/platform/tegra/camera/csi/csi4_fops.c
-@@ -89,8 +89,15 @@ static void csi4_stream_init(struct tegra_csi_channel *chan, int csi_port)
- 	csi4_stream_write(chan, csi_port, INTR_STATUS, 0x3ffff);
- 	csi4_stream_write(chan, csi_port, ERR_INTR_STATUS, 0x7ffff);
+@@ -91,6 +91,15 @@ static void csi4_stream_init(struct tegra_csi_channel *chan, int csi_port)
  	csi4_stream_write(chan, csi_port, ERROR_STATUS2VI_MASK, 0x0);
--	csi4_stream_write(chan, csi_port, INTR_MASK, 0x0);
--	csi4_stream_write(chan, csi_port, ERR_INTR_MASK, 0x0);
+ 	csi4_stream_write(chan, csi_port, INTR_MASK, 0x0);
+ 	csi4_stream_write(chan, csi_port, ERR_INTR_MASK, 0x0);
 +	csi4_stream_write(chan, csi_port, INTR_MASK, PH_ECC_MULTI_BIT_ERR |
 +					  PD_CRC_ERR_VC0 | PH_ECC_SINGLE_BIT_ERR_VC0);
 +	csi4_stream_write(chan, csi_port, ERR_INTR_MASK, PH_ECC_MULTI_BIT_ERR |
@@ -32,5 +29,5 @@ index 66557f127..9997ec070 100644
  
  static void csi4_stream_config(struct tegra_csi_channel *chan, int port_idx)
 -- 
-2.25.1
+2.34.1
 

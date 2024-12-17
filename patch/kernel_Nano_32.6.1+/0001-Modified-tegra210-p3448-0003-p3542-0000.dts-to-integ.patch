@@ -1,4 +1,4 @@
-From 2ae66f4953119de6dd0929709554ff2a166d8a0e Mon Sep 17 00:00:00 2001
+From c06feafebb6eca13fa0e8319f4bf0cc6231c1f17 Mon Sep 17 00:00:00 2001
 From: "/setup.sh" <support@vision-components.com>
 Date: Fri, 11 Feb 2022 11:50:55 +0100
 Subject: [PATCH] Modified tegra210-p3448-0003-p3542-0000.dts to integrate VC
@@ -9,7 +9,7 @@ Subject: [PATCH] Modified tegra210-p3448-0003-p3542-0000.dts to integrate VC
  1 file changed, 8 insertions(+), 2 deletions(-)
 
 diff --git a/hardware/nvidia/platform/t210/batuu/kernel-dts/tegra210-p3448-0003-p3542-0000.dts b/hardware/nvidia/platform/t210/batuu/kernel-dts/tegra210-p3448-0003-p3542-0000.dts
-index 7d19df5a8..f768b38c3 100644
+index 7d19df5..f768b38 100644
 --- a/hardware/nvidia/platform/t210/batuu/kernel-dts/tegra210-p3448-0003-p3542-0000.dts
 +++ b/hardware/nvidia/platform/t210/batuu/kernel-dts/tegra210-p3448-0003-p3542-0000.dts
 @@ -18,9 +18,15 @@
@@ -31,5 +31,5 @@ index 7d19df5a8..f768b38c3 100644
  #include "batuu-platforms/tegra210-batuu-gpio-p3448-0003.dtsi"
  #include "batuu-platforms/tegra210-batuu-p3448-emc-a00.dtsi"
 -- 
-2.25.1
+2.34.1
 

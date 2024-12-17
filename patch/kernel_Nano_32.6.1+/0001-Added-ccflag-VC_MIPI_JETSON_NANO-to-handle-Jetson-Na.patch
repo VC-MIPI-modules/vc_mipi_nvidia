@@ -1,6 +1,6 @@
-From 55f16606c2f06b8fa4f90a38164f61669d096662 Mon Sep 17 00:00:00 2001
+From be3cd3a6f5d20a979af6712599be623c013b7dfc Mon Sep 17 00:00:00 2001
 From: "/setup.sh" <support@vision-components.com>
-Date: Wed, 1 Dec 2021 17:47:45 +0100
+Date: Tue, 26 Nov 2024 16:24:12 +0100
 Subject: [PATCH] Added ccflag VC_MIPI_JETSON_NANO to handle Jetson Nano
  specific driver code.
 
@@ -21,5 +21,5 @@ index 579d3f6..38f400a 100644
  obj-$(CONFIG_VIDEO_IMX185) += imx185.o
  obj-$(CONFIG_VIDEO_IMX185) += imx185_v1.o
 -- 
-2.25.1
+2.34.1
 

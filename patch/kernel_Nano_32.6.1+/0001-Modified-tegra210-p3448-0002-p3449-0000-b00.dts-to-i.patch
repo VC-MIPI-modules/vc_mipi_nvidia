@@ -1,4 +1,4 @@
-From 75c2f9a9df1f1c4d264b50bc84ab6b3bf1ff0ba5 Mon Sep 17 00:00:00 2001
+From 4c30946d01e625d9b7392cfbe1aa89ce603d47fb Mon Sep 17 00:00:00 2001
 From: "/setup.sh" <support@vision-components.com>
 Date: Wed, 20 Oct 2021 09:19:22 +0200
 Subject: [PATCH] Modified tegra210-p3448-0002-p3449-0000-b00.dts to integrate
@@ -31,5 +31,5 @@ index 30ccb03..8a1ea33 100644
  #include "porg-platforms/tegra210-porg-gpio-p3448-0002-b00.dtsi"
  #include "porg-platforms/tegra210-porg-p3448-emc-a00.dtsi"
 -- 
-2.25.1
+2.34.1
 
