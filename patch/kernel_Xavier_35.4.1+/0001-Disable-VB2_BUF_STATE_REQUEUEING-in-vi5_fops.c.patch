@@ -1,6 +1,6 @@
-From 1f90deafa7271fe97a7f7e0195f2e997720da557 Mon Sep 17 00:00:00 2001
+From e8cc844eb6f995728bc7900353cf2801b4311256 Mon Sep 17 00:00:00 2001
 From: "/setup.sh" <support@vision-components.com>
-Date: Thu, 15 Feb 2024 15:18:12 +0100
+Date: Wed, 4 Dec 2024 17:23:24 +0100
 Subject: [PATCH] Disable VB2_BUF_STATE_REQUEUEING in vi5_fops.c.
 
 ---
@@ -8,7 +8,7 @@ Subject: [PATCH] Disable VB2_BUF_STATE_REQUEUEING in vi5_fops.c.
  1 file changed, 12 insertions(+), 12 deletions(-)
 
 diff --git a/kernel/nvidia/drivers/media/platform/tegra/camera/vi/vi5_fops.c b/kernel/nvidia/drivers/media/platform/tegra/camera/vi/vi5_fops.c
-index bd3798063..16c813f68 100644
+index bd37980..16c813f 100644
 --- a/kernel/nvidia/drivers/media/platform/tegra/camera/vi/vi5_fops.c
 +++ b/kernel/nvidia/drivers/media/platform/tegra/camera/vi/vi5_fops.c
 @@ -525,17 +525,17 @@ static void vi5_capture_dequeue(struct tegra_channel *chan,

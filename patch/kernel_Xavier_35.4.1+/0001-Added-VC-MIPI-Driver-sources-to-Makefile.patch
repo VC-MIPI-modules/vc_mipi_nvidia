@@ -1,6 +1,6 @@
-From be1f85d70caa9a4ce5efa70c455a16aa8c14c48f Mon Sep 17 00:00:00 2001
+From fc45b06d513dd9299835b29390f42d61d9610698 Mon Sep 17 00:00:00 2001
 From: "/setup.sh" <support@vision-components.com>
-Date: Thu, 15 Feb 2024 12:04:34 +0100
+Date: Wed, 4 Dec 2024 16:47:55 +0100
 Subject: [PATCH] Added VC MIPI Driver sources to Makefile.
 
 ---
@@ -10,7 +10,7 @@ Subject: [PATCH] Added VC MIPI Driver sources to Makefile.
  3 files changed, 3 insertions(+)
 
 diff --git a/kernel/kernel-5.10/arch/arm64/configs/defconfig b/kernel/kernel-5.10/arch/arm64/configs/defconfig
-index ce9f3e0a7..4fbed6604 100644
+index ce9f3e0..4fbed66 100644
 --- a/kernel/kernel-5.10/arch/arm64/configs/defconfig
 +++ b/kernel/kernel-5.10/arch/arm64/configs/defconfig
 @@ -892,6 +892,7 @@ CONFIG_NV_VIDEO_IMX318=m
@@ -22,7 +22,7 @@ index ce9f3e0a7..4fbed6604 100644
  CONFIG_NV_VIDEO_OV23850=m
  CONFIG_I2C_IOEXPANDER_PCA9570=m
 diff --git a/kernel/kernel-5.10/arch/arm64/configs/tegra_android_defconfig b/kernel/kernel-5.10/arch/arm64/configs/tegra_android_defconfig
-index 2a3e287c8..3b5e3d25b 100644
+index 2a3e287..3b5e3d2 100644
 --- a/kernel/kernel-5.10/arch/arm64/configs/tegra_android_defconfig
 +++ b/kernel/kernel-5.10/arch/arm64/configs/tegra_android_defconfig
 @@ -892,6 +892,7 @@ CONFIG_NV_VIDEO_IMX318=m
@@ -34,7 +34,7 @@ index 2a3e287c8..3b5e3d25b 100644
  CONFIG_NV_VIDEO_OV23850=m
  CONFIG_I2C_IOEXPANDER_PCA9570=m
 diff --git a/kernel/nvidia/drivers/media/i2c/Makefile b/kernel/nvidia/drivers/media/i2c/Makefile
-index c4708d8c7..1165bcf8e 100644
+index c4708d8..1165bcf 100644
 --- a/kernel/nvidia/drivers/media/i2c/Makefile
 +++ b/kernel/nvidia/drivers/media/i2c/Makefile
 @@ -13,6 +13,7 @@ obj-$(CONFIG_NV_VIDEO_IMX318) += nv_imx318.o

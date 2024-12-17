@@ -1,17 +1,17 @@
-From c2ffcd4647594bec6f2fe97ee89e91a5a36be4dc Mon Sep 17 00:00:00 2001
+From 2542c27023a2863c98043b69df48224a8957cc17 Mon Sep 17 00:00:00 2001
 From: "/setup.sh" <support@vision-components.com>
-Date: Wed, 24 Apr 2024 15:05:10 +0200
+Date: Wed, 4 Dec 2024 17:50:38 +0100
 Subject: [PATCH] Stability patch. work_struct refactored to kthread.
 
 ---
  .../kernel-5.10/drivers/mailbox/tegra-hsp.c   |  3 +-
  .../media/platform/tegra/camera/vi/vi5_fops.c | 11 +++-
  .../platform/tegra/rtcpu/capture-ivc-priv.h   | 12 ++--
- .../platform/tegra/rtcpu/capture-ivc.c        | 58 +++++++++++++++----
- 4 files changed, 67 insertions(+), 17 deletions(-)
+ .../platform/tegra/rtcpu/capture-ivc.c        | 57 +++++++++++++++----
+ 4 files changed, 67 insertions(+), 16 deletions(-)
 
 diff --git a/kernel/kernel-5.10/drivers/mailbox/tegra-hsp.c b/kernel/kernel-5.10/drivers/mailbox/tegra-hsp.c
-index a5c8c29e7..b8dca0238 100644
+index a5c8c29..b8dca02 100644
 --- a/kernel/kernel-5.10/drivers/mailbox/tegra-hsp.c
 +++ b/kernel/kernel-5.10/drivers/mailbox/tegra-hsp.c
 @@ -390,7 +390,6 @@ static void tegra_hsp_mailbox_receive_32bit_data(
@@ -32,7 +32,7 @@ index a5c8c29e7..b8dca0238 100644
  
  static const struct tegra_hsp_sm_ops tegra_hsp_sm_32bit_ops = {
 diff --git a/kernel/nvidia/drivers/media/platform/tegra/camera/vi/vi5_fops.c b/kernel/nvidia/drivers/media/platform/tegra/camera/vi/vi5_fops.c
-index 16c813f68..ffe78b043 100644
+index 16c813f..ffe78b0 100644
 --- a/kernel/nvidia/drivers/media/platform/tegra/camera/vi/vi5_fops.c
 +++ b/kernel/nvidia/drivers/media/platform/tegra/camera/vi/vi5_fops.c
 @@ -487,6 +487,7 @@ static void vi5_capture_dequeue(struct tegra_channel *chan,
@@ -68,7 +68,7 @@ index 16c813f68..ffe78b043 100644
  #if LINUX_VERSION_CODE < KERNEL_VERSION(5, 4, 0)
  	ts = ns_to_timespec((s64)descr->status.eof_timestamp);
 diff --git a/kernel/nvidia/drivers/platform/tegra/rtcpu/capture-ivc-priv.h b/kernel/nvidia/drivers/platform/tegra/rtcpu/capture-ivc-priv.h
-index 04c95aef3..4b4aa0275 100644
+index 04c95ae..4b4aa02 100644
 --- a/kernel/nvidia/drivers/platform/tegra/rtcpu/capture-ivc-priv.h
 +++ b/kernel/nvidia/drivers/platform/tegra/rtcpu/capture-ivc-priv.h
 @@ -2,7 +2,7 @@
@@ -107,14 +107,13 @@ index 04c95aef3..4b4aa0275 100644
  /**
   * @brief Implementation of IVC notify operation which gets called when we any
 diff --git a/kernel/nvidia/drivers/platform/tegra/rtcpu/capture-ivc.c b/kernel/nvidia/drivers/platform/tegra/rtcpu/capture-ivc.c
-index c5e1bc519..5bae2edb7 100644
+index c5e1bc5..485407c 100644
 --- a/kernel/nvidia/drivers/platform/tegra/rtcpu/capture-ivc.c
 +++ b/kernel/nvidia/drivers/platform/tegra/rtcpu/capture-ivc.c
-@@ -28,7 +28,12 @@
- #include <linux/tegra-ivc.h>
+@@ -29,6 +29,12 @@
  #include <linux/tegra-ivc-bus.h>
  #include <linux/nospec.h>
--
+ 
 +#include <linux/kthread.h>
 +#include <linux/sched.h>
 +#include <linux/version.h>
@@ -124,7 +123,7 @@ index c5e1bc519..5bae2edb7 100644
  #include <asm/barrier.h>
  
  #include "capture-ivc-priv.h"
-@@ -356,7 +361,7 @@ static inline void tegra_capture_ivc_recv(struct tegra_capture_ivc *civc)
+@@ -356,7 +362,7 @@ static inline void tegra_capture_ivc_recv(struct tegra_capture_ivc *civc)
  	}
  }
  
@@ -133,7 +132,7 @@ index c5e1bc519..5bae2edb7 100644
  {
  	struct tegra_capture_ivc *civc;
  	struct tegra_ivc_channel *chan;
-@@ -386,7 +391,7 @@ static void tegra_capture_ivc_notify(struct tegra_ivc_channel *chan)
+@@ -386,7 +392,7 @@ static void tegra_capture_ivc_notify(struct tegra_ivc_channel *chan)
  
  	/* Only 1 thread can wait on write_q, rest wait for write_lock */
  	wake_up(&civc->write_q);
@@ -142,7 +141,7 @@ index c5e1bc519..5bae2edb7 100644
  }
  
  #define NV(x) "nvidia," #x
-@@ -398,6 +403,8 @@ static int tegra_capture_ivc_probe(struct tegra_ivc_channel *chan)
+@@ -398,6 +404,8 @@ static int tegra_capture_ivc_probe(struct tegra_ivc_channel *chan)
  	const char *service;
  	int ret;
  	uint32_t i;
@@ -151,7 +150,7 @@ index c5e1bc519..5bae2edb7 100644
  
  	civc = devm_kzalloc(dev, (sizeof(*civc)), GFP_KERNEL);
  	if (unlikely(civc == NULL))
-@@ -410,13 +417,31 @@ static int tegra_capture_ivc_probe(struct tegra_ivc_channel *chan)
+@@ -410,13 +418,31 @@ static int tegra_capture_ivc_probe(struct tegra_ivc_channel *chan)
  		return ret;
  	}
  
@@ -185,7 +184,7 @@ index c5e1bc519..5bae2edb7 100644
  
  	/* Initialize wait queue */
  	init_waitqueue_head(&civc->write_q);
-@@ -432,26 +457,37 @@ static int tegra_capture_ivc_probe(struct tegra_ivc_channel *chan)
+@@ -432,26 +458,37 @@ static int tegra_capture_ivc_probe(struct tegra_ivc_channel *chan)
  	tegra_ivc_channel_set_drvdata(chan, civc);
  
  	if (!strcmp("capture-control", service)) {

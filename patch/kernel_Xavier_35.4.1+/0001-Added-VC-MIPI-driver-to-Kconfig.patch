@@ -1,6 +1,6 @@
-From 615f976a16a8449ec0b2ccf0ecaada045b2d7ab9 Mon Sep 17 00:00:00 2001
+From 463cf3bc33d6132a32e4c6589c72b0fff8639503 Mon Sep 17 00:00:00 2001
 From: "/setup.sh" <support@vision-components.com>
-Date: Thu, 15 Feb 2024 12:06:57 +0100
+Date: Wed, 4 Dec 2024 16:50:28 +0100
 Subject: [PATCH] Added VC MIPI driver to Kconfig.
 
 ---
@@ -8,7 +8,7 @@ Subject: [PATCH] Added VC MIPI driver to Kconfig.
  1 file changed, 10 insertions(+)
 
 diff --git a/kernel/nvidia/drivers/media/i2c/Kconfig b/kernel/nvidia/drivers/media/i2c/Kconfig
-index 5ec3c683c..dbc4fc473 100644
+index 5ec3c68..dbc4fc4 100644
 --- a/kernel/nvidia/drivers/media/i2c/Kconfig
 +++ b/kernel/nvidia/drivers/media/i2c/Kconfig
 @@ -99,6 +99,16 @@ config NV_VIDEO_OV9281
