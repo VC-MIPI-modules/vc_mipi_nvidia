@@ -24,12 +24,12 @@
   * [NVIDIA L4T 32.7.1](https://developer.nvidia.com/embedded/linux-tegra-r3271)
   * [NVIDIA L4T 32.7.2](https://developer.nvidia.com/embedded/linux-tegra-r3272)
   * [NVIDIA L4T 32.7.3](https://developer.nvidia.com/embedded/linux-tegra-r3273)
-  * [NVIDIA L4T 32.7.4](https://developer.nvidia.com/embedded/linux-tegra-r3274) *(only NVIDIA Jetson Nano, experimental)*
+  * [NVIDIA L4T 32.7.4](https://developer.nvidia.com/embedded/linux-tegra-r3274) *(only NVIDIA Jetson Nano)*
   * [NVIDIA L4T 35.1.0](https://developer.nvidia.com/embedded/jetson-linux-r351) *(only NVIDIA Jetson Xavier NX and AGX Xavier)*
-  * [NVIDIA L4T 35.2.1](https://developer.nvidia.com/embedded/jetson-linux-r3521) *(only NVIDIA Jetson Xavier NX, AGX Xavier and Orin NX, experimental)*
-  * [NVIDIA L4T 35.3.1](https://developer.nvidia.com/embedded/jetson-linux-r3531) *(only NVIDIA Jetson Xavier NX, AGX Xavier, Orin NX and Orin Nano, experimental)*
-  * [NVIDIA L4T 35.4.1](https://developer.nvidia.com/embedded/jetson-linux-r3541) *(only NVIDIA Jetson Xavier NX, AGX Xavier, Orin NX and Orin Nano, experimental)*
-  * [NVIDIA L4T 36.2.0](https://developer.nvidia.com/embedded/jetson-linux-r362) *(only NVIDIA Jetson Orin Nano and Orin NX + Orin Nano DevKit, experimental)*
+  * [NVIDIA L4T 35.2.1](https://developer.nvidia.com/embedded/jetson-linux-r3521) *(only NVIDIA Jetson Xavier NX, AGX Xavier and Orin NX)*
+  * [NVIDIA L4T 35.3.1](https://developer.nvidia.com/embedded/jetson-linux-r3531) *(only NVIDIA Jetson Xavier NX, AGX Xavier, Orin NX and Orin Nano)*
+  * [NVIDIA L4T 35.4.1](https://developer.nvidia.com/embedded/jetson-linux-r3541) *(only NVIDIA Jetson Xavier NX, AGX Xavier, Orin NX and Orin Nano)*
+  * [NVIDIA L4T 36.2.0](https://developer.nvidia.com/embedded/jetson-linux-r362) *(only NVIDIA Jetson Orin Nano and Orin NX + Orin Nano DevKit)*
 * Supported [VC MIPI Camera Modules](https://www.vision-components.com/fileadmin/external/documentation/hardware/VC_MIPI_Camera_Module/index.html) 
   * IMX178, IMX183, IMX226
   * IMX250, IMX252, IMX264, IMX265, IMX273, IMX392
