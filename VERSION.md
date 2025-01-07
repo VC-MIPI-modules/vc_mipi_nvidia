@@ -1,5 +1,14 @@
 # Version History
 
+## v0.18.2
+* New Features
+  * Handler function added, which will be executed before the streaming in order to tell the user whether the frame size for binning is setup correctly.
+* Improvements
+  * Framerate increase for binning mode and frame line reduction with binning combined
+  * Metadata Height values for IMX56x series corrected and documentation added.
+  * Support for GBRG8 format added for IMX226
+  * Added default values id_rsa and nvidia for the ./setup.sh --target
+
 ## v0.18.1 (L4T 36.2.0, Support IMX900)
 * New Features
   * Added support for board support package
