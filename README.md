@@ -2,7 +2,7 @@
 
 ![VC MIPI camera](doc/images/mipi_sensor_front_back.png)
 
-## Version 0.18.1 ([History](VERSION.md))
+## Version 0.18.2 ([History](VERSION.md))
 
 * Supported system on modules
   * [NVIDIA Jetson Nano 4GB/2GB (production + devkit)](https://developer.nvidia.com/embedded/jetson-nano)
@@ -121,6 +121,22 @@
    ```
 
 ## Changing camera settings in the device tree
+
+### Embedded Metadata Height
+
+Some of the streaming tools need an adjustment of the Embedded Metadata Height to work properly. </br>
+While v4l2-ctl won't work with a wrong metadata size, other streaming apps might be streaming, but will have a lack of timestamp information.<br>
+
+In the device tree include file of the configured board/som combination there is a parameter called **VC_MIPI_METADATA_H**. </br>
+This #define must be set according to your attached sensor. If you have a board with different sensors connected, it might be, that they need different values for the metadata height. In that case, your should alter the values in the parameter **embedded_metadata_height** directly in the modeX node of the attached sensor.</br>
+The Embedded Metadata Height parameter is available for nearly all soms with exception of the Jetson Nano.
+
+You can check your configured Embedded Metadata Height parameter on the running system with e.g.:
+<pre>
+cat /proc/device-tree/<b>cam_i2cmux</b>/i2c@<b>0</b>/vc_mipi@<b>1a</b>/mode0/embedded_metadata_height
+</pre>
+The bold parts of the path might vary, depending on your configured board/som/sensor combination.<br> 
+You can find this path in your configured dtsi file in the drivernode0 section of the moduleX node either in the variable *proc-device-tree* (Jetpack4/5) or in the variable *sysfs-device-tree* (Jetpack 6)
 
 ### GStreamer Support
 
