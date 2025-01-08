@@ -122,4 +122,14 @@ There is also the option to use the sensor_mode property. When there is more tha
 <pre>
 gst-launch-1.0 nvarguscamerasrc sensor-id=0 <b>sensor-mode=2</b> ! 'video/x-raw(memory:NVMM), format=(string)NV12, framerate=(fraction)40/1' ! nvvidconv ! queue ! xvimagesink
 </pre>
-This call demonstrates the usage of the nvargus gestreamer pipe line. The width and height property can be omitted in that case, because these values are read from the device tree.
+This call demonstrates the usage of the nvargus gestreamer pipe line. The width and height property can be omitted in that case, because these values are read from the device tree.</br>
+
+### Verification of the framesize
+
+If a binning mode is set, the mipi driver will perform a check of the frame size before the streaming starts. If it detects that a given binning mode would exceed the width or height capabilities of the sensor, the streaming would not be executed and an appropriate message will be deployed in the dmesg.</br>
+When streaming via gstreamer with nvarguscamerasrc or argus_camera and one of the parameter width, height, binning is misconfigured in the device-tree, the nvargus-daemon might crash.
+In that case the streaming application must be cancelled or killed and the nvargus-daemon should be restarted:
+<pre>
+sudo killall nvargus-daemon
+sudo nvargus-daemon &
+</pre>
