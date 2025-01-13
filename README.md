@@ -468,7 +468,7 @@ If you have your own BSP, you have to integrate the driver into it. Please follo
 
 ## Testing the camera
 
-To test the camera you can use [v4l2-test](https://github.com/pmliquify/v4l2-test)
+For testing the camera, please refer to [Test applications](/doc/TEST_APPLICATIONS.md)
 
 ## Annotations
 
