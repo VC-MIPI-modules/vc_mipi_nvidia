@@ -2,13 +2,13 @@
 
 The frame rate is always given in mHz, e.g.: 20000 mHz corresponds to 20 Hz.<br>
 It can basically be adjusted with the shell command
-<pre>
-v4l2-ctl -d /dev/video0 -c frame_rate=value
-</pre>
+```
+v4l2-ctl -d /dev/video0 -c frame_rate=<value>
+```
 or
-<pre>
-v4l2-ctl -d /dev/video0 --set-ctrl frame_rate=value
-</pre>
+```
+v4l2-ctl -d /dev/video0 --set-ctrl frame_rate=<value>
+```
 A frame rate value of 0 means the maximum frame rate the sensor is capable of in the given mode.
 The frame rate can also be modified during a streaming operation, no matter if streaming via v4l2 or ISP.
 

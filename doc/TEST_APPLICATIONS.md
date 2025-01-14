@@ -41,7 +41,7 @@ For more information, please see
 <pre>
 ./v4l2-test --help
 </pre>
-or the sub section [v4l2-test examples](#v4l2-test-examples)
+or the documentation on [v4l2-test](https://github.com/pmliquify/v4l2-test)
 
 ## ISP streaming
 
@@ -52,7 +52,7 @@ With the gst-launch application (gstreamer) you have got the possibility to use 
 </pre>
 For more information on options, please see
 <pre>
-gst-inspect-1.0
+gst-inspect-1.0 nvarguscamerasrc
 </pre>
 or the sub section [gstreamer examples](#gstreamer-examples)
 
@@ -62,18 +62,79 @@ It will be automatically fetched, built and installed with:
 <pre>
 ./setup_nvidia.sh
 </pre>
+After the install routine has finished, you can call the program on the shell, directly on the target:
+<pre>
+argus_camera
+</pre>
 For more information on usage and options, please see
 <pre>
 argus_camera --help
 </pre>
-or the sub section [argus_camera examples](#argus_camera-examples)
+or have a look at the /usr/src/jetson_multimedia_api/argus/apps/camera/README.TXT
 
 ## Examples
 
 ### v4l2-ctl examples
 
-### v4l2-test examples
+Getting all properties for the first sensor device:
+<pre>
+v4l2-ctl -d /dev/video0 -l
+</pre>
+
+Streaming with the first video device and the parameters which are already set in the v4l2 properties:
+<pre>
+v4l2-ctl -d /dev/video0 --set-ctrl bypass_mode=0 --stream-mmap
+</pre>
+
+Streaming with the first video device and the maximum possible frame rate:
+<pre>
+v4l2-ctl -d /dev/video0 --set-ctrl frame_rate=0 --stream-mmap
+</pre>
+
+Streaming with the first video device and a width of 4032, a height of 3040 and the format of 10 bit (IMX412 RG-Bayerpattern):
+<pre>
+v4l2-ctl -d /dev/video0 --set-fmt-video=width=4032,height=3040,pixelformat=RG10 --stream-mmap
+</pre>
+
+Streaming with the first video device and a width of 3840, a height of 2160 and the format of 10 bit (IMX415 GB-Bayerpattern):
+<pre>
+v4l2-ctl -d /dev/video0 --set-fmt-video=width=3840,height=2160,pixelformat=GB10 --stream-mmap
+</pre>
+
+Streaming with the first video device and a width of 2048, a height of 1536 and the format of 8 bit (IMX900 RG-Bayerpattern):
+<pre>
+v4l2-ctl -d /dev/video0 --set-fmt-video=width=2048,height=1536,pixelformat=RGGB --stream-mmap
+</pre>
+
+Streaming with the first video device and a width of 3904, a height of 3000 and the format of 8 bit (IMX226 GB-Bayerpattern):
+<pre>
+v4l2-ctl -d /dev/video0 --set-fmt-video=width=3904,height=3000,pixelformat=GBRG --stream-mmap
+</pre>
+
+Streaming with the first video device, acquire five frames and write it to a file:
+<pre>
+v4l2-ctl -d /dev/video0 --stream-mmap --stream-count=5 --stream-to=file_5_frames.raw
+</pre>
 
 ### gstreamer examples
 
-### argus_camera examples
+Streaming with the first video device at 20 Hz, using the first sensor mode (mode0 in the device-tree):
+<pre>
+gst-launch-1.0 nvarguscamerasrc sensor-id=0 sensor-mode=0 ! 'video/x-raw(memory:NVMM),framerate=20/1,width=4032,height=3040,format=NV12' ! nvvidconv ! queue ! fpsdisplaysink video-sink=xvimagesink text-overlay=true
+</pre>
+
+Streaming with the first video device at 78 Hz, using the second sensor mode (mode1 in the device-tree, binning_mode=2):
+<pre>
+gst-launch-1.0 nvarguscamerasrc sensor-id=0 sensor-mode=1 ! 'video/x-raw(memory:NVMM),framerate=78/1,width=2016,height=1520,format=NV12' ! nvvidconv ! queue ! fpsdisplaysink video-sink=xvimagesink text-overlay=true
+</pre>
+
+Streaming with the same parameters as above, writing down 5 jpeg encoded image files:
+<pre>
+gst-launch-1.0 nvarguscamerasrc sensor-id=0 sensor-mode=0 num-buffers=5 ! 'video/x-raw(memory:NVMM), framerate=20/1, width=4032, height=3040, format=NV12' ! nvvidconv ! jpegenc ! multifilesink location=~/$(date +%s)-%d.jpg
+</pre>
+
+Streaming with the same parameters as above, writing down 5 png encoded image files:
+<pre>
+gst-launch-1.0 nvarguscamerasrc sensor-id=0 sensor-mode=0 num-buffers=5 ! 'video/x-raw(memory:NVMM), framerate=20/1, width=4032, height=3040, format=NV12' ! nvvidconv ! pngenc ! multifilesink location=~/$(date +%s)-%d.png
+</pre>
+
