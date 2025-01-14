@@ -128,13 +128,18 @@ Streaming with the first video device at 78 Hz, using the second sensor mode (mo
 gst-launch-1.0 nvarguscamerasrc sensor-id=0 sensor-mode=1 ! 'video/x-raw(memory:NVMM),framerate=78/1,width=2016,height=1520,format=NV12' ! nvvidconv ! queue ! fpsdisplaysink video-sink=xvimagesink text-overlay=true
 </pre>
 
-Streaming with the same parameters as above, writing down 5 jpeg encoded image files:
+Streaming with sensor mode0, writing down 5 jpeg encoded image files:
 <pre>
 gst-launch-1.0 nvarguscamerasrc sensor-id=0 sensor-mode=0 num-buffers=5 ! 'video/x-raw(memory:NVMM), framerate=20/1, width=4032, height=3040, format=NV12' ! nvvidconv ! jpegenc ! multifilesink location=~/$(date +%s)-%d.jpg
 </pre>
 
-Streaming with the same parameters as above, writing down 5 png encoded image files:
+Streaming with sensor mode0, writing down 5 png encoded image files:
 <pre>
 gst-launch-1.0 nvarguscamerasrc sensor-id=0 sensor-mode=0 num-buffers=5 ! 'video/x-raw(memory:NVMM), framerate=20/1, width=4032, height=3040, format=NV12' ! nvvidconv ! pngenc ! multifilesink location=~/$(date +%s)-%d.png
 </pre>
 
+> If there is only mode0 in the device-tree defined, the sensor-mode=\<value\> property can be left out.
+
+> The nvarguscamerasrc is performing additional checks regarding frame rate and frame size. If there are multiple modes in the device-tree defined and the sensor-mode=\<value\> argument is left out, then the nvarguscamerasrc might preselect a different mode!
+
+> The width and the height property of the command line argument are only for the output window, not the frame size, which is set up in the device-tree. The frame size(width/height) is taken from the parameters of the given device-tree mode or the preselected device-tree mode by nvarguscamerasrc.
