@@ -130,21 +130,28 @@ setup_som_carrier_specifics() {
         L4T_setup_gpio_file
 
         L4T_setup_conf_file
+
+        if [[ "36.4.0" == $VC_MIPI_BSP ]]
+        then
+                L4T_setup_dynamic_dtbo_file
+        fi
 }
 
 setup_nvidia_prereq_on_target() {
-        if [[ "36.2.0" != $VC_MIPI_BSP ]]
-        then
+        case $VC_MIPI_BSP in
+        36.4.0|36.2.0)
+                target_dir=${ROOTFS_DIR}/home/${TARGET_USER}
+                src_dir=${WORKING_DIR}/target
+
+                cp ${src_dir}/setup_nvidia.sh ${target_dir}
+
+                cp ${KERNEL_SOURCE}/gst-nvarguscamera_src.tbz2 ${target_dir}
+                cp ${KERNEL_SOURCE}/gst-nvvidconv_src.tbz2 ${target_dir}
+                ;;
+        *)
                 return 0
-        fi
-
-        target_dir=${ROOTFS_DIR}/home/${TARGET_USER}
-        src_dir=${WORKING_DIR}/target
-
-        cp ${src_dir}/setup_nvidia.sh ${target_dir}
-
-        cp ${KERNEL_SOURCE}/gst-nvarguscamera_src.tbz2 ${target_dir}
-        cp ${KERNEL_SOURCE}/gst-nvvidconv_src.tbz2 ${target_dir}
+                ;;
+        esac
 }
 
 setup_user_credentials() {
@@ -190,7 +197,7 @@ create_target_user() {
         echo "Create target user ..."
         cd $BSP_DIR/Linux_for_Tegra
         case $VC_MIPI_BSP in
-        32.7.1|32.7.2|32.7.3|32.7.4|35.1.0|35.2.1|35.3.1|35.4.1|36.2.0)
+        32.7.1|32.7.2|32.7.3|32.7.4|35.1.0|35.2.1|35.3.1|35.4.1|36.2.0|36.4.0)
 
                 sudo ./tools/l4t_create_default_user.sh --username ${TARGET_USER} --password ${TARGET_PW} \
                         --hostname nvidia --autologin --accept-license

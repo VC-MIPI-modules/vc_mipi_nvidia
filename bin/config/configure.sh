@@ -149,7 +149,7 @@ XavierNX|XavierNXSD)
                 32.7.1|32.7.2|32.7.3)
                         PATCHES+=('dt_Auvidea_JNX30_XavierNX_32.5.0+')
                         ;;
-                35.1.0|35.2.1|35.3.1|35.4.1|36.2.0)
+                35.1.0|35.2.1|35.3.1|35.4.1|36.2.0|36.4.0)
                         # Comment
                 ;;
                 esac
@@ -193,12 +193,14 @@ OrinNano4GB_SD|OrinNano8GB_SD|OrinNano4GB_NVME|OrinNano8GB_NVME|OrinNX8GB|OrinNX
         ORIN_DTB_SUFFIX=''
         case $VC_MIPI_BOARD in
         Auvidea_JNX42)
-                if [[ "36.2.0" == $VC_MIPI_BSP ]]
-                then
+                case $VC_MIPI_BSP in
+                36.3.0|36.2.0)
                         FLASH_BOARD='p3509-a02-p3767-0000'
-                else
+                        ;;
+                *)
                         FLASH_BOARD='p3509-a02+p3767-0000'
-                fi
+                        ;;
+                esac
 
                 ORIN_DTB_SUFFIX='-p3509-a02.dtb'
                 ;;

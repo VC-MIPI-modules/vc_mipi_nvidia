@@ -1,0 +1,159 @@
+From be269d8ecca9dbe1e051fd2f53a0de5a44efac43 Mon Sep 17 00:00:00 2001
+From: "/setup.sh" <support@vision-components.com>
+Date: Mon, 3 Feb 2025 12:08:37 +0100
+Subject: [PATCH] Added implementation to set image position and size by
+ v4l2-ctl --set-fmt-video and --set-selection.
+
+---
+ .../media/platform/tegra/camera/vi/channel.c  | 114 +++++++++++++++++-
+ 1 file changed, 113 insertions(+), 1 deletion(-)
+
+diff --git a/nvidia-oot/drivers/media/platform/tegra/camera/vi/channel.c b/nvidia-oot/drivers/media/platform/tegra/camera/vi/channel.c
+index 6f98c64..9bb0b7e 100644
+--- a/nvidia-oot/drivers/media/platform/tegra/camera/vi/channel.c
++++ b/nvidia-oot/drivers/media/platform/tegra/camera/vi/channel.c
+@@ -2179,6 +2179,56 @@ __tegra_channel_set_format(struct tegra_channel *chan,
+ 	return ret;
+ }
+ 
++static int
++__tegra_channel_set_frame_position(struct tegra_channel *chan,
++			__u32 left, __u32 top)
++{
++	struct v4l2_subdev *sd = chan->subdev_on_csi;
++	struct camera_common_data *s_data = to_camera_common_data(sd->dev);
++	struct sensor_properties *sensor = &s_data->sensor_props;
++	int mode_idx = 0;
++
++	if (sensor->sensor_modes != NULL && sensor->num_modes > 0 && mode_idx < sensor->num_modes) {
++		struct sensor_mode_properties *mode = &sensor->sensor_modes[mode_idx];
++		struct sensor_image_properties *image = &mode->image_properties;
++		image->left = left;
++		image->top = top;
++		return 0;
++	}
++
++	return -EBUSY;
++}
++
++static int
++__tegra_channel_set_frame_size(struct tegra_channel *chan,
++			struct v4l2_pix_format *pix)
++{
++	struct v4l2_subdev *sd = chan->subdev_on_csi;
++	struct camera_common_data *s_data = to_camera_common_data(sd->dev);
++	struct sensor_properties *sensor = &s_data->sensor_props;
++	int mode_idx = 0;
++
++	pix->width = (pix->width / 32) * 32;
++	pix->height = (pix->height / 4) * 4;
++
++	s_data->def_width = pix->width;
++	s_data->def_height = pix->height;
++	if (s_data->frmfmt != NULL && s_data->numfmts > 0 && mode_idx < s_data->numfmts) {
++		struct camera_common_frmfmt *frmfmt = (struct camera_common_frmfmt *)&s_data->frmfmt[mode_idx];
++		frmfmt[mode_idx].size.width = pix->width;
++		frmfmt[mode_idx].size.height = pix->height;
++	}
++	if (sensor->sensor_modes != NULL && sensor->num_modes > 0 && mode_idx < sensor->num_modes) {
++		struct sensor_mode_properties *mode = &sensor->sensor_modes[mode_idx];
++		struct sensor_image_properties *image = &mode->image_properties;
++		image->width = pix->width;
++		image->height = pix->height;
++		return 0;
++	}
++
++	return -EBUSY;
++}
++
+ static int
+ tegra_channel_set_format(struct file *file, void *fh,
+ 			struct v4l2_format *format)
+@@ -2186,7 +2236,9 @@ tegra_channel_set_format(struct file *file, void *fh,
+ 	struct tegra_channel *chan = video_drvdata(file);
+ 	int ret = 0;
+ 
+-	/* get the suppod format by try_fmt */
++	__tegra_channel_set_frame_size(chan, &format->fmt.pix);
++
++	/* get the supported format by try_fmt */
+ 	ret = __tegra_channel_try_format(chan, &format->fmt.pix);
+ 	if (ret)
+ 		return ret;
+@@ -2197,6 +2249,64 @@ tegra_channel_set_format(struct file *file, void *fh,
+ 	return __tegra_channel_set_format(chan, &format->fmt.pix);
+ }
+ 
++static int
++tegra_channel_get_selection(struct file *file, void *fh,
++			struct v4l2_selection *selection)
++{
++	struct tegra_channel *chan = video_drvdata(file);
++	struct v4l2_subdev *sd = chan->subdev_on_csi;
++	struct camera_common_data *s_data = to_camera_common_data(sd->dev);
++	struct sensor_properties *sensor = &s_data->sensor_props;
++	int mode_idx = 0;
++
++	switch (selection->target) {
++	case V4L2_SEL_TGT_CROP:
++		if (sensor->sensor_modes != NULL && sensor->num_modes > 0 && mode_idx < sensor->num_modes) {
++			struct sensor_mode_properties *mode = &sensor->sensor_modes[mode_idx];
++			struct sensor_image_properties *image = &mode->image_properties;
++			selection->r.left = image->left;
++			selection->r.top = image->top;
++			selection->r.width = image->width;
++			selection->r.height = image->height;
++
++			dev_dbg(chan->vi->dev, "%s: type: 0x%x, target: 0x%x, flags: 0x%x, left: %u, top: %u, width: %u, height: %u\n", __func__,
++			selection->type, selection->target, selection->flags,
++			selection->r.left, selection->r.top, selection->r.width, selection->r.height);
++			return 0;
++		}
++		break;
++	}
++
++	return -EINVAL;
++}
++
++static int
++tegra_channel_set_selection(struct file *file, void *fh,
++			struct v4l2_selection *selection)
++{
++	struct tegra_channel *chan = video_drvdata(file);
++	struct v4l2_format format;
++
++	dev_dbg(chan->vi->dev, "%s: type: 0x%x, target: 0x%x, flags: 0x%x, left: %u, top: %u, width: %u, height: %u\n", __func__,
++		selection->type, selection->target, selection->flags,
++		selection->r.left, selection->r.top, selection->r.width, selection->r.height);
++
++	switch (selection->target) {
++	case V4L2_SEL_TGT_CROP:
++		__tegra_channel_set_frame_position(chan, selection->r.left, selection->r.top);
++
++		tegra_channel_get_format(file, fh, &format);
++		format.fmt.pix.width = selection->r.width;
++		format.fmt.pix.height = selection->r.height;
++		// bytesperline has to be zero to be recalculated 
++		// in tegra_channel_fmt_align()
++		format.fmt.pix.bytesperline = 0;
++		return tegra_channel_set_format(file, fh, &format);
++	}
++
++	return -EINVAL;
++}
++
+ static int tegra_channel_subscribe_event(struct v4l2_fh *fh,
+ 				  const struct v4l2_event_subscription *sub)
+ {
+@@ -2289,6 +2399,8 @@ static const struct v4l2_ioctl_ops tegra_channel_ioctl_ops = {
+ 	.vidioc_g_fmt_vid_cap		= tegra_channel_get_format,
+ 	.vidioc_s_fmt_vid_cap		= tegra_channel_set_format,
+ 	.vidioc_try_fmt_vid_cap		= tegra_channel_try_format,
++	.vidioc_g_selection		= tegra_channel_get_selection,
++	.vidioc_s_selection		= tegra_channel_set_selection,
+ 	.vidioc_reqbufs			= vb2_ioctl_reqbufs,
+ 	.vidioc_prepare_buf		= vb2_ioctl_prepare_buf,
+ 	.vidioc_querybuf		= vb2_ioctl_querybuf,
+-- 
+2.34.1
+
