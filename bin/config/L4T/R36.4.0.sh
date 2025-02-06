@@ -136,7 +136,7 @@ function L4T_build_device_tree {
 
         make dtbs
 
-        cp nvidia-oot/device-tree/platform/generic-dts/dtbs/* $BSP_DIR/Linux_for_Tegra/kernel/dtb/
+        cp kernel-devicetree/generic-dts/dtbs/* $BSP_DIR/Linux_for_Tegra/kernel/dtb/
 }
 
 function L4T_build_kernel {

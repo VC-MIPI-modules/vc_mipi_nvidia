@@ -11,6 +11,17 @@
 #define VERSION "0.18.2"
 // #define VC_CTRL_VALUE
 
+//prototypes
+struct tegra_channel *get_tegra_channel(struct tegracam_device *tc_dev);
+void vc_update_image_size_from_mode(struct tegracam_device *tc_dev,  __u32 *left, __u32 *top, __u32 *width, __u32 *height);
+void vc_overwrite_image_size(struct tegracam_device *tc_dev, __u32 *width, __u32 *height, 
+        __u32 *tegra_width, __u32 *tegra_height, __u32 *tegra_line_length);
+void vc_update_tegra_image_size(struct tegracam_device *tc_dev, __u32 width, __u32 height, __u32 line_length);
+void vc_update_tegra_controls(struct tegracam_device *tc_dev);
+int vc_init_frmfmt(struct device *dev, struct vc_cam *cam);
+void vc_init_tegra_controls(struct tegracam_device *tc_dev);
+
+
 static struct vc_cam *tegracam_to_cam(struct tegracam_device *tc_dev)
 {
         return (struct vc_cam *)tegracam_get_privdata(tc_dev);
