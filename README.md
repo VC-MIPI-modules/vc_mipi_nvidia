@@ -360,15 +360,28 @@ If you want to change some settings of a camera in the device tree, please follo
 
 ## Using long exposure times or external trigger mode with long waiting times (> 5 seconds)
 
-If you want to use your camera in an application with long exposure times or external trigger and the time between two consecutively triggers is potentially long (> 5 seconds) it is necessary to adjust the timeout of the csi receiver. In this case please change following line of code.
+If you want to use your camera in an application with long exposure times or external trigger and the time between two consecutively triggers is potentially long (> 5 seconds) it is necessary to adjust the timeout of the csi receiver. <br>
 
-   | system on module         | line | in file                                                          |
-   | ------------------------ | ---- | ---------------------------------------------------------------- |
-   | NVIDIA Jetson Nano       |  232 | /kernel/nvidia/drivers/media/platform/tegra/camera/vi/vi2_fops.c |
-   | NVIDIA Jetson Xavier NX  |   36 | /kernel/nvidia/drivers/media/platform/tegra/camera/vi/vi5_fops.c |
-   | NVIDIA Jetson AGX Xavier |   36 | /kernel/nvidia/drivers/media/platform/tegra/camera/vi/vi5_fops.c |
-   | NVIDIA Jetson TX2        | 1097 | /kernel/nvidia/drivers/media/platform/tegra/camera/vi/vi4_fops.c |
-   | NVIDIA Jetson TX2 NX     | 1097 | /kernel/nvidia/drivers/media/platform/tegra/camera/vi/vi4_fops.c |
+Since different Jetson devices are using different video inputs (VI2, VI4 and VI5), the adjustment has to be done at the appropriate location. <br>
+
+   | video input | file       | location                             | call                                    |
+   | ----------- | ---------- | ------------------------------------ | --------------------------------------- |
+   | VI2         | vi2_fops.c | function tegra_channel_ec_init       | chan->timeout = msecs_to_jiffies(5000); |
+   | VI4         | vi4_fops.c | function vi4_channel_start_streaming | chan->timeout = msecs_to_jiffies(5000); |
+   | VI5         | vi5_fops.c | define                               | #define CAPTURE_TIMEOUT_MS	5000         |
+
+The following table lists the Jetson device and the necessary file:
+   | system on module         | in file                                                          |
+   | ------------------------ | ---------------------------------------------------------------- |
+   | NVIDIA Jetson Nano       | /kernel/nvidia/drivers/media/platform/tegra/camera/vi/vi2_fops.c |
+   | NVIDIA Jetson TX2        | /kernel/nvidia/drivers/media/platform/tegra/camera/vi/vi4_fops.c |
+   | NVIDIA Jetson TX2 NX     | /kernel/nvidia/drivers/media/platform/tegra/camera/vi/vi4_fops.c |
+   | NVIDIA Jetson Xavier NX  | /kernel/nvidia/drivers/media/platform/tegra/camera/vi/vi5_fops.c |
+   | NVIDIA Jetson AGX Xavier | /kernel/nvidia/drivers/media/platform/tegra/camera/vi/vi5_fops.c |
+   | NVIDIA Jetson Orin Nano  | /kernel/nvidia/drivers/media/platform/tegra/camera/vi/vi5_fops.c |
+   | NVIDIA Jetson Orin NX    | /kernel/nvidia/drivers/media/platform/tegra/camera/vi/vi5_fops.c |
+
+  > Be aware that a high timeout value might cause a high wait penalty when stopping the stream from single or external trigger mode. <br>
 
 ## Tested with VC MIPI Camera Module Revision
 
