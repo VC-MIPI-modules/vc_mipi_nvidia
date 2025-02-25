@@ -8,7 +8,7 @@
 #include "vc_mipi_core.h"
 #include "vc_mipi_modules.h"
 
-#define VERSION "0.18.2"
+#define VERSION "0.18.2_infinite"
 // #define VC_CTRL_VALUE
 
 static struct vc_cam *tegracam_to_cam(struct tegracam_device *tc_dev)
@@ -144,7 +144,7 @@ void vc_update_image_size_from_mode(struct tegracam_device *tc_dev,  __u32 *left
         }
 }
 
-#if defined(VC_MIPI_JETSON_NANO) && defined(VC_MIPI_L4T_32_7_4)
+//#if defined(VC_MIPI_JETSON_NANO) && defined(VC_MIPI_L4T_32_7_4)
 int vc_set_channel_trigger_mode(struct tegracam_device *tc_dev, __u8 trigger_mode)
 {
         struct tegra_channel *chan = NULL;
@@ -157,11 +157,12 @@ int vc_set_channel_trigger_mode(struct tegracam_device *tc_dev, __u8 trigger_mod
                 return -EINVAL;
         }
 
+        printk("vc_mipi: setting trigger_mode=%d \n", trigger_mode);
         chan->trigger_mode = trigger_mode;
 
         return 0;
 }
-#endif
+//#endif
 
 #ifdef VC_MIPI_JETSON_NANO
 void vc_fix_image_size(struct tegracam_device *tc_dev, __u32 *width, __u32 *height, 
@@ -401,9 +402,9 @@ static int vc_set_trigger_mode(struct tegracam_device *tc_dev, __s64 val)
         int ret = vc_mod_set_trigger_mode(cam, val);
         vc_update_tegra_controls(tc_dev);
 
-#if defined(VC_MIPI_JETSON_NANO) && defined(VC_MIPI_L4T_32_7_4)
+//#if defined(VC_MIPI_JETSON_NANO) && defined(VC_MIPI_L4T_32_7_4)
         ret = vc_set_channel_trigger_mode(tc_dev, (__u8)val);
-#endif
+//#endif
 
         return ret;
 }
