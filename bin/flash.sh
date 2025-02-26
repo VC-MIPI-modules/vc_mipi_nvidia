@@ -10,6 +10,7 @@ usage() {
         echo "-d, --dt                  Flash device tree"
         echo "-h, --help                Show this help text"
         echo "-k, --kernel              Flash kernel image"
+        echo "-m, --module              Flash kernel module"
 }
 
 configure() {
@@ -68,10 +69,30 @@ flash_all() {
 flash_kernel() {
         echo "Flashing kernel only ..."
         IMAGE_FILE=Image
-        TARGET_DIR=/tmp
-        scp $KERNEL_OUT/arch/arm64/boot/$IMAGE_FILE $TARGET_USER@$TARGET_IP:$TARGET_DIR
-        $TARGET_SHELL "echo $TARGET_PW | sudo -S mv $TARGET_DIR/$IMAGE_FILE /boot"
+        TMP_DIR=/tmp
+        scp $KERNEL_OUT/arch/arm64/boot/$IMAGE_FILE $TARGET_USER@$TARGET_IP:$TMP_DIR
+        $TARGET_SHELL "echo $TARGET_PW | sudo -S mv $TMP_DIR/$IMAGE_FILE /boot"
         $TARGET_SHELL ls -l /boot
+}
+
+flash_module() {
+        case $VC_MIPI_BSP in
+        36.2.0)
+                echo "Flashing module only ..."
+                TMP_DIR=/tmp
+                MODULE_FILES=$(find $KERNEL_SOURCE/nvidia-oot/drivers/media/i2c -name "vc_mipi*.ko")
+                for MODULE_FILE in $MODULE_FILES; do
+                        MODULE_NAME=$(basename $MODULE_FILE)
+                        KERNEL_VERSION=$($TARGET_SHELL "uname -r")
+                        MODULE_DIR=/lib/modules/$KERNEL_VERSION/extra/drivers/media/i2c
+                        scp $MODULE_FILE $TARGET_USER@$TARGET_IP:$TMP_DIR
+                        $TARGET_SHELL "echo $TARGET_PW | sudo -S mv $TMP_DIR/$MODULE_NAME $MODULE_DIR"
+                done
+                ;;
+        *)
+                echo "This BSP version does not support flashing camera driver modules."
+                ;;
+        esac
 }
 
 flash_device_tree() {
@@ -79,13 +100,21 @@ flash_device_tree() {
         OrinNano4GB_SD|OrinNano8GB_SD|OrinNano4GB_NVME|OrinNano8GB_NVME|OrinNX8GB|OrinNX16GB)
                 echo "Flashing devtree only ..."
                 echo "Please modify /boot/extlinux/extlinux.conf"
-                TARGET_DIR=/tmp
-                scp $KERNEL_OUT/arch/arm64/boot/dts/nvidia/$ORIN_DTB_FILE \
-                        $TARGET_USER@$TARGET_IP:$TARGET_DIR
-                $TARGET_SHELL ls -la $TARGET_DIR/$ORIN_DTB_FILE
-
-                $TARGET_SHELL "echo $TARGET_PW | sudo -S mv $TARGET_DIR/$ORIN_DTB_FILE /boot/dtb"
-                $TARGET_SHELL ls -l /boot/dtb
+                TMP_DIR=/tmp
+                case $VC_MIPI_BSP in
+                35.1.0|35.2.1|35.3.1|35.4.1)
+                        SRC_FILE=$KERNEL_OUT/arch/arm64/boot/dts/nvidia/$ORIN_DTB_FILE
+                        ORIN_DTB_DIR=/boot/dtb
+                        ;;
+                36.2.0)
+                        ORIN_DTB_FILE=tegra234-p3767-camera-p3768-vc_mipi-dual.dtbo
+                        SRC_FILE=$KERNEL_OUT/device-tree/platform/generic-dts/dtbs/$ORIN_DTB_FILE
+                        ORIN_DTB_DIR=/boot
+                        ;;
+                esac
+                scp $SRC_FILE $TARGET_USER@$TARGET_IP:$TMP_DIR
+                $TARGET_SHELL "echo $TARGET_PW | sudo -S mv $TMP_DIR/$ORIN_DTB_FILE $ORIN_DTB_DIR"
+                $TARGET_SHELL ls -l $ORIN_DTB_DIR/$ORIN_DTB_FILE
                 ;;
         *)
                 check_recovery_mode
@@ -123,6 +152,10 @@ while [ $# != 0 ] ; do
         -k|--kernel)
                 configure
                 flash_kernel
+                ;;
+        -m|--module)
+                configure
+                flash_module
                 ;;
         -r|--reboot)
                 configure
