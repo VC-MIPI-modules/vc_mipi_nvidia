@@ -21,7 +21,7 @@ usage() {
 install_dependencies() {
         if [[ -z $(which v4l2-ctl) ]]; then
                 sudo apt update
-                sudo apt install -y v4l-utils git build-essential cmake python3-pip
+                sudo apt install -y v4l-utils git build-essential cmake python3-pip nvidia-l4t-gstreamer
                 sudo pip3 install -U jetson-stats
         fi
         (
