@@ -147,3 +147,18 @@ LABEL secondary
       OVERLAYS /boot/tegra234-p3767-camera-p3768-vc_mipi-dual.dtbo
 ```
 The dtbo file must be copied into the specified location before the restart.
+
+### JetPack 6 (L4T 36.4.0)
+
+The procedure of changing or applying a new dtbo is basically the same as in [L4T 36.2.0](/doc/DEVICE_FLASHING.md#jetpack-6-l4t-3620), but the FDT entry within the /boot/extlinux/extlinux.conf section is missing. So, both the entries - FDT and OVERLAYS - must be added into this section like this:
+
+<pre>
+LABEL secondary
+      MENU LABEL secondary kernel
+      LINUX /boot/Image
+      FDT /boot/dtb/kernel_tegra234-p3768-0000+p3767-<b>0000</b>-nv.dtb
+      INITRD /boot/initrd
+      APPEND ...
+
+      OVERLAYS /boot/tegra234-p3767-camera-p3768-vc_mipi-dual.dtbo
+</pre>
