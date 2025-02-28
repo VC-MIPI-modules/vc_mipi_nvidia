@@ -155,7 +155,7 @@ void vc_update_image_size_from_mode(struct tegracam_device *tc_dev,  __u32 *left
         }
 }
 
-//#if defined(VC_MIPI_JETSON_NANO) && defined(VC_MIPI_L4T_32_7_4)
+#if defined(VC_MIPI_JETSON_NANO) && defined(VC_MIPI_L4T_32_7_4)
 int vc_set_channel_trigger_mode(struct tegracam_device *tc_dev, __u8 trigger_mode)
 {
         struct tegra_channel *chan = NULL;
@@ -173,7 +173,7 @@ int vc_set_channel_trigger_mode(struct tegracam_device *tc_dev, __u8 trigger_mod
 
         return 0;
 }
-//#endif
+#endif
 
 #ifdef VC_MIPI_JETSON_NANO
 void vc_fix_image_size(struct tegracam_device *tc_dev, __u32 *width, __u32 *height, 
@@ -413,9 +413,9 @@ static int vc_set_trigger_mode(struct tegracam_device *tc_dev, __s64 val)
         int ret = vc_mod_set_trigger_mode(cam, val);
         vc_update_tegra_controls(tc_dev);
 
-//#if defined(VC_MIPI_JETSON_NANO) && defined(VC_MIPI_L4T_32_7_4)
+#if defined(VC_MIPI_JETSON_NANO) && defined(VC_MIPI_L4T_32_7_4)
         ret = vc_set_channel_trigger_mode(tc_dev, (__u8)val);
-//#endif
+#endif
 
         return ret;
 }
@@ -551,7 +551,11 @@ static int vc_start_streaming(struct tegracam_device *tc_dev)
         // ****************************************************************************************
         // NOTE: On some camera modules (e.g. IMX183, IMX273) the second and/or third image is 
         //       black if here isn't a sleep.
-        usleep_range(1000*sleepS, 1000*sleepS);
+        switch (cam->desc.mod_id) {
+                case MOD_ID_IMX183: usleep_range(1000*sleepS, 1000*sleepS); break;
+                case MOD_ID_IMX273: usleep_range(1000*sleepS, 1000*sleepS); break;
+                default: break;
+        }
 
         cam->state.former_binning_mode = cam->state.binning_mode;
         return ret;
