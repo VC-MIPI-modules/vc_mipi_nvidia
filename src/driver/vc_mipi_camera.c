@@ -168,7 +168,6 @@ int vc_set_channel_trigger_mode(struct tegracam_device *tc_dev, __u8 trigger_mod
                 return -EINVAL;
         }
 
-        printk("vc_mipi: setting trigger_mode=%d \n", trigger_mode);
         chan->trigger_mode = trigger_mode;
 
         return 0;
