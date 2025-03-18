@@ -1077,7 +1077,8 @@ int vc_mod_set_mode(struct vc_cam *cam, int *reset)
         char fourcc[5];
         char *stype;
         __u8 type = 0;
-        __u8 binning = 0; // TODO: Not implemented yet
+        struct vc_binning *binning = vc_core_get_binning(cam);
+        __u8 binning_mode = 0;
         __u8 mode = 0;
         int ret = 0;
         bool bMustBinningReset = false;
@@ -1115,7 +1116,9 @@ int vc_mod_set_mode(struct vc_cam *cam, int *reset)
                 bMustBinningReset = false;
         }
 
-        mode = vc_mod_find_mode(cam, num_lanes, format, type, binning);
+        binning_mode = (binning->use_mod_mode) ? state->binning_mode : 0;                
+
+        mode = vc_mod_find_mode(cam, num_lanes, format, type, binning_mode);
         if ( (mode == state->mode) && (!(ctrl->flags & FLAG_RESET_ALWAYS) && (type == MODE_TYPE_STREAM) && !bMustBinningReset)) {
                 vc_dbg(dev, "%s(): Module mode %u need not to be set!\n", __FUNCTION__, mode);
                 *reset = 0;
