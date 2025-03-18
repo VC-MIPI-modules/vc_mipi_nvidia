@@ -612,7 +612,7 @@ static int vc_ready_to_stream(struct tegracam_device *tc_dev)
         if (0 < ctrl->binnings[b_tmp].h_factor) {
                 w_tmp = image->width * ctrl->binnings[b_tmp].h_factor;
                 if (cam->ctrl.frame.width < w_tmp) {
-                        vc_err(dev, "%s(): Could not stat stream: width (%d x %d = %d) exceeds maximum width (%d) \n", __FUNCTION__, 
+                        vc_err(dev, "%s(): Could not start stream: width (%d x %d = %d) exceeds maximum width (%d) \n", __FUNCTION__, 
                         image->width, ctrl->binnings[b_tmp].h_factor, w_tmp, cam->ctrl.frame.width);
                         return -EINVAL;
                 }
@@ -620,7 +620,7 @@ static int vc_ready_to_stream(struct tegracam_device *tc_dev)
         if (0 < ctrl->binnings[b_tmp].v_factor) {
                 h_tmp = image->height * ctrl->binnings[b_tmp].v_factor;
                 if (cam->ctrl.frame.height < h_tmp) {
-                        vc_err(dev, "%s(): Could not stat stream: height (%d x %d = %d) exceeds maximum height (%d) \n", __FUNCTION__, 
+                        vc_err(dev, "%s(): Could not start stream: height (%d x %d = %d) exceeds maximum height (%d) \n", __FUNCTION__, 
                         image->height, ctrl->binnings[b_tmp].v_factor, h_tmp, cam->ctrl.frame.height);
                         return -EINVAL;
                 }
