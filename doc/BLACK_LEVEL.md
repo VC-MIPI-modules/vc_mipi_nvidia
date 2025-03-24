@@ -1,7 +1,7 @@
 # Black level
 Adds an offset to the image output by setting
 ```
-v4l2-ctl -c black_level=value
+v4l2-ctl -d /dev/video0 -c black_level=<value>
 ```
 where the value goes from 0 to 100000. This value is interpreted as milli% or m%.
 
