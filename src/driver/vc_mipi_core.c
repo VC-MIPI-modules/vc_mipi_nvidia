@@ -66,6 +66,12 @@ void vc_core_calculate_roi(struct vc_cam *cam, __u32 *w_left, __u32 *w_right, __
         __u32 *w_top, __u32 *w_bottom, __u32 *w_height, __u32 *o_width, __u32 *o_height);
 struct vc_binning *vc_core_get_binning(struct vc_cam *cam);
 
+int i2c_write_regs(struct i2c_client *client, const struct vc_reg *regs, const char* func);
+__u32 vc_core_get_optimized_vmax(struct vc_cam *cam);
+vc_mode vc_core_get_mode(struct vc_cam *cam, __u8 num_lanes, __u8 format, __u8 binning);
+int vc_mod_set_power(struct vc_cam *cam, int on);
+int vc_sen_write_mode(struct vc_ctrl *ctrl, int mode);
+
 static int vc_sen_read_image_size(struct vc_ctrl *ctrl, struct vc_frame *size);
 #ifdef READ_VMAX
 static __u32 vc_sen_read_vmax(struct vc_ctrl *ctrl);
@@ -1116,7 +1122,8 @@ int vc_mod_set_mode(struct vc_cam *cam, int *reset)
         }
 
         mode = vc_mod_find_mode(cam, num_lanes, format, type, binning);
-        if ( (mode == state->mode) && (!(ctrl->flags & FLAG_RESET_ALWAYS) && (type == MODE_TYPE_STREAM) && !bMustBinningReset)) {
+        if ( ((mode == state->mode) && (!bMustBinningReset) && ((MODE_TYPE_STREAM == type) && !(ctrl->flags & FLAG_RESET_STREAMMODE_ALWAYS)))
+          || ((mode == state->mode) && (!bMustBinningReset) && ((MODE_TYPE_TRIGGER == type) && !(ctrl->flags & FLAG_RESET_TRIGMODE_ALWAYS))) ) {
                 vc_dbg(dev, "%s(): Module mode %u need not to be set!\n", __FUNCTION__, mode);
                 *reset = 0;
                 return 0;

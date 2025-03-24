@@ -13,7 +13,6 @@
 #define vc_warn(dev, fmt, ...) dev_warn(dev, fmt, ##__VA_ARGS__)
 #define vc_err(dev, fmt, ...) dev_err(dev, fmt, ##__VA_ARGS__)
 
-#define FLAG_RESET_ALWAYS               (1 <<  0)
 #define FLAG_EXPOSURE_SONY              (1 <<  1)
 #define FLAG_EXPOSURE_NORMAL            (1 <<  2)
 #define FLAG_EXPOSURE_OMNIVISION        (1 <<  3)
@@ -36,6 +35,9 @@
 
 #define FLAG_PREGIUS_S                  (1 << 18)
 #define FLAG_USE_BINNING_INDEX          (1 << 19)
+
+#define FLAG_RESET_STREAMMODE_ALWAYS    (1 << 20)
+#define FLAG_RESET_TRIGMODE_ALWAYS      (1 << 21)
 
 #define FORMAT_RAW08                    0x2a
 #define FORMAT_RAW10                    0x2b

@@ -8,8 +8,19 @@
 #include "vc_mipi_core.h"
 #include "vc_mipi_modules.h"
 
-#define VERSION "0.18.2"
+#define VERSION "0.18.2_infinite"
 // #define VC_CTRL_VALUE
+
+//prototypes
+struct tegra_channel *get_tegra_channel(struct tegracam_device *tc_dev);
+void vc_update_image_size_from_mode(struct tegracam_device *tc_dev,  __u32 *left, __u32 *top, __u32 *width, __u32 *height);
+void vc_overwrite_image_size(struct tegracam_device *tc_dev, __u32 *width, __u32 *height, 
+        __u32 *tegra_width, __u32 *tegra_height, __u32 *tegra_line_length);
+void vc_update_tegra_image_size(struct tegracam_device *tc_dev, __u32 width, __u32 height, __u32 line_length);
+void vc_update_tegra_controls(struct tegracam_device *tc_dev);
+int vc_init_frmfmt(struct device *dev, struct vc_cam *cam);
+void vc_init_tegra_controls(struct tegracam_device *tc_dev);
+
 
 static struct vc_cam *tegracam_to_cam(struct tegracam_device *tc_dev)
 {
@@ -539,7 +550,11 @@ static int vc_start_streaming(struct tegracam_device *tc_dev)
         // ****************************************************************************************
         // NOTE: On some camera modules (e.g. IMX183, IMX273) the second and/or third image is 
         //       black if here isn't a sleep.
-        usleep_range(1000*sleepS, 1000*sleepS);
+        switch (cam->desc.mod_id) {
+                case MOD_ID_IMX183: usleep_range(1000*sleepS, 1000*sleepS); break;
+                case MOD_ID_IMX273: usleep_range(1000*sleepS, 1000*sleepS); break;
+                default: break;
+        }
 
         cam->state.former_binning_mode = cam->state.binning_mode;
         return ret;

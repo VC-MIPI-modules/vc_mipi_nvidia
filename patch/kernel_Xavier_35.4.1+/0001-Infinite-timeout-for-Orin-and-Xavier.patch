@@ -1,0 +1,80 @@
+From 56977ecc1c3edc466cf6b9434eceb7634f19b25d Mon Sep 17 00:00:00 2001
+From: "/setup.sh" <support@vision-components.com>
+Date: Thu, 27 Feb 2025 16:17:48 +0100
+Subject: [PATCH] Infinite timeout for Orin and Xavier.
+
+---
+ .../platform/tegra/camera/fusa-capture/capture-vi.c |  6 +++++-
+ .../media/platform/tegra/camera/vi/vi5_fops.c       | 13 ++++++++++---
+ 2 files changed, 15 insertions(+), 4 deletions(-)
+
+diff --git a/kernel/nvidia/drivers/media/platform/tegra/camera/fusa-capture/capture-vi.c b/kernel/nvidia/drivers/media/platform/tegra/camera/fusa-capture/capture-vi.c
+index 416b33ad1..d31e8d358 100644
+--- a/kernel/nvidia/drivers/media/platform/tegra/camera/fusa-capture/capture-vi.c
++++ b/kernel/nvidia/drivers/media/platform/tegra/camera/fusa-capture/capture-vi.c
+@@ -1502,7 +1502,11 @@ int vi_capture_status(
+ 
+ 	/* negative timeout means wait forever */
+ 	if (timeout_ms < 0) {
+-		wait_for_completion(&capture->capture_resp);
++		do {
++			ret = wait_for_completion_timeout(
++					&capture->capture_resp,
++					msecs_to_jiffies(10000));
++		} while (ret == 0);
+ 	} else {
+ 		ret = wait_for_completion_timeout(
+ 				&capture->capture_resp,
+diff --git a/kernel/nvidia/drivers/media/platform/tegra/camera/vi/vi5_fops.c b/kernel/nvidia/drivers/media/platform/tegra/camera/vi/vi5_fops.c
+index 4cd2f8538..984b98d6d 100644
+--- a/kernel/nvidia/drivers/media/platform/tegra/camera/vi/vi5_fops.c
++++ b/kernel/nvidia/drivers/media/platform/tegra/camera/vi/vi5_fops.c
+@@ -40,6 +40,7 @@
+ #define VI_CHAN_PATH_MAX 40
+ 
+ #define CAPTURE_TIMEOUT_MS	5000
++#define MIPI_NO_TIMEOUT (-1)
+ 
+ static const struct vi_capture_setup default_setup = {
+ 	.channel_flags = 0
+@@ -509,12 +510,12 @@ static void vi5_capture_dequeue(struct tegra_channel *chan,
+ 			goto rel_buf;
+ 
+ 		/* Dequeue a frame and check its capture status */
+-		err = vi_capture_status(chan->tegra_vi_channel[vi_port], CAPTURE_TIMEOUT_MS);
++		err = vi_capture_status(chan->tegra_vi_channel[vi_port], jiffies_to_msecs(chan->timeout));
+ 		if (err) {
+ 			if (err == -ETIMEDOUT) {
+ 				dev_err(vi->dev,
+ 					"uncorr_err: request timed out after %d ms\n",
+-					CAPTURE_TIMEOUT_MS);
++					jiffies_to_msecs(chan->timeout));
+ 			} else {
+ 				dev_err(vi->dev, "uncorr_err: request err %d\n", err);
+ 			}
+@@ -850,6 +851,7 @@ static int vi5_channel_start_streaming(struct vb2_queue *vq, u32 count)
+ 
+ 	/* Skip in bypass mode */
+ 	if (!chan->bypass) {
++		chan->timeout = MIPI_NO_TIMEOUT;
+ 		for (vi_port = 0; vi_port < chan->valid_ports; vi_port++) {
+ 			int err = vi5_channel_open(chan, vi_port);
+ 
+@@ -981,8 +983,13 @@ static int vi5_channel_stop_streaming(struct vb2_queue *vq)
+ 	struct tegra_channel *chan = vb2_get_drv_priv(vq);
+ 	long err;
+ 	int vi_port = 0;
+-	if (!chan->bypass)
++
++	if (!chan->bypass) {
++		for (vi_port = 0; vi_port < chan->valid_ports; vi_port++) {
++			complete_all(&chan->tegra_vi_channel[vi_port]->capture_data->capture_resp);
++		}
+ 		vi5_channel_stop_kthreads(chan);
++	}
+ 
+ 	/* csi stream/sensor(s) devices to be closed before vi channel */
+ 	tegra_channel_set_stream(chan, false);
+-- 
+2.34.1
+

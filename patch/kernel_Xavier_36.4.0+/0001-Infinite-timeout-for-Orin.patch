@@ -1,0 +1,75 @@
+From 064c28680b3ecf6f3891c4fea12f6e9c59e774dd Mon Sep 17 00:00:00 2001
+From: "/setup.sh" <support@vision-components.com>
+Date: Mon, 17 Mar 2025 13:06:29 +0100
+Subject: [PATCH] Infinite timeout for Orin.
+
+---
+ .../media/platform/tegra/camera/vi/vi5_fops.c    | 16 +++++++++++-----
+ 1 file changed, 11 insertions(+), 5 deletions(-)
+
+diff --git a/nvidia-oot/drivers/media/platform/tegra/camera/vi/vi5_fops.c b/nvidia-oot/drivers/media/platform/tegra/camera/vi/vi5_fops.c
+index aca48d5..c7926ce 100644
+--- a/nvidia-oot/drivers/media/platform/tegra/camera/vi/vi5_fops.c
++++ b/nvidia-oot/drivers/media/platform/tegra/camera/vi/vi5_fops.c
+@@ -39,7 +39,7 @@
+ #define VI_CHANNEL_DEV "/dev/capture-vi-channel"
+ #define VI_CHAN_PATH_MAX 40
+ 
+-#define CAPTURE_TIMEOUT_MS	5000
++#define MIPI_NO_TIMEOUT (-1)
+ 
+ static const struct vi_capture_setup default_setup = {
+ 	.channel_flags = 0
+@@ -214,7 +214,7 @@ static const struct v4l2_ctrl_config vi5_custom_ctrls[] = {
+ 		.id = TEGRA_CAMERA_CID_VI_CAPTURE_TIMEOUT,
+ 		.name = "Override capture timeout ms",
+ 		.type = V4L2_CTRL_TYPE_INTEGER,
+-		.def = CAPTURE_TIMEOUT_MS,
++		.def = -1,
+ 		.min = -1,
+ 		.max = 0x7FFFFFFF,
+ 		.step = 1,
+@@ -516,7 +516,7 @@ static void vi5_capture_dequeue(struct tegra_channel *chan,
+ 	unsigned long flags;
+ 	struct tegra_mc_vi *vi = chan->vi;
+ 	struct vb2_v4l2_buffer *vb = &buf->buf;
+-	int timeout_ms = CAPTURE_TIMEOUT_MS;
++	int timeout_ms = MIPI_NO_TIMEOUT;
+ 	struct timespec64 ts;
+ 	struct capture_descriptor *descr = NULL;
+ 
+@@ -527,7 +527,6 @@ static void vi5_capture_dequeue(struct tegra_channel *chan,
+ 			goto rel_buf;
+ 
+ 		/* Dequeue a frame and check its capture status */
+-		timeout_ms = chan->capture_timeout_ms;
+ 		err = vi_capture_status(chan->tegra_vi_channel[vi_port], timeout_ms);
+ 		if (err) {
+ 			if (err == -ETIMEDOUT) {
+@@ -860,6 +859,8 @@ static int vi5_channel_start_streaming(struct vb2_queue *vq, u32 count)
+ 
+ 	/* Skip in bypass mode */
+ 	if (!chan->bypass) {
++		chan->timeout = MIPI_NO_TIMEOUT;
++
+ 		for (vi_port = 0; vi_port < chan->valid_ports; vi_port++) {
+ 			int err = vi5_channel_open(chan, vi_port);
+ 
+@@ -991,8 +992,13 @@ static int vi5_channel_stop_streaming(struct vb2_queue *vq)
+ 	struct tegra_channel *chan = vb2_get_drv_priv(vq);
+ 	long err;
+ 	int vi_port = 0;
+-	if (!chan->bypass)
++	if (!chan->bypass) {
++		for (vi_port = 0; vi_port < chan->valid_ports; vi_port++) {
++			complete_all(&chan->tegra_vi_channel[vi_port]->capture_data->capture_resp);
++		}
++
+ 		vi5_channel_stop_kthreads(chan);
++	}
+ 
+ 	/* csi stream/sensor(s) devices to be closed before vi channel */
+ 	tegra_channel_set_stream(chan, false);
+-- 
+2.34.1
+
