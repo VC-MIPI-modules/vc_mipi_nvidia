@@ -619,30 +619,38 @@ __u32 vc_core_calculate_max_frame_rate(struct vc_cam *cam, __u8 num_lanes, __u8 
 // ------------------------------------------------------------------------------------------------
 //  Helper Functions for the VC MIPI Controller Module
 
-static struct i2c_client *vc_mod_get_client(struct i2c_adapter *adapter, __u8 i2c_addr)
+struct i2c_client *vc_mod_get_client(struct device *dev, struct i2c_adapter *adapter, __u8 i2c_addr)
 {
-	// struct device *dev;
-	struct i2c_client *client;
-	struct i2c_board_info info = {
-		I2C_BOARD_INFO("i2c", i2c_addr),
-	};
-	unsigned short addr_list[2] = { i2c_addr, I2C_CLIENT_END };
-	client = i2c_new_probed_device(adapter, &info, addr_list, NULL);
+        struct i2c_client *client;
+        struct i2c_board_info info = {
+                I2C_BOARD_INFO("i2c", i2c_addr),
+        };
+        unsigned short addr_list[2] = { i2c_addr, I2C_CLIENT_END };
+        int count;
 
-	// How to change the drivers name.
-	// i2c 6-0010
-	//  ^     ^
-	//  |     +--- The device name is set by
-	//  |          i2c_new_probed_device() -> i2c_new_device() -> i2c_dev_set_name()
-	//  |          dev_set_name() and dev_name()
-	//  +---------
-	// dev = &client->dev;
-	// vc_info(dev, "%s(): dev_name:%s\n", __FUNCTION__, dev_name(dev));
-	// if (dev->driver == 0) {
-	// 	vc_err(dev, "%s(): dev->driver == 0\n", __FUNCTION__);
-	// }
+        for (count = 0; count < 200; count++) {
+                msleep(1);
+                client = i2c_new_probed_device(adapter, &info, addr_list, NULL);
+                if (client != NULL) {
+                        vc_dbg(dev, "%s(): %u attempts took %u ms to probe i2c device 0x%02x\n", __func__, count, count, i2c_addr);
+                        return client;
+                }
+        }
 
-	return client;
+        // How to change the drivers name.
+        // i2c 6-0010
+        //  ^     ^
+        //  |     +--- The device name is set by
+        //  |          i2c_new_probed_device() -> i2c_new_device() -> i2c_dev_set_name()
+        //  |          dev_set_name() and dev_name()
+        //  +---------
+        // dev = &client->dev;
+        // vc_info(dev, "%s(): dev_name:%s\n", __FUNCTION__, dev_name(dev));
+        // if (dev->driver == 0) {
+        // 	vc_err(dev, "%s(): dev->driver == 0\n", __FUNCTION__);
+        // }
+
+        return NULL;
 }
 
 int vc_mod_set_power(struct vc_cam *cam, int on)
@@ -748,7 +756,7 @@ static int vc_mod_setup(struct vc_ctrl *ctrl, int mod_i2c_addr, struct vc_desc *
 		return 0;
 	}
 
-	client_mod = vc_mod_get_client(adapter, mod_i2c_addr);
+	client_mod = vc_mod_get_client(dev_sen, adapter, mod_i2c_addr);
 	if (client_mod == 0) {
 		vc_err(dev_sen, "%s(): Unable to get module I2C client for address 0x%02x\n", __FUNCTION__, mod_i2c_addr);
 		return -EIO;
