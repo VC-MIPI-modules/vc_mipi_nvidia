@@ -52,6 +52,7 @@ MODULES_BSP=$BSP_DIR/Linux_for_Tegra/rootfs/usr
 DTB_OUT=$KERNEL_OUT/arch/arm64/boot/dts/nvidia
 
 ROOTFS_DIR=$BSP_DIR/Linux_for_Tegra/rootfs
+MODULE_TARGET_LOCATION=updates/drivers/media/i2c
 
 ORIN_FLASH_CONFIG_FOLDER="generic"
 ORIN_FLASH_PARTITION_MMC="mmcblk0p1"

@@ -77,14 +77,14 @@ flash_kernel() {
 
 flash_module() {
         case $VC_MIPI_BSP in
-        36.2.0)
+        36.2.0|36.4.0)
                 echo "Flashing module only ..."
                 TMP_DIR=/tmp
                 MODULE_FILES=$(find $KERNEL_SOURCE/nvidia-oot/drivers/media/i2c -name "vc_mipi*.ko")
                 for MODULE_FILE in $MODULE_FILES; do
                         MODULE_NAME=$(basename $MODULE_FILE)
                         KERNEL_VERSION=$($TARGET_SHELL "uname -r")
-                        MODULE_DIR=/lib/modules/$KERNEL_VERSION/extra/drivers/media/i2c
+                        MODULE_DIR=/lib/modules/$KERNEL_VERSION/$MODULE_TARGET_LOCATION
                         scp $MODULE_FILE $TARGET_USER@$TARGET_IP:$TMP_DIR
                         $TARGET_SHELL "echo $TARGET_PW | sudo -S mv $TMP_DIR/$MODULE_NAME $MODULE_DIR"
                 done
@@ -106,7 +106,7 @@ flash_device_tree() {
                         SRC_FILE=$KERNEL_OUT/arch/arm64/boot/dts/nvidia/$ORIN_DTB_FILE
                         ORIN_DTB_DIR=/boot/dtb
                         ;;
-                36.2.0)
+                36.2.0|36.4.0)
                         ORIN_DTB_FILE=tegra234-p3767-camera-p3768-vc_mipi-dual.dtbo
                         SRC_FILE=$KERNEL_OUT/device-tree/platform/generic-dts/dtbs/$ORIN_DTB_FILE
                         ORIN_DTB_DIR=/boot

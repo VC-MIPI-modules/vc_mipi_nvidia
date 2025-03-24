@@ -1,5 +1,18 @@
 # Version History
 
+## v0.18.3 (L4T 36.4, Improvements)
+* New Features
+  * Added support for board support package
+    * NVIDIA L4T 36.4.0 for NVIDIA Jetson Orin NX + Orin Nano DevKit
+* Improvements
+  * I²C communication performs a retry in case of a writing error.
+  * IMX252 starts the triggered stream without additional time penalty.
+  * Infinite timeout for v4l streaming added for L4T 35.4.1 and L4T 36.4.0
+  * Flash script option -m|--module added for L4T 36.2.0 and L4T 36.4.0
+  * Documentation for frame_rate property added.
+  * Documentation for test programs added.
+  * README.md description for long exposures changed.
+
 ## v0.18.2 (Improvements)
 * Improvements
   * Improved error handling for incorrect binning/width/height setup.
