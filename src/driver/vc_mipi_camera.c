@@ -8,7 +8,7 @@
 #include "vc_mipi_core.h"
 #include "vc_mipi_modules.h"
 
-#define VERSION "0.18.2_infinite"
+#define VERSION "0.18.3"
 // #define VC_CTRL_VALUE
 
 //prototypes
