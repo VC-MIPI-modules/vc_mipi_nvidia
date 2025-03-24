@@ -121,7 +121,8 @@ static int i2c_write_reg(struct device *dev, struct i2c_client *client, const __
         struct i2c_adapter *adap = client->adapter;
         struct i2c_msg msg;
         __u8 tx[3];
-        int ret;
+        int wRet = 0;
+        int i = 0;
 
         vc_dbg(dev, "%s():   addr: 0x%04x <= value: 0x%02x\n", func, addr, value);
 
@@ -132,9 +133,16 @@ static int i2c_write_reg(struct device *dev, struct i2c_client *client, const __
         tx[0] = addr >> 8;
         tx[1] = addr & 0xff;
         tx[2] = value;
-        ret = i2c_transfer(adap, &msg, 1);
 
-        return ret == 1 ? 0 : -EIO;
+        for (i = 0; i < MAX_I2C_RETRY_COUNT; i++) {
+                wRet = i2c_transfer(adap, &msg, 1);
+                if (1 == wRet) {
+                        return 0;
+                } else {
+                        vc_err(dev, "%s():  try (%d) addr: 0x%04x <= value: 0x%02x, (write) i2c_transfer ret=%d \n", func, i+1, addr, value, wRet);
+                }
+        }
+        return -EIO;
 }
 
 int i2c_write_regs(struct i2c_client *client, const struct vc_reg *regs, const char* func)
