@@ -74,7 +74,8 @@ static __u32 vc_sen_read_vmax(struct vc_ctrl *ctrl);
 static __u8 i2c_read_reg(struct device *dev, struct i2c_client *client, const __u16 addr, const char* func)
 {
 	__u8 buf[2] = { addr >> 8, addr & 0xff };
-	int ret;
+	int retry = 1, max_retries = 10;
+	int ret = -1;
 	struct i2c_msg msgs[] = {
 		{
 			.addr = client->addr,
@@ -90,10 +91,17 @@ static __u8 i2c_read_reg(struct device *dev, struct i2c_client *client, const __
 		},
 	};
 
-	ret = i2c_transfer(client->adapter, msgs, ARRAY_SIZE(msgs));
-	if (ret < 0) {
+	while (ret < 0 && retry < max_retries) {
+		ret = i2c_transfer(client->adapter, msgs, ARRAY_SIZE(msgs));
+		if (ret < 0) {
+			msleep(10);
+			vc_err(&client->dev, "%s(): Retry %d: Reading register 0x%04x\n", func, retry, addr);
+			retry++;
+		}
+	}
+	if (retry == max_retries) {
 		vc_err(&client->dev, "%s(): Reading register 0x%04x from 0x%02x failed\n", func, addr, client->addr);
-		return ret;
+		return -EIO;
 	}
 
         vc_dbg(dev, "%s():   addr: 0x%04x => value: 0x%02x\n", func, addr, buf[0]);
