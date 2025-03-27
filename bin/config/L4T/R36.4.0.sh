@@ -44,6 +44,7 @@ DTSI_DEST_DICT+=(["Auvidea_JNX42_OrinNX"]="$KERNEL_SOURCE/hardware/nvidia/t23x/n
 
 #setup
 DRIVER_DST_DIR=$KERNEL_SOURCE/nvidia-oot/drivers/media/i2c/vc_mipi
+KERNEL_OUT=$KERNEL_SOURCE/nvidia-oot
 export KERNEL_HEADERS=$KERNEL_SOURCE/kernel/kernel-jammy-src
 
 KERNEL_DIR=kernel/kernel-jammy-src/

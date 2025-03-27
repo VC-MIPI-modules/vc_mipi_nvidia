@@ -108,7 +108,7 @@ flash_device_tree() {
                         ;;
                 36.2.0|36.4.0)
                         ORIN_DTB_FILE=tegra234-p3767-camera-p3768-vc_mipi-dual.dtbo
-                        SRC_FILE=$KERNEL_OUT/device-tree/platform/generic-dts/dtbs/$ORIN_DTB_FILE
+                        SRC_FILE=$BSP_DIR/Linux_for_Tegra/kernel/dtb/$ORIN_DTB_FILE
                         ORIN_DTB_DIR=/boot
                         ;;
                 esac

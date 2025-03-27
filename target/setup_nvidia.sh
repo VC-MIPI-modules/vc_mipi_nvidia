@@ -1,5 +1,7 @@
 #!/bin/bash
 
+sudo apt update
+
 sudo apt-get install -y v4l-utils
 
 sudo apt-get install -y qtbase5-dev qt5-qmake
