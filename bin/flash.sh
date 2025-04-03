@@ -52,6 +52,15 @@ flash_all() {
                         --network usb0 \
                         ${FLASH_BOARD} internal
                 ;;
+        AGXOrin32GB|AGXOrin64GB)
+                sudo ADDITIONAL_DTB_OVERLAY_OPT="BootOrderNvme.dtbo" \
+                        ./tools/kernel_flash/l4t_initrd_flash.sh \
+                        --external-device nvme0n1p1 \
+                        -c tools/kernel_flash/flash_l4t_external.xml \
+                        -p "-c bootloader/t186ref/cfg/flash_t234_qspi.xml" \
+                        --network usb0 \
+                        jetson-agx-orin-devkit internal
+                ;;
         *)
                 sudo ./flash.sh $FLASH_BOARD $FLASH_PARTITION
                 ;;

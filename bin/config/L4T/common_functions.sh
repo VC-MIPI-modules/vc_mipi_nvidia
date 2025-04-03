@@ -129,7 +129,7 @@ function Common_setup_conf_file {
 function Common_setup_nvidia_driver {
         # checking for Orin ...
         case $VC_MIPI_SOM in
-        OrinNano4GB_SD|OrinNano8GB_SD|OrinNano4GB_NVME|OrinNano8GB_NVME|OrinNX8GB|OrinNX16GB)
+        OrinNano4GB_SD|OrinNano8GB_SD|OrinNano4GB_NVME|OrinNano8GB_NVME|OrinNX8GB|OrinNX16GB|AGXOrin32GB|AGXOrin64GB)
                 echo "Setup NVIDIA display driver ($VC_MIPI_BSP) ..."
                 ;;
         *)
@@ -194,7 +194,7 @@ function Common_setup_nvidia_driver {
 function Common_build_nvidia_driver {
         # checking for Orin ...
         case $VC_MIPI_SOM in
-        OrinNano4GB_SD|OrinNano8GB_SD|OrinNano4GB_NVME|OrinNano8GB_NVME|OrinNX8GB|OrinNX16GB)
+        OrinNano4GB_SD|OrinNano8GB_SD|OrinNano4GB_NVME|OrinNano8GB_NVME|OrinNX8GB|OrinNX16GB|AGXOrin32GB|AGXOrin64GB)
                 echo "Build NVIDIA display driver ($VC_MIPI_BSP) ..."
                 ;;
         *)

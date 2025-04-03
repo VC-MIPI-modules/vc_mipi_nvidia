@@ -1,0 +1,34 @@
+From 9cabce63f44e2462b8d32005ddd098f16615494c Mon Sep 17 00:00:00 2001
+From: "/setup.sh" <support@vision-components.com>
+Date: Thu, 3 Apr 2025 16:16:59 +0200
+Subject: [PATCH] Modified tegra234-p3701-0000-p3737-0000.dts to integrate VC
+ Mipi driver.
+
+---
+ .../t23x/concord/kernel-dts/tegra234-p3701-0000-p3737-0000.dts | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
+
+diff --git a/hardware/nvidia/platform/t23x/concord/kernel-dts/tegra234-p3701-0000-p3737-0000.dts b/hardware/nvidia/platform/t23x/concord/kernel-dts/tegra234-p3701-0000-p3737-0000.dts
+index 4059d66..ff751ac 100644
+--- a/hardware/nvidia/platform/t23x/concord/kernel-dts/tegra234-p3701-0000-p3737-0000.dts
++++ b/hardware/nvidia/platform/t23x/concord/kernel-dts/tegra234-p3701-0000-p3737-0000.dts
+@@ -20,7 +20,6 @@
+ #include "tegra234-power-tree-p3701-0000-p3737-0000.dtsi"
+ #include "tegra234-dcb-p3701-0000-a02-p3737-0000-a01.dtsi"
+ #include <tegra234-soc/mods-simple-bus.dtsi>
+-#include "cvb/tegra234-p3737-camera-modules.dtsi"
+ #include <t234-common-cvb/tegra234-pwm.dtsi>
+ #include <t234-common-cvm/tegra234-cpuidle.dtsi>
+ #include <t234-common-cvm/tegra234-thermal.dtsi>
+@@ -28,6 +27,8 @@
+ #include <t234-common-cvm/tegra234-thermal-userspace-alert.dtsi>
+ #include <tegra234-soc/tegra234-soc-hwpm.dtsi>
+ 
++#include "cvb/tegra234-camera-vc-mipi-cam.dtsi"
++
+ / {
+ 	nvidia,dtsfilename = __FILE__;
+ 	nvidia,dtbbuildtime = __DATE__, __TIME__;
+-- 
+2.34.1
+

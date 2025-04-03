@@ -12,7 +12,7 @@ export CROSS_COMPILE=$GCC_DIR/bin/aarch64-linux-gnu-
 DEV_URL=https://developer.nvidia.com/downloads/embedded/l4t/r35_release_v4.1
 
 case $VC_MIPI_SOM in
-        AGXXavier|XavierNX|XavierNXSD|AGXOrin|OrinNX8GB|OrinNX16GB|OrinNano4GB_SD|OrinNano8GB_SD|OrinNano4GB_NVME|OrinNano8GB_NVME)
+        AGXXavier|XavierNX|XavierNXSD|OrinNX8GB|OrinNX16GB|OrinNano4GB_SD|OrinNano8GB_SD|OrinNano4GB_NVME|OrinNano8GB_NVME|AGXOrin32GB|AGXOrin64GB)
                 BSP_FILE=jetson_linux_r35.4.1_aarch64.tbz2
                 ;;
 esac
@@ -40,6 +40,12 @@ DTSI_FILE_DICT+=(["Auvidea_JNX42_OrinNano"]="tegra234-camera-vc-mipi-cam.dtsi")
 DTSI_DEST_DICT+=(    ["NV_DevKit_OrinNano"]="$KERNEL_SOURCE/hardware/nvidia/platform/t23x/p3768/kernel-dts/cvb")
 DTSI_DEST_DICT+=(  ["Auvidea_JNX42_OrinNX"]="$KERNEL_SOURCE/hardware/nvidia/platform/t23x/p3768/kernel-dts/cvb")
 DTSI_DEST_DICT+=(["Auvidea_JNX42_OrinNano"]="$KERNEL_SOURCE/hardware/nvidia/platform/t23x/p3768/kernel-dts/cvb")
+
+DTSI_FILE_DICT+=(["Auvidea_J20_AGXOrin"]="tegra234-camera-vc-mipi-cam.dtsi" )
+DTSI_DEST_DICT+=(["Auvidea_J20_AGXOrin"]="$KERNEL_SOURCE/hardware/nvidia/platform/t23x/concord/kernel-dts/cvb")
+
+DTSI_FILE_DICT+=(["Forecr_DSADDON_AGXOrin"]="tegra234-camera-vc-mipi-cam.dtsi" )
+DTSI_DEST_DICT+=(["Forecr_DSADDON_AGXOrin"]="$KERNEL_SOURCE/hardware/nvidia/platform/t23x/concord/kernel-dts/cvb")
 
 #setup
 DRIVER_DST_DIR=$KERNEL_SOURCE/kernel/nvidia/drivers/media/i2c
@@ -76,7 +82,7 @@ function L4T_setup_nvidia_driver {
 
 function L4T_setup_flash_prerequisites {
         case $VC_MIPI_SOM in
-        OrinNano4GB_SD|OrinNano8GB_SD|OrinNano4GB_NVME|OrinNano8GB_NVME|OrinNX8GB|OrinNX16GB)
+        OrinNano4GB_SD|OrinNano8GB_SD|OrinNano4GB_NVME|OrinNano8GB_NVME|OrinNX8GB|OrinNX16GB|AGXOrin32GB|AGXOrin64GB)
                 echo "Setting up flash prerequisites ($VC_MIPI_BSP) ..."
                 sudo ./tools/l4t_flash_prerequisites.sh
                 ;;

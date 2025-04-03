@@ -45,13 +45,17 @@ function extract_and_set_key_from_config {
                         part_str_som=$VC_MIPI_SOM
                         part_str_board="${part_str_board}D"
                         ;;
+                AGXOrin32GB|AGXOrin64GB)
+                        part_str_som="AGXOrin"
+                        ;;
                 *)
                         echo "Unknown som detected! Exiting."
                         exit 1
                         ;;
                 esac
-
+                
                 DTSI_KEY="${part_str_board}_${part_str_som}"
+                echo "bazo DTSI_KEY: $DTSI_KEY"
         fi
 
         found=0

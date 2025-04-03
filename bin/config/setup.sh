@@ -53,10 +53,12 @@ soms=(
 "NVIDIA Jetson TX2 NX (production) (https://developer.nvidia.com/embedded/jetson-tx2-nx)"
 "NVIDIA Jetson Orin NX 8GB (devkit) (https://developer.nvidia.com/embedded/jetson-modules#jetson_orin_nx)"
 "NVIDIA Jetson Orin NX 16GB (devkit) (https://developer.nvidia.com/embedded/jetson-modules#jetson_orin_nx)"
-"NVIDIA Jetson Orin Nano 4GB SD (devkit) (https://developer.nvidia.com/embedded/jetson-modules#jetson_orin_nano)"        
-"NVIDIA Jetson Orin Nano 8GB SD (devkit) (https://developer.nvidia.com/embedded/jetson-modules#jetson_orin_nano)"        
-"NVIDIA Jetson Orin Nano 4GB NVME (devkit) (https://developer.nvidia.com/embedded/jetson-modules#jetson_orin_nano)"        
-"NVIDIA Jetson Orin Nano 8GB NVME (devkit) (https://developer.nvidia.com/embedded/jetson-modules#jetson_orin_nano)"        
+"NVIDIA Jetson Orin Nano 4GB SD (devkit) (https://developer.nvidia.com/embedded/jetson-modules#jetson_orin_nano)"
+"NVIDIA Jetson Orin Nano 8GB SD (devkit) (https://developer.nvidia.com/embedded/jetson-modules#jetson_orin_nano)"
+"NVIDIA Jetson Orin Nano 4GB NVME (devkit) (https://developer.nvidia.com/embedded/jetson-modules#jetson_orin_nano)"
+"NVIDIA Jetson Orin Nano 8GB NVME (devkit) (https://developer.nvidia.com/embedded/jetson-modules#jetson_orin_nano)"
+"NVIDIA Jetson AGX Orin 32GB (devkit) (https://developer.nvidia.com/embedded/jetson-modules#jetson_agx_orin)"
+"NVIDIA Jetson AGX Orin 64GB (devkit) (https://developer.nvidia.com/embedded/jetson-modules#jetson_agx_orin)"
 )
 
 som_keys=(
@@ -74,6 +76,8 @@ som_keys=(
 "OrinNano8GB_SD"
 "OrinNano4GB_NVME"
 "OrinNano8GB_NVME"
+"AGXOrin32GB"
+"AGXOrin64GB"
 )
 
 choose_som() {
@@ -102,6 +106,8 @@ boards=(
 "Auvidea JNX30/JNX30D (https://auvidea.eu/product/70879)"
 "Auvidea JNX42 LM (https://auvidea.eu/product/70784)"
 "Auvidea J20 on Devkit Jetson AGX Xavier or TX2 (https://auvidea.eu/j20)"
+"Auvidea J20 on Devkit Jetson AGX Orin (https://auvidea.eu/j20)"
+"Forecr DSADDON on Devkit Jetson AGX Orin (https://www.forecr.io/)"
 )
 
 board_keys=(
@@ -112,6 +118,8 @@ board_keys=(
 "Auvidea_JNX30"
 "Auvidea_JNX42"
 "Auvidea_J20"
+"Auvidea_J20"
+"Forecr_DSADDON"
 )
 
 choose_board() {
@@ -206,7 +214,7 @@ write_configuration() {
 
 setup_driver() {
         print_title $1 $2
-        choose_som 0 1 2 3 4 5 6 7 8 9 10 11 12 13
+        choose_som 0 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15
         case ${som} in
         Nano2GB)
                 choose_board 0
@@ -248,6 +256,10 @@ setup_driver() {
                         ;;
                 esac
 
+                ;;
+        AGXOrin32GB|AGXOrin64GB)
+                choose_board 8
+                choose_bsp 7
                 ;;
         esac
         check_configuration $1 $2

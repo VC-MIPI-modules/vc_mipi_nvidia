@@ -16,7 +16,7 @@ case $VC_MIPI_SOM in
 Nano|NanoSD|Nano2GB|TX1)
         BSP_DIR=$BUILD_DIR/Nano\_$VC_MIPI_BSP
         ;;
-AGXXavier|XavierNX|XavierNXSD|TX2|TX2i|TX2NX|OrinNano4GB_SD|OrinNano8GB_SD|OrinNano4GB_NVME|OrinNano8GB_NVME|OrinNX8GB|OrinNX16GB)
+AGXXavier|XavierNX|XavierNXSD|TX2|TX2i|TX2NX|OrinNano4GB_SD|OrinNano8GB_SD|OrinNano4GB_NVME|OrinNano8GB_NVME|OrinNX8GB|OrinNX16GB|AGXOrin32GB|AGXOrin64GB)
         BSP_DIR=$BUILD_DIR/Xavier\_$VC_MIPI_BSP
         ;;
 esac
@@ -238,6 +238,9 @@ OrinNano4GB_SD|OrinNano8GB_SD|OrinNano4GB_NVME|OrinNano8GB_NVME|OrinNX8GB|OrinNX
         esac
 
         ORIN_DTB_FILE=${ORIN_DTB_PREFIX}${ORIN_DTB_SKU}${ORIN_DTB_SUFFIX}
+        ;;
+AGXOrin32GB|AGXOrin64GB)
+# todo device-tree files...
         ;;
 *)
         echo "SOM $VC_MIPI_SOM not supported!"
