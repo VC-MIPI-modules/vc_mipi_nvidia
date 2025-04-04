@@ -55,7 +55,6 @@ function extract_and_set_key_from_config {
                 esac
                 
                 DTSI_KEY="${part_str_board}_${part_str_som}"
-                echo "bazo DTSI_KEY: $DTSI_KEY"
         fi
 
         found=0
