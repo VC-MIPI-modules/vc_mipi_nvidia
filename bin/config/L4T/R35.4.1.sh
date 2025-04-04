@@ -41,8 +41,8 @@ DTSI_DEST_DICT+=(    ["NV_DevKit_OrinNano"]="$KERNEL_SOURCE/hardware/nvidia/plat
 DTSI_DEST_DICT+=(  ["Auvidea_JNX42_OrinNX"]="$KERNEL_SOURCE/hardware/nvidia/platform/t23x/p3768/kernel-dts/cvb")
 DTSI_DEST_DICT+=(["Auvidea_JNX42_OrinNano"]="$KERNEL_SOURCE/hardware/nvidia/platform/t23x/p3768/kernel-dts/cvb")
 
-DTSI_FILE_DICT+=(["Auvidea_J20_AGXOrin"]="tegra234-camera-vc-mipi-cam.dtsi" )
-DTSI_DEST_DICT+=(["Auvidea_J20_AGXOrin"]="$KERNEL_SOURCE/hardware/nvidia/platform/t23x/concord/kernel-dts/cvb")
+#DTSI_FILE_DICT+=(["Auvidea_J20_AGXOrin"]="tegra234-camera-vc-mipi-cam.dtsi" )
+#DTSI_DEST_DICT+=(["Auvidea_J20_AGXOrin"]="$KERNEL_SOURCE/hardware/nvidia/platform/t23x/concord/kernel-dts/cvb")
 
 DTSI_FILE_DICT+=(["Forecr_DSADDON_AGXOrin"]="tegra234-camera-vc-mipi-cam.dtsi" )
 DTSI_DEST_DICT+=(["Forecr_DSADDON_AGXOrin"]="$KERNEL_SOURCE/hardware/nvidia/platform/t23x/concord/kernel-dts/cvb")
