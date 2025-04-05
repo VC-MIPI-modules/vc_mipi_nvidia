@@ -130,8 +130,8 @@ index fc8d9ac..e3d08a1 100644
 +
 +	int ret = 0;
 +
-+	dev_dbg(chan->vi->dev, "%s: s_data->mode=%d, s_data->mode_prop_idx=%d, s_data->sensor_mode_id=%d \n", __func__,
-+		s_data->mode, s_data->mode_prop_idx, s_data->sensor_mode_id);
++	if (s_data != NULL) { dev_dbg(chan->vi->dev, "%s: s_data->mode=%d, s_data->mode_prop_idx=%d, s_data->sensor_mode_id=%d \n", __func__,
++		s_data->mode, s_data->mode_prop_idx, s_data->sensor_mode_id); }
 +
 +	if (NULL == vi->fops) {
 +		dev_err(chan->vi->dev, "%s: Could not get fops! \n", __func__);
