@@ -437,6 +437,7 @@ static void vc_init_ctrl_imx335(struct vc_ctrl *ctrl, struct vc_desc* desc)
         ctrl->flags                    |= FLAG_INCREASE_FRAME_RATE;
         ctrl->flags                    |= FLAG_DOUBLE_HEIGHT;
         ctrl->flags                    |= FLAG_IO_ENABLED;
+        ctrl->flags                    |= FLAG_TRIGGER_SLAVE;
 }
 
 // ------------------------------------------------------------------------------------------------
