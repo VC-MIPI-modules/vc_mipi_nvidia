@@ -135,8 +135,6 @@ setup_som_carrier_specifics() {
         then
                 L4T_setup_dynamic_dtbo_file
         fi
-
-#bazo 36.4.3 ?
 }
 
 setup_nvidia_prereq_on_target() {

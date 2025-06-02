@@ -240,7 +240,7 @@ setup_driver() {
                 choose_board 3 4 6
 
                 case ${board} in
-                NV_DevKit_OrinNano_Super)
+                NV_DevKit_OrinNano|NV_DevKit_OrinNano_Super)
                         choose_bsp 6 7 8 9 10
                         ;;
                 *)
