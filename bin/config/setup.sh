@@ -216,14 +216,7 @@ setup_driver() {
                 ;;
         Nano|NanoSD)
                 choose_board 1 4 5
-                case ${board} in
-                NV_DevKit_Nano)
-                        choose_bsp 0 1 2 3 4
-                        ;;
-                *)
-                        choose_bsp 0 1 2 3
-                        ;;
-                esac
+                choose_bsp 0 1 2 3 4
                 ;;
         XavierNX|XavierNXSD) 
                 choose_board 2 4 5

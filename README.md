@@ -2,7 +2,7 @@
 
 ![VC MIPI camera](doc/images/mipi_sensor_front_back.png)
 
-## Version 0.18.3 ([History](VERSION.md))
+## Version 0.18.4 ([History](VERSION.md))
 
 * Supported system on modules
   * [NVIDIA Jetson Nano 4GB/2GB (production + devkit)](https://developer.nvidia.com/embedded/jetson-nano)
@@ -25,6 +25,7 @@
   * [NVIDIA L4T 32.7.2](https://developer.nvidia.com/embedded/linux-tegra-r3272)
   * [NVIDIA L4T 32.7.3](https://developer.nvidia.com/embedded/linux-tegra-r3273)
   * [NVIDIA L4T 32.7.4](https://developer.nvidia.com/embedded/linux-tegra-r3274) *(only NVIDIA Jetson Nano)*
+  * [NVIDIA L4T 32.7.5](https://developer.nvidia.com/embedded/linux-tegra-r3275) *(only NVIDIA Jetson Nano)*
   * [NVIDIA L4T 35.1.0](https://developer.nvidia.com/embedded/jetson-linux-r351) *(only NVIDIA Jetson Xavier NX and AGX Xavier)*
   * [NVIDIA L4T 35.2.1](https://developer.nvidia.com/embedded/jetson-linux-r3521) *(only NVIDIA Jetson Xavier NX, AGX Xavier and Orin NX)*
   * [NVIDIA L4T 35.3.1](https://developer.nvidia.com/embedded/jetson-linux-r3531) *(only NVIDIA Jetson Xavier NX, AGX Xavier, Orin NX and Orin Nano)*
@@ -418,10 +419,13 @@ If you have your own BSP, you have to integrate the driver into it. Please follo
    | ------------------------ | -------------- | --------------- | --------------------- |
    | NVIDIA Jetson Nano       | NVIDIA DevKit  | 32.7.1 - 32.7.3 | kernel_Nano_32.6.1+   |
    |                          |                | 32.7.4          | kernel_Nano_32.6.1+ <br> kernel_Nano_32.7.4 |
+   |                          |                | 32.7.5          | kernel_Nano_32.6.1+ <br> kernel_Nano_32.7.5 |
    |                          | Auvidea JNX30  | 32.7.1 - 32.7.3 | kernel_Nano_32.6.1+ <br> dt_Auvidea_JNX30_Nano_32.5.0+ |
    |                          |                | 32.7.4          | kernel_Nano_32.6.1+ <br> kernel_Nano_32.7.4 <br> dt_Auvidea_JNX30_Nano_32.5.0+ |
+   |                          |                | 32.7.5          | kernel_Nano_32.6.1+ <br> kernel_Nano_32.7.5 <br> dt_Auvidea_JNX30_Nano_32.5.0+ |
    |                          | Auvidea JNX42  | 32.7.1 - 32.7.3 | kernel_Nano_32.6.1+ <br> dt_Auvidea_JNX30_Nano_32.5.0+ |
    |                          |                | 32.7.4          | kernel_Nano_32.6.1+ <br> kernel_Nano_32.7.4 <br> dt_Auvidea_JNX30_Nano_32.5.0+ |
+   |                          |                | 32.7.5          | kernel_Nano_32.6.1+ <br> kernel_Nano_32.7.5 <br> dt_Auvidea_JNX30_Nano_32.5.0+ |
    | NVIDIA Jetson Xavier NX  | NVIDIA DevKit  | 32.7.1 - 32.7.2 | kernel_Xavier_32.6.1+ |
    |                          |                | 32.7.3          | kernel_Xavier_32.7.3+ |
    |                          |                | 35.1.0          | kernel_Xavier_35.1.0+ |
