@@ -328,6 +328,20 @@ static void vc_init_ctrl_imx273(struct vc_ctrl *ctrl, struct vc_desc* desc)
         MODE( 4, 4, FORMAT_RAW10, 0,     290,   15,  0xfffff,  1130, 1032,   60,    519230)
         MODE( 5, 4, FORMAT_RAW12, 0,     396,   15,  0xfffff,  1130, 4095,  240,    519230)
 
+        // binning
+        MODE( 6, 2, FORMAT_RAW08, 1,     336,   15,  0xfffff,   586,  255,   15,    519230)
+        MODE( 7, 2, FORMAT_RAW10, 1,     420,   15,  0xfffff,   586, 1023,   60,    519230)
+        MODE( 8, 2, FORMAT_RAW12, 1,     480,   15,  0xfffff,   586, 4095,  240,    519230)
+        MODE( 9, 4, FORMAT_RAW08, 1,     218,   15,  0xfffff,   586,  255,   15,    519230)
+        MODE(10, 4, FORMAT_RAW10, 1,     250,   15,  0xfffff,   586, 1032,   60,    519230)
+        MODE(11, 4, FORMAT_RAW12, 1,     396,   15,  0xfffff,   586, 4095,  240,    519230)
+
+        BINNING(ctrl->binnings[0], 0, 0)
+        BINNING(ctrl->binnings[1], 2, 2)
+        
+        ctrl->max_binning_modes_used = 1;
+
+        ctrl->flags                    |= FLAG_USE_BINNING_INDEX;
         ctrl->flags                    |= FLAG_RESET_TRIGMODE_ALWAYS;
 }
 
@@ -362,7 +376,19 @@ static void vc_init_ctrl_imx296(struct vc_ctrl *ctrl, struct vc_desc* desc)
         FRAME(0, 0, 1440, 1080)
         //all read out         binning  hmax  vmax      vmax   vmax  blkl  blkl  retrigger
         //                      mode           min       max    def   max   def
-        MODE( 0, 1, FORMAT_RAW10, 0,    1100,    5,  0xfffff,  1110, 1023,   60,    883008)
+        MODE( 0, 1, FORMAT_RAW10, 0,   0x44c,    5,  0xfffff, 0x45e, 1023,   60,    883008)
+
+        // binning
+        // NOTE: Since the data sheet values of hmax (0x42e) and vmax (0x23e) does not lead 
+        // to correct exposure time and frame rate, the values are optimized.
+        MODE( 1, 1, FORMAT_RAW10, 1,   0x44c,    5,  0xfffff, 0x22f, 1023,   60,    883008)
+
+        BINNING(ctrl->binnings[0], 0, 0)
+        BINNING(ctrl->binnings[1], 2, 2)
+        
+        ctrl->max_binning_modes_used = 1;
+
+        ctrl->flags                    |= FLAG_USE_BINNING_INDEX;
 }
 
 // ------------------------------------------------------------------------------------------------
@@ -378,7 +404,7 @@ static void vc_init_ctrl_imx297(struct vc_ctrl *ctrl, struct vc_desc* desc)
         FRAME(0, 0, 704, 540) // 720 isn't divisible by 32
         //all read out         binning  hmax  vmax      vmax   vmax  blkl  blkl  retrigger
         //                      mode           min       max    def   max   def
-        MODE( 0, 1, FORMAT_RAW10, 0,     550,    5,  0xfffff,  1110,  511,   60,    883008)
+        MODE( 0, 1, FORMAT_RAW10, 0,   0x42e,    5,  0xfffff, 0x23e,  511,   60,    883008)
 }
 
 // ------------------------------------------------------------------------------------------------
