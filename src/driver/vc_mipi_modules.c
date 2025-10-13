@@ -29,6 +29,19 @@
                 } while (0); \
         }
 
+#define HDR_MODE_REGS(_mode, ...) \
+        if (MAX_VC_MODES > _mode) { \
+                do { \
+                        const struct vc_reg _hdr_mode_regs [] = { __VA_ARGS__ }; \
+                        int vrs = 0; \
+                        vrs = sizeof(_hdr_mode_regs) / sizeof(vc_reg); \
+                                if (MAX_HDR_MODE_REGS > vrs) { \
+                                        memcpy(&ctrl->mode[_mode].hdr_mode_regs, _hdr_mode_regs, sizeof(_hdr_mode_regs)); \
+                                } \
+                } while (0); \
+        }
+
+
 int vc_mod_is_color_sensor(struct vc_desc *desc)
 {
         if (desc->sen_type) {
@@ -51,13 +64,13 @@ static void vc_init_ctrl(struct vc_ctrl *ctrl, struct vc_desc* desc)
         ctrl->csr.sen.mode_standby      = 0x00; 
         ctrl->csr.sen.mode_operating    = 0x01;
         
-        ctrl->csr.sen.shs.l             = desc->csr_exposure_l;
-        ctrl->csr.sen.shs.m             = desc->csr_exposure_m;
-        ctrl->csr.sen.shs.h             = desc->csr_exposure_h;
-        ctrl->csr.sen.shs.u             = 0;
+        ctrl->csr.sen.shs[0].l          = desc->csr_exposure_l;
+        ctrl->csr.sen.shs[0].m          = desc->csr_exposure_m;
+        ctrl->csr.sen.shs[0].h          = desc->csr_exposure_h;
+        ctrl->csr.sen.shs[0].u          = 0;
         
-        ctrl->csr.sen.gain.l            = desc->csr_gain_l;
-        ctrl->csr.sen.gain.m            = desc->csr_gain_h;
+        ctrl->csr.sen.gain[0].l         = desc->csr_gain_l;
+        ctrl->csr.sen.gain[0].m         = desc->csr_gain_h;
 
         ctrl->csr.sen.h_start.l         = desc->csr_h_start_l;
         ctrl->csr.sen.h_start.m         = desc->csr_h_start_h;
@@ -414,6 +427,14 @@ static void vc_init_ctrl_imx327(struct vc_ctrl *ctrl, struct vc_desc* desc)
 //  Settings for IMX335 (Rev.02)
 //  5.0 MegaPixel Starvis
 
+#define IMX335_HDR_MODE                 0x3049
+#define IMX335_HDR_MODE_DISABLE         0x00
+#define IMX335_HDR_MODE_2FRAME          0x01
+#define IMX335_HDR_MODE_4FRAME          0x03
+#define IMX335_HDR_INDI_GAIN            0x3200
+#define IMX335_HDR_INDI_GAIN_ENABLE     0xF0
+#define IMX335_HDR_INDI_GAIN_DISABLE    0xF1
+
 static void vc_init_ctrl_imx335(struct vc_ctrl *ctrl, struct vc_desc* desc)
 {
         INIT_MESSAGE("IMX335")
@@ -425,7 +446,18 @@ static void vc_init_ctrl_imx335(struct vc_ctrl *ctrl, struct vc_desc* desc)
         ctrl->csr.sen.mode_standby      = 0x01;
         ctrl->csr.sen.mode_operating    = 0x00;
 
-        FRAME(7, 52, 2592, 1944)
+        ctrl->csr.sen.gain[1]           = (vc_csr2) { .l = 0x30ea, .m = 0x30eb };
+        ctrl->csr.sen.gain[2]           = (vc_csr2) { .l = 0x30ec, .m = 0x30ed };
+        ctrl->csr.sen.gain[3]           = (vc_csr2) { .l = 0x30ee, .m = 0x30ef };
+
+        ctrl->csr.sen.shs[1]            = (vc_csr4) { .l = 0x305c, .m = 0x305d, .h = 0x305e, .u = 0x0000 };
+        ctrl->csr.sen.shs[2]            = (vc_csr4) { .l = 0x3060, .m = 0x3061, .h = 0x3062, .u = 0x0000 };
+        ctrl->csr.sen.shs[3]            = (vc_csr4) { .l = 0x3064, .m = 0x3065, .h = 0x3066, .u = 0x0000 };
+
+//        FRAME(7, 52, 2592, 1944)
+        // workaround for TX2 (256 alignment)
+        FRAME(12, 52, 2560, 1944)
+
         //all read out         binning  hmax  vmax      vmax   vmax  blkl  blkl  retrigger
         //                      mode           min       max    def   max   def
         MODE( 0, 2, FORMAT_RAW10, 0,   0x226,    9,  0xfffff,  4500, 1023,   50,         0)
@@ -433,10 +465,26 @@ static void vc_init_ctrl_imx335(struct vc_ctrl *ctrl, struct vc_desc* desc)
         MODE( 2, 4, FORMAT_RAW10, 0,   0x113,    9,  0xfffff,  4500, 1023,   50,         0)
         MODE( 3, 4, FORMAT_RAW12, 0,   0x113,    9,  0xfffff,  4500, 1023,   50,         0)
 
+        HDR_START(ctrl->hdrs[0], 1)
+                { IMX335_HDR_MODE, IMX335_HDR_MODE_DISABLE },
+                { IMX335_HDR_INDI_GAIN, IMX335_HDR_INDI_GAIN_DISABLE }
+        HDR_END(ctrl->hdrs[0])
+        HDR_START(ctrl->hdrs[1], 2)
+                { IMX335_HDR_MODE, IMX335_HDR_MODE_2FRAME },
+                { IMX335_HDR_INDI_GAIN, IMX335_HDR_INDI_GAIN_ENABLE }
+        HDR_END(ctrl->hdrs[1])
+        HDR_START(ctrl->hdrs[2], 4)
+                { IMX335_HDR_MODE, IMX335_HDR_MODE_4FRAME },
+                { IMX335_HDR_INDI_GAIN, IMX335_HDR_INDI_GAIN_ENABLE }
+        HDR_END(ctrl->hdrs[2])
+
+        ctrl->max_hdr_modes_used = 2;
+
         ctrl->flags                    |= FLAG_EXPOSURE_SONY;
         ctrl->flags                    |= FLAG_INCREASE_FRAME_RATE;
         ctrl->flags                    |= FLAG_DOUBLE_HEIGHT;
         ctrl->flags                    |= FLAG_IO_ENABLED;
+        ctrl->flags                    |= FLAG_USE_HDR_INDEX;
 }
 
 // ------------------------------------------------------------------------------------------------
@@ -488,7 +536,7 @@ static void vc_init_ctrl_imx412(struct vc_ctrl *ctrl, struct vc_desc* desc)
         ctrl->csr.sen.blacklevel        = (vc_csr2) { .l = 0x3033, .m = 0x3032 };
 
         ctrl->csr.sen.vmax              = (vc_csr4) { .l = 0x0341, .m = 0x0340, .h = 0x0000, .u = 0x0000 };
-        ctrl->csr.sen.shs               = (vc_csr4) { .l = 0x0203, .m = 0x0202, .h = 0x0000, .u = 0x0000 };
+        ctrl->csr.sen.shs[0]            = (vc_csr4) { .l = 0x0203, .m = 0x0202, .h = 0x0000, .u = 0x0000 };
 
         FRAME(0, 0, 4032, 3040)
         //all read out         binning  hmax  vmax      vmax    vmax  blkl  blkl  retrigger
@@ -633,7 +681,7 @@ static void vc_init_ctrl_imx565(struct vc_ctrl *ctrl, struct vc_desc *desc)
 
         ctrl->gain                      = (vc_control) { .min =   0, .max =       480, .def =      0 };
         
-        ctrl->csr.sen.gain              = (vc_csr2) { .l = 0x3514, .m = 0x3515 };
+        ctrl->csr.sen.gain[0]           = (vc_csr2) { .l = 0x3514, .m = 0x3515 };
         ctrl->csr.sen.blacklevel        = (vc_csr2) { .l = 0x35b4, .m = 0x35b5 };
         ctrl->csr.sen.vmax              = (vc_csr4) { .l = 0x30d4, .m = 0x30d5, .h = 0x30d6, .u = 0x0000 };
         ctrl->csr.sen.hmax              = (vc_csr4) { .l = 0x30d8, .m = 0x30d9, .h = 0x0000, .u = 0x0000 };
@@ -952,7 +1000,7 @@ static void vc_init_ctrl_ov7251(struct vc_ctrl *ctrl, struct vc_desc* desc)
         ctrl->csr.sen.flash_offset      = (vc_csr4) { .l = 0x3b8b, .m = 0x3b8a, .h = 0x3b89, .u = 0x3b88 };
         ctrl->csr.sen.vmax              = (vc_csr4) { .l = 0x380f, .m = 0x380e, .h = 0x0000, .u = 0x0000 };
         // NOTE: Modules rom table contains swapped address assigment.
-        ctrl->csr.sen.gain              = (vc_csr2) { .l = 0x350b, .m = 0x350a };
+        ctrl->csr.sen.gain[0]           = (vc_csr2) { .l = 0x350b, .m = 0x350a };
         
         FRAME(0, 0, 640, 480)
         //all read out         binning  hmax  vmax      vmax   vmax  blkl  blkl  retrigger
@@ -984,7 +1032,7 @@ static void vc_init_ctrl_ov9281(struct vc_ctrl *ctrl, struct vc_desc* desc)
         ctrl->csr.sen.flash_offset      = (vc_csr4) { .l = 0x3924, .m = 0x3923, .h = 0x3922, .u = 0x0000 };
         ctrl->csr.sen.vmax              = (vc_csr4) { .l = 0x380f, .m = 0x380e, .h = 0x0000, .u = 0x0000 };
         // NOTE: Modules rom table contains swapped address assigment.
-        ctrl->csr.sen.gain              = (vc_csr2) { .l = 0x3509, .m = 0x0000 };
+        ctrl->csr.sen.gain[0]           = (vc_csr2) { .l = 0x3509, .m = 0x0000 };
         
         FRAME(0, 0, 1280, 800)
         //all read out         binning  hmax  vmax      vmax   vmax  blkl  blkl  retrigger

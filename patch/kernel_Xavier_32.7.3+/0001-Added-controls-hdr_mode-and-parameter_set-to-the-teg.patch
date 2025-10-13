@@ -1,0 +1,132 @@
+From 8cca9115e102d585e2f425ff79f2a264b1d77caa Mon Sep 17 00:00:00 2001
+From: "/setup.sh" <support@vision-components.com>
+Date: Tue, 7 Oct 2025 11:43:39 +0200
+Subject: [PATCH] Added controls 'hdr_mode' and 'parameter_set' to the tegra
+ framework.
+
+---
+ .../platform/tegra/camera/tegracam_ctrls.c    | 59 +++++++++++++++++++
+ kernel/nvidia/include/media/camera_common.h   |  2 +
+ .../nvidia/include/media/tegra-v4l2-camera.h  |  2 +
+ 3 files changed, 63 insertions(+)
+
+diff --git a/kernel/nvidia/drivers/media/platform/tegra/camera/tegracam_ctrls.c b/kernel/nvidia/drivers/media/platform/tegra/camera/tegracam_ctrls.c
+index 3be3a14..50664da 100644
+--- a/kernel/nvidia/drivers/media/platform/tegra/camera/tegracam_ctrls.c
++++ b/kernel/nvidia/drivers/media/platform/tegra/camera/tegracam_ctrls.c
+@@ -227,6 +227,28 @@ static struct v4l2_ctrl_config ctrl_cfg_list[] = {
+ 		.def = 0,
+ 		.step = 1,
+ 	},
++	{
++		.ops = &tegracam_ctrl_ops,
++		.id = TEGRA_CAMERA_CID_HDR_MODE,
++		.name = "HDR Mode",
++		.type = V4L2_CTRL_TYPE_INTEGER,
++		.flags = 0,
++		.min = 0,
++		.max = 2,
++		.def = 0,
++		.step = 1,
++	},
++	{
++		.ops = &tegracam_ctrl_ops,
++		.id = TEGRA_CAMERA_CID_PARAMETER_SET,
++		.name = "Parameter Set",
++		.type = V4L2_CTRL_TYPE_INTEGER,
++		.flags = 0,
++		.min = 0,
++		.max = 3,
++		.def = 0,
++		.step = 1,
++	},
+ };
+ 
+ static int tegracam_get_ctrl_index(u32 cid)
+@@ -375,6 +397,12 @@ static int tegracam_set_ctrls(struct tegracam_ctrl_handler *handler,
+ 	case TEGRA_CAMERA_CID_BINNING_MODE:
+ 		err = ops->set_binning_mode(tc_dev, ctrl->val);
+ 		break;
++	case TEGRA_CAMERA_CID_HDR_MODE:
++		err = ops->set_hdr_mode(tc_dev, ctrl->val);
++		break;
++	case TEGRA_CAMERA_CID_PARAMETER_SET:
++		err = ops->set_parameter_set(tc_dev, ctrl->val);
++		break;
+ 	case TEGRA_CAMERA_CID_GAIN:
+ 		err = ops->set_gain(tc_dev, *ctrl->p_new.p_s64);
+ 		break;
+@@ -752,6 +780,20 @@ static int tegracam_check_ctrl_ops(
+ 			if (ops->set_binning_mode != NULL)
+ 				sensor_ops++;
+ 			break;
++		case TEGRA_CAMERA_CID_HDR_MODE:
++			if (ops->set_hdr_mode == NULL)
++				dev_err(dev,
++					"Missing TEGRA_CAMERA_CID_HDR_MODE implementation\n");
++			if (ops->set_hdr_mode != NULL)
++				sensor_ops++;
++			break;
++		case TEGRA_CAMERA_CID_PARAMETER_SET:
++			if (ops->set_parameter_set == NULL)
++				dev_err(dev,
++					"Missing TEGRA_CAMERA_CID_PARAMETER_SET implementation\n");
++			if (ops->set_parameter_set != NULL)
++				sensor_ops++;
++			break;
+ 		case TEGRA_CAMERA_CID_GAIN:
+ 			if (ops->set_gain == NULL && ops->set_gain_ex == NULL)
+ 				dev_err(dev,
+@@ -967,6 +1009,23 @@ static int tegracam_check_ctrl_cids(struct tegracam_ctrl_handler *handler)
+ 		}
+ 	}
+ 
++	if (ops->set_hdr_mode != NULL) {
++		if (!find_matching_cid(ops->ctrl_cid_list,
++			ops->numctrls,
++			TEGRA_CAMERA_CID_HDR_MODE)) {
++			dev_err(dev, "Missing TEGRA_CAMERA_CID_HDR_MODE registration\n");
++			errors_found++;
++		}
++	}
++	if (ops->set_parameter_set != NULL) {
++		if (!find_matching_cid(ops->ctrl_cid_list,
++			ops->numctrls,
++			TEGRA_CAMERA_CID_PARAMETER_SET)) {
++			dev_err(dev, "Missing TEGRA_CAMERA_CID_PARAMETER_SET registration\n");
++			errors_found++;
++		}
++	}
++
+ 	if (ops->set_gain != NULL || ops->set_gain_ex != NULL) {
+ 		if (!find_matching_cid(ops->ctrl_cid_list,
+ 			ops->numctrls,
+diff --git a/kernel/nvidia/include/media/camera_common.h b/kernel/nvidia/include/media/camera_common.h
+index b9b5891..af3dca6 100644
+--- a/kernel/nvidia/include/media/camera_common.h
++++ b/kernel/nvidia/include/media/camera_common.h
+@@ -198,6 +198,8 @@ struct tegracam_ctrl_ops {
+ 	int (*set_black_level)(struct tegracam_device *tc_dev, s64 val);
+ 	int (*set_single_trigger)(struct tegracam_device *tc_dev, bool val);
+ 	int (*set_binning_mode)(struct tegracam_device *tc_dev, s64 val);
++	int (*set_hdr_mode)(struct tegracam_device *tc_dev, s64 val);
++	int (*set_parameter_set)(struct tegracam_device *tc_dev, s64 val);
+ 	int (*set_gain)(struct tegracam_device *tc_dev, s64 val);
+ 	int (*set_exposure)(struct tegracam_device *tc_dev, s64 val);
+ 	int (*set_exposure_short)(struct tegracam_device *tc_dev, s64 val);
+diff --git a/kernel/nvidia/include/media/tegra-v4l2-camera.h b/kernel/nvidia/include/media/tegra-v4l2-camera.h
+index 090f508..273442f 100644
+--- a/kernel/nvidia/include/media/tegra-v4l2-camera.h
++++ b/kernel/nvidia/include/media/tegra-v4l2-camera.h
+@@ -43,6 +43,8 @@
+ #define TEGRA_CAMERA_CID_BLACK_LEVEL		(TEGRA_CAMERA_CID_BASE+16)
+ #define TEGRA_CAMERA_CID_SINGLE_TRIGGER		(TEGRA_CAMERA_CID_BASE+17)
+ #define TEGRA_CAMERA_CID_BINNING_MODE           (TEGRA_CAMERA_CID_BASE+18)
++#define TEGRA_CAMERA_CID_HDR_MODE               (TEGRA_CAMERA_CID_BASE+19)
++#define TEGRA_CAMERA_CID_PARAMETER_SET          (TEGRA_CAMERA_CID_BASE+20)
+ 
+ #define TEGRA_CAMERA_CID_SENSOR_CONFIG		(TEGRA_CAMERA_CID_BASE+50)
+ #define TEGRA_CAMERA_CID_SENSOR_MODE_BLOB	(TEGRA_CAMERA_CID_BASE+51)
+-- 
+2.34.1
+

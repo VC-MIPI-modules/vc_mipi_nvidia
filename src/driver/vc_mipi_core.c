@@ -65,6 +65,7 @@ static __u32 vc_core_calculate_period_1H(struct vc_cam *cam, __u8 num_lanes, __u
 void vc_core_calculate_roi(struct vc_cam *cam, __u32 *w_left, __u32 *w_right, __u32 *w_width,
         __u32 *w_top, __u32 *w_bottom, __u32 *w_height, __u32 *o_width, __u32 *o_height);
 struct vc_binning *vc_core_get_binning(struct vc_cam *cam);
+struct vc_hdr *vc_core_get_hdr(struct vc_cam *cam);
 
 int i2c_write_regs(struct i2c_client *client, const struct vc_reg *regs, const char* func);
 __u32 vc_core_get_optimized_vmax(struct vc_cam *cam);
@@ -944,7 +945,10 @@ static void vc_core_state_init(struct vc_cam *cam)
         state->exposure = ctrl->exposure.def;
         state->gain = ctrl->gain.def;
 //        state->blacklevel = ctrl->blacklevel.def;
-        state->shs = 0;
+        state->shs[0] = 0;
+        state->shs[1] = 0;
+        state->shs[2] = 0;
+        state->shs[3] = 0;
         state->vmax = 0;
         state->exposure_cnt = 0;
         state->retrigger_cnt = 0;
@@ -1369,6 +1373,21 @@ struct vc_binning *vc_core_get_binning(struct vc_cam *cam)
         return &ctrl->binnings[state->binning_mode];
 }
 
+struct vc_hdr *vc_core_get_hdr(struct vc_cam *cam)
+{
+        struct vc_ctrl *ctrl = &cam->ctrl;
+        struct vc_state *state = &cam->state;
+        struct i2c_client *client = ctrl->client_sen;
+        struct device *dev = &client->dev;
+
+        if (state->hdr_mode >= ARRAY_SIZE(ctrl->hdrs)) {
+                vc_err(dev, "%s(): Invalid hdr mode! \n", __FUNCTION__);
+                return NULL;
+        }
+
+        return &ctrl->hdrs[state->hdr_mode];
+}
+
 void vc_core_calculate_roi(struct vc_cam *cam, __u32 *left, __u32 *right, __u32 *width,
         __u32 *top, __u32 *bottom, __u32 *height, __u32 *o_width, __u32 *o_height)
 {
@@ -1416,6 +1435,7 @@ int vc_sen_set_roi(struct vc_cam *cam)
         struct i2c_client *client = ctrl->client_sen;
         struct device *dev = &client->dev;
         struct vc_binning *binning = vc_core_get_binning(cam);
+        struct vc_hdr *hdr = vc_core_get_hdr(cam);
         __u8 format = vc_core_v4l2_code_to_format(state->format_code);
         int w_left, w_top, w_right, w_bottom, w_width, w_height, o_width, o_height;
         int ret = 0;
@@ -1430,10 +1450,17 @@ int vc_sen_set_roi(struct vc_cam *cam)
                 return -EINVAL;
         }
 
+        if (NULL == hdr) {
+                vc_err(dev, "%s() Could not get hdr struct!\n", __FUNCTION__);
+                return -EINVAL;
+        }
+
         vc_dbg(dev, "%s() h_factor: %d, v_factor: %d \n", __FUNCTION__,
                 binning->h_factor, binning->v_factor);
 
         i2c_write_regs(client, binning->regs, __FUNCTION__);
+
+        i2c_write_regs(client, hdr->regs, __FUNCTION__);
 
         vc_core_calculate_roi(cam, &w_left, &w_right, &w_width, &w_top, &w_bottom, &w_height, &o_width, &o_height);
 
@@ -1517,7 +1544,17 @@ static int vc_sen_write_shs(struct vc_ctrl *ctrl, __u32 shs)
 
         vc_dbg(dev, "%s(): Write sensor SHS: 0x%08x (%u)\n", __FUNCTION__, shs, shs);
 
-        return i2c_write_reg4(dev, client, &ctrl->csr.sen.shs, shs, __FUNCTION__);
+        return i2c_write_reg4(dev, client, &ctrl->csr.sen.shs[0], shs, __FUNCTION__);
+}
+
+static int vc_sen_write_shs_by_index(struct vc_ctrl *ctrl, __u32 shs, int idx)
+{
+        struct i2c_client *client = ctrl->client_sen;
+        struct device *dev = &client->dev;
+
+        vc_dbg(dev, "%s(): Write sensor SHS%d: 0x%08x (%u)\n", __FUNCTION__, idx, shs, shs);
+
+        return i2c_write_reg4(dev, client, &ctrl->csr.sen.shs[idx], shs, __FUNCTION__);
 }
 
 static int vc_sen_write_flash_duration(struct vc_ctrl *ctrl, __u32 duration)
@@ -1554,7 +1591,7 @@ int vc_sen_set_gain(struct vc_cam *cam, int gain)
 
         vc_notice(dev, "%s(): Set sensor gain: %u\n", __FUNCTION__, gain);
 
-        ret |= i2c_write_reg2(dev, client, &ctrl->csr.sen.gain, gain, __FUNCTION__);
+        ret |= i2c_write_reg2(dev, client, &ctrl->csr.sen.gain[cam->state.parameter_set], gain, __FUNCTION__);
         if (ret) {
                 vc_err(dev, "%s(): Couldn't set gain (error: %d)\n", __FUNCTION__, ret);
                 return ret;
@@ -1613,6 +1650,52 @@ int vc_sen_set_binning_mode(struct vc_cam *cam, int mode)
         return 0;
 }
 EXPORT_SYMBOL(vc_sen_set_binning_mode);
+
+
+int vc_sen_set_hdr_mode(struct vc_cam *cam, int hdr_mode)
+{
+        struct vc_ctrl *ctrl = &cam->ctrl;
+        struct vc_state *state = &cam->state;
+        struct i2c_client *client = ctrl->client_sen;
+        struct device *dev = &client->dev;
+
+        vc_notice(dev, "%s(): Set hdr mode: %u\n", __FUNCTION__, hdr_mode);
+
+        if (hdr_mode > ctrl->max_hdr_modes_used)
+        {
+                vc_err(dev, "%s(): Couldn't set hdr mode (max supported modes: %d)\n", __FUNCTION__, ctrl->max_hdr_modes_used);
+                return -1;
+        }
+
+        state->hdr_mode = hdr_mode;
+
+        return 0;
+}
+EXPORT_SYMBOL(vc_sen_set_hdr_mode);
+
+int vc_sen_set_parameter_set(struct vc_cam *cam, int parameter_set)
+{
+        struct vc_ctrl *ctrl = &cam->ctrl;
+        struct vc_state *state = &cam->state;
+        struct i2c_client *client = ctrl->client_sen;
+        struct device *dev = &client->dev;
+
+        vc_notice(dev, "%s(): Set parameter set: %u\n", __FUNCTION__, parameter_set);
+
+        if (parameter_set > (ctrl->hdrs[state->hdr_mode].param_sets - 1))
+        {
+                vc_err(dev, "%s(): Couldn't set parameter set (max supported sets: %d)\n", __FUNCTION__, ctrl->hdrs[state->hdr_mode].param_sets);
+                return -1;
+        }
+
+        state->parameter_set = parameter_set;
+
+        return 0;
+}
+EXPORT_SYMBOL(vc_sen_set_parameter_set);
+
+
+
 
 int vc_sen_start_stream(struct vc_cam *cam)
 {
@@ -1735,7 +1818,7 @@ static void vc_calculate_exposure_sony(struct vc_cam *cam, __u64 exposure_1H)
                 // | SHS_MIN |                                          |
                 // +----------------------------+-----------------------+
                 // | SHS (exposure delay) --->  |    exposure time ---> |
-                state->shs = state->vmax - exposure_1H;
+                state->shs[state->parameter_set] = state->vmax - exposure_1H;
 
         } else {
                 // No, then increase frame time and set exposure delay to the minimal value.
@@ -1743,7 +1826,10 @@ static void vc_calculate_exposure_sony(struct vc_cam *cam, __u64 exposure_1H)
                 // +---------+------------------------------------------------+
                 // | SHS     |                             exposure time ---> |
                 state->vmax = shs_min + exposure_1H;
-                state->shs = shs_min;
+                state->shs[0] = shs_min;
+                state->shs[1] = shs_min;
+                state->shs[2] = shs_min;
+                state->shs[3] = shs_min;
         }
 
         // Special case: Framerate of slave module has to be a little bit faster (Tested with IMX183)
@@ -1765,21 +1851,21 @@ static void vc_calculate_exposure_normal(struct vc_cam *cam, __u64 exposure_1H)
                 // |                 VMAX (frame time)             ---> |
                 // +------------------------+---------------------------+
                 // | exposure time ---> SHS |                           |
-                state->shs = exposure_1H;
+                state->shs[0] = exposure_1H;
 
         } else if (exposure_1H < shs_min) {
                 // Yes, then set shs equal to shs_min
                 // |                 VMAX (frame time)             ---> |
                 // +----------------------------+-----------------------+
                 // | SHS_MIN |                                          |
-                state->shs = shs_min;
+                state->shs[0] = shs_min;
 
         } else {
                 // |                 VMAX (frame time)                   ---> |
                 // +----------------------------------------------------------+
                 // |                                       exposure time ---> |
                 state->vmax = exposure_1H;
-                state->shs = exposure_1H;
+                state->shs[0] = exposure_1H;
         }
 }
 
@@ -1814,7 +1900,7 @@ static void vc_calculate_exposure(struct vc_cam *cam, __u32 exposure_us)
         }
 
         vc_dbg(dev, "%s(): flags: 0x%04x, period_1H_ns: %u, shs: %u/%u, vmax: %u/%u\n", __FUNCTION__,
-                ctrl->flags, period_1H_ns, state->shs, vmax_min, state->vmax, vmax_def);
+                ctrl->flags, period_1H_ns, state->shs[0], vmax_min, state->vmax, vmax_def);
 }
 
 static void vc_calculate_trig_exposure(struct vc_cam *cam, __u32 exposure_us)
@@ -1884,7 +1970,7 @@ int vc_sen_set_exposure(struct vc_cam *cam, int exposure_us)
 
         state->vmax = 0;
 
-        state->shs = 0;
+        state->shs[state->parameter_set] = 0;
         state->exposure_cnt = 0;
         state->retrigger_cnt = 0;
 
@@ -1909,15 +1995,24 @@ int vc_sen_set_exposure(struct vc_cam *cam, int exposure_us)
                 case REG_TRIGGER_STREAM_EDGE:
                 case REG_TRIGGER_STREAM_LEVEL:
                         vc_calculate_exposure(cam, exposure_us);
-                        ret |= vc_sen_write_shs(ctrl, state->shs);
+                        ret |= vc_sen_write_shs(ctrl, state->shs[0]);
                         ret |= vc_sen_write_vmax(ctrl, state->vmax);
+
+                        if (1 == state->hdr_mode) {
+                                ret |= vc_sen_write_shs_by_index(ctrl, state->shs[1], 1);
+                        }
+                        if (2 == state->hdr_mode) {
+                                ret |= vc_sen_write_shs_by_index(ctrl, state->shs[1], 1);
+                                ret |= vc_sen_write_shs_by_index(ctrl, state->shs[2], 2);
+                                ret |= vc_sen_write_shs_by_index(ctrl, state->shs[3], 3);
+                        }
                 }
         
         } else if (ctrl->flags & FLAG_EXPOSURE_OMNIVISION) {
                 __u32 duration = (((__u64)exposure_us)*ctrl->flash_factor)/1000000;
 
                 vc_calculate_exposure(cam, exposure_us);
-                ret |= vc_sen_write_shs(ctrl, state->shs);
+                ret |= vc_sen_write_shs(ctrl, state->shs[0]);
                 ret |= vc_sen_write_vmax(ctrl, state->vmax);
                 ret |= vc_sen_write_flash_duration(ctrl, duration);
                 ret |= vc_sen_write_flash_offset(ctrl, ctrl->flash_toffset);
@@ -1928,7 +2023,7 @@ int vc_sen_set_exposure(struct vc_cam *cam, int exposure_us)
         }
 
         vc_dbg(dev, "%s(): (VMAX: %5u, SHS: %5u), (RETC: %6u, EXPC: %6u)\n",
-                __FUNCTION__, state->vmax, state->shs, state->retrigger_cnt, state->exposure_cnt);
+                __FUNCTION__, state->vmax, state->shs[0], state->retrigger_cnt, state->exposure_cnt);
 
         return ret;
 }

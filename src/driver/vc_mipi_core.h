@@ -1,7 +1,7 @@
 #ifndef _VC_MIPI_CORE_H
 #define _VC_MIPI_CORE_H
 
-// #define DEBUG
+ #define DEBUG
 
 #include <linux/types.h>
 #include <linux/i2c.h>
@@ -39,6 +39,8 @@
 #define FLAG_RESET_STREAMMODE_ALWAYS    (1 << 19)
 #define FLAG_RESET_TRIGMODE_ALWAYS      (1 << 20)
 
+#define FLAG_USE_HDR_INDEX              (1 << 21)
+
 #define FORMAT_RAW08                    0x2a
 #define FORMAT_RAW10                    0x2b
 #define FORMAT_RAW12                    0x2c
@@ -46,6 +48,7 @@
 
 #define MAX_VC_MODES                    16
 #define MAX_BINNING_MODE_REGS           16
+#define MAX_HDR_MODE_REGS               3
 
 #define MAX_I2C_RETRY_COUNT             5
 
@@ -132,8 +135,8 @@ struct vc_sen_csr {
         __u8 mode_operating;
         struct vc_csr4 vmax;
         struct vc_csr4 hmax;
-        struct vc_csr4 shs;
-        struct vc_csr2 gain;
+        struct vc_csr4 shs[4];
+        struct vc_csr2 gain[4];
         struct vc_csr2 blacklevel;
         struct vc_csr2 h_start;
         struct vc_csr2 v_start;
@@ -160,11 +163,13 @@ typedef struct vc_mode {
         __u8       num_lanes;
         __u8       format;
         __u8       binning;
+        __u8       hdr;
         __u32      hmax;
         vc_control vmax;
         vc_control blacklevel;
         __u32      retrigger_min;
         struct vc_reg binning_mode_regs[MAX_BINNING_MODE_REGS];
+        struct vc_reg hdr_mode_regs[MAX_HDR_MODE_REGS];
 } vc_mode;
 
 typedef struct vc_binning {
@@ -178,6 +183,17 @@ typedef struct vc_binning {
         { const struct vc_reg regs [] = {
 #define BINNING_END(binning) \
         , {0, 0} }; memcpy(&binning.regs, regs, sizeof(regs)); }
+
+typedef struct vc_hdr {
+        __u8 param_sets;
+        struct vc_reg regs[8];
+} vc_hdr;
+
+#define HDR_START(hdr, ps) \
+        hdr = (vc_hdr) { .param_sets = ps}; \
+        { const struct vc_reg regs [] = {
+#define HDR_END(hdr) \
+        , {0, 0} }; memcpy(&hdr.regs, regs, sizeof(regs)); }
 
 typedef struct dt_binning_mode {
         __u32 binning_mode;
@@ -199,6 +215,9 @@ struct vc_ctrl {
         struct vc_binning binnings[8];
         __u8 max_binning_modes_used;
         
+        struct vc_hdr hdrs[3];
+        __u8 max_hdr_modes_used;
+
         // Array for binning_mode property read from device tree
         struct dt_binning_mode *dt_binning_modes;
 
@@ -212,12 +231,14 @@ struct vc_ctrl {
         __s32 flash_toffset;
         // Special features
         __u32 flags;
+
+        __u8 aliasI2CAddress;
 };
 
 struct vc_state {
         __u8 mode;
         __u32 vmax;
-        __u32 shs;
+        __u32 shs[4];
         __u32 exposure;                 // µs
         __u32 gain;
         __u32 blacklevel;
@@ -231,6 +252,8 @@ struct vc_state {
         __u8 trigger_mode;
         __u8 binning_mode;
         __u8 former_binning_mode;
+        __u8 hdr_mode;
+        __u8 parameter_set;
         int power_on;
         int streaming;
         __u8 flags;
@@ -289,6 +312,9 @@ int vc_sen_set_gain(struct vc_cam *cam, int gain);
 int vc_sen_set_blacklevel(struct vc_cam *cam, __u32 blacklevel);
 
 int vc_sen_set_binning_mode(struct vc_cam *cam, int mode);
+int vc_sen_set_hdr_mode(struct vc_cam *cam, int hdr_mode);
+int vc_sen_set_parameter_set(struct vc_cam *cam, int param_set);
+
 int vc_sen_start_stream(struct vc_cam *cam);
 int vc_sen_stop_stream(struct vc_cam *cam);
 

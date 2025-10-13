@@ -8,7 +8,7 @@
 #include "vc_mipi_core.h"
 #include "vc_mipi_modules.h"
 
-#define VERSION "0.18.3"
+#define VERSION "0.18.3_hdr"
 // #define VC_CTRL_VALUE
 
 //prototypes
@@ -21,6 +21,9 @@ void vc_update_tegra_controls(struct tegracam_device *tc_dev);
 int vc_init_frmfmt(struct device *dev, struct vc_cam *cam);
 void vc_init_tegra_controls(struct tegracam_device *tc_dev);
 
+#define CheckAndReturnFromAliasDevice if ((0x1a != cam->ctrl.aliasI2CAddress) && (0x60 != cam->ctrl.aliasI2CAddress)) { \
+                                        printk("Alias i2c device %s return 0.\n", __FUNCTION__); \
+                                        return 0; }
 
 static struct vc_cam *tegracam_to_cam(struct tegracam_device *tc_dev)
 {
@@ -324,6 +327,8 @@ static int vc_set_mode(struct tegracam_device *tc_dev)
         __u32 tegra_line_length = 0;
         int ret = 0;
 
+        CheckAndReturnFromAliasDevice
+
         ret  = vc_core_set_format(cam , tc_dev->s_data->colorfmt->code);
 
         vc_update_image_size_from_mode(tc_dev, &left, &top, &width, &height);
@@ -381,6 +386,8 @@ static int vc_set_gain(struct tegracam_device *tc_dev, __s64 val)
         struct sensor_control_properties *control;
         int gain = 0;
 
+        CheckAndReturnFromAliasDevice
+
         if (mode != NULL) {
                 control = &mode->control_properties;
 
@@ -397,12 +404,18 @@ static int vc_set_gain(struct tegracam_device *tc_dev, __s64 val)
 static int vc_set_exposure(struct tegracam_device *tc_dev, __s64 val)
 {
         struct vc_cam *cam = tegracam_to_cam(tc_dev);
+
+        CheckAndReturnFromAliasDevice
+
         return vc_sen_set_exposure(cam, val);
 }
 
 static int vc_set_frame_rate(struct tegracam_device *tc_dev, __s64 val)
 {
         struct vc_cam *cam = tegracam_to_cam(tc_dev);
+
+        CheckAndReturnFromAliasDevice
+
         return vc_core_set_framerate(cam, val);
 }
 
@@ -442,6 +455,19 @@ static int vc_set_binning_mode(struct tegracam_device *tc_dev, __s64 val)
         struct vc_cam *cam = tegracam_to_cam(tc_dev);
         return vc_sen_set_binning_mode(cam, val);
 }
+
+static int vc_set_hdr_mode(struct tegracam_device *tc_dev, __s64 val)
+{
+        struct vc_cam *cam = tegracam_to_cam(tc_dev);
+        return vc_sen_set_hdr_mode(cam, val);
+}
+
+static int vc_set_parameter_set(struct tegracam_device *tc_dev, __s64 val)
+{
+        struct vc_cam *cam = tegracam_to_cam(tc_dev);
+        return vc_sen_set_parameter_set(cam, val);
+}
+
 
 __u32 g_sleepR = 0;
 __u32 g_sleepS = 0;
@@ -519,6 +545,8 @@ static int vc_start_streaming(struct tegracam_device *tc_dev)
         int sleepS = 200; 
         int ret = 0;
 
+        CheckAndReturnFromAliasDevice
+
 #ifdef VC_MIPI_JETSON_NANO
         switch (cam->desc.mod_id) {
         case MOD_ID_IMX183: sleepR = 100; sleepS =  50; break;
@@ -564,7 +592,9 @@ static int vc_stop_streaming(struct tegracam_device *tc_dev)
 {
         struct vc_cam *cam = tegracam_to_cam(tc_dev);
         int ret = 0;
-        
+
+        CheckAndReturnFromAliasDevice
+
         ret = vc_sen_stop_stream(cam);
         usleep_range(1000*g_sleepP, 1000*g_sleepP);
 
@@ -578,7 +608,7 @@ static int vc_ready_to_stream(struct tegracam_device *tc_dev)
         struct vc_ctrl *ctrl = &cam->ctrl;
         struct i2c_client *client_sen = ctrl->client_sen;
         struct camera_common_data *s_data = NULL;
-        struct tegra_channel *chan = get_tegra_channel(tc_dev);
+        struct tegra_channel *chan = NULL;
         struct sensor_mode_properties *mode = NULL;
         struct sensor_image_properties *image = NULL;
         int w_tmp = 0, h_tmp = 0, b_tmp = 0;
@@ -587,12 +617,15 @@ static int vc_ready_to_stream(struct tegracam_device *tc_dev)
 
         int ret = 0;
 
+        CheckAndReturnFromAliasDevice
+
         s_data = to_camera_common_data(&client_sen->dev);
         if (NULL == s_data) {
                 vc_err(dev, "%s(): s_data is NULL!\n", __FUNCTION__);
                 return -1;
         }
 
+        chan = get_tegra_channel(tc_dev);
         if (NULL == chan) {
                 vc_err(dev, "%s(): chan is NULL!\n", __FUNCTION__);
                 return -1;
@@ -852,6 +885,8 @@ static const __u32 ctrl_cid_list[] = {
         TEGRA_CAMERA_CID_IO_MODE,
         TEGRA_CAMERA_CID_SINGLE_TRIGGER,
         TEGRA_CAMERA_CID_BINNING_MODE,
+        TEGRA_CAMERA_CID_HDR_MODE,
+        TEGRA_CAMERA_CID_PARAMETER_SET,
 #ifdef VC_CTRL_VALUE
         TEGRA_CAMERA_CID_VALUE,
 #endif
@@ -865,6 +900,8 @@ static struct tegracam_ctrl_ops vc_ctrl_ops = {
         .set_black_level = vc_set_black_level,
         .set_single_trigger = vc_set_single_trigger,
         .set_binning_mode = vc_set_binning_mode,
+        .set_hdr_mode = vc_set_hdr_mode,
+        .set_parameter_set = vc_set_parameter_set,
         .set_frame_rate = vc_set_frame_rate,
         .set_trigger_mode = vc_set_trigger_mode,
         .set_io_mode = vc_set_io_mode,
@@ -913,57 +950,95 @@ static int vc_probe(struct i2c_client *client, const struct i2c_device_id *id)
         }
 #endif
 
-        ret = vc_core_init(cam, client);
-        if (ret) {
-                vc_err(dev, "%s(): Error in vc_core_init!\n", __func__);
+        if (NULL == client) {
+                vc_err(dev, "%s(): Could not get client!\n", __func__);
+                return -1;
+        }
+        cam->ctrl.aliasI2CAddress = client->addr;
+
+        // normal registering of physical sony or omni sensor device
+        if ((0x1a == client->addr) || (0x60 == client->addr))
+        {
+                ret = vc_core_init(cam, client);
+                if (ret) {
+                        vc_err(dev, "%s(): Error in vc_core_init!\n", __func__);
+                        return 0;
+                }
+                vc_init_io(dev, cam);
+                vc_init_frmfmt(dev, cam);
+                vc_init_binning(dev, cam);
+
+                // Defined in tegracam_core.c
+                // Initializes 
+                //   * tc_dev->s_data
+                // Calls 
+                //   * camera_common_initialize
+                tc_dev->client = client;
+                tc_dev->dev = dev;
+                strncpy(tc_dev->name, "vc_mipi", sizeof(tc_dev->name));
+                tc_dev->dev_regmap_config = &vc_regmap_config;
+                tc_dev->sensor_ops = &vc_sensor_ops;
+                ret = tegracam_device_register(tc_dev);
+                if (ret) {
+                        vc_err(dev, "%s(): Tegra camera device registration failed\n", __FUNCTION__);
+                        // goto free_vc_core;
+                        return 0;
+                }
+
+                // Defined in tegracam_core.c
+                // Initializes
+                //   * tc_dev->priv
+                //   * tc_dev->s_data->priv
+                tegracam_set_privdata(tc_dev, (void *)cam);
+                
+                // Defined in tegracam_v4l2.c
+                // Initializes
+                //   * tc_dev->s_data->tegracam_ctrl_hdl
+                tc_dev->tcctrl_ops = &vc_ctrl_ops;
+                ret = tegracam_v4l2subdev_register(tc_dev, true);
+                if (ret) {
+                        vc_err(dev, "%s(): Tegra camera subdev registration failed\n", __FUNCTION__);
+                        // goto unregister_tc_dev;
+                        return 0;
+                }
+
+                // This functions need tc_dev->s_data to be initialized.
+                ret = vc_init_lanes(tc_dev);
+                if (ret)
+                        goto unregister_subdev;
+
+                vc_init_tegra_controls(tc_dev);
+                
                 return 0;
         }
-        vc_init_io(dev, cam);
-        vc_init_frmfmt(dev, cam);
-        vc_init_binning(dev, cam);
+        else // registering of alias sensor device
+        {
+                vc_notice(dev, "%s(): Registering alias i2c device...\n", __FUNCTION__);
 
-        // Defined in tegracam_core.c
-        // Initializes 
-        //   * tc_dev->s_data
-        // Calls 
-        //   * camera_common_initialize
-        tc_dev->client = client;
-        tc_dev->dev = dev;
-        strncpy(tc_dev->name, "vc_mipi", sizeof(tc_dev->name));
-        tc_dev->dev_regmap_config = &vc_regmap_config;
-        tc_dev->sensor_ops = &vc_sensor_ops;
-        ret = tegracam_device_register(tc_dev);
-        if (ret) {
-                vc_err(dev, "%s(): Tegra camera device registration failed\n", __FUNCTION__);
-                // goto free_vc_core;
+                tc_dev->client = client;
+                tc_dev->dev = dev;
+                strncpy(tc_dev->name, "vc_mipi_alias", sizeof(tc_dev->name));
+                tc_dev->dev_regmap_config = &vc_regmap_config;
+                tc_dev->sensor_ops = &vc_sensor_ops;
+
+                ret = tegracam_device_register(tc_dev);
+                if (ret) {
+                        vc_err(dev, "%s(): Tegra camera device registration of alias device failed\n", __FUNCTION__);
+                        return -1;
+                }
+
+                tegracam_set_privdata(tc_dev, (void *)cam);
+                tc_dev->tcctrl_ops = &vc_ctrl_ops;
+                ret = tegracam_v4l2subdev_register(tc_dev, true);
+                if (ret) {
+                        vc_err(dev, "%s(): Tegra camera subdev registration of alias device failed\n", __FUNCTION__);
+                        return -1;
+                }
+
+                vc_notice(dev, "%s(): Alias i2c device registered.\n", __FUNCTION__);
+
                 return 0;
         }
-
-        // Defined in tegracam_core.c
-        // Initializes
-        //   * tc_dev->priv
-        //   * tc_dev->s_data->priv
-        tegracam_set_privdata(tc_dev, (void *)cam);
-        
-        // Defined in tegracam_v4l2.c
-        // Initializes
-        //   * tc_dev->s_data->tegracam_ctrl_hdl
-        tc_dev->tcctrl_ops = &vc_ctrl_ops;
-        ret = tegracam_v4l2subdev_register(tc_dev, true);
-        if (ret) {
-                       vc_err(dev, "%s(): Tegra camera subdev registration failed\n", __FUNCTION__);
-                       // goto unregister_tc_dev;
-                return 0;
-            }
-
-        // This functions need tc_dev->s_data to be initialized.
-        ret = vc_init_lanes(tc_dev);
-        if (ret)
-                goto unregister_subdev;
-
-        vc_init_tegra_controls(tc_dev);
-        
-        return 0;
 
 unregister_subdev:
         tegracam_v4l2subdev_unregister(tc_dev);
@@ -988,6 +1063,7 @@ MODULE_DEVICE_TABLE(i2c, vc_id);
 
 static const struct of_device_id vc_dt_ids[] = {
         { .compatible = "nvidia,vc_mipi", },
+        { .compatible = "nvidia,vc_mipi_alias", },
         { /* sentinel */ }
 };
 MODULE_DEVICE_TABLE(of, vc_dt_ids);
