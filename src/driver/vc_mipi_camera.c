@@ -1028,7 +1028,7 @@ static int vc_probe(struct i2c_client *client, const struct i2c_device_id *id)
                 }
 
                 tegracam_set_privdata(tc_dev, (void *)cam);
-                tc_dev->tcctrl_ops = &vc_ctrl_ops;
+//                tc_dev->tcctrl_ops = &vc_ctrl_ops;
                 ret = tegracam_v4l2subdev_register(tc_dev, true);
                 if (ret) {
                         vc_err(dev, "%s(): Tegra camera subdev registration of alias device failed\n", __FUNCTION__);

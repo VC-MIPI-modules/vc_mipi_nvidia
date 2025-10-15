@@ -1,6 +1,6 @@
-From 8cca9115e102d585e2f425ff79f2a264b1d77caa Mon Sep 17 00:00:00 2001
+From 245c694049ade45e697cd7715b7fa4826dd7d5b0 Mon Sep 17 00:00:00 2001
 From: "/setup.sh" <support@vision-components.com>
-Date: Tue, 7 Oct 2025 11:43:39 +0200
+Date: Tue, 14 Oct 2025 13:10:28 +0200
 Subject: [PATCH] Added controls 'hdr_mode' and 'parameter_set' to the tegra
  framework.
 
