@@ -49,6 +49,7 @@
 #define MAX_VC_MODES                    16
 #define MAX_BINNING_MODE_REGS           16
 #define MAX_HDR_MODE_REGS               3
+#define SHS_MAX_COUNT                   4
 
 #define MAX_I2C_RETRY_COUNT             5
 
@@ -238,7 +239,7 @@ struct vc_ctrl {
 struct vc_state {
         __u8 mode;
         __u32 vmax;
-        __u32 shs[4];
+        __u32 shs[SHS_MAX_COUNT];
         __u32 exposure;                 // µs
         __u32 gain;
         __u32 blacklevel;

@@ -1,0 +1,50 @@
+From 8e41e2e2cef2f0286f83455b1263fce54e7ba8e2 Mon Sep 17 00:00:00 2001
+From: "/setup.sh" <support@vision-components.com>
+Date: Tue, 21 Oct 2025 13:05:32 +0200
+Subject: [PATCH] Print and copy embedded data into frame.
+
+---
+ .../media/platform/tegra/camera/vi/vi4_fops.c | 19 +++++++++++++++++++
+ 1 file changed, 19 insertions(+)
+
+diff --git a/kernel/nvidia/drivers/media/platform/tegra/camera/vi/vi4_fops.c b/kernel/nvidia/drivers/media/platform/tegra/camera/vi/vi4_fops.c
+index 57808d737..8419eb7a3 100644
+--- a/kernel/nvidia/drivers/media/platform/tegra/camera/vi/vi4_fops.c
++++ b/kernel/nvidia/drivers/media/platform/tegra/camera/vi/vi4_fops.c
+@@ -930,6 +930,8 @@ static int tegra_channel_kthread_capture_start(void *data)
+ 	struct tegra_channel *chan = data;
+ 	struct tegra_channel_buffer *buf;
+ 	int err = 0;
++	void* frm_buffer = NULL;
++	struct vb2_v4l2_buffer *vb = NULL;
+ 
+ 	set_freezable();
+ 
+@@ -953,7 +955,24 @@ static int tegra_channel_kthread_capture_start(void *data)
+ 		if (!buf)
+ 			continue;
+ 
++		if (NULL != chan->vi->emb_buf_addr)
++		{
++			printk("chan->virtual_channel=%d, emb_buf_addr=%p emb_buf_size=%d \n", chan->virtual_channel, chan->vi->emb_buf_addr, chan->vi->emb_buf_size);
++			print_hex_dump(KERN_INFO, "EMB:", DUMP_PREFIX_OFFSET, 16, 1, chan->vi->emb_buf_addr, 96, false);
++		}
++
+ 		err = tegra_channel_capture_frame(chan, buf);
++
++		vb = &buf->buf;
++		if (NULL == vb) {
++			continue;
++		}
++
++		frm_buffer = vb2_plane_vaddr(&(vb->vb2_buf), 0);
++		if (NULL != frm_buffer) {
++			memcpy(frm_buffer, chan->vi->emb_buf_addr, 96);
++			continue;
++		}
+ 	}
+ 
+ 	return 0;
+-- 
+2.34.1
+

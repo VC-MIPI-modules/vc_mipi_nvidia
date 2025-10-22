@@ -939,16 +939,14 @@ static void vc_core_state_init(struct vc_cam *cam)
         __u8 format = 0;
         __u32 blacklevel_def = 0;
         __u32 blacklevel_max = 0;
+        __u32 shs_min = 0;
+        int iShsIdx = 0;
         __u8 binning = state->binning_mode;
 
         state->mode = 0xff;
         state->exposure = ctrl->exposure.def;
         state->gain = ctrl->gain.def;
 //        state->blacklevel = ctrl->blacklevel.def;
-        state->shs[0] = 0;
-        state->shs[1] = 0;
-        state->shs[2] = 0;
-        state->shs[3] = 0;
         state->vmax = 0;
         state->exposure_cnt = 0;
         state->retrigger_cnt = 0;
@@ -959,6 +957,11 @@ static void vc_core_state_init(struct vc_cam *cam)
         blacklevel_def = vc_core_get_blacklevel(cam, state->num_lanes, format, binning).def;
         blacklevel_max = vc_core_get_blacklevel(cam, state->num_lanes, format, binning).max + 1;
         state->blacklevel = (__u32)DIV_ROUND_CLOSEST(blacklevel_def * 100000, blacklevel_max);
+
+        shs_min = vc_core_get_vmax(cam, state->num_lanes, format, binning).min;
+        for (iShsIdx = 0; iShsIdx < SHS_MAX_COUNT; iShsIdx++) {
+                state->shs[iShsIdx] = shs_min;
+        }
 
         state->frame.left = 0;
         state->frame.top = 0;
@@ -1819,17 +1822,13 @@ static void vc_calculate_exposure_sony(struct vc_cam *cam, __u64 exposure_1H)
                 // +----------------------------+-----------------------+
                 // | SHS (exposure delay) --->  |    exposure time ---> |
                 state->shs[state->parameter_set] = state->vmax - exposure_1H;
-
         } else {
                 // No, then increase frame time and set exposure delay to the minimal value.
                 // |                 VMAX (frame time)                   ---> |
                 // +---------+------------------------------------------------+
                 // | SHS     |                             exposure time ---> |
                 state->vmax = shs_min + exposure_1H;
-                state->shs[0] = shs_min;
-                state->shs[1] = shs_min;
-                state->shs[2] = shs_min;
-                state->shs[3] = shs_min;
+                state->shs[state->parameter_set] = shs_min;
         }
 
         // Special case: Framerate of slave module has to be a little bit faster (Tested with IMX183)
@@ -1960,6 +1959,8 @@ int vc_sen_set_exposure(struct vc_cam *cam, int exposure_us)
         struct device *dev = vc_core_get_sen_device(cam);
         struct i2c_client *client_mod = ctrl->client_mod;
         int ret = 0;
+        int iShsIdx = 0;
+        int hdr_modes_to_write = 0;
 
         vc_notice(dev, "%s(): Set sensor exposure: %u us\n", __FUNCTION__, exposure_us);
 
@@ -1995,17 +1996,18 @@ int vc_sen_set_exposure(struct vc_cam *cam, int exposure_us)
                 case REG_TRIGGER_STREAM_EDGE:
                 case REG_TRIGGER_STREAM_LEVEL:
                         vc_calculate_exposure(cam, exposure_us);
-                        ret |= vc_sen_write_shs(ctrl, state->shs[0]);
-                        ret |= vc_sen_write_vmax(ctrl, state->vmax);
+                        if (!(ctrl->flags & FLAG_USE_HDR_INDEX)) {
+                                ret |= vc_sen_write_shs(ctrl, state->shs[0]);
+                        } else {
+                                hdr_modes_to_write = ctrl->hdrs[state->hdr_mode].param_sets;
+                                vc_dbg(dev, "%s(): hdr_mode=%u, shs to write: %u \n", __FUNCTION__,
+                                        state->hdr_mode, hdr_modes_to_write);
 
-                        if (1 == state->hdr_mode) {
-                                ret |= vc_sen_write_shs_by_index(ctrl, state->shs[1], 1);
+                                for (iShsIdx = 0; iShsIdx < hdr_modes_to_write; iShsIdx++) {
+                                        ret |= vc_sen_write_shs_by_index(ctrl, state->shs[iShsIdx], iShsIdx);
+                                }
                         }
-                        if (2 == state->hdr_mode) {
-                                ret |= vc_sen_write_shs_by_index(ctrl, state->shs[1], 1);
-                                ret |= vc_sen_write_shs_by_index(ctrl, state->shs[2], 2);
-                                ret |= vc_sen_write_shs_by_index(ctrl, state->shs[3], 3);
-                        }
+                        ret |= vc_sen_write_vmax(ctrl, state->vmax);
                 }
         
         } else if (ctrl->flags & FLAG_EXPOSURE_OMNIVISION) {
