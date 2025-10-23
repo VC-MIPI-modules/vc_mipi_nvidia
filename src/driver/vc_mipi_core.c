@@ -1804,6 +1804,50 @@ static void vc_core_calculate_vmax(struct vc_cam *cam, __u32 period_1H_ns)
         }
 }
 
+static int vc_get_shs_index(struct vc_cam *cam, int iParameterSetIdx)
+{
+        struct vc_state *state = &cam->state;
+        struct vc_desc *desc = &cam->desc;
+
+        if (0 == state->hdr_mode) {
+                return 0;
+        }
+
+        if (1 == state->hdr_mode) {
+                switch (desc->mod_id)
+                {
+                        case MOD_ID_IMX335: {
+                                switch (iParameterSetIdx)
+                                {
+                                        case 0: return 1;
+                                        case 1: return 0;
+                                        default: return -1;
+                                } break;
+                        }
+                        default: return -1;
+                }
+        }
+
+        if (2 == state->hdr_mode) {
+                switch (desc->mod_id)
+                {
+                        case MOD_ID_IMX335: {
+                                switch (iParameterSetIdx)
+                                {
+                                        case 0: return 3;
+                                        case 1: return 0;
+                                        case 2: return 1;
+                                        case 3: return 2;
+                                        default: return -1;
+                                } break;
+                        }
+                        default: return -1;
+                }
+        }
+
+        return -1;
+}
+
 static void vc_calculate_exposure_sony(struct vc_cam *cam, __u64 exposure_1H)
 {
         struct vc_state *state = &cam->state;
@@ -1813,6 +1857,7 @@ static void vc_calculate_exposure_sony(struct vc_cam *cam, __u64 exposure_1H)
 
         // Exposure time [s] = (1 H period) × (Number of lines per frame - SHS)
         //                     + Exposure time error (t OFFSET ) [µs]
+        int iShsIdx = vc_get_shs_index(cam, state->parameter_set);
 
         // Is exposure time less than frame time?
         if (exposure_1H < state->vmax - shs_min) {
@@ -1821,14 +1866,14 @@ static void vc_calculate_exposure_sony(struct vc_cam *cam, __u64 exposure_1H)
                 // | SHS_MIN |                                          |
                 // +----------------------------+-----------------------+
                 // | SHS (exposure delay) --->  |    exposure time ---> |
-                state->shs[state->parameter_set] = state->vmax - exposure_1H;
+                state->shs[iShsIdx] = state->vmax - exposure_1H;
         } else {
                 // No, then increase frame time and set exposure delay to the minimal value.
                 // |                 VMAX (frame time)                   ---> |
                 // +---------+------------------------------------------------+
                 // | SHS     |                             exposure time ---> |
                 state->vmax = shs_min + exposure_1H;
-                state->shs[state->parameter_set] = shs_min;
+                state->shs[iShsIdx] = shs_min;
         }
 
         // Special case: Framerate of slave module has to be a little bit faster (Tested with IMX183)
@@ -1959,7 +2004,7 @@ int vc_sen_set_exposure(struct vc_cam *cam, int exposure_us)
         struct device *dev = vc_core_get_sen_device(cam);
         struct i2c_client *client_mod = ctrl->client_mod;
         int ret = 0;
-        int iShsIdx = 0;
+        int iParamSet = 0;
         int hdr_modes_to_write = 0;
 
         vc_notice(dev, "%s(): Set sensor exposure: %u us\n", __FUNCTION__, exposure_us);
@@ -1971,7 +2016,6 @@ int vc_sen_set_exposure(struct vc_cam *cam, int exposure_us)
 
         state->vmax = 0;
 
-        state->shs[state->parameter_set] = 0;
         state->exposure_cnt = 0;
         state->retrigger_cnt = 0;
 
@@ -2003,8 +2047,8 @@ int vc_sen_set_exposure(struct vc_cam *cam, int exposure_us)
                                 vc_dbg(dev, "%s(): hdr_mode=%u, shs to write: %u \n", __FUNCTION__,
                                         state->hdr_mode, hdr_modes_to_write);
 
-                                for (iShsIdx = 0; iShsIdx < hdr_modes_to_write; iShsIdx++) {
-                                        ret |= vc_sen_write_shs_by_index(ctrl, state->shs[iShsIdx], iShsIdx);
+                                for (iParamSet = 0; iParamSet < hdr_modes_to_write; iParamSet++) {
+                                        ret |= vc_sen_write_shs_by_index(ctrl, state->shs[iParamSet], iParamSet);
                                 }
                         }
                         ret |= vc_sen_write_vmax(ctrl, state->vmax);
