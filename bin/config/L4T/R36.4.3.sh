@@ -36,9 +36,6 @@ KERNEL_SOURCE=$BSP_DIR/Linux_for_Tegra/source
 DTSI_FILE_DICT+=(["NV_DevKit_OrinNano"]="tegra234-p3767-camera-p3768-vc_mipi-dual.dts")
 DTSI_DEST_DICT+=(["NV_DevKit_OrinNano"]="$KERNEL_SOURCE/hardware/nvidia/t23x/nv-public/overlay")
 
-DTSI_FILE_DICT+=(["NV_DevKit_OrinNano_Super"]="tegra234-p3767-camera-p3768-vc_mipi-dual.dts")
-DTSI_DEST_DICT+=(["NV_DevKit_OrinNano_Super"]="$KERNEL_SOURCE/hardware/nvidia/t23x/nv-public/overlay")
-
 DTSI_FILE_DICT+=(["Auvidea_JNX42_OrinNano"]="tegra234-p3767-camera-p3768-vc_mipi-dual.dts")
 DTSI_DEST_DICT+=(["Auvidea_JNX42_OrinNano"]="$KERNEL_SOURCE/hardware/nvidia/t23x/nv-public/overlay")
 

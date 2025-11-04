@@ -30,43 +30,32 @@ flash_all() {
 
         start_time=$(date +%s)
 
-        if [[ "36.4.3" == $VC_MIPI_BSP ]]
-        then
-                sudo ./tools/kernel_flash/l4t_initrd_flash.sh \
-                --external-device ${FLASH_PARTITION} \
-                -c tools/kernel_flash/flash_l4t_t234_nvme.xml \
-                -p "-c bootloader/generic/cfg/flash_t234_qspi.xml" \
-                --showlogs --network usb0 ${FLASH_BOARD} internal
-        else
-                case $VC_MIPI_SOM in
-                OrinNano4GB_SD|OrinNano8GB_SD)
-                        # The given parameter $1 might be used for the EXT_NUM_SECTORS variable
-                        # which has been introduced with 35.4.1
-                        # sudo ./flash.sh -a EXT_NUM_SECTORS="121536512"
-                        sudo $1 ./tools/kernel_flash/l4t_initrd_flash.sh \
-                                --external-device ${FLASH_PARTITION} \
-                                -c tools/kernel_flash/flash_l4t_external.xml \
-                                -p "-c bootloader/${ORIN_FLASH_CONFIG_FOLDER}/cfg/flash_t234_qspi.xml" \
-                                --network usb0 \
-                                ${FLASH_BOARD} internal
-                        ;;
+        case $VC_MIPI_SOM in
+        OrinNano4GB_SD|OrinNano8GB_SD)
+                # The given parameter $1 might be used for the EXT_NUM_SECTORS variable
+                # which has been introduced with 35.4.1
+                # sudo ./flash.sh -a EXT_NUM_SECTORS="121536512"
+                sudo $1 ./tools/kernel_flash/l4t_initrd_flash.sh \
+                        --external-device ${FLASH_PARTITION} \
+                        -c tools/kernel_flash/flash_l4t_external.xml \
+                        -p "-c bootloader/${ORIN_FLASH_CONFIG_FOLDER}/cfg/flash_t234_qspi.xml" \
+                        --network usb0 \
+                        ${FLASH_BOARD} internal
+                ;;
 
-                OrinNano4GB_NVME|OrinNano8GB_NVME|OrinNX8GB|OrinNX16GB)
-                        sudo ADDITIONAL_DTB_OVERLAY_OPT="BootOrderNvme.dtbo" \
-                                ./tools/kernel_flash/l4t_initrd_flash.sh \
-                                --external-device ${FLASH_PARTITION} \
-                                -c tools/kernel_flash/flash_l4t_external.xml \
-                                -p "-c bootloader/${ORIN_FLASH_CONFIG_FOLDER}/cfg/flash_t234_qspi.xml" \
-                                --network usb0 \
-                                ${FLASH_BOARD} internal
-                        ;;
-                *)
-                        sudo ./flash.sh $FLASH_BOARD $FLASH_PARTITION
-                        ;;
-                esac
-
-        fi
-
+        OrinNano4GB_NVME|OrinNano8GB_NVME|OrinNX8GB|OrinNX16GB)
+                sudo ADDITIONAL_DTB_OVERLAY_OPT="BootOrderNvme.dtbo" \
+                        ./tools/kernel_flash/l4t_initrd_flash.sh \
+                        --external-device ${FLASH_PARTITION} \
+                        -c tools/kernel_flash/flash_l4t_external.xml \
+                        -p "-c bootloader/${ORIN_FLASH_CONFIG_FOLDER}/cfg/flash_t234_qspi.xml" \
+                        --network usb0 \
+                        ${FLASH_BOARD} internal
+                ;;
+        *)
+                sudo ./flash.sh $FLASH_BOARD $FLASH_PARTITION
+                ;;
+        esac
         end_time=$(date +%s)
         elapsed_time=$((${end_time} - ${start_time}))
 

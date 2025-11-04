@@ -208,10 +208,6 @@ OrinNano4GB_SD|OrinNano8GB_SD|OrinNano4GB_NVME|OrinNano8GB_NVME|OrinNX8GB|OrinNX
                 FLASH_BOARD='jetson-orin-nano-devkit'
                 ORIN_DTB_SUFFIX='-p3768-0000-a0.dtb'
                 ;;
-        NV_DevKit_OrinNano_Super)
-                FLASH_BOARD='jetson-orin-nano-devkit-super'
-                ORIN_DTB_SUFFIX='-p3768-0000-a0.dtb'
-                ;;
         esac
 
         case $VC_MIPI_SOM in

@@ -99,7 +99,6 @@ boards=(
 "NVIDIA Jetson Nano Developer Kit B01 (https://developer.nvidia.com/embedded/jetson-nano-developer-kit)"
 "NVIDIA Jetson Xavier NX Developer Kit (https://developer.nvidia.com/embedded/jetson-xavier-nx-devkit)"
 "NVIDIA Jetson Orin Nano Developer Kit (https://developer.nvidia.com/embedded/learn/get-started-jetson-orin-nano-devkit)"
-"NVIDIA Jetson Orin Nano Super Developer Kit (https://www.nvidia.com/en-us/autonomous-machines/embedded-systems/jetson-orin/nano-super-developer-kit/)"
 "Auvidea JNX30/JNX30D (https://auvidea.eu/product/70879)"
 "Auvidea JNX42 LM (https://auvidea.eu/product/70784)"
 "Auvidea J20 on Devkit Jetson AGX Xavier or TX2 (https://auvidea.eu/j20)"
@@ -110,7 +109,6 @@ board_keys=(
 "NV_DevKit_Nano"
 "NV_DevKit_XavierNX"
 "NV_DevKit_OrinNano"
-"NV_DevKit_OrinNano_Super"
 "Auvidea_JNX30"
 "Auvidea_JNX42"
 "Auvidea_J20"
@@ -217,47 +215,38 @@ setup_driver() {
                 choose_bsp 0 1 2 3
                 ;;
         Nano|NanoSD)
-                choose_board 1 5 6
+                choose_board 1 4 5
                 choose_bsp 0 1 2 3
                 ;;
         XavierNX|XavierNXSD) 
-                choose_board 2 5 6
+                choose_board 2 4 5
                 choose_bsp 0 1 2 4 5 6 7
                 ;;
         AGXXavier)
-                choose_board 7
+                choose_board 6
                 choose_bsp 0 1 2 4 5 6 7
                 ;;
         TX2|TX2i)
-                choose_board 7
+                choose_board 6
                 choose_bsp 0 1 2
                 ;;
         TX2NX)
-                choose_board 5
+                choose_board 4
                 choose_bsp 0 1 2
                 ;;
         OrinNano4GB_SD|OrinNano8GB_SD|OrinNano4GB_NVME|OrinNano8GB_NVME)
-                choose_board 3 4 6
-
-                case ${board} in
-                NV_DevKit_OrinNano|NV_DevKit_OrinNano_Super)
-                        choose_bsp 6 7 8 9 10
-                        ;;
-                *)
-                        choose_bsp 6 7 8 9
-                        ;;
-                esac
-
+                choose_board 3 5
+                choose_bsp 6 7 8 9 10
                 ;;
         OrinNX8GB|OrinNX16GB)
-                choose_board 3 6
+                choose_board 3 5
 
                 case ${board} in
                 NV_DevKit_OrinNano)
-                        choose_bsp 8 9
+                        choose_bsp 8 9 10
                         ;;
                 *)
-                        choose_bsp 5 6 7 8 9
+                        choose_bsp 5 6 7 8 9 10
                         ;;
                 esac
 
