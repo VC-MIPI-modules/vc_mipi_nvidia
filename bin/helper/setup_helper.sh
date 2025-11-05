@@ -38,6 +38,7 @@ download_and_check_file () {
 
         # First check if already downloaded file is valid.
         # Then a download isn't necessary anymore.
+
         if [[ -e $FILE_VAR ]]
         then
                 DL_RESULT=$(echo "$CHECKSUM_VAR $FILE_VAR" | md5sum -c >/dev/null ; echo $? )
@@ -46,7 +47,7 @@ download_and_check_file () {
         if [[ $DL_RESULT != 0 ]]; then
                 echo ""
                 case $1 in
-                BSP|RFS|SRC)
+                BSP|RFS|SRC|ADDON)
                         echo "  Trying to download $1 file $FILE_VAR ..."
                         if [[ $TEST_COMMAND == $PARENT_COMMAND ]]
                         then

@@ -103,6 +103,11 @@ function L4T_setup_som_carrier_specifics {
         return 0
 }
 
+function L4T_setup_addon_file {
+# not necessary for this L4T
+        return 0
+}
+
 #build
 function L4T_build_device_tree {
         echo "Build device tree ($VC_MIPI_BSP) ..."

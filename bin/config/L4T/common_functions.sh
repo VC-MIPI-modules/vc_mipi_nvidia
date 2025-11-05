@@ -35,7 +35,7 @@ function Common_setup_eeprom_size {
                         # Setting EPROM size to 0x0
                         sed -i 's/cvb_eeprom_read_size = <0x100>;/cvb_eeprom_read_size = <0x0>;/' ${EPROM_FILE}
                 else
-                        # Setting EPROM size to 100x0
+                        # Setting EPROM size to 0x100
                         sed -i 's/cvb_eeprom_read_size = <0x0>;/cvb_eeprom_read_size = <0x100>;/' ${EPROM_FILE}
                 fi
                 echo "done"
