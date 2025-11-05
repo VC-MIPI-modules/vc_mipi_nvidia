@@ -10,8 +10,6 @@ export CROSS_COMPILE=$GCC_DIR/bin/aarch64-linux-gnu-
 
 DEV_URL=https://developer.nvidia.com/downloads/embedded/l4t/r32_release_v7.5
 
-#wget https://developer.nvidia.com/downloads/embedded/L4T/r32_Release_v7.5/overlay_32.7.5_PCN211181.tbz2
-
 case $VC_MIPI_SOM in
         Nano|NanoSD|Nano2GB)
                 BSP_FILE=jetson-210_linux_r32.7.5_aarch64.tbz2

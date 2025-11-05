@@ -1,12 +1,14 @@
 # Version History
 
-## v0.18.4 (L4T 32.7.5, Improvements)
+## v0.19.0 (L4T 36.4.3, L4T 32.7.5, Improvements)
 * New Features
   * Added support for board support package
+    * NVIDIA L4T 36.4.3 for NVIDIA Jetson Orin NX/OrinNano + Orin Nano DevKit + Auvidea JNX42
     * NVIDIA L4T 32.7.5 for NVIDIA Jetson Nano *(NVIDIA DevKit, Auvidea JNX30 + JNX42)* 
 * Improvements
   * Infinite Timeout for v4l streaming added for L4T 32.7.5 *(only NVIDIA Jetson Nano)*
   * DRAM patch PCN211181 *(only NVIDIA Jetson Nano)*
+  * README.md upgrade warning added
 
 ## v0.18.3 (L4T 36.4, Improvements)
 * New Features
