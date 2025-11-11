@@ -9,27 +9,27 @@ GCC_DIR=$TOOLCHAIN_DIR/gcc-linaro-11.3.1-2022.06-x86_64_aarch64-linux-gnu
 export CROSS_COMPILE=$GCC_DIR/bin/aarch64-linux-gnu-
 
 #downloads
-DEV_URL=https://developer.nvidia.com/downloads/embedded/l4t/r36_release_v4.0
+DEV_URL=https://developer.nvidia.com/downloads/embedded/l4t/r36_release_v4.3
 
 case $VC_MIPI_SOM in
         AGXXavier|XavierNX|XavierNXSD|AGXOrin|OrinNX8GB|OrinNX16GB|OrinNano4GB_SD|OrinNano8GB_SD|OrinNano4GB_NVME|OrinNano8GB_NVME)
-                BSP_FILE=Jetson_Linux_R36.4.0_aarch64.tbz2
+                BSP_FILE=Jetson_Linux_R36.4.3_aarch64.tbz2
                 ;;
 esac
 
-RFS_FILE=Tegra_Linux_Sample-Root-Filesystem_R36.4.0_aarch64.tbz2
+RFS_FILE=Tegra_Linux_Sample-Root-Filesystem_R36.4.3_aarch64.tbz2
 SRC_FILE=public_sources.tbz2
 
 CHECK4MD5=1
 
-BSP_FILE_CHECKSUM="6cfe5e3471f6ccb1059fc7a5a59ca1f2"
-RFS_FILE_CHECKSUM="050fe9d304d771df6795eb49187784c9"
-SRC_FILE_CHECKSUM="5c30b49fea680c370e870a3424c886f4"
+BSP_FILE_CHECKSUM="a6aa0a131d2fa720273a5ddb02e425ba"
+RFS_FILE_CHECKSUM="70889e8b24ee55e1982eb95ccaf07776"
+SRC_FILE_CHECKSUM="83e0943757e7982e00eec2732b2daa09"
 
 . $BIN_DIR/config/L4T/urls_35.1.0+.sh
 
 #configure
-PATCHES=('kernel_Xavier_36.4.0+')
+PATCHES=('kernel_Xavier_36.4.3')
 
 KERNEL_SOURCE=$BSP_DIR/Linux_for_Tegra/source
 

@@ -26,20 +26,9 @@ patch_kernel() {
         copy_dtsi_files
 }
 
-#configure_kernel() {
-#        if [[ "36.2.0" == $VC_MIPI_BSP ]]
-#        then
-#                return 0
-#        fi
-#
-#        cd $KERNEL_SOURCE
-#
-#        make -C $KERNEL_DIR O=$KERNEL_OUT -j$(nproc) tegra_defconfig
-#}
-
 configure_kernel() {
         case $VC_MIPI_BSP in
-        36.4.0|36.2.0)
+        36.2.0|36.4.0|36.4.3)
                 return 0
                 ;;
         esac
@@ -48,7 +37,6 @@ configure_kernel() {
 
         make -C $KERNEL_DIR O=$KERNEL_OUT -j$(nproc) tegra_defconfig
 }
-
 
 build_kernel() {
         cd $KERNEL_SOURCE

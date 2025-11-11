@@ -8,30 +8,33 @@ GCC_FILE=gcc-linaro-7.3.1-2018.05-x86_64_aarch64-linux-gnu.tar.xz
 GCC_DIR=$TOOLCHAIN_DIR/gcc-linaro-7.3.1-2018.05-x86_64_aarch64-linux-gnu
 export CROSS_COMPILE=$GCC_DIR/bin/aarch64-linux-gnu-
 
-DEV_URL=https://developer.nvidia.com/embedded/l4t/r32_release_v7.1
+DEV_URL=https://developer.nvidia.com/downloads/embedded/l4t/r32_release_v7.5
 
 case $VC_MIPI_SOM in
-        Nano|NanoSD|Nano2GB|TX1)
-                BSP_FILE=jetson-210_linux_r32.7.1_aarch64.tbz2
+        Nano|NanoSD|Nano2GB)
+                BSP_FILE=jetson-210_linux_r32.7.5_aarch64.tbz2
+
+                ADDON_FILE=overlay_32.7.5_PCN211181.tbz2
 
                 CHECK4MD5=1
 
-                BSP_FILE_CHECKSUM="6dd5805faeafa9826464a7f5d6bbdcd4"
-                RFS_FILE_CHECKSUM="bb3e6ff5514964e8838c7bd90eb2a0eb"
-                SRC_FILE_CHECKSUM="3da2a5f08f5e7b43995a66336b432a0c"
+                BSP_FILE_CHECKSUM="ad9f047075ea3a7767ea737ac2c38dee"
+                RFS_FILE_CHECKSUM="cc0bcfce89cfbe58349e7a00f6b32d5f"
+                SRC_FILE_CHECKSUM="7e165f36b363cb23c3c477323434a972"
+                ADDON_FILE_CHECKSUM="406dc6a814e6ca20b87322fbcc8dfc1c"
                 ;;
         AGXXavier|XavierNX|XavierNXSD|TX2|TX2i|TX2NX)
-                BSP_FILE=jetson_linux_r32.7.1_aarch64.tbz2
+                BSP_FILE=jetson_linux_r32.7.5_aarch64.tbz2
 
                 CHECK4MD5=1
 
-                BSP_FILE_CHECKSUM="178801c125bb6041179fe506144bcf17"
-                RFS_FILE_CHECKSUM="bb3e6ff5514964e8838c7bd90eb2a0eb"
-                SRC_FILE_CHECKSUM="9cd3d27c7ca17c57b49931d972febe82"
+                BSP_FILE_CHECKSUM=""
+                RFS_FILE_CHECKSUM=""
+                SRC_FILE_CHECKSUM=""
                 ;;
 esac
 
-RFS_FILE=tegra_linux_sample-root-filesystem_r32.7.1_aarch64.tbz2
+RFS_FILE=tegra_linux_sample-root-filesystem_r32.7.5_aarch64.tbz2
 SRC_FILE=public_sources.tbz2
 
 . $BIN_DIR/config/L4T/urls_32.4.4+.sh
@@ -41,10 +44,7 @@ PATCHES=('kernel_common_32.3.1+')
 case $VC_MIPI_SOM in
 Nano|NanoSD|Nano2GB)
         PATCHES+=('kernel_Nano_32.6.1+')
-        ;;
-
-AGXXavier|XavierNX|XavierNXSD|TX2|TX2i|TX2NX)
-        PATCHES+=('kernel_Xavier_32.6.1+')
+        PATCHES+=('kernel_Nano_32.7.5')
         ;;
 esac
 
@@ -104,8 +104,18 @@ function L4T_setup_som_carrier_specifics {
 }
 
 function L4T_setup_addon_file {
-# not necessary for this L4T
-        return 0
+        cd $DOWNLOAD_DIR
+        download_and_check_file ADDON
+
+        echo "Extracting DRAM cfg ($VC_MIPI_BSP) ..."
+        tar xjvf $ADDON_FILE -C $BSP_DIR Linux_for_Tegra/bootloader/t210ref/BCT/P3448_A00_lpddr4_204Mhz_P987.cfg 
+
+        echo "Extracting DRAM patch ($VC_MIPI_BSP) ..."
+        tar xjvf $ADDON_FILE -C $KERNEL_SOURCE/hardware/nvidia/platform/t210/porg/ hardware-nvidia-platform-t210-porg.patch 
+        
+        echo "Applying DRAM patch ($VC_MIPI_BSP) ..."
+        cd $KERNEL_SOURCE/hardware/nvidia/platform/t210/porg/
+        git am -3 --whitespace=fix --ignore-whitespace < hardware-nvidia-platform-t210-porg.patch
 }
 
 #build
