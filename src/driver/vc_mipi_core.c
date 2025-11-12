@@ -39,6 +39,9 @@
 
 #define REG_IO_DISABLE           0x00
 #define REG_IO_FLASH_ENABLE      0x01
+
+#define REG_IO_XHS_OUT           0x02
+
 #define REG_IO_XTRIG_ENABLE      0x08
 #define REG_IO_FLASH_ACTIVE_LOW  0x10
 #define REG_IO_TRIG_ACTIVE_LOW   0x40
@@ -1276,6 +1279,11 @@ int vc_mod_set_io_mode(struct vc_cam *cam, int mode)
                 case 5:
                         mode_desc = "TRIGGER AND FLASH ACTIVE LOW";
                         state->io_mode = REG_IO_FLASH_ENABLE | REG_IO_FLASH_ACTIVE_LOW | REG_IO_TRIG_ACTIVE_LOW;
+                        break;
+                case 6:
+                        printk("### IMX335 master mode \n");
+                        mode_desc = "enable xvs output / enable xhs output";
+                        state->io_mode = REG_IO_FLASH_ENABLE | REG_IO_XHS_OUT;
                         break;
                 }
                 if (ctrl->flags & FLAG_EXPOSURE_OMNIVISION) {

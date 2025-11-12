@@ -431,7 +431,7 @@ static void vc_init_ctrl_imx335(struct vc_ctrl *ctrl, struct vc_desc* desc)
         MODE( 0, 2, FORMAT_RAW10, 0,   0x226,    9,  0xfffff,  4500, 1023,   50,         0)
         MODE( 1, 2, FORMAT_RAW12, 0,   0x226,    9,  0xfffff,  4500, 1023,   50,         0)
         MODE( 2, 4, FORMAT_RAW10, 0,   0x113,    9,  0xfffff,  4500, 1023,   50,         0)
-        MODE( 3, 4, FORMAT_RAW12, 0,   0x113,    9,  0xfffff,  4500, 1023,   50,         0)
+        MODE( 3, 4, FORMAT_RAW12, 0,   0x226,    9,  0xfffff,  4500, 1023,   50,         0)
 
         ctrl->flags                    |= FLAG_EXPOSURE_SONY;
         ctrl->flags                    |= FLAG_INCREASE_FRAME_RATE;

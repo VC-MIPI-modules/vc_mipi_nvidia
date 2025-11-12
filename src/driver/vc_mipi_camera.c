@@ -8,7 +8,7 @@
 #include "vc_mipi_core.h"
 #include "vc_mipi_modules.h"
 
-#define VERSION "0.19.0"
+#define VERSION "0.19.0_IM335_sync"
 // #define VC_CTRL_VALUE
 
 //prototypes
