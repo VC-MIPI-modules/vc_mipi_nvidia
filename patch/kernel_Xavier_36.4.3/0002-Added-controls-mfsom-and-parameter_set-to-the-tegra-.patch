@@ -1,0 +1,132 @@
+From 9aa4b0ced3eeb511d86956b00606e53f16087076 Mon Sep 17 00:00:00 2001
+From: "/setup.sh" <support@vision-components.com>
+Date: Tue, 18 Nov 2025 17:54:57 +0100
+Subject: [PATCH] Added controls 'mfsom' and 'parameter_set' to the tegra
+ framework.
+
+---
+ .../platform/tegra/camera/tegracam_ctrls.c    | 59 +++++++++++++++++++
+ nvidia-oot/include/media/camera_common.h      |  2 +
+ nvidia-oot/include/media/tegra-v4l2-camera.h  |  2 +
+ 3 files changed, 63 insertions(+)
+
+diff --git a/nvidia-oot/drivers/media/platform/tegra/camera/tegracam_ctrls.c b/nvidia-oot/drivers/media/platform/tegra/camera/tegracam_ctrls.c
+index f6392154f..4dd8c888e 100644
+--- a/nvidia-oot/drivers/media/platform/tegra/camera/tegracam_ctrls.c
++++ b/nvidia-oot/drivers/media/platform/tegra/camera/tegracam_ctrls.c
+@@ -235,6 +235,27 @@ static struct v4l2_ctrl_config ctrl_cfg_list[] = {
+ 		.def = 0,
+ 		.step = 1,
+ 	},
++	{
++		.ops = &tegracam_ctrl_ops,
++		.id = TEGRA_CAMERA_CID_MFSOM,
++		.name = "MFSOM",
++		.type = V4L2_CTRL_TYPE_INTEGER,
++		.flags = 0,
++		.min = 0,
++		.max = 2,
++		.step = 1,
++	},
++	{
++		.ops = &tegracam_ctrl_ops,
++		.id = TEGRA_CAMERA_CID_PARAMETER_SET,
++		.name = "Parameter Set",
++		.type = V4L2_CTRL_TYPE_INTEGER,
++		.flags = 0,
++		.min = 0,
++		.max = 3,
++		.def = 0,
++		.step = 1,
++	},
+ };
+ 
+ static int tegracam_get_ctrl_index(u32 cid)
+@@ -393,6 +414,12 @@ static int tegracam_set_ctrls(struct tegracam_ctrl_handler *handler,
+ 	case TEGRA_CAMERA_CID_BINNING_MODE:
+ 		err = ops->set_binning_mode(tc_dev, ctrl->val);
+ 		break;
++	case TEGRA_CAMERA_CID_MFSOM:
++		err = ops->set_mfsom(tc_dev, ctrl->val);
++		break;
++	case TEGRA_CAMERA_CID_PARAMETER_SET:
++		err = ops->set_parameter_set(tc_dev, ctrl->val);
++		break;
+ 	case TEGRA_CAMERA_CID_GAIN:
+ 		if (*ctrl->p_new.p_s64 == ctrlprops->max_gain_val + 1)
+ 			return 0;
+@@ -836,6 +863,20 @@ static int tegracam_check_ctrl_ops(
+ 			if (ops->set_binning_mode != NULL)
+ 				sensor_ops++;
+ 			break;
++		case TEGRA_CAMERA_CID_MFSOM:
++			if (ops->set_mfsom == NULL)
++				dev_err(dev,
++					"Missing TEGRA_CAMERA_CID_MFSOM implementation\n");
++			if (ops->set_mfsom != NULL)
++				sensor_ops++;
++			break;
++		case TEGRA_CAMERA_CID_PARAMETER_SET:
++			if (ops->set_parameter_set == NULL)
++				dev_err(dev,
++					"Missing TEGRA_CAMERA_CID_PARAMETER_SET implementation\n");
++			if (ops->set_parameter_set != NULL)
++				sensor_ops++;
++			break;
+ 		case TEGRA_CAMERA_CID_GAIN:
+ 			if (ops->set_gain == NULL && ops->set_gain_ex == NULL)
+ 				dev_err(dev,
+@@ -1057,6 +1098,24 @@ static int tegracam_check_ctrl_cids(struct tegracam_ctrl_handler *handler)
+ 		}
+ 	}
+ 
++	if (ops->set_mfsom != NULL) {
++		if (!find_matching_cid(ops->ctrl_cid_list,
++			ops->numctrls,
++			TEGRA_CAMERA_CID_MFSOM)) {
++			dev_err(dev, "Missing TEGRA_CAMERA_CID_MFSOM registration\n");
++			errors_found++;
++		}
++	}
++
++	if (ops->set_parameter_set != NULL) {
++		if (!find_matching_cid(ops->ctrl_cid_list,
++			ops->numctrls,
++			TEGRA_CAMERA_CID_PARAMETER_SET)) {
++			dev_err(dev, "Missing TEGRA_CAMERA_CID_PARAMETER_SET registration\n");
++			errors_found++;
++		}
++	}
++
+ 	if (ops->set_gain != NULL || ops->set_gain_ex != NULL) {
+ 		if (!find_matching_cid(ops->ctrl_cid_list,
+ 			ops->numctrls,
+diff --git a/nvidia-oot/include/media/camera_common.h b/nvidia-oot/include/media/camera_common.h
+index 2a7c41d4f..29d96ec69 100644
+--- a/nvidia-oot/include/media/camera_common.h
++++ b/nvidia-oot/include/media/camera_common.h
+@@ -187,6 +187,8 @@ struct tegracam_ctrl_ops {
+ 	int (*set_black_level)(struct tegracam_device *tc_dev, s64 val);
+ 	int (*set_single_trigger)(struct tegracam_device *tc_dev, bool val);
+ 	int (*set_binning_mode)(struct tegracam_device *tc_dev, s64 val);
++	int (*set_mfsom)(struct tegracam_device *tc_dev, s64 val);
++	int (*set_parameter_set)(struct tegracam_device *tc_dev, s64 val);
+ 	int (*set_gain)(struct tegracam_device *tc_dev, s64 val);
+ 	int (*set_exposure)(struct tegracam_device *tc_dev, s64 val);
+ 	int (*set_exposure_short)(struct tegracam_device *tc_dev, s64 val);
+diff --git a/nvidia-oot/include/media/tegra-v4l2-camera.h b/nvidia-oot/include/media/tegra-v4l2-camera.h
+index f1e2d7b82..e5eeca9a2 100644
+--- a/nvidia-oot/include/media/tegra-v4l2-camera.h
++++ b/nvidia-oot/include/media/tegra-v4l2-camera.h
+@@ -45,6 +45,8 @@
+ #define TEGRA_CAMERA_CID_BLACK_LEVEL		(TEGRA_CAMERA_CID_BASE+17)
+ #define TEGRA_CAMERA_CID_SINGLE_TRIGGER		(TEGRA_CAMERA_CID_BASE+18)
+ #define TEGRA_CAMERA_CID_BINNING_MODE           (TEGRA_CAMERA_CID_BASE+19)
++#define TEGRA_CAMERA_CID_MFSOM			(TEGRA_CAMERA_CID_BASE+20)
++#define TEGRA_CAMERA_CID_PARAMETER_SET          (TEGRA_CAMERA_CID_BASE+21)
+ 
+ #define TEGRA_CAMERA_CID_SENSOR_CONFIG		(TEGRA_CAMERA_CID_BASE+50)
+ #define TEGRA_CAMERA_CID_SENSOR_MODE_BLOB	(TEGRA_CAMERA_CID_BASE+51)
+-- 
+2.34.1
+

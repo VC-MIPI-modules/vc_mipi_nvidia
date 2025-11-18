@@ -39,6 +39,8 @@
 #define FLAG_RESET_STREAMMODE_ALWAYS    (1 << 19)
 #define FLAG_RESET_TRIGMODE_ALWAYS      (1 << 20)
 
+#define FLAG_USE_MFSOM_INDEX            (1 << 21)
+
 #define FORMAT_RAW08                    0x2a
 #define FORMAT_RAW10                    0x2b
 #define FORMAT_RAW12                    0x2c
@@ -46,6 +48,9 @@
 
 #define MAX_VC_MODES                    16
 #define MAX_BINNING_MODE_REGS           16
+
+#define MAX_MFSOM_MODE_REGS             3
+#define SHS_MAX_COUNT                   4
 
 #define MAX_I2C_RETRY_COUNT             5
 
@@ -132,8 +137,10 @@ struct vc_sen_csr {
         __u8 mode_operating;
         struct vc_csr4 vmax;
         struct vc_csr4 hmax;
-        struct vc_csr4 shs;
-        struct vc_csr2 gain;
+
+        struct vc_csr4 shs[4];
+        struct vc_csr2 gain[4];
+
         struct vc_csr2 blacklevel;
         struct vc_csr2 h_start;
         struct vc_csr2 v_start;
@@ -165,6 +172,7 @@ typedef struct vc_mode {
         vc_control blacklevel;
         __u32      retrigger_min;
         struct vc_reg binning_mode_regs[MAX_BINNING_MODE_REGS];
+        struct vc_reg mfsom_mode_regs[MAX_MFSOM_MODE_REGS];
 } vc_mode;
 
 typedef struct vc_binning {
@@ -184,6 +192,17 @@ typedef struct dt_binning_mode {
         bool  mode_set;
 } dt_binning_mode;
 
+typedef struct vc_mfsom {
+        __u8 param_sets;
+        struct vc_reg regs[8];
+} vc_mfsom;
+
+#define MFSOM_START(mfsom, ps) \
+        mfsom = (vc_mfsom) { .param_sets = ps}; \
+        { const struct vc_reg regs [] = {
+#define MFSOM_END(mfsom) \
+        , {0, 0} }; memcpy(&mfsom.regs, regs, sizeof(regs)); }
+
 struct vc_ctrl {
         // Communication
         int mod_i2c_addr;
@@ -198,7 +217,10 @@ struct vc_ctrl {
         struct vc_frame frame;          // Pixel
         struct vc_binning binnings[8];
         __u8 max_binning_modes_used;
-        
+
+        struct vc_mfsom mfsoms[3];
+        __u8 max_mfsom_modes_used;
+
         // Array for binning_mode property read from device tree
         struct dt_binning_mode *dt_binning_modes;
 
@@ -217,7 +239,7 @@ struct vc_ctrl {
 struct vc_state {
         __u8 mode;
         __u32 vmax;
-        __u32 shs;
+        __u32 shs[SHS_MAX_COUNT];
         __u32 exposure;                 // µs
         __u32 gain;
         __u32 blacklevel;
@@ -234,6 +256,9 @@ struct vc_state {
         int power_on;
         int streaming;
         __u8 flags;
+
+        __u8 mfsom_mode;
+        __u8 parameter_set;
 };
 
 struct vc_cam {
@@ -289,6 +314,10 @@ int vc_sen_set_gain(struct vc_cam *cam, int gain);
 int vc_sen_set_blacklevel(struct vc_cam *cam, __u32 blacklevel);
 
 int vc_sen_set_binning_mode(struct vc_cam *cam, int mode);
+
+int vc_sen_set_mfsom(struct vc_cam *cam, int mode);
+int vc_sen_set_parameter_set(struct vc_cam *cam, int param_set);
+
 int vc_sen_start_stream(struct vc_cam *cam);
 int vc_sen_stop_stream(struct vc_cam *cam);
 

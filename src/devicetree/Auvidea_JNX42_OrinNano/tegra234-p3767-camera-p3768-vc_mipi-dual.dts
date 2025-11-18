@@ -291,8 +291,8 @@
                                                         // ----------------------------------------------------
                                                         // If you want to use GStreamer with nvarguscamerasrc
                                                         // you have to adjust this settings
-                                                        physical_w              = "1.000";
-                                                        physical_h              = "1.000";
+                                                        physical_w              = "4.608";
+                                                        physical_h              = "3.456";
                                                         // ----------------------------------------------------
                                                         // This node is needed by the Tegra framework.
                                                         // You don't have to change any settings if just want 
@@ -309,15 +309,15 @@
                                                                 // you have to adjust this settings. 
                                                                 active_l                 = "0";
                                                                 active_t                 = "0";
-                                                                active_w                 = "0";
-                                                                active_h                 = "0";
+                                                                active_w                 = "2048";
+                                                                active_h                 = "1536";
                                                                 mode_type                = "bayer";
                                                                 pixel_phase              = "rggb";
                                                                 csi_pixel_bit_depth      = "10";
 
                                                                 min_gain_val             = "0";         // mdB
                                                                 max_gain_val             = "48000";     // mdB
-                                                                step_gain_val            = "50";       // mdB
+                                                                step_gain_val            = "100";       // mdB
                                                                 default_gain             = "0";         // mdB
 
                                                                 min_exp_time             = "1";         // us
@@ -328,9 +328,9 @@
                                                                 // For applications like argus_camera, there should 
                                                                 // be a minimal frame rate greater than zero!
                                                                 min_framerate            = "100";       // mHz
-                                                                max_framerate            = "60000";     // mHz
+                                                                max_framerate            = "112300";     // mHz
                                                                 step_framerate           = "100";       // mHz
-                                                                default_framerate        = "60000";     // mHz
+                                                                default_framerate        = "112300";     // mHz
                                                                 // ----------------------------------------------------
 
                                                                 gain_factor              = "1000";
@@ -396,8 +396,8 @@
                                                         // ----------------------------------------------------
                                                         // If you want to use GStreamer with nvarguscamerasrc
                                                         // you have to adjust this settings
-                                                        physical_w              = "1.000";
-                                                        physical_h              = "1.000";
+                                                        physical_w              = "4.608";
+                                                        physical_h              = "3.456";
                                                         // ----------------------------------------------------
 
                                                         mode0 {
@@ -412,8 +412,8 @@
                                                                 // you have to adjust this settings. 
                                                                 active_l                 = "0";
                                                                 active_t                 = "0";
-                                                                active_w                 = "0";
-                                                                active_h                 = "0";
+                                                                active_w                 = "2048";
+                                                                active_h                 = "1536";
                                                                 mode_type                = "bayer";
                                                                 pixel_phase              = "rggb";
                                                                 csi_pixel_bit_depth      = "10";
@@ -431,9 +431,9 @@
                                                                 // For applications like argus_camera, there should 
                                                                 // be a minimal frame rate greater than zero!
                                                                 min_framerate            = "100";       // mHz
-                                                                max_framerate            = "60000";     // mHz
+                                                                max_framerate            = "112300";     // mHz
                                                                 step_framerate           = "100";       // mHz
-                                                                default_framerate        = "60000";     // mHz
+                                                                default_framerate        = "112300";     // mHz
                                                                 // ----------------------------------------------------
 
                                                                 gain_factor              = "1000";

@@ -50,14 +50,14 @@ static void vc_init_ctrl(struct vc_ctrl *ctrl, struct vc_desc* desc)
 
         ctrl->csr.sen.mode_standby      = 0x00; 
         ctrl->csr.sen.mode_operating    = 0x01;
+
+        ctrl->csr.sen.shs[0].l          = desc->csr_exposure_l;
+        ctrl->csr.sen.shs[0].m          = desc->csr_exposure_m;
+        ctrl->csr.sen.shs[0].h          = desc->csr_exposure_h;
+        ctrl->csr.sen.shs[0].u          = 0;
         
-        ctrl->csr.sen.shs.l             = desc->csr_exposure_l;
-        ctrl->csr.sen.shs.m             = desc->csr_exposure_m;
-        ctrl->csr.sen.shs.h             = desc->csr_exposure_h;
-        ctrl->csr.sen.shs.u             = 0;
-        
-        ctrl->csr.sen.gain.l            = desc->csr_gain_l;
-        ctrl->csr.sen.gain.m            = desc->csr_gain_h;
+        ctrl->csr.sen.gain[0].l         = desc->csr_gain_l;
+        ctrl->csr.sen.gain[0].m         = desc->csr_gain_h;
 
         ctrl->csr.sen.h_start.l         = desc->csr_h_start_l;
         ctrl->csr.sen.h_start.m         = desc->csr_h_start_h;
@@ -488,7 +488,7 @@ static void vc_init_ctrl_imx412(struct vc_ctrl *ctrl, struct vc_desc* desc)
         ctrl->csr.sen.blacklevel        = (vc_csr2) { .l = 0x3033, .m = 0x3032 };
 
         ctrl->csr.sen.vmax              = (vc_csr4) { .l = 0x0341, .m = 0x0340, .h = 0x0000, .u = 0x0000 };
-        ctrl->csr.sen.shs               = (vc_csr4) { .l = 0x0203, .m = 0x0202, .h = 0x0000, .u = 0x0000 };
+        ctrl->csr.sen.shs[0]            = (vc_csr4) { .l = 0x0203, .m = 0x0202, .h = 0x0000, .u = 0x0000 };
 
         FRAME(0, 0, 4032, 3040)
         //all read out         binning  hmax  vmax      vmax    vmax  blkl  blkl  retrigger
@@ -633,7 +633,7 @@ static void vc_init_ctrl_imx565(struct vc_ctrl *ctrl, struct vc_desc *desc)
 
         ctrl->gain                      = (vc_control) { .min =   0, .max =       480, .def =      0 };
         
-        ctrl->csr.sen.gain              = (vc_csr2) { .l = 0x3514, .m = 0x3515 };
+        ctrl->csr.sen.gain[0]           = (vc_csr2) { .l = 0x3514, .m = 0x3515 };
         ctrl->csr.sen.blacklevel        = (vc_csr2) { .l = 0x35b4, .m = 0x35b5 };
         ctrl->csr.sen.vmax              = (vc_csr4) { .l = 0x30d4, .m = 0x30d5, .h = 0x30d6, .u = 0x0000 };
         ctrl->csr.sen.hmax              = (vc_csr4) { .l = 0x30d8, .m = 0x30d9, .h = 0x0000, .u = 0x0000 };
@@ -893,6 +893,14 @@ static void vc_init_ctrl_imx568(struct vc_ctrl *ctrl, struct vc_desc* desc)
 //  Settings for IMX900 (Rev.00)
 //  3.2 MegaPixel Pregius S
 
+#define IMX900_MFSOM                    0x3208
+#define IMX900_MFSOM_DISABLE            0x00
+#define IMX900_MFSOM_2FRAME             0x01
+#define IMX900_MFSOM_4FRAME             0x03
+#define IMX900_MFSOM_INDI_GAIN          0x3500
+#define IMX900_MFSOM_INDI_GAIN_ENABLE   0x41
+#define IMX900_MFSOM_INDI_GAIN_DISABLE  0x01
+
 static void vc_init_ctrl_imx900(struct vc_ctrl *ctrl, struct vc_desc* desc)
 {
         INIT_MESSAGE("IMX900")
@@ -904,6 +912,14 @@ static void vc_init_ctrl_imx900(struct vc_ctrl *ctrl, struct vc_desc* desc)
         ctrl->csr.sen.mode              = (vc_csr2) { .l = 0x3000, .m = 0x3010 };
         ctrl->csr.sen.mode_standby      = 0x01;
         ctrl->csr.sen.mode_operating    = 0x00;
+
+        ctrl->csr.sen.gain[1]           = (vc_csr2) { .l = 0x3516, .m = 0x3517 };
+        ctrl->csr.sen.gain[2]           = (vc_csr2) { .l = 0x3518, .m = 0x3519 };
+        ctrl->csr.sen.gain[3]           = (vc_csr2) { .l = 0x351a, .m = 0x351b };
+
+        ctrl->csr.sen.shs[1]            = (vc_csr4) { .l = 0x3244, .m = 0x3245, .h = 0x3246, .u = 0x0000 };
+        ctrl->csr.sen.shs[2]            = (vc_csr4) { .l = 0x3248, .m = 0x3249, .h = 0x324a, .u = 0x0000 };
+        ctrl->csr.sen.shs[3]            = (vc_csr4) { .l = 0x324c, .m = 0x324d, .h = 0x324e, .u = 0x0000 };
 
         FRAME(0, 0, 2048, 1536)
 
@@ -918,6 +934,21 @@ static void vc_init_ctrl_imx900(struct vc_ctrl *ctrl, struct vc_desc* desc)
         MODE( 4, 4, FORMAT_RAW10, 0,     364,   99, 0xffffff, 1816,  1023,  60,    444204)
         MODE( 5, 4, FORMAT_RAW12, 0,     610,   99, 0xffffff, 1816,  4095, 240,    727542)
 
+        MFSOM_START(ctrl->mfsoms[0], 1)
+                { IMX900_MFSOM, IMX900_MFSOM_DISABLE },
+                { IMX900_MFSOM_INDI_GAIN, IMX900_MFSOM_INDI_GAIN_DISABLE }
+        MFSOM_END(ctrl->mfsoms[0])
+        MFSOM_START(ctrl->mfsoms[1], 2)
+                { IMX900_MFSOM, IMX900_MFSOM_2FRAME },
+                { IMX900_MFSOM_INDI_GAIN, IMX900_MFSOM_INDI_GAIN_ENABLE }
+        MFSOM_END(ctrl->mfsoms[1])
+        MFSOM_START(ctrl->mfsoms[2], 4)
+                { IMX900_MFSOM, IMX900_MFSOM_4FRAME },
+                { IMX900_MFSOM_INDI_GAIN, IMX900_MFSOM_INDI_GAIN_ENABLE }
+        MFSOM_END(ctrl->mfsoms[2])
+
+        ctrl->max_mfsom_modes_used = 2;
+
         ctrl->flags                     = FLAG_EXPOSURE_SONY;
         ctrl->flags                    |= FLAG_RESET_TRIGMODE_ALWAYS;
         ctrl->flags                    |= FLAG_PREGIUS_S;
@@ -925,6 +956,7 @@ static void vc_init_ctrl_imx900(struct vc_ctrl *ctrl, struct vc_desc* desc)
         ctrl->flags                    |= FLAG_IO_ENABLED;
         ctrl->flags                    |= FLAG_TRIGGER_EXTERNAL | FLAG_TRIGGER_PULSEWIDTH |
                                           FLAG_TRIGGER_SELF | FLAG_TRIGGER_SINGLE;
+        ctrl->flags                    |= FLAG_USE_MFSOM_INDEX;
 
         BINNING_START(ctrl->binnings[0], 0, 0)
                 { IMX56X_HV_MODE, IMX56X_BINNING_MODE_DISABLE },
@@ -952,7 +984,7 @@ static void vc_init_ctrl_ov7251(struct vc_ctrl *ctrl, struct vc_desc* desc)
         ctrl->csr.sen.flash_offset      = (vc_csr4) { .l = 0x3b8b, .m = 0x3b8a, .h = 0x3b89, .u = 0x3b88 };
         ctrl->csr.sen.vmax              = (vc_csr4) { .l = 0x380f, .m = 0x380e, .h = 0x0000, .u = 0x0000 };
         // NOTE: Modules rom table contains swapped address assigment.
-        ctrl->csr.sen.gain              = (vc_csr2) { .l = 0x350b, .m = 0x350a };
+        ctrl->csr.sen.gain[0]           = (vc_csr2) { .l = 0x350b, .m = 0x350a };
         
         FRAME(0, 0, 640, 480)
         //all read out         binning  hmax  vmax      vmax   vmax  blkl  blkl  retrigger
@@ -984,7 +1016,7 @@ static void vc_init_ctrl_ov9281(struct vc_ctrl *ctrl, struct vc_desc* desc)
         ctrl->csr.sen.flash_offset      = (vc_csr4) { .l = 0x3924, .m = 0x3923, .h = 0x3922, .u = 0x0000 };
         ctrl->csr.sen.vmax              = (vc_csr4) { .l = 0x380f, .m = 0x380e, .h = 0x0000, .u = 0x0000 };
         // NOTE: Modules rom table contains swapped address assigment.
-        ctrl->csr.sen.gain              = (vc_csr2) { .l = 0x3509, .m = 0x0000 };
+        ctrl->csr.sen.gain[0]           = (vc_csr2) { .l = 0x3509, .m = 0x0000 };
         
         FRAME(0, 0, 1280, 800)
         //all read out         binning  hmax  vmax      vmax   vmax  blkl  blkl  retrigger
