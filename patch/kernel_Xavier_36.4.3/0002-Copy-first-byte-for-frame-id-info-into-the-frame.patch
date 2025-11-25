@@ -1,0 +1,50 @@
+From 997014e2e1f4df470509340693c39ec21859b480 Mon Sep 17 00:00:00 2001
+From: "/setup.sh" <support@vision-components.com>
+Date: Mon, 24 Nov 2025 14:02:07 +0100
+Subject: [PATCH] Copy first byte for frame id info into the frame.
+
+---
+ .../media/platform/tegra/camera/vi/vi5_fops.c | 20 +++++++++++++++++++
+ 1 file changed, 20 insertions(+)
+
+diff --git a/nvidia-oot/drivers/media/platform/tegra/camera/vi/vi5_fops.c b/nvidia-oot/drivers/media/platform/tegra/camera/vi/vi5_fops.c
+index cffb7ecf7..96f22b079 100644
+--- a/nvidia-oot/drivers/media/platform/tegra/camera/vi/vi5_fops.c
++++ b/nvidia-oot/drivers/media/platform/tegra/camera/vi/vi5_fops.c
+@@ -519,6 +519,7 @@ static void vi5_capture_dequeue(struct tegra_channel *chan,
+ 	int timeout_ms = MIPI_NO_TIMEOUT;
+ 	struct timespec64 ts;
+ 	struct capture_descriptor *descr = NULL;
++	void* frm_buffer = NULL;
+ 
+ 	for (vi_port = 0; vi_port < chan->valid_ports; vi_port++) {
+ 		descr = &chan->request[vi_port][buf->capture_descr_index[vi_port]];
+@@ -573,6 +574,25 @@ static void vi5_capture_dequeue(struct tegra_channel *chan,
+ 			chan->capture_state = CAPTURE_GOOD;
+ 		}
+ 		spin_unlock_irqrestore(&chan->capture_state_lock, flags);
++
++
++		if (NULL == chan->emb_buf_addr) {
++			continue;
++		}
++
++//		printk("chan->virtual_channel=%d, emb_buf_addr=%p emb_buf_size=%d \n", chan->virtual_channel, chan->emb_buf_addr, chan->emb_buf_size);
++//		print_hex_dump(KERN_INFO, "EMB:", DUMP_PREFIX_OFFSET, 16, 1, chan->emb_buf_addr, 96, false);
++
++		if (NULL == vb) {
++			continue;
++		}
++
++		frm_buffer = vb2_plane_vaddr(&(vb->vb2_buf), 0);
++		if (NULL != frm_buffer) {
++			memcpy(frm_buffer, chan->emb_buf_addr, 1);
++			continue;
++		}
++
+ 	}
+ 
+ 	wake_up_interruptible(&chan->start_wait);
+-- 
+2.34.1
+
