@@ -1280,8 +1280,9 @@ int vc_mod_set_io_mode(struct vc_cam *cam, int mode)
                         mode_desc = "TRIGGER AND FLASH ACTIVE LOW";
                         state->io_mode = REG_IO_FLASH_ENABLE | REG_IO_FLASH_ACTIVE_LOW | REG_IO_TRIG_ACTIVE_LOW;
                         break;
-                case 6:
-                        printk("### IMX335 master mode \n");
+//                case 6: reserved for IMX568 master
+//                case 7: reserved for IMX568 slave
+                case 8:
                         mode_desc = "enable xvs output / enable xhs output";
                         state->io_mode = REG_IO_FLASH_ENABLE | REG_IO_XHS_OUT;
                         break;
