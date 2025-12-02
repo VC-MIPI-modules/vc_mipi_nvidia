@@ -1,9 +1,19 @@
 # Version History
 
-## v0.18.3 (L4T 36.4, Improvements)
+## v0.19.0 (L4T 36.4.3, L4T 32.7.5, Improvements)
 * New Features
   * Added support for board support package
-    * NVIDIA L4T 36.4.0 for NVIDIA Jetson Orin NX + Orin Nano DevKit
+    * NVIDIA L4T 36.4.3 *(only NVIDIA Jetson Orin NX and Orin Nano + Orin Nano DevKit and Auvidea JNX42)*
+    * NVIDIA L4T 32.7.5 *(only NVIDIA Jetson Nano + NVIDIA DevKit, Auvidea JNX30 and JNX42)* 
+* Improvements
+  * Infinite Timeout for v4l streaming added for L4T 32.7.5 *(only NVIDIA Jetson Nano)*
+  * DRAM patch PCN211181 *(only NVIDIA Jetson Nano)*
+  * README.md upgrade warning added
+
+## v0.18.3 (L4T 36.4.0, Improvements)
+* New Features
+  * Added support for board support package
+    * NVIDIA L4T 36.4.0 *(only NVIDIA Jetson Orin NX and Orin Nano + Orin Nano DevKit and Auvidea JNX42)*
 * Improvements
   * I²C communication performs a retry in case of a writing error.
   * IMX252 starts the triggered stream without additional time penalty.
@@ -24,7 +34,7 @@
 ## v0.18.1 (L4T 36.2.0, Support IMX900)
 * New Features
   * Added support for board support package
-    * NVIDIA L4T 36.2.0 for NVIDIA Jetson Orin NX + Orin Nano DevKit
+    * NVIDIA L4T 36.2.0 *(only NVIDIA Jetson Orin NX + Auvidea JNX42)*
   * Added support for VC MIPI Camera Module
     * IMX900 adjusted values for Rev02 (exposure fix + static noise pattern removed)
   * Bugfix
@@ -34,7 +44,7 @@
 
 * New Features
   * Added support for board support package
-    * NVIDIA L4T 36.2.0 for NVIDIA Jetson Orin Nano + Orin Nano DevKit
+    * NVIDIA L4T 36.2.0 *(only NVIDIA Jetson Orin NX and Orin Nano + Orin Nano DevKit)*
     * NVIDIA L4T 35.4.1 
   * Added support for VC MIPI Camera Module
     * IMX900 (exposure not working correctly when the exposure is less than the frametime)
@@ -53,8 +63,8 @@
 
 * New Features
   * Added support for system on modules
-    * NVIDIA Jetson Orin Nano 8GB/4GB SD/NVME *(NVIDIA DevKit, Auvidea JNX42)*
-    * NVIDIA Jetson Orin NX 16GB/8GB NVME *(Auvidea JNX42)*
+    * NVIDIA Jetson Orin Nano 8GB/4GB SD/NVME *(only NVIDIA DevKit and Auvidea JNX42)*
+    * NVIDIA Jetson Orin NX 16GB/8GB NVME *(only Auvidea JNX42)*
   * Added support for board support package
     * NVIDIA L4T 32.7.4 *(only NVIDIA Jetson Nano)*
 * Improvements
