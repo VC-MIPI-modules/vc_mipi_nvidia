@@ -41,7 +41,7 @@ Be aware of that you have to enable the flash output of the master sensor. Conne
 ## Support for trigger modes
 In the table below you can find, which camera supports which trigger mode.
 
-> **_NOTE:_** IMX290, IMX327, IMX335, IMX412, IMX415, IMX462, OV7251, OV9281 does not support any trigger mode.
+> **_NOTE:_** IMX290, IMX327, IMX335, IMX412, IMX415, IMX462, IMX585, OV7251, OV9281 does not support any trigger mode.
 
 | cameras | 1: external | 2: pulsewidth | 3: self | 4: single | 5: sync | 6: stream_edge | 7: stream_level |
 | ------ | --- | --- | --- | --- | --- | --- | --- |

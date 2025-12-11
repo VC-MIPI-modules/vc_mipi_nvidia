@@ -42,6 +42,7 @@
   * IMX412
   * IMX415
   * IMX565, IMX566, IMX567, IMX568
+  * IMX585
   * IMX900
   * OV7251, OV9281
 * Features
@@ -229,23 +230,23 @@ The property *max_framerate* is given for the number of lanes and the pixel form
 </details>
 
 <details>
-  <summary>GStreamer properties for IMX290, IMX327, IMX335, IMX412, IMX415 and IMX462 (cameras with 2 and 4 lanes support)</summary>
+  <summary>GStreamer properties for IMX290, IMX327, IMX335, IMX412, IMX415, IMX462 and IMX585 (cameras with 2 and 4 lanes support)</summary>
 
-| Property             | IMX290/327 | IMX335     | IMX412     | IMX415     | IMX462     |
-| -------------------- | ---------: | ---------: | ---------: | ---------: | ---------: |
-| physical_w           |      5.568 |      5.184 |      6.250 |      5.568 |      5.568 |
-| physical_h           |      3.132 |      3.888 |      4.712 |      3.132 |      3.132 |
-| active_w             |       1920 |       2592 |       4032 |       3840 |       1920 |
-| active_h             |       1080 |       1944 |       3040 |       2160 |       1080 |
-| pixel_t              |      RG 10 |   RG 10,12 |      RG 10 |      GB 10 |      RG 10 |
-| max_gain_val         |         71 |         72 |         51 |         72 |         71 |
-| step_gain_val        |      0.300 |      0.300 |      0.050 |      0.300 |      0.300 |
-| max_framerate (2L08) |          - |          - |          - |          - |          - |
-| max_framerate (2L10) |       60.0 |       15.0 |       20.0 |       31.7 |       60.0 |
-| max_framerate (2L12) |          - |       15.0 |          - |          - |          - |
-| max_framerate (4L08) |          - |          - |          - |          - |          - |
-| max_framerate (4L10) |       60.0 |       22.3 |       40.0 |       59.9 |      120.0 |
-| max_framerate (4L12) |          - |       22.3 |          - |          - |          - |
+| Property             | IMX290/327 | IMX335     | IMX412     | IMX415     | IMX462     | IMX585     |
+| -------------------- | ---------: | ---------: | ---------: | ---------: | ---------: | ---------: |
+| physical_w           |      5.568 |      5.184 |      6.250 |      5.568 |      5.568 |     11.136 |
+| physical_h           |      3.132 |      3.888 |      4.712 |      3.132 |      3.132 |      6.264 |
+| active_w             |       1920 |       2592 |       4032 |       3840 |       1920 |       3840 |
+| active_h             |       1080 |       1944 |       3040 |       2160 |       1080 |       2160 |
+| pixel_t              |      RG 10 |   RG 10,12 |      RG 10 |      GB 10 |      RG 10 |   RG 10,12 |
+| max_gain_val         |         71 |         72 |         51 |         72 |         71 |         72 |
+| step_gain_val        |      0.300 |      0.300 |      0.050 |      0.300 |      0.300 |      0.300 |
+| max_framerate (2L08) |          - |          - |          - |          - |          - |          - |
+| max_framerate (2L10) |       60.0 |       15.0 |       20.0 |       31.7 |       60.0 |       30.0 |
+| max_framerate (2L12) |          - |       15.0 |          - |          - |          - |       25.0 |
+| max_framerate (4L08) |          - |          - |          - |          - |          - |          - |
+| max_framerate (4L10) |       60.0 |       22.3 |       40.0 |       59.9 |      120.0 |       60.0 |
+| max_framerate (4L12) |          - |       22.3 |          - |          - |          - |       50.0 |
 </details>
 
 <details>
