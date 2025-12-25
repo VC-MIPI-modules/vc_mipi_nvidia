@@ -25,7 +25,7 @@ index 6f98c64..9bb0b7e 100644
 +	struct sensor_properties *sensor = &s_data->sensor_props;
 +	int mode_idx = 0;
 +
-+	if (sensor->sensor_modes != NULL && sensor->num_modes > 0 && mode_idx < sensor->num_modes) {
++	if (s_data != NULL && sensor->sensor_modes != NULL && sensor->num_modes > 0 && mode_idx < sensor->num_modes) {
 +		struct sensor_mode_properties *mode = &sensor->sensor_modes[mode_idx];
 +		struct sensor_image_properties *image = &mode->image_properties;
 +		image->left = left;
@@ -47,7 +47,7 @@ index 6f98c64..9bb0b7e 100644
 +
 +	pix->width = (pix->width / 32) * 32;
 +	pix->height = (pix->height / 4) * 4;
-+
++	if (s_data == NULL) return -EINVAL;
 +	s_data->def_width = pix->width;
 +	s_data->def_height = pix->height;
 +	if (s_data->frmfmt != NULL && s_data->numfmts > 0 && mode_idx < s_data->numfmts) {
@@ -96,7 +96,7 @@ index 6f98c64..9bb0b7e 100644
 +
 +	switch (selection->target) {
 +	case V4L2_SEL_TGT_CROP:
-+		if (sensor->sensor_modes != NULL && sensor->num_modes > 0 && mode_idx < sensor->num_modes) {
++		if (s_data != NULL && sensor->sensor_modes != NULL && sensor->num_modes > 0 && mode_idx < sensor->num_modes) {
 +			struct sensor_mode_properties *mode = &sensor->sensor_modes[mode_idx];
 +			struct sensor_image_properties *image = &mode->image_properties;
 +			selection->r.left = image->left;
