@@ -9,28 +9,28 @@ GCC_DIR=$TOOLCHAIN_DIR/gcc-linaro-7.3.1-2018.05-x86_64_aarch64-linux-gnu
 export CROSS_COMPILE=$GCC_DIR/bin/aarch64-linux-gnu-
 
 #downloads
-DEV_URL=https://developer.nvidia.com/downloads/embedded/l4t/r35_release_v3.1
+DEV_URL=https://developer.nvidia.com/downloads/embedded/l4t/r35_release_v6.0
 
 case $VC_MIPI_SOM in
         AGXXavier|XavierNX|XavierNXSD|AGXOrin|OrinNX8GB|OrinNX16GB|OrinNano4GB_SD|OrinNano8GB_SD|OrinNano4GB_NVME|OrinNano8GB_NVME)
-                BSP_FILE=jetson_linux_r35.3.1_aarch64.tbz2
+                BSP_FILE=jetson_linux_r35.6.0_aarch64.tbz2
                 ;;
 esac
 
-RFS_FILE=tegra_linux_sample-root-filesystem_r35.3.1_aarch64.tbz2
+RFS_FILE=tegra_linux_sample-root-filesystem_r35.6.0_aarch64.tbz2
 SRC_FILE=public_sources.tbz2
 
 CHECK4MD5=1
 
-BSP_FILE_CHECKSUM="1d254bec244e1bdeaa4012f02e2c6057"
-RFS_FILE_CHECKSUM="12bd3ed977eb86f6b13e90a2000022de"
-SRC_FILE_CHECKSUM="71f31135cf18255be97182d6521bc59d"
+BSP_FILE_CHECKSUM="383f4132624960aac6ed27710b52e249"
+RFS_FILE_CHECKSUM="6bf87a58c5b898a987f3a7a78f994c89"
+SRC_FILE_CHECKSUM="9d448cd78b4d65772c369c819df762b1"
 
 . $BIN_DIR/config/L4T/urls_35.1.0+.sh
 
 #configure
 PATCHES=('kernel_common_32.3.1+')
-PATCHES+=('kernel_Xavier_35.3.1+')
+PATCHES+=('kernel_Xavier_35.6.0')
 
 KERNEL_SOURCE=$BSP_DIR/Linux_for_Tegra/source/public
 
@@ -51,13 +51,13 @@ MODULES_BSP=$BSP_DIR/Linux_for_Tegra/rootfs/usr
 
 DTB_OUT=$KERNEL_OUT/arch/arm64/boot/dts/nvidia
 
-NVDD_DIR=NVIDIA-kernel-module-source-TempVersion
+NVDD_DIR=nvdisplay
 
 ORIN_FLASH_CONFIG_FOLDER="t186ref"
 ORIN_FLASH_PARTITION_MMC="mmcblk1p1"
 ORIN_FLASH_PARTITION_NVME="nvme0n1p1"
 
-ORIN_NVME_XML="flash_l4t_external.xml"
+ORIN_NVME_XML="flash_l4t_t234_nvme.xml"
 
 function L4T_extract_kernel_packages {
         echo "Extracting kernel packages ($VC_MIPI_BSP) ..."
@@ -93,10 +93,9 @@ function L4T_setup_eeprom_size {
         Common_setup_eeprom_size
 }
 
-#GPIO_FILE=${BSP_DIR}/Linux_for_Tegra/bootloader/t186ref/BCT/tegra234-mb2-bct-scr-p3767-0000.dts
+GPIO_FILE=${BSP_DIR}/Linux_for_Tegra/bootloader/t186ref/BCT/tegra234-mb2-bct-scr-p3767-0000.dts
 function L4T_setup_gpio_file {
-#        Common_setup_gpio_file
-        return 0;
+        Common_setup_gpio_file
 }
 
 function L4T_setup_conf_file {

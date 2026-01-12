@@ -47,7 +47,7 @@ flash_all() {
                 sudo ADDITIONAL_DTB_OVERLAY_OPT="BootOrderNvme.dtbo" \
                         ./tools/kernel_flash/l4t_initrd_flash.sh \
                         --external-device ${FLASH_PARTITION} \
-                        -c tools/kernel_flash/flash_l4t_external.xml \
+                        -c tools/kernel_flash/${ORIN_NVME_XML} \
                         -p "-c bootloader/${ORIN_FLASH_CONFIG_FOLDER}/cfg/flash_t234_qspi.xml" \
                         --network usb0 \
                         ${FLASH_BOARD} internal
@@ -101,7 +101,7 @@ flash_device_tree() {
                 echo "Please modify /boot/extlinux/extlinux.conf"
                 TMP_DIR=/tmp
                 case $VC_MIPI_BSP in
-                35.1.0|35.2.1|35.3.1|35.4.1)
+                35.1.0|35.2.1|35.3.1|35.4.1|35.6.0)
                         SRC_FILE=$KERNEL_OUT/arch/arm64/boot/dts/nvidia/$ORIN_DTB_FILE
                         ORIN_DTB_DIR=/boot/dtb
                         ;;

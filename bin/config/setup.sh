@@ -142,6 +142,7 @@ bsps=(
 "NVIDIA L4T 35.2.1 (https://developer.nvidia.com/embedded/jetson-linux-r3521)"
 "NVIDIA L4T 35.3.1 (https://developer.nvidia.com/embedded/jetson-linux-r3531)"
 "NVIDIA L4T 35.4.1 (https://developer.nvidia.com/embedded/jetson-linux-r3541)"
+"NVIDIA L4T 35.6.0 (https://developer.nvidia.com/embedded/jetson-linux-r3560)"
 "NVIDIA L4T 36.2.0 (https://developer.nvidia.com/embedded/jetson-linux-r362)"
 "NVIDIA L4T 36.4.0 (https://developer.nvidia.com/embedded/jetson-linux-r364)"
 "NVIDIA L4T 36.4.3 (https://developer.nvidia.com/embedded/jetson-linux-r3643)"
@@ -157,6 +158,7 @@ bsps_keys=(
 "35.2.1"
 "35.3.1"
 "35.4.1"
+"35.6.0"
 "36.2.0"
 "36.4.0"
 "36.4.3"
@@ -222,11 +224,11 @@ setup_driver() {
                 ;;
         XavierNX|XavierNXSD) 
                 choose_board 2 4 5
-                choose_bsp 0 1 2 5 6 7 8
+                choose_bsp 0 1 2 5 6 7 8 9
                 ;;
         AGXXavier)
                 choose_board 6
-                choose_bsp 0 1 2 5 6 7 8
+                choose_bsp 0 1 2 5 6 7 8 9
                 ;;
         TX2|TX2i)
                 choose_board 6
@@ -238,17 +240,17 @@ setup_driver() {
                 ;;
         OrinNano4GB_SD|OrinNano8GB_SD|OrinNano4GB_NVME|OrinNano8GB_NVME)
                 choose_board 3 5
-                choose_bsp 7 8 9 10 11
+                choose_bsp 7 8 9 10 11 12
                 ;;
         OrinNX8GB|OrinNX16GB)
                 choose_board 3 5
 
                 case ${board} in
                 NV_DevKit_OrinNano)
-                        choose_bsp 9 10 11
+                        choose_bsp 9 10 11 12
                         ;;
                 *)
-                        choose_bsp 6 7 8 9 10 11
+                        choose_bsp 6 7 8 9 10 11 12
                         ;;
                 esac
 

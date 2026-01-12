@@ -86,7 +86,7 @@ The device must be in forced recovery mode! Just call:
 ./flash.sh --dt
 ```
 
-### JetPack 5 (L4T 35.1.0 - L4T 35.4.1)
+### JetPack 5 (L4T 35.1.0 - L4T 35.6.0)
 
  For changing device trees only, there must be a differentiation between Orin and Non-Orin Targets:
   * For targets like Xavier NX and AGX Xavier, you will have to modify your /boot/extlinux/extlinux.conf on your target machine by removing the FDT entry or by commenting out with '#'. Otherwise you will have to flash your complete linux image for every device tree change to take effect.
