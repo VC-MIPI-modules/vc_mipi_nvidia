@@ -8,7 +8,7 @@
 #include "vc_mipi_core.h"
 #include "vc_mipi_modules.h"
 
-#define VERSION "0.19.0"
+#define VERSION "0.19.0_sequential"
 // #define VC_CTRL_VALUE
 
 //prototypes
@@ -804,6 +804,12 @@ void vc_init_tegra_controls(struct tegracam_device *tc_dev)
         struct sensor_mode_properties *mode = tegracam_to_mode(tc_dev, 0);
         struct sensor_control_properties *control;
 
+        struct vc_ctrl *ctrl = &cam->ctrl;
+        struct i2c_client *client_sen = ctrl->client_sen;
+        struct camera_common_data *s_data = NULL;
+        struct tegracam_ctrl_handler *tcc_handler = NULL;
+        int i = 0;
+
         if (mode != NULL) {
                 control = &mode->control_properties;
 
@@ -829,6 +835,34 @@ void vc_init_tegra_controls(struct tegracam_device *tc_dev)
 
         // NOTE: Set this state to enable controls in tegracam_ctrls.c -> tegracam_set_ctrls
         tc_dev->s_data->power->state = SWITCH_ON;
+
+        s_data = to_camera_common_data(&client_sen->dev);
+        if (NULL == s_data) {
+                vc_err(dev, "%s(): s_data is NULL!\n", __FUNCTION__);
+                return;
+        }
+
+        tcc_handler = s_data->tegracam_ctrl_hdl;
+        if (NULL == tcc_handler) {
+                vc_err(dev, "%s(): tegracam control handler is NULL!\n", __FUNCTION__);
+                return;
+        }
+
+        for (i = 0; i < tcc_handler->numctrls; i++) {
+                struct v4l2_ctrl *ctrl = tcc_handler->ctrls[i];
+                int err = 0;
+                if (NULL == ctrl) {
+                        vc_err(dev, "%s(): v4l2 ctrl is NULL!\n", __FUNCTION__);
+                        continue;
+                }
+                if (TEGRA_CAMERA_CID_TRIGGER_MODE == ctrl->id) {
+                        vc_notice(dev, "%s(): Overwrite control trigger_mode (min: %d, max: %d, default: %d)\n", __FUNCTION__, 0, 8, 0);
+                        err = v4l2_ctrl_modify_range(ctrl, 0, 8, 1, 0);
+                        if (0 > err) {
+                                vc_err(dev, "%s(): Could not overwrite trigger_mode control!\n", __FUNCTION__);
+                        }
+                }
+        }
 }
 
 static const struct regmap_config vc_regmap_config = {

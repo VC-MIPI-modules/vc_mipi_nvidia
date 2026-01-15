@@ -51,10 +51,12 @@
 #define REG_TRIGGER_SYNC         0x10
 #define REG_TRIGGER_STREAM_EDGE  0x20
 #define REG_TRIGGER_STREAM_LEVEL 0x60
+#define REG_TRIGGER_SEQUENTIAL   0x80
 
 #define MODE_TYPE_STREAM         0x01
 #define MODE_TYPE_TRIGGER        0x02
 #define MODE_TYPE_SLAVE          0x03
+#define MODE_TYPE_TRIGGER_SEQUENTIAL    0x04
 
 // ------------------------------------------------------------------------------------------------
 // Function prototypes
@@ -297,9 +299,10 @@ static void vc_core_print_modes(struct device *dev, struct vc_desc *desc)
                 data_rate = (*(__u32*)mode->data_rate)/1000000;
                 vc_core_print_format(mode->format, format);
                 switch (mode->type) {
-                case MODE_TYPE_STREAM:  strcpy(type, "STREAM "); break;
-                case MODE_TYPE_TRIGGER: strcpy(type, "EXT.TRG"); break;
-                case MODE_TYPE_SLAVE:   strcpy(type, "SLAVE  "); break;
+                case MODE_TYPE_STREAM:             strcpy(type, "STREAM "); break;
+                case MODE_TYPE_TRIGGER:            strcpy(type, "EXT.TRG"); break;
+                case MODE_TYPE_SLAVE:              strcpy(type, "SLAVE  "); break;
+                case MODE_TYPE_TRIGGER_SEQUENTIAL: strcpy(type, "EXT.SEQ"); break;
                 default: sprintf(type, "0x%02x   ", mode->type); break;
                 }
                 vc_notice(dev, "| %2d |    %4u |       %u | %s   | %s |       %u |\n",
@@ -588,6 +591,7 @@ __u32 vc_core_calculate_max_exposure(struct vc_cam *cam, __u8 num_lanes, __u8 fo
         case REG_TRIGGER_PULSEWIDTH:
         case REG_TRIGGER_SELF:
         case REG_TRIGGER_SINGLE:
+        case REG_TRIGGER_SEQUENTIAL:
                 {
                         vc_dbg(dev, "%s(): clk_ext_trigger: %u\n", __FUNCTION__, ctrl->clk_ext_trigger);
                         return ((__u64)0xffffffff * 1000000) / ctrl->clk_ext_trigger;
@@ -1121,6 +1125,10 @@ int vc_mod_set_mode(struct vc_cam *cam, int *reset)
                 type = MODE_TYPE_TRIGGER;
                 stype = "EXT.TRG";
                 break;
+        case REG_TRIGGER_SEQUENTIAL:
+                type = MODE_TYPE_TRIGGER_SEQUENTIAL;
+                stype = "SEQ.TRG";
+                break;
         }
 
         if (( 0 < state->former_binning_mode ) && ( 0 == state->binning_mode) ) {
@@ -1134,7 +1142,8 @@ int vc_mod_set_mode(struct vc_cam *cam, int *reset)
 
         mode = vc_mod_find_mode(cam, num_lanes, format, type, binning_mode);
         if ( ((mode == state->mode) && (!bMustBinningReset) && ((MODE_TYPE_STREAM == type) && !(ctrl->flags & FLAG_RESET_STREAMMODE_ALWAYS)))
-          || ((mode == state->mode) && (!bMustBinningReset) && ((MODE_TYPE_TRIGGER == type) && !(ctrl->flags & FLAG_RESET_TRIGMODE_ALWAYS))) ) {
+          || ((mode == state->mode) && (!bMustBinningReset) && ((MODE_TYPE_TRIGGER == type) && !(ctrl->flags & FLAG_RESET_TRIGMODE_ALWAYS))) 
+          || ((mode == state->mode) && (!bMustBinningReset) && ((MODE_TYPE_TRIGGER_SEQUENTIAL == type) && !(ctrl->flags & FLAG_RESET_SEQTRIGMODE_ALWAYS))) ) {
                 vc_dbg(dev, "%s(): Module mode %u need not to be set!\n", __FUNCTION__, mode);
                 *reset = 0;
                 return 0;
@@ -1202,6 +1211,10 @@ int vc_mod_set_trigger_mode(struct vc_cam *cam, int mode)
                 mode_desc = "STREAM_LEVEL";
                 state->trigger_mode = REG_TRIGGER_STREAM_LEVEL;
 
+        } else if (mode == 8 && ctrl->flags & FLAG_TRIGGER_SEQUENTIAL) {
+                mode_desc = "SEQUENTIAL";
+                state->trigger_mode = REG_TRIGGER_SEQUENTIAL;
+
         } else {
                 vc_err(dev, "%s(): Trigger mode %d not supported!\n", __FUNCTION__, mode);
                 return -EINVAL;
@@ -1226,6 +1239,7 @@ int vc_mod_get_trigger_mode(struct vc_cam *cam)
         case REG_TRIGGER_SYNC:          return 5;
         case REG_TRIGGER_STREAM_EDGE:   return 6;
         case REG_TRIGGER_STREAM_LEVEL:  return 7;
+        case REG_TRIGGER_SEQUENTIAL:    return 8;
         }
         return 0;
 }
@@ -1643,7 +1657,10 @@ int vc_sen_start_stream(struct vc_cam *cam)
         if (ctrl->flags & FLAG_TRIGGER_SLAVE && state->trigger_mode == REG_TRIGGER_SYNC) {
                 ret |= vc_mod_write_io_mode(client_mod, REG_IO_XTRIG_ENABLE);
                 ret |= vc_mod_write_trigger_mode(client_mod, REG_TRIGGER_DISABLE);
-
+        }
+        else if (ctrl->flags & FLAG_TRIGGER_SEQUENTIAL && state->trigger_mode == REG_TRIGGER_SEQUENTIAL) {
+                ret |= vc_mod_write_io_mode(client_mod, state->io_mode);
+                ret |= vc_mod_write_trigger_mode(client_mod, REG_TRIGGER_EXTERNAL);
         } else {
                 ret |= vc_mod_write_io_mode(client_mod, state->io_mode);
                 ret |= vc_mod_write_trigger_mode(client_mod, state->trigger_mode);
@@ -1896,6 +1913,7 @@ int vc_sen_set_exposure(struct vc_cam *cam, int exposure_us)
                 case REG_TRIGGER_EXTERNAL:
                 case REG_TRIGGER_SINGLE:
                 case REG_TRIGGER_SELF:	
+                case REG_TRIGGER_SEQUENTIAL:
                         vc_calculate_trig_exposure(cam, exposure_us);
                         ret |= vc_mod_write_exposure(client_mod, state->exposure_cnt);
                         // NOTE for FLAG_TRIGGER_SELF

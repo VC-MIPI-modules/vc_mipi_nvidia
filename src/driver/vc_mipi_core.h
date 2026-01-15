@@ -39,6 +39,9 @@
 #define FLAG_RESET_STREAMMODE_ALWAYS    (1 << 19)
 #define FLAG_RESET_TRIGMODE_ALWAYS      (1 << 20)
 
+#define FLAG_TRIGGER_SEQUENTIAL         (1 << 21)
+#define FLAG_RESET_SEQTRIGMODE_ALWAYS   (1 << 22)
+
 #define FORMAT_RAW08                    0x2a
 #define FORMAT_RAW10                    0x2b
 #define FORMAT_RAW12                    0x2c
