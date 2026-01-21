@@ -12,51 +12,52 @@
 
 // #define READ_VMAX
 
-#define MOD_REG_RESET            0x0100 // register  0 [0x0100]: reset and init register (R/W)
-#define MOD_REG_STATUS           0x0101 // register  1 [0x0101]: status (R)
-#define MOD_REG_MODE             0x0102 // register  2 [0x0102]: initialisation mode (R/W)
-#define MOD_REG_IOCTRL           0x0103 // register  3 [0x0103]: input/output control (R/W)
-#define MOD_REG_MOD_ADDR         0x0104 // register  4 [0x0104]: module i2c address (R/W, default: 0x10)
-#define MOD_REG_SEN_ADDR         0x0105 // register  5 [0x0105]: sensor i2c address (R/W, default: 0x1A)
-#define MOD_REG_OUTPUT           0x0106 // register  6 [0x0106]: output signal override register (R/W, default: 0x00)
-#define MOD_REG_INPUT            0x0107 // register  7 [0x0107]: input signal status register (R)
-#define MOD_REG_EXTTRIG          0x0108 // register  8 [0x0108]: external trigger enable (R/W, default: 0x00)
-#define MOD_REG_EXPO_L           0x0109 // register  9 [0x0109]: exposure LSB (R/W, default: 0x10)
-#define MOD_REG_EXPO_M           0x010A // register 10 [0x010A]: exposure 	   (R/W, default: 0x27)
-#define MOD_REG_EXPO_H           0x010B // register 11 [0x010B]: exposure     (R/W, default: 0x00)
-#define MOD_REG_EXPO_U           0x010C // register 12 [0x010C]: exposure MSB (R/W, default: 0x00)
-#define MOD_REG_RETRIG_L         0x010D // register 13 [0x010D]: retrigger LSB (R/W, default: 0x40)
-#define MOD_REG_RETRIG_M         0x010E // register 14 [0x010E]: retrigger     (R/W, default: 0x2D)
-#define MOD_REG_RETRIG_H         0x010F // register 15 [0x010F]: retrigger     (R/W, default: 0x29)
-#define MOD_REG_RETRIG_U         0x0110 // register 16 [0x0110]: retrigger MSB (R/W, default: 0x00)
+#define MOD_REG_RESET                   0x0100 // register  0 [0x0100]: reset and init register (R/W)
+#define MOD_REG_STATUS                  0x0101 // register  1 [0x0101]: status (R)
+#define MOD_REG_MODE                    0x0102 // register  2 [0x0102]: initialisation mode (R/W)
+#define MOD_REG_IOCTRL                  0x0103 // register  3 [0x0103]: input/output control (R/W)
+#define MOD_REG_MOD_ADDR                0x0104 // register  4 [0x0104]: module i2c address (R/W, default: 0x10)
+#define MOD_REG_SEN_ADDR                0x0105 // register  5 [0x0105]: sensor i2c address (R/W, default: 0x1A)
+#define MOD_REG_OUTPUT                  0x0106 // register  6 [0x0106]: output signal override register (R/W, default: 0x00)
+#define MOD_REG_INPUT                   0x0107 // register  7 [0x0107]: input signal status register (R)
+#define MOD_REG_EXTTRIG                 0x0108 // register  8 [0x0108]: external trigger enable (R/W, default: 0x00)
+#define MOD_REG_EXPO_L                  0x0109 // register  9 [0x0109]: exposure LSB (R/W, default: 0x10)
+#define MOD_REG_EXPO_M                  0x010A // register 10 [0x010A]: exposure 	   (R/W, default: 0x27)
+#define MOD_REG_EXPO_H                  0x010B // register 11 [0x010B]: exposure     (R/W, default: 0x00)
+#define MOD_REG_EXPO_U                  0x010C // register 12 [0x010C]: exposure MSB (R/W, default: 0x00)
+#define MOD_REG_RETRIG_L                0x010D // register 13 [0x010D]: retrigger LSB (R/W, default: 0x40)
+#define MOD_REG_RETRIG_M                0x010E // register 14 [0x010E]: retrigger     (R/W, default: 0x2D)
+#define MOD_REG_RETRIG_H                0x010F // register 15 [0x010F]: retrigger     (R/W, default: 0x29)
+#define MOD_REG_RETRIG_U                0x0110 // register 16 [0x0110]: retrigger MSB (R/W, default: 0x00)
 
-#define REG_RESET_PWR_UP         0x00
-#define REG_RESET_SENSOR         0x01   // reg0[0] = 0 sensor reset the sensor is held in reset when this bit is 1
-#define REG_RESET_PWR_DOWN       0x02   // reg0[1] = 0 power down power for the sensor is switched off
-#define REG_STATUS_NO_COM        0x00   // reg1[7:0] = 0x00 default, no communication with sensor possible
-#define REG_STATUS_READY         0x80   // reg1[7:0] = 0x80 sensor ready after successful initialization sequence
-#define REG_STATUS_ERROR         0x01   // reg1[7:0] = 0x01 internal error during initialization
+#define REG_RESET_PWR_UP                0x00
+#define REG_RESET_SENSOR                0x01   // reg0[0] = 0 sensor reset the sensor is held in reset when this bit is 1
+#define REG_RESET_PWR_DOWN              0x02   // reg0[1] = 0 power down power for the sensor is switched off
+#define REG_STATUS_NO_COM               0x00   // reg1[7:0] = 0x00 default, no communication with sensor possible
+#define REG_STATUS_READY                0x80   // reg1[7:0] = 0x80 sensor ready after successful initialization sequence
+#define REG_STATUS_ERROR                0x01   // reg1[7:0] = 0x01 internal error during initialization
 
-#define REG_IO_DISABLE           0x00
-#define REG_IO_FLASH_ENABLE      0x01
-#define REG_IO_XTRIG_ENABLE      0x08
-#define REG_IO_FLASH_ACTIVE_LOW  0x10
-#define REG_IO_TRIG_ACTIVE_LOW   0x40
+#define REG_IO_DISABLE                  0x00
+#define REG_IO_FLASH_ENABLE             0x01
+#define REG_IO_XTRIG_ENABLE             0x08
+#define REG_IO_FLASH_ACTIVE_LOW         0x10
+#define REG_IO_TRIG_ACTIVE_LOW          0x40
 
-#define REG_TRIGGER_DISABLE      0x00
-#define REG_TRIGGER_EXTERNAL     0x01
-#define REG_TRIGGER_PULSEWIDTH   0x02
-#define REG_TRIGGER_SELF         0x04
-#define REG_TRIGGER_SINGLE       0x08
-#define REG_TRIGGER_SYNC         0x10
-#define REG_TRIGGER_STREAM_EDGE  0x20
-#define REG_TRIGGER_STREAM_LEVEL 0x60
-#define REG_TRIGGER_SEQUENTIAL   0x80
+#define REG_TRIGGER_DISABLE             0x00
+#define REG_TRIGGER_EXTERNAL            0x01
+#define REG_TRIGGER_PULSEWIDTH          0x02
+#define REG_TRIGGER_SELF                0x04
+#define REG_TRIGGER_SINGLE              0x08
+#define REG_TRIGGER_SYNC                0x10
+#define REG_TRIGGER_STREAM_EDGE         0x20
+#define REG_TRIGGER_STREAM_LEVEL        0x60
 
-#define MODE_TYPE_STREAM         0x01
-#define MODE_TYPE_TRIGGER        0x02
-#define MODE_TYPE_SLAVE          0x03
-#define MODE_TYPE_TRIGGER_SEQUENTIAL    0x04
+#define REG_TRIGGER_OVERLAP             0x80
+
+#define MODE_TYPE_STREAM                0x01
+#define MODE_TYPE_TRIGGER               0x02
+#define MODE_TYPE_SLAVE                 0x03
+#define MODE_TYPE_TRIGGER_OVERLAP       0x04
 
 // ------------------------------------------------------------------------------------------------
 // Function prototypes
@@ -299,10 +300,10 @@ static void vc_core_print_modes(struct device *dev, struct vc_desc *desc)
                 data_rate = (*(__u32*)mode->data_rate)/1000000;
                 vc_core_print_format(mode->format, format);
                 switch (mode->type) {
-                case MODE_TYPE_STREAM:             strcpy(type, "STREAM "); break;
-                case MODE_TYPE_TRIGGER:            strcpy(type, "EXT.TRG"); break;
-                case MODE_TYPE_SLAVE:              strcpy(type, "SLAVE  "); break;
-                case MODE_TYPE_TRIGGER_SEQUENTIAL: strcpy(type, "EXT.SEQ"); break;
+                case MODE_TYPE_STREAM:          strcpy(type, "STREAM "); break;
+                case MODE_TYPE_TRIGGER:         strcpy(type, "EXT.TRG"); break;
+                case MODE_TYPE_SLAVE:           strcpy(type, "SLAVE  "); break;
+                case MODE_TYPE_TRIGGER_OVERLAP: strcpy(type, "OVL.TRG"); break;
                 default: sprintf(type, "0x%02x   ", mode->type); break;
                 }
                 vc_notice(dev, "| %2d |    %4u |       %u | %s   | %s |       %u |\n",
@@ -591,7 +592,7 @@ __u32 vc_core_calculate_max_exposure(struct vc_cam *cam, __u8 num_lanes, __u8 fo
         case REG_TRIGGER_PULSEWIDTH:
         case REG_TRIGGER_SELF:
         case REG_TRIGGER_SINGLE:
-        case REG_TRIGGER_SEQUENTIAL:
+        case REG_TRIGGER_OVERLAP:
                 {
                         vc_dbg(dev, "%s(): clk_ext_trigger: %u\n", __FUNCTION__, ctrl->clk_ext_trigger);
                         return ((__u64)0xffffffff * 1000000) / ctrl->clk_ext_trigger;
@@ -1125,9 +1126,9 @@ int vc_mod_set_mode(struct vc_cam *cam, int *reset)
                 type = MODE_TYPE_TRIGGER;
                 stype = "EXT.TRG";
                 break;
-        case REG_TRIGGER_SEQUENTIAL:
-                type = MODE_TYPE_TRIGGER_SEQUENTIAL;
-                stype = "SEQ.TRG";
+        case REG_TRIGGER_OVERLAP:
+                type = MODE_TYPE_TRIGGER_OVERLAP;
+                stype = "OVL.TRG";
                 break;
         }
 
@@ -1143,7 +1144,7 @@ int vc_mod_set_mode(struct vc_cam *cam, int *reset)
         mode = vc_mod_find_mode(cam, num_lanes, format, type, binning_mode);
         if ( ((mode == state->mode) && (!bMustBinningReset) && ((MODE_TYPE_STREAM == type) && !(ctrl->flags & FLAG_RESET_STREAMMODE_ALWAYS)))
           || ((mode == state->mode) && (!bMustBinningReset) && ((MODE_TYPE_TRIGGER == type) && !(ctrl->flags & FLAG_RESET_TRIGMODE_ALWAYS))) 
-          || ((mode == state->mode) && (!bMustBinningReset) && ((MODE_TYPE_TRIGGER_SEQUENTIAL == type) && !(ctrl->flags & FLAG_RESET_SEQTRIGMODE_ALWAYS))) ) {
+          || ((mode == state->mode) && (!bMustBinningReset) && ((MODE_TYPE_TRIGGER_OVERLAP == type) && !(ctrl->flags & FLAG_RESET_TRIGMODE_ALWAYS))) ) {
                 vc_dbg(dev, "%s(): Module mode %u need not to be set!\n", __FUNCTION__, mode);
                 *reset = 0;
                 return 0;
@@ -1211,9 +1212,9 @@ int vc_mod_set_trigger_mode(struct vc_cam *cam, int mode)
                 mode_desc = "STREAM_LEVEL";
                 state->trigger_mode = REG_TRIGGER_STREAM_LEVEL;
 
-        } else if (mode == 8 && ctrl->flags & FLAG_TRIGGER_SEQUENTIAL) {
-                mode_desc = "SEQUENTIAL";
-                state->trigger_mode = REG_TRIGGER_SEQUENTIAL;
+        } else if (mode == 8 && ctrl->flags & FLAG_TRIGGER_OVERLAP) {
+                mode_desc = "OVERLAP";
+                state->trigger_mode = REG_TRIGGER_OVERLAP;
 
         } else {
                 vc_err(dev, "%s(): Trigger mode %d not supported!\n", __FUNCTION__, mode);
@@ -1239,7 +1240,7 @@ int vc_mod_get_trigger_mode(struct vc_cam *cam)
         case REG_TRIGGER_SYNC:          return 5;
         case REG_TRIGGER_STREAM_EDGE:   return 6;
         case REG_TRIGGER_STREAM_LEVEL:  return 7;
-        case REG_TRIGGER_SEQUENTIAL:    return 8;
+        case REG_TRIGGER_OVERLAP:       return 8; 
         }
         return 0;
 }
@@ -1658,7 +1659,7 @@ int vc_sen_start_stream(struct vc_cam *cam)
                 ret |= vc_mod_write_io_mode(client_mod, REG_IO_XTRIG_ENABLE);
                 ret |= vc_mod_write_trigger_mode(client_mod, REG_TRIGGER_DISABLE);
         }
-        else if (ctrl->flags & FLAG_TRIGGER_SEQUENTIAL && state->trigger_mode == REG_TRIGGER_SEQUENTIAL) {
+        else if (ctrl->flags & FLAG_TRIGGER_OVERLAP && state->trigger_mode == REG_TRIGGER_OVERLAP) {
                 ret |= vc_mod_write_io_mode(client_mod, state->io_mode);
                 ret |= vc_mod_write_trigger_mode(client_mod, REG_TRIGGER_EXTERNAL);
         } else {
@@ -1913,7 +1914,7 @@ int vc_sen_set_exposure(struct vc_cam *cam, int exposure_us)
                 case REG_TRIGGER_EXTERNAL:
                 case REG_TRIGGER_SINGLE:
                 case REG_TRIGGER_SELF:	
-                case REG_TRIGGER_SEQUENTIAL:
+                case REG_TRIGGER_OVERLAP:
                         vc_calculate_trig_exposure(cam, exposure_us);
                         ret |= vc_mod_write_exposure(client_mod, state->exposure_cnt);
                         // NOTE for FLAG_TRIGGER_SELF

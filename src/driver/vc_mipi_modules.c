@@ -90,7 +90,6 @@ static void vc_init_ctrl_imx183_base(struct vc_ctrl *ctrl, struct vc_desc* desc)
         ctrl->flags                    |= FLAG_TRIGGER_EXTERNAL | FLAG_TRIGGER_SELF |
                                           FLAG_TRIGGER_SINGLE | FLAG_TRIGGER_SYNC;
         ctrl->flags                    |= FLAG_RESET_TRIGMODE_ALWAYS;
-        ctrl->flags                    |= FLAG_RESET_SEQTRIGMODE_ALWAYS;
 }
 
 static void vc_init_ctrl_imx252_base(struct vc_ctrl *ctrl, struct vc_desc* desc)
@@ -141,7 +140,6 @@ static void vc_init_ctrl_imx296_base(struct vc_ctrl *ctrl, struct vc_desc* desc)
         ctrl->flags                    |= FLAG_IO_ENABLED;
         ctrl->flags                    |= FLAG_TRIGGER_EXTERNAL | FLAG_TRIGGER_PULSEWIDTH | FLAG_TRIGGER_SELF_V2;
         ctrl->flags                    |= FLAG_RESET_TRIGMODE_ALWAYS;
-        ctrl->flags                    |= FLAG_RESET_SEQTRIGMODE_ALWAYS;
 }
 
 // ------------------------------------------------------------------------------------------------
@@ -247,7 +245,6 @@ static void vc_init_ctrl_imx250(struct vc_ctrl *ctrl, struct vc_desc* desc)
         MODE( 5, 4, FORMAT_RAW12, 0,     510,   10,  0xfffff,  2094, 4095,  240,   1580040)
 
         ctrl->flags                    |= FLAG_RESET_TRIGMODE_ALWAYS;
-        ctrl->flags                    |= FLAG_RESET_SEQTRIGMODE_ALWAYS;
 }
 
 // ------------------------------------------------------------------------------------------------
@@ -270,7 +267,7 @@ static void vc_init_ctrl_imx252(struct vc_ctrl *ctrl, struct vc_desc* desc)
         MODE( 4, 4, FORMAT_RAW10, 0,     380,   10,  0xfffff,  1582, 1023,   60,   1063754)
         MODE( 5, 4, FORMAT_RAW12, 0,     444,   10,  0xfffff,  1582, 4095,  240,   1063754)
 
-        ctrl->flags                    |= FLAG_TRIGGER_SEQUENTIAL;
+        ctrl->flags                    |= FLAG_TRIGGER_OVERLAP;
 }
 
 // ------------------------------------------------------------------------------------------------
@@ -291,7 +288,6 @@ static void vc_init_ctrl_imx264(struct vc_ctrl *ctrl, struct vc_desc* desc)
         MODE( 2, 2, FORMAT_RAW12, 0,     996,   10,  0xfffff,  2100, 4095,  240,   1580040)
 
         ctrl->flags                    |= FLAG_RESET_TRIGMODE_ALWAYS;
-        ctrl->flags                    |= FLAG_RESET_SEQTRIGMODE_ALWAYS;
 }
 
 // ------------------------------------------------------------------------------------------------
@@ -312,7 +308,6 @@ static void vc_init_ctrl_imx265(struct vc_ctrl *ctrl, struct vc_desc* desc)
         MODE( 2, 2, FORMAT_RAW12, 0,     846,   10,  0xfffff,  1587, 4095, 4095,   1580040)
 
         ctrl->flags                    |= FLAG_RESET_TRIGMODE_ALWAYS;
-        ctrl->flags                    |= FLAG_RESET_SEQTRIGMODE_ALWAYS;
 }
 
 // ------------------------------------------------------------------------------------------------
@@ -350,7 +345,6 @@ static void vc_init_ctrl_imx273(struct vc_ctrl *ctrl, struct vc_desc* desc)
 
         ctrl->flags                    |= FLAG_USE_BINNING_INDEX;
         ctrl->flags                    |= FLAG_RESET_TRIGMODE_ALWAYS;
-        ctrl->flags                    |= FLAG_RESET_SEQTRIGMODE_ALWAYS;
 }
 
 // ------------------------------------------------------------------------------------------------
@@ -494,7 +488,6 @@ static void vc_init_ctrl_imx392(struct vc_ctrl *ctrl, struct vc_desc* desc)
         MODE( 5, 4, FORMAT_RAW12, 0,     441,   10,  0xfffff,  1252, 4095,  240,   1063754)
 
         ctrl->flags                    |= FLAG_RESET_TRIGMODE_ALWAYS;
-        ctrl->flags                    |= FLAG_RESET_SEQTRIGMODE_ALWAYS;
 }
 
 // ------------------------------------------------------------------------------------------------
@@ -588,7 +581,6 @@ static void vc_init_ctrl_imx412(struct vc_ctrl *ctrl, struct vc_desc* desc)
 
         ctrl->flags                     = FLAG_RESET_STREAMMODE_ALWAYS;
         ctrl->flags                    |= FLAG_RESET_TRIGMODE_ALWAYS;
-        ctrl->flags                    |= FLAG_RESET_SEQTRIGMODE_ALWAYS;
         ctrl->flags                    |= FLAG_EXPOSURE_NORMAL;
         ctrl->flags                    |= FLAG_INCREASE_FRAME_RATE;
         ctrl->flags                    |= FLAG_IO_ENABLED;
@@ -718,7 +710,6 @@ static void vc_init_ctrl_imx565(struct vc_ctrl *ctrl, struct vc_desc *desc)
 
         ctrl->flags                     = FLAG_EXPOSURE_SONY;
         ctrl->flags                    |= FLAG_RESET_TRIGMODE_ALWAYS;
-        ctrl->flags                    |= FLAG_RESET_SEQTRIGMODE_ALWAYS;
         ctrl->flags                    |= FLAG_PREGIUS_S;
         ctrl->flags                    |= FLAG_INCREASE_FRAME_RATE;
         ctrl->flags                    |= FLAG_TRIGGER_EXTERNAL;
@@ -787,7 +778,6 @@ static void vc_init_ctrl_imx566(struct vc_ctrl *ctrl, struct vc_desc* desc)
 
         ctrl->flags                     = FLAG_EXPOSURE_SONY;
         ctrl->flags                    |= FLAG_RESET_TRIGMODE_ALWAYS;
-        ctrl->flags                    |= FLAG_RESET_SEQTRIGMODE_ALWAYS;
         ctrl->flags                    |= FLAG_PREGIUS_S;
         ctrl->flags                    |= FLAG_INCREASE_FRAME_RATE;
         ctrl->flags                    |= FLAG_IO_ENABLED;
@@ -854,7 +844,6 @@ static void vc_init_ctrl_imx567(struct vc_ctrl *ctrl, struct vc_desc* desc)
 
         ctrl->flags                     = FLAG_EXPOSURE_SONY;
         ctrl->flags                    |= FLAG_RESET_TRIGMODE_ALWAYS;
-        ctrl->flags                    |= FLAG_RESET_SEQTRIGMODE_ALWAYS;
         ctrl->flags                    |= FLAG_PREGIUS_S;
         ctrl->flags                    |= FLAG_INCREASE_FRAME_RATE;
         ctrl->flags                    |= FLAG_IO_ENABLED;
@@ -920,7 +909,6 @@ static void vc_init_ctrl_imx568(struct vc_ctrl *ctrl, struct vc_desc* desc)
 
         ctrl->flags                     = FLAG_EXPOSURE_SONY;
         ctrl->flags                    |= FLAG_RESET_TRIGMODE_ALWAYS;
-        ctrl->flags                    |= FLAG_RESET_SEQTRIGMODE_ALWAYS;
         ctrl->flags                    |= FLAG_PREGIUS_S;
         ctrl->flags                    |= FLAG_INCREASE_FRAME_RATE;
         ctrl->flags                    |= FLAG_IO_ENABLED;
@@ -960,7 +948,6 @@ static void vc_init_ctrl_imx900(struct vc_ctrl *ctrl, struct vc_desc* desc)
 
         ctrl->flags                     = FLAG_EXPOSURE_SONY;
         ctrl->flags                    |= FLAG_RESET_TRIGMODE_ALWAYS;
-        ctrl->flags                    |= FLAG_RESET_SEQTRIGMODE_ALWAYS;
         ctrl->flags                    |= FLAG_PREGIUS_S;
         ctrl->flags                    |= FLAG_INCREASE_FRAME_RATE;
         ctrl->flags                    |= FLAG_IO_ENABLED;
