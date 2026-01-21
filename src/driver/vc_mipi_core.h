@@ -1,7 +1,7 @@
 #ifndef _VC_MIPI_CORE_H
 #define _VC_MIPI_CORE_H
 
-// #define DEBUG
+ #define DEBUG
 
 #include <linux/types.h>
 #include <linux/i2c.h>
@@ -39,8 +39,7 @@
 #define FLAG_RESET_STREAMMODE_ALWAYS    (1 << 19)
 #define FLAG_RESET_TRIGMODE_ALWAYS      (1 << 20)
 
-#define FLAG_TRIGGER_SEQUENTIAL         (1 << 21)
-#define FLAG_RESET_SEQTRIGMODE_ALWAYS   (1 << 22)
+#define FLAG_TRIGGER_OVERLAP            (1 << 21)
 
 #define FORMAT_RAW08                    0x2a
 #define FORMAT_RAW10                    0x2b

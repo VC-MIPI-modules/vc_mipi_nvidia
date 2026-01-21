@@ -8,7 +8,7 @@
 #include "vc_mipi_core.h"
 #include "vc_mipi_modules.h"
 
-#define VERSION "0.19.0_sequential"
+#define VERSION "0.19.0_overlap_refact"
 // #define VC_CTRL_VALUE
 
 //prototypes
