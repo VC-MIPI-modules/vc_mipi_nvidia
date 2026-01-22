@@ -234,6 +234,7 @@ struct vc_state {
         __u8 num_lanes;
         __u8 io_mode;
         __u8 trigger_mode;
+        __u8 trigger_mode_reg;
         __u8 binning_mode;
         __u8 former_binning_mode;
         int power_on;

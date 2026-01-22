@@ -43,16 +43,24 @@
 #define REG_IO_FLASH_ACTIVE_LOW         0x10
 #define REG_IO_TRIG_ACTIVE_LOW          0x40
 
-#define REG_TRIGGER_DISABLE             0x00
-#define REG_TRIGGER_EXTERNAL            0x01
-#define REG_TRIGGER_PULSEWIDTH          0x02
-#define REG_TRIGGER_SELF                0x04
-#define REG_TRIGGER_SINGLE              0x08
-#define REG_TRIGGER_SYNC                0x10
-#define REG_TRIGGER_STREAM_EDGE         0x20
-#define REG_TRIGGER_STREAM_LEVEL        0x60
+#define TRIGGER_MODE_REG_DISABLE        0x00
+#define TRIGGER_MODE_REG_EXTERNAL       0x01
+#define TRIGGER_MODE_REG_PULSEWIDTH     0x02
+#define TRIGGER_MODE_REG_SELF           0x04
+#define TRIGGER_MODE_REG_SINGLE         0x08
+#define TRIGGER_MODE_REG_SYNC           0x10
+#define TRIGGER_MODE_REG_STREAM_EDGE    0x20
+#define TRIGGER_MODE_REG_STREAM_LEVEL   0x60
 
-#define REG_TRIGGER_OVERLAP             0x80
+#define TRIGGER_MODE_DISABLE            0
+#define TRIGGER_MODE_EXTERNAL           1
+#define TRIGGER_MODE_PULSEWIDTH         2
+#define TRIGGER_MODE_SELF               3
+#define TRIGGER_MODE_SINGLE             4
+#define TRIGGER_MODE_SYNC               5
+#define TRIGGER_MODE_STREAM_EDGE        6
+#define TRIGGER_MODE_STREAM_LEVEL       7
+#define TRIGGER_MODE_OVERLAP            8
 
 #define MODE_TYPE_STREAM                0x01
 #define MODE_TYPE_TRIGGER               0x02
@@ -577,10 +585,10 @@ __u32 vc_core_calculate_max_exposure(struct vc_cam *cam, __u8 num_lanes, __u8 fo
         __u32 vmax_min = vc_core_get_vmax(cam, num_lanes, format, binning).min;
 
         switch (cam->state.trigger_mode) {
-        case REG_TRIGGER_DISABLE:
-        case REG_TRIGGER_SYNC:
-        case REG_TRIGGER_STREAM_EDGE:
-        case REG_TRIGGER_STREAM_LEVEL:
+        case TRIGGER_MODE_DISABLE:
+        case TRIGGER_MODE_SYNC:
+        case TRIGGER_MODE_STREAM_EDGE:
+        case TRIGGER_MODE_STREAM_LEVEL:
         default:
                 {
                         __u32 period_1H_ns = vc_core_calculate_period_1H(cam, num_lanes, format, binning);
@@ -588,11 +596,11 @@ __u32 vc_core_calculate_max_exposure(struct vc_cam *cam, __u8 num_lanes, __u8 fo
                                 __FUNCTION__, period_1H_ns, vmax_max, vmax_min);
                         return ((__u64)period_1H_ns * (vmax_max - vmax_min)) / 1000;
                 }
-        case REG_TRIGGER_EXTERNAL:
-        case REG_TRIGGER_PULSEWIDTH:
-        case REG_TRIGGER_SELF:
-        case REG_TRIGGER_SINGLE:
-        case REG_TRIGGER_OVERLAP:
+        case TRIGGER_MODE_EXTERNAL:
+        case TRIGGER_MODE_PULSEWIDTH:
+        case TRIGGER_MODE_SELF:
+        case TRIGGER_MODE_SINGLE:
+        case TRIGGER_MODE_OVERLAP:
                 {
                         vc_dbg(dev, "%s(): clk_ext_trigger: %u\n", __FUNCTION__, ctrl->clk_ext_trigger);
                         return ((__u64)0xffffffff * 1000000) / ctrl->clk_ext_trigger;
@@ -945,10 +953,10 @@ static void vc_core_state_init(struct vc_cam *cam)
         __u32 blacklevel_max = 0;
         __u8 binning = state->binning_mode;
 
+        state->trigger_mode_reg = 0;
         state->mode = 0xff;
         state->exposure = ctrl->exposure.def;
         state->gain = ctrl->gain.def;
-//        state->blacklevel = ctrl->blacklevel.def;
         state->shs = 0;
         state->vmax = 0;
         state->exposure_cnt = 0;
@@ -1103,14 +1111,14 @@ int vc_mod_set_mode(struct vc_cam *cam, int *reset)
         bool bMustBinningReset = false;
 
         switch (cam->state.trigger_mode) {
-        case REG_TRIGGER_DISABLE:
-        case REG_TRIGGER_STREAM_EDGE:
-        case REG_TRIGGER_STREAM_LEVEL:
+        case TRIGGER_MODE_DISABLE:
+        case TRIGGER_MODE_STREAM_EDGE:
+        case TRIGGER_MODE_STREAM_LEVEL:
         default:
                 type = MODE_TYPE_STREAM;
                 stype = "STREAM";
-                break;
-        case REG_TRIGGER_SYNC:
+                break;                   
+        case TRIGGER_MODE_SYNC:
                 if (cam->ctrl.flags & FLAG_TRIGGER_SLAVE) {
                         type = MODE_TYPE_SLAVE;
                         stype = "SLAVE";
@@ -1119,14 +1127,14 @@ int vc_mod_set_mode(struct vc_cam *cam, int *reset)
                         stype = "STREAM";
                 }
                 break;
-        case REG_TRIGGER_EXTERNAL:
-        case REG_TRIGGER_PULSEWIDTH:
-        case REG_TRIGGER_SELF:
-        case REG_TRIGGER_SINGLE:
+        case TRIGGER_MODE_EXTERNAL:
+        case TRIGGER_MODE_PULSEWIDTH:
+        case TRIGGER_MODE_SELF:
+        case TRIGGER_MODE_SINGLE:
                 type = MODE_TYPE_TRIGGER;
                 stype = "EXT.TRG";
                 break;
-        case REG_TRIGGER_OVERLAP:
+        case TRIGGER_MODE_OVERLAP:
                 type = MODE_TYPE_TRIGGER_OVERLAP;
                 stype = "OVL.TRG";
                 break;
@@ -1139,7 +1147,7 @@ int vc_mod_set_mode(struct vc_cam *cam, int *reset)
                 bMustBinningReset = false;
         }
 
-        binning_mode = (binning->use_mod_mode) ? state->binning_mode : 0;                
+        binning_mode = (binning->use_mod_mode) ? state->binning_mode : 0;
 
         mode = vc_mod_find_mode(cam, num_lanes, format, type, binning_mode);
         if ( ((mode == state->mode) && (!bMustBinningReset) && ((MODE_TYPE_STREAM == type) && !(ctrl->flags & FLAG_RESET_STREAMMODE_ALWAYS)))
@@ -1170,7 +1178,7 @@ EXPORT_SYMBOL(vc_mod_set_mode);
 
 int vc_mod_is_trigger_enabled(struct vc_cam *cam)
 {
-        return cam->state.trigger_mode != REG_TRIGGER_DISABLE;
+        return cam->state.trigger_mode != TRIGGER_MODE_DISABLE;
 }
 
 int vc_mod_set_trigger_mode(struct vc_cam *cam, int mode)
@@ -1180,46 +1188,48 @@ int vc_mod_set_trigger_mode(struct vc_cam *cam, int mode)
         struct device *dev = vc_core_get_mod_device(cam);
         char *mode_desc;
 
-        if (mode == 0) {
+        if (mode == TRIGGER_MODE_DISABLE) {
                 mode_desc = "DISABLED";
-                state->trigger_mode = REG_TRIGGER_DISABLE;
+                state->trigger_mode_reg = TRIGGER_MODE_REG_DISABLE;
 
-        } else if (mode == 1 && ctrl->flags & FLAG_TRIGGER_EXTERNAL) {
+        } else if (mode == TRIGGER_MODE_EXTERNAL && ctrl->flags & FLAG_TRIGGER_EXTERNAL) {
                 mode_desc = "EXTERNAL";
-                state->trigger_mode = REG_TRIGGER_EXTERNAL;
+                state->trigger_mode_reg = TRIGGER_MODE_REG_EXTERNAL;
 
-        } else if (mode == 2 && ctrl->flags & FLAG_TRIGGER_PULSEWIDTH) {
+        } else if (mode == TRIGGER_MODE_PULSEWIDTH && ctrl->flags & FLAG_TRIGGER_PULSEWIDTH) {
                 mode_desc = "PULSEWIDTH";
-                state->trigger_mode = REG_TRIGGER_PULSEWIDTH;
+                state->trigger_mode_reg = TRIGGER_MODE_REG_PULSEWIDTH;
 
-        } else if (mode == 3 && ctrl->flags & (FLAG_TRIGGER_SELF | FLAG_TRIGGER_SELF_V2)) {
+        } else if (mode == TRIGGER_MODE_SELF && ctrl->flags & (FLAG_TRIGGER_SELF | FLAG_TRIGGER_SELF_V2)) {
                 mode_desc = "SELF";
-                state->trigger_mode = REG_TRIGGER_SELF;
+                state->trigger_mode_reg = TRIGGER_MODE_REG_SELF;
 
-        } else if (mode == 4 && ctrl->flags & FLAG_TRIGGER_SINGLE) {
+        } else if (mode == TRIGGER_MODE_SINGLE && ctrl->flags & FLAG_TRIGGER_SINGLE) {
                 mode_desc = "SINGLE";
-                state->trigger_mode = REG_TRIGGER_SINGLE;
+                state->trigger_mode_reg = TRIGGER_MODE_REG_SINGLE;
 
-        } else if (mode == 5 && ctrl->flags & (FLAG_TRIGGER_SYNC | FLAG_TRIGGER_SLAVE)) {
+        } else if (mode == TRIGGER_MODE_SYNC && ctrl->flags & (FLAG_TRIGGER_SYNC | FLAG_TRIGGER_SLAVE)) {
                 mode_desc = "SYNC";
-                state->trigger_mode = REG_TRIGGER_SYNC;
+                state->trigger_mode_reg = TRIGGER_MODE_REG_SYNC;
 
-        } else if (mode == 6 && ctrl->flags & FLAG_TRIGGER_STREAM_EDGE) {
+        } else if (mode == TRIGGER_MODE_STREAM_EDGE && ctrl->flags & FLAG_TRIGGER_STREAM_EDGE) {
                 mode_desc = "STREAM_EDGE";
-                state->trigger_mode = REG_TRIGGER_STREAM_EDGE;
+                state->trigger_mode_reg = TRIGGER_MODE_REG_STREAM_EDGE;
 
-        } else if (mode == 7 && ctrl->flags & FLAG_TRIGGER_STREAM_LEVEL) {
+        } else if (mode == TRIGGER_MODE_STREAM_LEVEL && ctrl->flags & FLAG_TRIGGER_STREAM_LEVEL) {
                 mode_desc = "STREAM_LEVEL";
-                state->trigger_mode = REG_TRIGGER_STREAM_LEVEL;
+                state->trigger_mode_reg = TRIGGER_MODE_REG_STREAM_LEVEL;
 
-        } else if (mode == 8 && ctrl->flags & FLAG_TRIGGER_OVERLAP) {
+        } else if (mode == TRIGGER_MODE_OVERLAP && ctrl->flags & FLAG_TRIGGER_OVERLAP) {
                 mode_desc = "OVERLAP";
-                state->trigger_mode = REG_TRIGGER_OVERLAP;
+                state->trigger_mode_reg = TRIGGER_MODE_REG_EXTERNAL;
 
         } else {
                 vc_err(dev, "%s(): Trigger mode %d not supported!\n", __FUNCTION__, mode);
                 return -EINVAL;
         }
+
+        state->trigger_mode = mode;
 
         vc_core_update_controls(cam);
 
@@ -1231,18 +1241,7 @@ EXPORT_SYMBOL(vc_mod_set_trigger_mode);
 
 int vc_mod_get_trigger_mode(struct vc_cam *cam)
 {
-        switch (cam->state.trigger_mode)  {
-        case REG_TRIGGER_DISABLE:       return 0;
-        case REG_TRIGGER_EXTERNAL:      return 1;
-        case REG_TRIGGER_PULSEWIDTH:    return 2;
-        case REG_TRIGGER_SELF:          return 3;
-        case REG_TRIGGER_SINGLE:        return 4;
-        case REG_TRIGGER_SYNC:          return 5;
-        case REG_TRIGGER_STREAM_EDGE:   return 6;
-        case REG_TRIGGER_STREAM_LEVEL:  return 7;
-        case REG_TRIGGER_OVERLAP:       return 8; 
-        }
-        return 0;
+        return cam->state.trigger_mode;
 }
 EXPORT_SYMBOL(vc_mod_get_trigger_mode);
 
@@ -1253,7 +1252,7 @@ int vc_mod_set_single_trigger(struct vc_cam *cam)
 
         vc_notice(dev, "%s(): Set single trigger\n", __FUNCTION__);
 
-        return i2c_write_reg(dev, client, MOD_REG_EXTTRIG, REG_TRIGGER_SINGLE, __FUNCTION__);
+        return i2c_write_reg(dev, client, MOD_REG_EXTTRIG, TRIGGER_MODE_REG_SINGLE, __FUNCTION__);
 }
 EXPORT_SYMBOL(vc_mod_set_single_trigger);
 
@@ -1641,8 +1640,8 @@ int vc_sen_start_stream(struct vc_cam *cam)
         int ret = 0;
 
         vc_notice(dev, "%s(): Start streaming\n", __FUNCTION__);
-        vc_dbg(dev, "%s(): MM: 0x%02x, TM: 0x%02x, IO: 0x%02x\n",
-                __FUNCTION__, state->mode, state->trigger_mode, state->io_mode);
+        vc_dbg(dev, "%s(): MM: 0x%02x, TM: %02d, TMR: 0x%02x, IO: 0x%02x\n",
+                __FUNCTION__, state->mode, state->trigger_mode, state->trigger_mode_reg, state->io_mode);
 
         if (state->streaming) {
                 vc_sen_stop_stream(cam);
@@ -1655,16 +1654,12 @@ int vc_sen_start_stream(struct vc_cam *cam)
                         vc_err(dev, "%s(): Unable to start streaming (error: %d)\n", __FUNCTION__, ret);
         }
 
-        if (ctrl->flags & FLAG_TRIGGER_SLAVE && state->trigger_mode == REG_TRIGGER_SYNC) {
+        if (ctrl->flags & FLAG_TRIGGER_SLAVE && TRIGGER_MODE_SYNC == state->trigger_mode) {
                 ret |= vc_mod_write_io_mode(client_mod, REG_IO_XTRIG_ENABLE);
-                ret |= vc_mod_write_trigger_mode(client_mod, REG_TRIGGER_DISABLE);
-        }
-        else if (ctrl->flags & FLAG_TRIGGER_OVERLAP && state->trigger_mode == REG_TRIGGER_OVERLAP) {
-                ret |= vc_mod_write_io_mode(client_mod, state->io_mode);
-                ret |= vc_mod_write_trigger_mode(client_mod, REG_TRIGGER_EXTERNAL);
+                ret |= vc_mod_write_trigger_mode(client_mod, TRIGGER_MODE_REG_DISABLE);
         } else {
                 ret |= vc_mod_write_io_mode(client_mod, state->io_mode);
-                ret |= vc_mod_write_trigger_mode(client_mod, state->trigger_mode);
+                ret |= vc_mod_write_trigger_mode(client_mod, state->trigger_mode_reg);
         }
         state->streaming = 1;
 
@@ -1682,7 +1677,7 @@ int vc_sen_stop_stream(struct vc_cam *cam)
 
         vc_notice(dev, "%s(): Stop streaming\n", __FUNCTION__);
 
-        ret |= vc_mod_write_trigger_mode(client_mod, REG_TRIGGER_DISABLE);
+        ret |= vc_mod_write_trigger_mode(client_mod, TRIGGER_MODE_REG_DISABLE);
         ret |= vc_mod_write_io_mode(client_mod, REG_IO_DISABLE);
 
         ret |= vc_sen_write_mode(ctrl, ctrl->csr.sen.mode_standby);
@@ -1768,7 +1763,7 @@ static void vc_calculate_exposure_sony(struct vc_cam *cam, __u64 exposure_1H)
         }
 
         // Special case: Framerate of slave module has to be a little bit faster (Tested with IMX183)
-        if (state->trigger_mode == REG_TRIGGER_SYNC) {
+        if (state->trigger_mode == TRIGGER_MODE_SYNC) {
                 state->vmax--;
         }
 }
@@ -1855,7 +1850,7 @@ static void vc_calculate_trig_exposure(struct vc_cam *cam, __u32 exposure_us)
         min_frametime_us = ((__u64)retrigger_min * 1000000) / ctrl->clk_ext_trigger;
         frametime_us = min_frametime_us;
 
-        if (state->trigger_mode & REG_TRIGGER_SELF) {
+        if (state->trigger_mode == TRIGGER_MODE_SELF) {
                 if (state->framerate > 0) {
                         frametime_us = 1000000000 / state->framerate;
                 }
@@ -1911,10 +1906,10 @@ int vc_sen_set_exposure(struct vc_cam *cam, int exposure_us)
 
         if (ctrl->flags & FLAG_EXPOSURE_SONY || ctrl->flags & FLAG_EXPOSURE_NORMAL) {
                 switch (state->trigger_mode) {
-                case REG_TRIGGER_EXTERNAL:
-                case REG_TRIGGER_SINGLE:
-                case REG_TRIGGER_SELF:	
-                case REG_TRIGGER_OVERLAP:
+                case TRIGGER_MODE_EXTERNAL:
+                case TRIGGER_MODE_SINGLE:
+                case TRIGGER_MODE_SELF:	
+                case TRIGGER_MODE_OVERLAP:
                         vc_calculate_trig_exposure(cam, exposure_us);
                         ret |= vc_mod_write_exposure(client_mod, state->exposure_cnt);
                         // NOTE for FLAG_TRIGGER_SELF
@@ -1924,12 +1919,12 @@ int vc_sen_set_exposure(struct vc_cam *cam, int exposure_us)
                                 ret |= vc_mod_write_retrigger(client_mod, state->retrigger_cnt);
                         }
                         break;
-                case REG_TRIGGER_PULSEWIDTH:
+                case TRIGGER_MODE_PULSEWIDTH:
                         break;
-                case REG_TRIGGER_DISABLE:
-                case REG_TRIGGER_SYNC:
-                case REG_TRIGGER_STREAM_EDGE:
-                case REG_TRIGGER_STREAM_LEVEL:
+                case TRIGGER_MODE_DISABLE:
+                case TRIGGER_MODE_SYNC:
+                case TRIGGER_MODE_STREAM_EDGE:
+                case TRIGGER_MODE_STREAM_LEVEL:
                         vc_calculate_exposure(cam, exposure_us);
                         ret |= vc_sen_write_shs(ctrl, state->shs);
                         ret |= vc_sen_write_vmax(ctrl, state->vmax);
