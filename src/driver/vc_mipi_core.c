@@ -83,6 +83,8 @@ vc_mode vc_core_get_mode(struct vc_cam *cam, __u8 num_lanes, __u8 format, __u8 b
 int vc_mod_set_power(struct vc_cam *cam, int on);
 int vc_sen_write_mode(struct vc_ctrl *ctrl, int mode);
 
+static __u8 vc_core_get_mode_type(struct vc_cam *cam, char* stype);
+
 static int vc_sen_read_image_size(struct vc_ctrl *ctrl, struct vc_frame *size);
 #ifdef READ_VMAX
 static __u32 vc_sen_read_vmax(struct vc_ctrl *ctrl);
@@ -1037,6 +1039,43 @@ static int vc_mod_write_retrigger(struct i2c_client *client, __u32 value)
         return ret;
 }
 
+static __u8 vc_core_get_mode_type(struct vc_cam *cam, char* stype)
+{
+        __u8 type = 0;
+
+        switch (cam->state.trigger_mode) {
+        case TRIGGER_MODE_DISABLE:
+        case TRIGGER_MODE_STREAM_EDGE:
+        case TRIGGER_MODE_STREAM_LEVEL:
+        default:
+                type = MODE_TYPE_STREAM;
+                strcpy(stype, "STREAM");
+                break;                   
+        case TRIGGER_MODE_SYNC:
+                if (cam->ctrl.flags & FLAG_TRIGGER_SLAVE) {
+                        type = MODE_TYPE_SLAVE;
+                        strcpy(stype, "SLAVE");
+                } else {
+                        type = MODE_TYPE_STREAM;
+                        strcpy(stype, "STREAM");
+                }
+                break;
+        case TRIGGER_MODE_EXTERNAL:
+        case TRIGGER_MODE_PULSEWIDTH:
+        case TRIGGER_MODE_SELF:
+        case TRIGGER_MODE_SINGLE:
+                type = MODE_TYPE_TRIGGER;
+                strcpy(stype, "EXT.TRG");
+                break;
+        case TRIGGER_MODE_OVERLAP:
+                type = MODE_TYPE_TRIGGER_OVERLAP;
+                strcpy(stype, "OVL.TRG");
+                break;
+        }
+
+        return type;
+}
+
 static __u8 vc_mod_find_mode(struct vc_cam *cam, __u8 num_lanes, __u8 format, __u8 type, __u8 binning)
 {
         struct vc_desc *desc = &cam->desc;
@@ -1102,43 +1141,14 @@ int vc_mod_set_mode(struct vc_cam *cam, int *reset)
         __u8 num_lanes = state->num_lanes;
         __u8 format = vc_core_v4l2_code_to_format(state->format_code);
         char fourcc[5];
-        char *stype;
-        __u8 type = 0;
+        char stype[16];
+        __u8 type = vc_core_get_mode_type(cam, stype);
+
         struct vc_binning *binning = vc_core_get_binning(cam);
         __u8 binning_mode = 0;
         __u8 mode = 0;
         int ret = 0;
         bool bMustBinningReset = false;
-
-        switch (cam->state.trigger_mode) {
-        case TRIGGER_MODE_DISABLE:
-        case TRIGGER_MODE_STREAM_EDGE:
-        case TRIGGER_MODE_STREAM_LEVEL:
-        default:
-                type = MODE_TYPE_STREAM;
-                stype = "STREAM";
-                break;                   
-        case TRIGGER_MODE_SYNC:
-                if (cam->ctrl.flags & FLAG_TRIGGER_SLAVE) {
-                        type = MODE_TYPE_SLAVE;
-                        stype = "SLAVE";
-                } else {
-                        type = MODE_TYPE_STREAM;
-                        stype = "STREAM";
-                }
-                break;
-        case TRIGGER_MODE_EXTERNAL:
-        case TRIGGER_MODE_PULSEWIDTH:
-        case TRIGGER_MODE_SELF:
-        case TRIGGER_MODE_SINGLE:
-                type = MODE_TYPE_TRIGGER;
-                stype = "EXT.TRG";
-                break;
-        case TRIGGER_MODE_OVERLAP:
-                type = MODE_TYPE_TRIGGER_OVERLAP;
-                stype = "OVL.TRG";
-                break;
-        }
 
         if (( 0 < state->former_binning_mode ) && ( 0 == state->binning_mode) ) {
                 bMustBinningReset = true;
