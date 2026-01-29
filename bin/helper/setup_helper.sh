@@ -47,7 +47,7 @@ download_and_check_file () {
         if [[ $DL_RESULT != 0 ]]; then
                 echo ""
                 case $1 in
-                BSP|RFS|SRC|ADDON)
+                BSP|RFS|SRC|ADDON|GCC)
                         echo "  Trying to download $1 file $FILE_VAR ..."
                         if [[ $TEST_COMMAND == $PARENT_COMMAND ]]
                         then

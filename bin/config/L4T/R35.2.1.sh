@@ -3,11 +3,13 @@
 . $BIN_DIR/config/L4T/common_functions.sh
 
 #toolchain
-GCC_URL=http://releases.linaro.org/components/toolchain/binaries/7.3-2018.05/aarch64-linux-gnu
-GCC_FILE=gcc-linaro-7.3.1-2018.05-x86_64_aarch64-linux-gnu.tar.xz
-GCC_DIR=$TOOLCHAIN_DIR/gcc-linaro-7.3.1-2018.05-x86_64_aarch64-linux-gnu
-export CROSS_COMPILE=$GCC_DIR/bin/aarch64-linux-gnu-
+GCC_URL_UNRESOLVED=https://developer.nvidia.com/embedded/jetson-linux/bootlin-toolchain-gcc-93
+GCC_FILE=aarch64--glibc--stable-final.tar.gz
+GCC_DIR=$TOOLCHAIN_DIR/gcc93
+GCC_FILE_CHECKSUM="f360163e23096d3157949af40840e413"
+export CROSS_COMPILE=$GCC_DIR/bin/aarch64-linux-
 
+#downloads
 DEV_URL=https://developer.download.nvidia.com/embedded/L4T/r35_Release_v2.1
 
 case $VC_MIPI_SOM in
@@ -51,6 +53,8 @@ NVDD_DIR=NVIDIA-kernel-module-source-TempVersion
 ORIN_FLASH_CONFIG_FOLDER="t186ref"
 ORIN_FLASH_PARTITION_MMC="mmcblk1p1"
 ORIN_FLASH_PARTITION_NVME="nvme0n1p1"
+
+ORIN_NVME_XML="flash_l4t_t234_nvme.xml"
 
 function L4T_extract_kernel_packages {
         echo "Extracting kernel packages ($VC_MIPI_BSP) ..."
@@ -99,6 +103,17 @@ function L4T_setup_conf_file {
 
 function L4T_setup_addon_file {
 # not necessary for this L4T
+        return 0
+}
+
+function L4T_setup_toolchain {
+        echo "Setup toolchain ($VC_MIPI_BSP) ..."
+
+        if [[ ! -e $GCC_DIR ]]; then
+                mkdir -p $GCC_DIR
+                cd $DOWNLOAD_DIR
+                tar xvf $GCC_FILE -C $GCC_DIR
+        fi
         return 0
 }
 

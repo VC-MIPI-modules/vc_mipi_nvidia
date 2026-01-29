@@ -6,6 +6,7 @@ L4T_setup_eeprom_size
 L4T_setup_gpio_file
 L4T_setup_conf_file
 L4T_setup_addon_file
+L4T_setup_toolchain
 L4T_build_device_tree
 L4T_build_kernel
 L4T_build_modules

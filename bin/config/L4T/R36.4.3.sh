@@ -3,10 +3,11 @@
 . $BIN_DIR/config/L4T/common_functions.sh
 
 #toolchain
-GCC_URL=https://snapshots.linaro.org/gnu-toolchain/11.3-2022.06-1/aarch64-linux-gnu
-GCC_FILE=gcc-linaro-11.3.1-2022.06-x86_64_aarch64-linux-gnu.tar.xz
-GCC_DIR=$TOOLCHAIN_DIR/gcc-linaro-11.3.1-2022.06-x86_64_aarch64-linux-gnu
-export CROSS_COMPILE=$GCC_DIR/bin/aarch64-linux-gnu-
+GCC_URL=https://developer.nvidia.com/downloads/embedded/l4t/r36_release_v3.0/toolchain
+GCC_FILE=aarch64--glibc--stable-2022.08-1.tar.bz2
+GCC_DIR=$TOOLCHAIN_DIR/aarch64--glibc--stable-2022.08-1
+GCC_FILE_CHECKSUM="fe202753bc610a8045934377afb589f1"
+export CROSS_COMPILE=$GCC_DIR/bin/aarch64-linux-
 
 #downloads
 DEV_URL=https://developer.nvidia.com/downloads/embedded/l4t/r36_release_v4.3
@@ -57,8 +58,9 @@ MODULE_TARGET_LOCATION=updates/drivers/media/i2c
 
 ORIN_FLASH_CONFIG_FOLDER="generic"
 ORIN_FLASH_PARTITION_MMC="mmcblk0p1"
-
 ORIN_FLASH_PARTITION_NVME="nvme0n1p1"
+
+ORIN_NVME_XML="flash_l4t_t234_nvme.xml"
 
 function L4T_extract_kernel_packages {
         echo "Extracting kernel packages ($VC_MIPI_BSP) ..."
@@ -134,6 +136,16 @@ function L4T_setup_dynamic_dtbo_file {
 
 function L4T_setup_addon_file {
 # not necessary for this L4T
+        return 0
+}
+
+function L4T_setup_toolchain {
+        echo "Setup toolchain ($VC_MIPI_BSP) ..."
+
+        if [[ ! -e $GCC_DIR ]]; then
+                cd $DOWNLOAD_DIR
+                tar xvf $GCC_FILE -C $TOOLCHAIN_DIR
+        fi
         return 0
 }
 

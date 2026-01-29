@@ -1,5 +1,13 @@
 # Version History
 
+## v0.19.1 (Support IMX585, Improvement, Bugfix)
+* New Features
+  * Added support for IMX585 *(only NVIDIA Jetson Xavier NX, Orin NX and Orin Nano)*
+* Improvement
+  * Added overlap trigger mode for IMX252 *(Rev. 17)*
+* Bugfix
+  * Crosscompiler hosted by linaro has been cancelled, so setup/build pipe has been refactored to compilers hosted by NVIDIA.
+
 ## v0.19.0 (L4T 36.4.3, L4T 32.7.5, Improvements)
 * New Features
   * Added support for board support package

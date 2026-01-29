@@ -48,13 +48,16 @@ setup_toolchain() {
         if [[ ! -e $TOOLCHAIN_DIR ]]; then
                 mkdir -p $TOOLCHAIN_DIR
         fi
+
+        mkdir -p $BSP_DIR
+        mkdir -p $DOWNLOAD_DIR
+
+        cd $DOWNLOAD_DIR
+        download_and_check_file GCC
+
         cd $TOOLCHAIN_DIR
 
-        if [[ ! -e $GCC_DIR ]]; then
-                wget $GCC_URL/$GCC_FILE
-                tar xvf $GCC_FILE -C $TOOLCHAIN_DIR
-                rm $GCC_FILE
-        fi
+        L4T_setup_toolchain
 }
 
 setup_kernel() {

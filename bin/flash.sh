@@ -47,7 +47,7 @@ flash_all() {
                 sudo ADDITIONAL_DTB_OVERLAY_OPT="BootOrderNvme.dtbo" \
                         ./tools/kernel_flash/l4t_initrd_flash.sh \
                         --external-device ${FLASH_PARTITION} \
-                        -c tools/kernel_flash/flash_l4t_external.xml \
+                        -c tools/kernel_flash/${ORIN_NVME_XML} \
                         -p "-c bootloader/${ORIN_FLASH_CONFIG_FOLDER}/cfg/flash_t234_qspi.xml" \
                         --network usb0 \
                         ${FLASH_BOARD} internal

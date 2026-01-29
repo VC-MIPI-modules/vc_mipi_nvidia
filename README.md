@@ -2,7 +2,7 @@
 
 ![VC MIPI camera](doc/images/mipi_sensor_front_back.png)
 
-## Version 0.19.0 ([History](VERSION.md))
+## Version 0.19.1 ([History](VERSION.md))
 
 * Supported system on modules
   * [NVIDIA Jetson Nano 4GB/2GB (production + devkit)](https://developer.nvidia.com/embedded/jetson-nano)
@@ -42,7 +42,7 @@
   * IMX412
   * IMX415
   * IMX565, IMX566, IMX567, IMX568
-  * IMX585
+  * IMX585 *(only NVIDIA Jetson Xavier NX, Orin NX and Orin Nano)*
   * IMX900
   * OV7251, OV9281
 * Features
