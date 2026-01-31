@@ -8,17 +8,18 @@ The trigger mode remains set until it is deactivated with
 v4l2-ctl -c trigger_mode=0
 ```
 Following you will find timing diagrams to illustrate the specific behavior of each mode.
-## External, pulse width and overlap trigger mode (1, 2 or 8)
+## External, pulse width and overlap trigger mode (1, 2 and 8)
 ![External trigger mode](../doc/plantuml/tm_external.svg)
 
 Regarding the exposure the overlap trigger mode(8) is similar to external trigger mode(1), but allows higher exposure times without reducing the frame rate.<br>
 
 ### Note
+#### Mode 1:
+* Tmin: The time between two successive exposure phases must not be shorter than the image transmission time. This limits the exposure time to a maximum value that is less than the frame time.
 #### Mode 1 and 2:
-* Tmin* Minimal transmission time to the next exposure. 
 * There is a constant delay of 5µs between the trigger in and the flash out signal due to the fpga, not shown in the image above.
 #### Mode 8:
-* Tmin** The transmission time to the next exposure might be nearly 0.
+* Tmin: Image transmission occurs during the exposure time (overlapping). For this reason, the exposure time can be equal to the frame time.
 * Instead of 5µs delay between the trigger in and the flash out signal, there is a jitter depending on the format/lane combination.
 
 ## Self trigger mode (3)

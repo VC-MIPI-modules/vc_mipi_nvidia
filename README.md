@@ -51,7 +51,7 @@
   * Image Streaming in GREY, Y10, Y12, SRGGB8, SRGGB10, SRGGB12, SGBRG8, SGBRG10, SGBRG12 format
   * **Exposure** can be set via V4L2 control 'exposure'
   * **Gain** can be set via V4L2 control 'gain'
-  * **[Trigger mode](doc/TRIGGER_MODE.md)** '0: disabled', '1: external', '2: pulsewidth', '3: self', '4: single', '5: sync', '6: stream_edge', '7: stream_level' can be set via device tree or V4L2 control 'trigger_mode'
+  * **[Trigger mode](doc/TRIGGER_MODE.md)** '0: disabled', '1: external', '2: pulsewidth', '3: self', '4: single', '5: sync', '6: stream_edge', '7: stream_level', '8: overlap' can be set via device tree or V4L2 control 'trigger_mode'
     * **Software trigger** can be executed by V4L2 control 'single_trigger'
   * **[IO mode](doc/IO_MODE.md)** '0: disabled', '1: flash active high', '2: flash active low', '3: trigger active low', '4: trigger active low and flash active high', '5: trigger and flash active low' can be set via device tree or V4L2 control 'flash_mode'
   * **[Frame rate](doc/FRAME_RATE.md)** can be set via V4L2 control 'frame_rate' *(except OV9281)*
