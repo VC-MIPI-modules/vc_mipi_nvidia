@@ -7,6 +7,8 @@ The trigger mode remains set until it is deactivated with
 ```
 v4l2-ctl -c trigger_mode=0
 ```
+
+The external trigger pulse must be at least 10µs.<br>
 Following you will find timing diagrams to illustrate the specific behavior of each mode.
 ## External, pulse width and overlap trigger mode (1, 2 and 8)
 ![External trigger mode](../doc/plantuml/tm_external.svg)
