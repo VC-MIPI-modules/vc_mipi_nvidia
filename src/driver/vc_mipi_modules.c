@@ -85,7 +85,6 @@ static void vc_init_ctrl_imx183_base(struct vc_ctrl *ctrl, struct vc_desc* desc)
         ctrl->csr.sen.hmax              = (vc_csr4) { .l = 0x7002, .m = 0x7003, .h = 0x0000, .u = 0x0000 };
 
         ctrl->flags                     = FLAG_EXPOSURE_SONY;
-        ctrl->flags                    |= FLAG_INCREASE_FRAME_RATE;
         ctrl->flags                    |= FLAG_IO_ENABLED;
         ctrl->flags                    |= FLAG_TRIGGER_EXTERNAL | FLAG_TRIGGER_SELF |
                                           FLAG_TRIGGER_SINGLE | FLAG_TRIGGER_SYNC;
@@ -167,6 +166,8 @@ static void vc_init_ctrl_imx178(struct vc_ctrl *ctrl, struct vc_desc* desc)
         MODE( 5, 4, FORMAT_RAW10, 0,     600,    9,  0x1ffff,  2126, 1023,   50,   2698560)
         MODE( 6, 4, FORMAT_RAW12, 0,     680,    9,  0x1ffff,  2126, 1023,  200,   2698560)
         MODE( 7, 4, FORMAT_RAW14, 0,    1156,    9,  0x1ffff,  2126, 4095,  800,   2698560)
+
+        ctrl->flags                    |= FLAG_INCREASE_FRAME_RATE;
 }
 
 // ------------------------------------------------------------------------------------------------
@@ -192,6 +193,8 @@ static void vc_init_ctrl_imx183(struct vc_ctrl *ctrl, struct vc_desc* desc)
         MODE( 3, 4, FORMAT_RAW08, 0,     720,    5,  0x1ffff,  3728,  255,   50,   3599997)
         MODE( 4, 4, FORMAT_RAW10, 0,     720,    5,  0x1ffff,  3728,  255,   50,   3599997)
         MODE( 5, 4, FORMAT_RAW12, 0,     862,    5,  0x1ffff,  3728,  255,   50,   3599997)
+
+        ctrl->flags                    |= FLAG_INCREASE_FRAME_RATE;
 }
 
 // ------------------------------------------------------------------------------------------------
