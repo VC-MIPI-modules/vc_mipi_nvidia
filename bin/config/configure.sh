@@ -16,7 +16,7 @@ case $VC_MIPI_SOM in
 Nano|NanoSD|Nano2GB|TX1)
         BSP_DIR=$BUILD_DIR/Nano\_$VC_MIPI_BSP
         ;;
-AGXXavier|XavierNX|XavierNXSD|TX2|TX2i|TX2NX|OrinNano4GB_SD|OrinNano8GB_SD|OrinNano4GB_NVME|OrinNano8GB_NVME|OrinNX8GB|OrinNX16GB)
+AGXXavier|XavierNX|XavierNXSD|TX2|TX2i|TX2NX|OrinNano4GB_SD|OrinNano8GB_SD|OrinNano4GB_NVME|OrinNano8GB_NVME|OrinNX8GB|OrinNX16GB|OrinAGX32GB|OrinAGX64GB)
         BSP_DIR=$BUILD_DIR/Xavier\_$VC_MIPI_BSP
         ;;
 esac
@@ -149,7 +149,7 @@ XavierNX|XavierNXSD)
                 32.7.1|32.7.2|32.7.3)
                         PATCHES+=('dt_Auvidea_JNX30_XavierNX_32.5.0+')
                         ;;
-                35.1.0|35.2.1|35.3.1|35.4.1|36.2.0|36.4.0|36.4.3)
+                35.1.0|35.2.1|35.3.1|35.4.1|36.2.0|36.4.0|36.4.3|36.4.4)
                         # Comment
                 ;;
                 esac
@@ -239,6 +239,11 @@ OrinNano4GB_SD|OrinNano8GB_SD|OrinNano4GB_NVME|OrinNano8GB_NVME|OrinNX8GB|OrinNX
 
         ORIN_DTB_FILE=${ORIN_DTB_PREFIX}${ORIN_DTB_SKU}${ORIN_DTB_SUFFIX}
         ;;
+
+OrinAGX32GB|OrinAGX64GB)
+# todo device-tree files...
+        ;;
+
 *)
         echo "SOM $VC_MIPI_SOM not supported!"
         ;;

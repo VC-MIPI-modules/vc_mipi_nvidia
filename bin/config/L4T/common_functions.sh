@@ -120,6 +120,18 @@ function Common_setup_conf_file {
                         echo "done"
                 fi
                 ;;
+        OrinAGX32GB|OrinAGX64GB)
+                if [ ! -e ${ORIN_AGX_CONF_FILE} ]
+                then
+                        echo "Could not find ${ORIN_AGX_CONF_FILE}! (pwd $(pwd))"
+                        exit 1
+                fi
+
+                echo "Modifying ${ORIN_AGX_CONF_FILE} ($VC_MIPI_BSP) ..."
+                sed -i 's/,tegra234-p3737-camera-dual-imx274-overlay.dtbo,tegra234-p3737-camera-e3331-overlay.dtbo,tegra234-p3737-camera-e3333-overlay.dtbo,tegra234-p3737-camera-imx185-overlay.dtbo//' $ORIN_AGX_CONF_FILE
+
+                ;;
+
         *)
                 return 0
                 ;;

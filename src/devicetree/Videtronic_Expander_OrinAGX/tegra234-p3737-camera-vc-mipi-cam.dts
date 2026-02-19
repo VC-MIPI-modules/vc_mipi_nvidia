@@ -1,0 +1,1246 @@
+// SPDX-License-Identifier: GPL-2.0-only
+// SPDX-FileCopyrightText: Copyright (c) 2023, NVIDIA CORPORATION & AFFILIATES. All rights reserved.
+
+/dts-v1/;
+/plugin/;
+
+#include <dt-bindings/tegra234-p3737-0000+p3701-0000.h>
+
+#include <dt-bindings/clock/tegra234-clock.h>
+#include <dt-bindings/gpio/tegra234-gpio.h>
+
+// ------------------------------------------------------------------------------------------------
+//  Driver Configuration for NVIDIA Jetson AGX Orin Developer Kit on Forecr DSADDON
+// ------------------------------------------------------------------------------------------------
+#define VC_MIPI_CAM_0       1   // 1: Enabled, 0: Disabled  (serial_a => CSI Port 0 => VI Stream 0)
+#define VC_MIPI_CAM_1       1   // 1: Enabled, 0: Disabled  (serial_b => CSI Port 1 => VI Stream 1)
+#define VC_MIPI_CAM_2       1   // 1: Enabled, 0: Disabled  (serial_c => CSI Port 2 => VI Stream 2)
+#define VC_MIPI_CAM_3       1   // 1: Enabled, 0: Disabled  (serial_d => CSI Port 3 => VI Stream 3)
+#define VC_MIPI_CAM_4       1   // 1: Enabled, 0: Disabled  (serial_e => CSI Port 4 => VI Stream 4)
+#define VC_MIPI_CAM_5       1   // 1: Enabled, 0: Disabled  (serial_g => CSI Port 6 => VI Stream 5)
+
+// ------------------------------------------------------------------------------------------------
+//  Supported number of lanes
+// -----+------------------------------------------------------------------------------------------
+//  1   | OV7251, IMX296, IMX297
+//  2   | OV9281, IMX264, IMX265
+//  2,4 | IMX178, IMX183, IMX226, IMX250, IMX252, IMX273, IMX290, IMX327, IMX335, IMX392, 
+//      | IMX412, IMX415, IMX462, IMX565, IMX566, IMX567, IMX568, IMX900
+// -----+------------------------------------------------------------------------------------------
+#define VC_MIPI_LANES       2  // 1, 2 Lanes
+// ------------------------------------------------------------------------------------------------
+//  Embedded Metadata Height
+// -----+------------------------------------------------------------------------------------------
+//  0   | IMX178, IMX183, IMX226, IMX250, IMX252, IMX264, IMX265, IMX273, IMX392, OV7251, OV9281
+//  1   | IMX290, IMX327, IMX335, IMX415, IMX462, IMX565, IMX566, IMX567, IMX568, IMX900
+//  2   | IMX296, IMX297, IMX412
+// -----+------------------------------------------------------------------------------------------
+#define VC_MIPI_METADATA_H  "1" // "0", "1", "2" Lines of meta data
+// ------------------------------------------------------------------------------------------------
+//   Sensor Manufacturer
+// -----+------------------------------------------------------------------------------------------
+//   1  | Sony Sensor (IMX)
+//   2  | Omni Vision Sensor (OV)
+// -----+------------------------------------------------------------------------------------------
+#define VC_MIPI_MANUFACTURER 1
+// ------------------------------------------------------------------------------------------------
+//  GStreamer Support
+// ------------------------------------------------------------------------------------------------
+//  If you want to use GStreamer with nvarguscamerasrc you have to adjust this settings in the 
+//  device tree below. The sections which have to be modified are marked by a comment. 
+//  To find the correct parameter values please follow the instruction in the main README.md of 
+//  this repository https://github.com/VC-MIPI-modules/vc_mipi_nvidia#gstreamer-support
+// ------------------------------------------------------------------------------------------------
+
+//#define CAMERA_I2C_MUX_BUS(x) (0x1E + x)
+
+#if VC_MIPI_LANES == 1
+        #define BUS_WIDTH 1
+        #define NUM_LANES "1" 
+        #define PIX_CLK_HZ "150000000"
+#endif
+#if VC_MIPI_LANES == 2
+        #define BUS_WIDTH 2
+        #define NUM_LANES "2" 
+        #define PIX_CLK_HZ "300000000"
+#endif
+
+#define CAM0_PORT_IDX 0
+#define CAM1_PORT_IDX 1
+#define CAM2_PORT_IDX 2
+#define CAM3_PORT_IDX 3
+#define CAM4_PORT_IDX 4
+#define CAM5_PORT_IDX 5
+
+#define VC_MIPI_CAMERAS (VC_MIPI_CAM_0 + VC_MIPI_CAM_1 + VC_MIPI_CAM_2 + VC_MIPI_CAM_3 + VC_MIPI_CAM_4 + VC_MIPI_CAM_5)
+#define NUM_CSI_LANES ((VC_MIPI_CAMERAS) * BUS_WIDTH)
+
+/ {
+        overlay-name = "Jetson Camera VCMIPI module";
+        jetson-header-name = "Jetson AGX CSI Connector";
+        compatible = JETSON_COMPATIBLE;
+
+        fragment@0 {
+                target-path = "/";
+                __overlay__ {
+                        tegra-capture-vi {
+                                num-channels = <VC_MIPI_CAMERAS>;
+                                ports {
+                                        #address-cells = <1>;
+                                        #size-cells = <0>;
+#if VC_MIPI_CAM_0 == 1
+                                        vc_vi_port0: port@0 {
+                                                status = "okay";
+                                                reg = <0>;
+                                                vc_vi_in0: endpoint {
+                                                        status = "okay";
+                                                        port-index = <CAM0_PORT_IDX>;
+                                                        bus-width = <BUS_WIDTH>;
+                                                        remote-endpoint = <&vc_csi_out0>;
+                                                };
+                                        };
+#endif
+#if VC_MIPI_CAM_1 == 1
+                                        vc_vi_port1: port@1 {
+                                                status = "okay";
+                                                reg = <1>;
+                                                vc_vi_in1: endpoint {
+                                                        status = "okay";
+                                                        port-index = <CAM1_PORT_IDX>;
+                                                        bus-width = <BUS_WIDTH>;
+                                                        remote-endpoint = <&vc_csi_out1>;
+                                                };
+                                        };
+#endif
+#if VC_MIPI_CAM_2 == 1
+                                        vc_vi_port2: port@2 {
+                                                status = "okay";
+                                                reg = <2>;
+                                                vc_vi_in2: endpoint {
+                                                        status = "okay";
+                                                        port-index = <CAM2_PORT_IDX>;
+                                                        bus-width = <BUS_WIDTH>;
+                                                        remote-endpoint = <&vc_csi_out2>;
+                                                };
+                                        };
+#endif
+#if VC_MIPI_CAM_3 == 1
+                                        vc_vi_port3: port@3 {
+                                                status = "okay";
+                                                reg = <3>;
+                                                vc_vi_in3: endpoint {
+                                                        status = "okay";
+                                                        port-index = <CAM3_PORT_IDX>;
+                                                        bus-width = <BUS_WIDTH>;
+                                                        remote-endpoint = <&vc_csi_out3>;
+                                                };
+                                        };
+#endif
+#if VC_MIPI_CAM_4 == 1
+                                        vc_vi_port4: port@4 {
+                                                status = "okay";
+                                                reg = <4>;
+                                                vc_vi_in4: endpoint {
+                                                        status = "okay";
+                                                        port-index = <CAM4_PORT_IDX>;
+                                                        bus-width = <BUS_WIDTH>;
+                                                        remote-endpoint = <&vc_csi_out4>;
+                                                };
+                                        };
+#endif
+#if VC_MIPI_CAM_5 == 1
+                                        vc_vi_port5: port@5 {
+                                                status = "okay";
+                                                reg = <5>;
+                                                vc_vi_in5: endpoint {
+                                                        status = "okay";
+                                                        port-index = <CAM5_PORT_IDX>;
+                                                        bus-width = <BUS_WIDTH>;
+                                                        remote-endpoint = <&vc_csi_out5>;
+                                                };
+                                        };
+#endif
+                                }; // ports
+                        }; // tegra-capture-vi
+
+
+                        bus@0 {
+                                host1x@13e00000 {
+                                        nvcsi@15a00000 {
+                                                num-channels = <VC_MIPI_CAMERAS>;
+                                                #address-cells = <1>;
+                                                #size-cells = <0>;
+                                                status = "okay";
+
+#if VC_MIPI_CAM_0 == 1
+                                                vc_csi_chan0: channel@0 {
+                                                        status = "okay";
+                                                        reg = <0>;
+                                                        ports {
+                                                                status = "okay";
+                                                                #address-cells = <1>;
+                                                                #size-cells = <0>;
+                                                                vc_csi_chan0_port0: port@0 {
+                                                                        status = "okay";
+                                                                        reg = <0>;
+                                                                        vc_csi_in0: endpoint@0 {
+                                                                                status = "okay";
+                                                                                port-index = <CAM0_PORT_IDX>;
+                                                                                bus-width = <BUS_WIDTH>;
+                                                                                remote-endpoint = <&vc_mipi_out0>;
+                                                                        };
+                                                                };
+                                                                vc_csi_chan0_port1: port@1 {
+                                                                        status = "okay";
+                                                                        reg = <1>;
+                                                                        vc_csi_out0: endpoint@1 {
+                                                                                status = "okay";
+                                                                                remote-endpoint = <&vc_vi_in0>;
+                                                                        };
+                                                                };
+                                                        };
+                                                };
+#endif
+#if VC_MIPI_CAM_1 == 1
+                                                vc_csi_chan1: channel@1 {
+                                                        status = "okay";
+                                                        reg = <1>;
+                                                        ports {
+                                                                status = "okay";
+                                                                #address-cells = <1>;
+                                                                #size-cells = <0>;
+                                                                vc_csi_chan1_port0: port@0 {
+                                                                        status = "okay";
+                                                                        reg = <0>;
+                                                                        vc_csi_in1: endpoint@2 {
+                                                                                status = "okay";
+                                                                                port-index = <CAM1_PORT_IDX>;
+                                                                                bus-width = <BUS_WIDTH>;
+                                                                                remote-endpoint = <&vc_mipi_out1>;
+                                                                        };
+                                                                };
+                                                                vc_csi_chan1_port1: port@1 {
+                                                                        status = "okay";
+                                                                        reg = <1>;
+                                                                        vc_csi_out1: endpoint@3 {
+                                                                                status = "okay";
+                                                                                remote-endpoint = <&vc_vi_in1>;
+                                                                        };
+                                                                };
+                                                        };
+                                                };
+#endif
+
+#if VC_MIPI_CAM_2 == 1
+                                                vc_csi_chan2: channel@2 {
+                                                        status = "okay";
+                                                        reg = <2>;
+                                                        ports {
+                                                                #address-cells = <1>;
+                                                                #size-cells = <0>;
+                                                                vc_csi_chan2_port0: port@0 {
+                                                                        status = "okay";
+                                                                        reg = <0>;
+                                                                        vc_csi_in2: endpoint@4 {
+                                                                                status = "okay";
+                                                                                port-index = <CAM2_PORT_IDX>;
+                                                                                bus-width = <BUS_WIDTH>;
+                                                                                remote-endpoint = <&vc_mipi_out2>;
+                                                                        };
+                                                                };
+                                                                vc_csi_chan2_port1: port@1 {
+                                                                        status = "okay";
+                                                                        reg = <1>;
+                                                                        vc_csi_out2: endpoint@5 {
+                                                                                status = "okay";
+                                                                                remote-endpoint = <&vc_vi_in2>;
+                                                                        };
+                                                                };
+                                                        };
+                                                };
+#endif
+
+#if VC_MIPI_CAM_3 == 1
+                                                vc_csi_chan3: channel@3 {
+                                                        status = "okay";
+                                                        reg = <3>;
+                                                        ports {
+                                                                #address-cells = <1>;
+                                                                #size-cells = <0>;
+                                                                vc_csi_chan3_port0: port@0 {
+                                                                        status = "okay";
+                                                                        reg = <0>;
+                                                                        vc_csi_in3: endpoint@6 {
+                                                                                status = "okay";
+                                                                                port-index = <CAM3_PORT_IDX>;
+                                                                                bus-width = <BUS_WIDTH>;
+                                                                                remote-endpoint = <&vc_mipi_out3>;
+                                                                        };
+                                                                };
+                                                                vc_csi_chan3_port1: port@1 {
+                                                                        status = "okay";
+                                                                        reg = <1>;
+                                                                        vc_csi_out3: endpoint@7 {
+                                                                                status = "okay";
+                                                                                remote-endpoint = <&vc_vi_in3>;
+                                                                        };
+                                                                };
+                                                        };
+                                                };
+#endif
+
+#if VC_MIPI_CAM_4 == 1
+                                                vc_csi_chan4: channel@4 {
+                                                        status = "okay";
+                                                        reg = <4>;
+                                                        ports {
+                                                                #address-cells = <1>;
+                                                                #size-cells = <0>;
+                                                                vc_csi_chan4_port0: port@0 {
+                                                                        status = "okay";
+                                                                        reg = <0>;
+                                                                        vc_csi_in4: endpoint@8 {
+                                                                                status = "okay";
+                                                                                port-index = <CAM4_PORT_IDX>;
+                                                                                bus-width = <BUS_WIDTH>;
+                                                                                remote-endpoint = <&vc_mipi_out4>;
+                                                                        };
+                                                                };
+                                                                vc_csi_chan4_port1: port@1 {
+                                                                        status = "okay";
+                                                                        reg = <1>;
+                                                                        vc_csi_out4: endpoint@9 {
+                                                                                status = "okay";
+                                                                                remote-endpoint = <&vc_vi_in4>;
+                                                                        };
+                                                                };
+                                                        };
+                                                };
+#endif
+
+#if VC_MIPI_CAM_5 == 1
+                                                vc_csi_chan5: channel@5 {
+                                                        status = "okay";
+                                                        reg = <5>;
+                                                        ports {
+                                                                #address-cells = <1>;
+                                                                #size-cells = <0>;
+                                                                vc_csi_chan5_port0: port@0 {
+                                                                        status = "okay";
+                                                                        reg = <0>;
+                                                                        vc_csi_in5: endpoint@10 {
+                                                                                status = "okay";
+                                                                                port-index = <6>;
+                                                                                bus-width = <BUS_WIDTH>;
+                                                                                remote-endpoint = <&vc_mipi_out5>;
+                                                                        };
+                                                                };
+                                                                vc_csi_chan5_port1: port@1 {
+                                                                        status = "okay";
+                                                                        reg = <1>;
+                                                                        vc_csi_out5: endpoint@11 {
+                                                                                status = "okay";
+                                                                                remote-endpoint = <&vc_vi_in5>;
+                                                                        };
+                                                                };
+                                                        };
+                                                };
+#endif
+                                        }; //nvcsi
+                                }; // host1x
+
+                                tegra-camera-platform {
+                                        compatible = "nvidia, tegra-camera-platform";
+
+                                        num_csi_lanes = <NUM_CSI_LANES>;
+
+                                        max_lane_speed = <1500000>;
+                                        min_bits_per_pixel = <10>;
+                                        vi_peak_byte_per_pixel = <2>;
+                                        vi_bw_margin_pct = <25>;
+                                        max_pixel_rate = <240000>;
+                                        isp_peak_byte_per_pixel = <5>;
+                                        isp_bw_margin_pct = <25>;
+
+                                        status = "okay";
+
+                                        modules {
+#if VC_MIPI_CAM_0 == 1
+                                                cam_module0: module0 {
+                                                        status = "okay";
+
+                                                        badge = "bottomleft_vc_mipi";
+                                                        position = "bottomleft";
+                                                        orientation = "1";
+                                                        cam_module0_drivernode0: drivernode0 {
+                                                                pcl_id = "v4l2_sensor";
+                                                                status = "okay";
+#if VC_MIPI_MANUFACTURER == 1
+                                                                devname = "vc_mipi 9-001a";
+                                                                sysfs-device-tree = "/sys/firmware/devicetree/base/bus@0/i2c@3180000/tca9548@70/i2c@0/vc_mipi@1a";
+#else
+                                                                devname = "vc_mipi 9-0060";
+                                                                sysfs-device-tree = "/sys/firmware/devicetree/base/bus@0/i2c@3180000/tca9548@70/i2c@0/vc_mipi@60";
+#endif
+                                                        };
+                                                        
+                                                        cam_module0_drivernode1: drivernode1 {
+                                                                pcl_id = "v4l2_lens";
+                                                                status = "okay";
+                                                                sysfs-device-tree = "/sys/firmware/devicetree/base/bus@0/lens@vc_mipi";
+                                                        };
+
+                                                };
+#endif // VC_MIPI_CAM_0
+
+#if VC_MIPI_CAM_1 == 1
+                                                cam_module1: module1 {
+                                                        status = "okay";
+
+                                                        badge = "centerleft_vc_mipi";
+                                                        position = "centerleft";
+                                                        orientation = "1";
+                                                        cam_module1_drivernode0: drivernode0 {
+                                                                pcl_id = "v4l2_sensor";
+                                                                status = "okay";
+#if VC_MIPI_MANUFACTURER == 1
+                                                                devname = "vc_mipi 10-001a";
+                                                                sysfs-device-tree = "/sys/firmware/devicetree/base/bus@0/i2c@3180000/tca9548@70/i2c@1/vc_mipi@1a";
+#else
+                                                                devname = "vc_mipi 10-0060";
+                                                                sysfs-device-tree = "/sys/firmware/devicetree/base/bus@0/i2c@3180000/tca9548@70/i2c@1/vc_mipi@60";
+#endif	
+                                                        };
+                                                        
+                                                        cam_module1_drivernode1: drivernode1 {
+                                                                pcl_id = "v4l2_lens";
+                                                                status = "okay";
+                                                                sysfs-device-tree = "/sys/firmware/devicetree/base/bus@0/lens@vc_mipi/";
+                                                        };
+                                                        
+                                                };
+#endif // VC_MIPI_CAM_1
+
+#if VC_MIPI_CAM_2 == 1
+                                                cam_module2: module2 {
+                                                        status = "okay";
+
+                                                        badge = "centerright_vc_mipi";
+                                                        position = "centerright";
+                                                        orientation = "1";
+                                                        cam_module2_drivernode0: drivernode0 {
+                                                                pcl_id = "v4l2_sensor";
+                                                                status = "okay";
+#if VC_MIPI_MANUFACTURER == 1
+                                                                devname = "vc_mipi 11-001a";
+                                                                sysfs-device-tree = "/sys/firmware/devicetree/base/bus@0/i2c@3180000/tca9548@70/i2c@2/vc_mipi@1a";
+#else
+                                                                devname = "vc_mipi 11-0060";
+                                                                sysfs-device-tree = "/sys/firmware/devicetree/base/bus@0/i2c@3180000/tca9548@70/i2c@2/vc_mipi@60";
+#endif	
+                                                        };
+                                                        cam_module2_drivernode1: drivernode1 {
+                                                                pcl_id = "v4l2_lens";
+                                                                status = "okay";
+                                                                sysfs-device-tree = "/sys/firmware/devicetree/base/bus@0/lens@vc_mipi/";
+                                                        };
+                                                };
+#endif // VC_MIPI_CAM_2
+
+#if VC_MIPI_CAM_3 == 1
+                                                cam_module3: module3 {
+                                                        status = "okay";
+
+                                                        badge = "topleft_vc_mipi";
+                                                        position = "topleft";
+                                                        orientation = "1";
+                                                        cam_module3_drivernode0: drivernode0 {
+                                                                pcl_id = "v4l2_sensor";
+                                                                status = "okay";
+#if VC_MIPI_MANUFACTURER == 1
+                                                                devname = "vc_mipi 12-001a";
+                                                                sysfs-device-tree = "/sys/firmware/devicetree/base/bus@0/i2c@3180000/tca9548@70/i2c@3/vc_mipi@1a";
+#else
+                                                                devname = "vc_mipi 12-0060";
+                                                                sysfs-device-tree = "/sys/firmware/devicetree/base/bus@0/i2c@3180000/tca9548@70/i2c@3/vc_mipi@60";
+#endif	
+                                                        };
+                                                        cam_module3_drivernode1: drivernode1 {
+                                                                pcl_id = "v4l2_lens";
+                                                                status = "okay";
+                                                                sysfs-device-tree = "/sys/firmware/devicetree/base/bus@0/lens@vc_mipi/";
+                                                        };
+                                                };
+#endif // VC_MIPI_CAM_3
+
+#if VC_MIPI_CAM_4 == 1
+                                                cam_module4: module4 {
+                                                        status = "okay";
+
+                                                        badge = "bottomright_vc_mipi";
+                                                        position = "bottomright";
+                                                        orientation = "1";
+                                                        cam_module4_drivernode0: drivernode0 {
+                                                                pcl_id = "v4l2_sensor";
+                                                                status = "okay";
+#if VC_MIPI_MANUFACTURER == 1
+                                                                devname = "vc_mipi 13-001a";
+                                                                sysfs-device-tree = "/sys/firmware/devicetree/base/bus@0/i2c@3180000/tca9548@70/i2c@4/vc_mipi@1a";
+#else
+                                                                devname = "vc_mipi 13-0060";
+                                                                sysfs-device-tree = "/sys/firmware/devicetree/base/bus@0/i2c@3180000/tca9548@70/i2c@4/vc_mipi@60";
+#endif	
+                                                        };
+                                                        cam_module4_drivernode1: drivernode1 {
+                                                                pcl_id = "v4l2_lens";
+                                                                status = "okay";
+                                                                sysfs-device-tree = "/sys/firmware/devicetree/base/bus@0/lens@vc_mipi/";
+                                                        };
+                                                };
+#endif // VC_MIPI_CAM_4
+
+#if VC_MIPI_CAM_5 == 1
+                                                cam_module5: module5 {
+                                                        status = "okay";
+
+                                                        badge = "topright_vc_mipi";
+                                                        position = "topright";
+                                                        orientation = "1";
+                                                        cam_module5_drivernode0: drivernode0 {
+                                                                pcl_id = "v4l2_sensor";
+                                                                status = "okay";
+#if VC_MIPI_MANUFACTURER == 1
+                                                                devname = "vc_mipi 14-001a";
+                                                                sysfs-device-tree = "/sys/firmware/devicetree/base/bus@0/i2c@3180000/tca9548@70/i2c@5/vc_mipi@1a";
+#else
+                                                                devname = "vc_mipi 14-0060";
+                                                                sysfs-device-tree = "/sys/firmware/devicetree/base/bus@0/i2c@3180000/tca9548@70/i2c@5/vc_mipi@60";
+#endif	
+                                                        };
+                                                        cam_module5_drivernode1: drivernode1 {
+                                                                pcl_id = "v4l2_lens";
+                                                                status = "okay";
+                                                                sysfs-device-tree = "/sys/firmware/devicetree/base/bus@0/lens@vc_mipi/";
+                                                        };
+                                                };
+#endif // VC_MIPI_CAM_5
+                                        }; // modules
+                                }; // tegra-camera-platform
+
+                                i2c@3180000 {
+                                        tca9555_20: tca9555@20 {
+                                                status = "okay";
+                                                compatible = "nxp,pca9555";
+                                                gpio-controller;
+                                                #gpio-cells = <2>;
+                                                reg = <0x20>;
+                                        };
+
+                                        tca9548_70: tca9548@70 {
+                                                status = "okay";
+                                                compatible = "nxp,pca9548";
+                                                reg = <0x70>;
+                                                #address-cells = <1>;
+                                                #size-cells = <0>;
+                                                skip_mux_detect;
+
+                                                vif-supply = <&vdd_1v8_sys>;
+                                                vcc-supply = <&vdd_1v8_sys>;
+
+#if VC_MIPI_CAM_0 == 1
+                                                i2c@0 {
+                                                        status = "okay";
+                                                        reg = <0>;
+                                                        i2c-mux,deselect-on-exit;
+                                                        #address-cells = <1>;
+                                                        #size-cells = <0>;
+#if VC_MIPI_MANUFACTURER == 1
+                                                        vc_mipi_cam0: vc_mipi@1a {
+                                                                reg                     = <0x1a>;
+#else
+                                                        vc_mipi_cam0: vc_mipi@60 {
+                                                                reg                     = <0x60>;
+#endif
+                                                                status = "okay";
+
+                                                                compatible              = "nvidia,vc_mipi";
+                                                                devnode                 = "video0";
+                                                                use_sensor_mode_id      = "false";
+                                                                sensor_model            = "vc_mipi";
+
+                                                                num_lanes               = NUM_LANES;
+                                                                trigger_mode            = "0";
+                                                                io_mode                 = "0";
+
+//                                                                reset-gpios = <&pcf8574a_38 0 GPIO_ACTIVE_HIGH>;
+
+                                                                // ----------------------------------------------------
+                                                                // If you want to use GStreamer with nvarguscamerasrc
+                                                                // you have to adjust this settings
+                                                                physical_w              = "1.000";
+                                                                physical_h              = "1.000";
+                                                                // ----------------------------------------------------
+
+                                                                // This node is needed by the Tegra framework.
+                                                                // You don't have to change any settings if just want to use the V4L API.
+                                                                mode0 {
+                                                                        num_lanes                = NUM_LANES;
+                                                                        tegra_sinterface         = "serial_a";
+                                                                        embedded_metadata_height = VC_MIPI_METADATA_H;
+                                                                        readout_orientation      = "0";
+                                                                        lane_polarity            = "0";
+
+                                                                        // ----------------------------------------------------
+                                                                        active_l                 = "0";
+                                                                        active_t                 = "0";
+                                                                        active_w                 = "0";
+                                                                        active_h                 = "0";
+
+                                                                        mode_type                = "bayer";
+                                                                        pixel_phase              = "rggb";
+                                                                        csi_pixel_bit_depth      = "10";
+
+                                                                        min_gain_val             = "0";         // mdB
+                                                                        max_gain_val             = "48000";     // mdB
+                                                                        step_gain_val            = "100";       // mdB
+                                                                        default_gain             = "0";         // mdB
+
+                                                                        min_exp_time             = "1";         // us
+                                                                        max_exp_time             = "1000000";   // us
+                                                                        step_exp_time            = "1";         // us
+                                                                        default_exp_time         = "10000";     // us
+
+                                                                        // For applications like argus_camera, there should
+                                                                        // be a minimal frame rate greater than zero!
+                                                                        min_framerate            = "1000";      // mHz
+                                                                        max_framerate            = "60000";     // mHz
+                                                                        step_framerate           = "100";       // mHz
+                                                                        default_framerate        = "60000";     // mHz
+                                                                        // ----------------------------------------------------
+
+                                                                        gain_factor              = "1000";
+                                                                        exposure_factor          = "1000000";
+                                                                        framerate_factor         = "1000";
+                                                                        inherent_gain            = "1";
+                                                                        min_hdr_ratio            = "1";
+                                                                        max_hdr_ratio            = "1";
+
+                                                                        line_length              = "0";
+                                                                        phy_mode                 = "DPHY";
+                                                                        discontinuous_clk        = "no";
+                                                                        mclk_khz                 = "24000";
+
+                                                                        pix_clk_hz               = PIX_CLK_HZ;
+                                                                        mclk_multiplier          = "0.0";		// deprecated
+                                                                        cil_settletime           = "0";
+                                                                        dpcm_enable              = "false";
+
+                                                                        set_mode_delay_ms        = "100000";
+                                                                };
+
+                                                                ports {
+                                                                        #address-cells = <1>;
+                                                                        #size-cells = <0>;
+                                                                        port@0 {
+                                                                                reg = <0>;
+                                                                                vc_mipi_out0: endpoint {
+                                                                                        port-index = <CAM0_PORT_IDX>;
+                                                                                        bus-width = <BUS_WIDTH>;
+                                                                                        remote-endpoint = <&vc_csi_in0>;
+                                                                                };
+                                                                        };
+                                                                };
+                                                        };
+                                                };
+#endif // VC_MIPI_CAM_0
+
+#if VC_MIPI_CAM_1 == 1
+                                                i2c@1 {
+                                                        status = "okay";
+                                                        reg = <1>;
+                                                        i2c-mux,deselect-on-exit;
+                                                        #address-cells = <1>;
+                                                        #size-cells = <0>;
+#if VC_MIPI_MANUFACTURER == 1
+                                                        vc_mipi_cam1: vc_mipi@1a {
+                                                                reg                     = <0x1a>;
+#else
+                                                        vc_mipi_cam1: vc_mipi@60 {
+                                                                reg                     = <0x60>;
+#endif
+                                                                status = "okay";
+
+                                                                compatible              = "nvidia,vc_mipi";
+                                                                devnode                 = "video1";
+                                                                use_sensor_mode_id      = "false";
+                                                                sensor_model            = "vc_mipi";
+
+                                                                num_lanes               = NUM_LANES;
+                                                                trigger_mode            = "0";
+                                                                io_mode                 = "0";
+
+//                                                                reset-gpios = <&pcf8574a_38 1 GPIO_ACTIVE_HIGH>;
+
+                                                                // ----------------------------------------------------
+                                                                // If you want to use GStreamer with nvarguscamerasrc
+                                                                // you have to adjust this settings
+                                                                physical_w              = "1.000";
+                                                                physical_h              = "1.000";
+                                                                // ----------------------------------------------------
+
+                                                                // This node is needed by the Tegra framework.
+                                                                // You don't have to change any settings if just want to use the V4L API.
+                                                                mode0 {
+                                                                        num_lanes                = NUM_LANES;
+                                                                        tegra_sinterface         = "serial_b";
+                                                                        embedded_metadata_height = VC_MIPI_METADATA_H;
+                                                                        readout_orientation      = "0";
+                                                                        lane_polarity            = "0";
+
+                                                                        // ----------------------------------------------------
+                                                                        active_l                 = "0";
+                                                                        active_t                 = "0";
+                                                                        active_w                 = "0";
+                                                                        active_h                 = "0";
+
+                                                                        mode_type                = "bayer";
+                                                                        pixel_phase              = "rggb";
+                                                                        csi_pixel_bit_depth      = "10";
+
+                                                                        min_gain_val             = "0";         // mdB
+                                                                        max_gain_val             = "48000";     // mdB
+                                                                        step_gain_val            = "100";       // mdB
+                                                                        default_gain             = "0";         // mdB
+
+                                                                        min_exp_time             = "1";         // us
+                                                                        max_exp_time             = "1000000";   // us
+                                                                        step_exp_time            = "1";         // us
+                                                                        default_exp_time         = "10000";     // us
+
+                                                                        // For applications like argus_camera, there should
+                                                                        // be a minimal frame rate greater than zero!
+                                                                        min_framerate            = "1000";      // mHz
+                                                                        max_framerate            = "60000";     // mHz
+                                                                        step_framerate           = "100";       // mHz
+                                                                        default_framerate        = "60000";     // mHz
+                                                                        // ----------------------------------------------------
+
+                                                                        gain_factor              = "1000";
+                                                                        exposure_factor          = "1000000";
+                                                                        framerate_factor         = "1000";
+                                                                        inherent_gain            = "1";
+                                                                        min_hdr_ratio            = "1";
+                                                                        max_hdr_ratio            = "1";
+
+                                                                        line_length              = "0";
+                                                                        phy_mode                 = "DPHY";
+                                                                        discontinuous_clk        = "no";
+                                                                        mclk_khz                 = "24000";
+
+                                                                        pix_clk_hz               = PIX_CLK_HZ;
+                                                                        mclk_multiplier          = "0.0";		// deprecated
+                                                                        cil_settletime           = "0";
+                                                                        dpcm_enable              = "false";
+
+                                                                        set_mode_delay_ms        = "100000";
+                                                                };
+
+                                                                ports {
+                                                                        #address-cells = <1>;
+                                                                        #size-cells = <0>;
+                                                                        port@0 {
+                                                                                reg = <0>;
+                                                                                vc_mipi_out1: endpoint {
+                                                                                        port-index = <CAM1_PORT_IDX>;
+                                                                                        bus-width = <BUS_WIDTH>;
+                                                                                        remote-endpoint = <&vc_csi_in1>;
+                                                                                };
+                                                                        };
+                                                                };
+                                                        };
+                                                };
+#endif // VC_MIPI_CAM_1
+
+#if VC_MIPI_CAM_2 == 1
+                                                i2c@2 {
+                                                        status = "okay";
+                                                        reg = <2>;
+                                                        i2c-mux,deselect-on-exit;
+                                                        #address-cells = <1>;
+                                                        #size-cells = <0>;
+
+#if VC_MIPI_MANUFACTURER == 1
+                                                        vc_mipi_cam2: vc_mipi@1a {
+                                                                reg                     = <0x1a>;
+#else
+                                                        vc_mipi_cam2: vc_mipi@60 {
+                                                                reg                     = <0x60>;
+#endif
+                                                                status = "okay";
+
+                                                                compatible              = "nvidia,vc_mipi";
+                                                                devnode                 = "video2";
+                                                                use_sensor_mode_id      = "false";
+                                                                sensor_model            = "vc_mipi";
+
+                                                                num_lanes               = NUM_LANES;
+                                                                trigger_mode            = "0";
+                                                                io_mode                 = "0";
+
+//                                                                reset-gpios = <&pcf8574a_38 2 GPIO_ACTIVE_HIGH>;
+
+                                                                // ----------------------------------------------------
+                                                                // If you want to use GStreamer with nvarguscamerasrc
+                                                                // you have to adjust this settings
+                                                                physical_w              = "1.000";
+                                                                physical_h              = "1.000";
+                                                                // ----------------------------------------------------
+
+                                                                // This node is needed by the Tegra framework.
+                                                                // You don't have to change any settings if just want to use the V4L API.
+                                                                mode0 {
+                                                                        num_lanes                = NUM_LANES;
+                                                                        tegra_sinterface         = "serial_c";
+                                                                        embedded_metadata_height = VC_MIPI_METADATA_H;
+                                                                        readout_orientation      = "0";
+                                                                        lane_polarity            = "0";
+
+                                                                        // ----------------------------------------------------
+                                                                        active_l                 = "0";
+                                                                        active_t                 = "0";
+                                                                        active_w                 = "0";
+                                                                        active_h                 = "0";
+
+                                                                        mode_type                = "bayer";
+                                                                        pixel_phase              = "rggb";
+                                                                        csi_pixel_bit_depth      = "10";
+
+                                                                        min_gain_val             = "0";         // mdB
+                                                                        max_gain_val             = "48000";     // mdB
+                                                                        step_gain_val            = "100";       // mdB
+                                                                        default_gain             = "0";         // mdB
+
+                                                                        min_exp_time             = "1";         // us
+                                                                        max_exp_time             = "1000000";   // us
+                                                                        step_exp_time            = "1";         // us
+                                                                        default_exp_time         = "10000";     // us
+
+                                                                        // For applications like argus_camera, there should
+                                                                        // be a minimal frame rate greater than zero!
+                                                                        min_framerate            = "1000";      // mHz
+                                                                        max_framerate            = "60000";     // mHz
+                                                                        step_framerate           = "100";       // mHz
+                                                                        default_framerate        = "60000";     // mHz
+                                                                        // ----------------------------------------------------
+
+                                                                        gain_factor              = "1000";
+                                                                        exposure_factor          = "1000000";
+                                                                        framerate_factor         = "1000";
+                                                                        inherent_gain            = "1";
+                                                                        min_hdr_ratio            = "1";
+                                                                        max_hdr_ratio            = "1";
+
+                                                                        line_length              = "0";
+                                                                        phy_mode                 = "DPHY";
+                                                                        discontinuous_clk        = "no";
+                                                                        mclk_khz                 = "24000";
+
+                                                                        pix_clk_hz               = PIX_CLK_HZ;
+                                                                        mclk_multiplier          = "0.0";		// deprecated
+                                                                        cil_settletime           = "0";
+                                                                        dpcm_enable              = "false";
+
+                                                                        set_mode_delay_ms        = "100000";
+                                                                };
+
+                                                                ports {
+                                                                        #address-cells = <1>;
+                                                                        #size-cells = <0>;
+                                                                        port@0 {
+                                                                                reg = <0>;
+                                                                                vc_mipi_out2: endpoint {
+                                                                                        port-index = <CAM2_PORT_IDX>;
+                                                                                        bus-width = <BUS_WIDTH>;
+                                                                                        remote-endpoint = <&vc_csi_in2>;
+                                                                                };
+                                                                        };
+                                                                };
+                                                        };
+                                                };
+#endif // VC_MIPI_CAM_2
+
+#if VC_MIPI_CAM_3 == 1
+                                                i2c@3 {
+                                                        status = "okay";
+                                                        reg = <3>;
+                                                        i2c-mux,deselect-on-exit;
+                                                        #address-cells = <1>;
+                                                        #size-cells = <0>;
+#if VC_MIPI_MANUFACTURER == 1
+                                                        vc_mipi_cam3: vc_mipi@1a {
+                                                                reg                     = <0x1a>;
+#else
+                                                        vc_mipi_cam3: vc_mipi@60 {
+                                                                reg                     = <0x60>;
+#endif
+                                                                status = "okay";
+
+                                                                compatible              = "nvidia,vc_mipi";
+                                                                devnode                 = "video3";
+                                                                use_sensor_mode_id      = "false";
+                                                                sensor_model            = "vc_mipi";
+
+                                                                num_lanes               = NUM_LANES;
+                                                                trigger_mode            = "0";
+                                                                io_mode                 = "0";
+
+//                                                                reset-gpios = <&pcf8574a_38 3 GPIO_ACTIVE_HIGH>;
+
+                                                                // ----------------------------------------------------
+                                                                // If you want to use GStreamer with nvarguscamerasrc
+                                                                // you have to adjust this settings
+                                                                physical_w              = "1.000";
+                                                                physical_h              = "1.000";
+                                                                // ----------------------------------------------------
+
+                                                                // This node is needed by the Tegra framework.
+                                                                // You don't have to change any settings if just want to use the V4L API.
+                                                                mode0 {
+                                                                        num_lanes                = NUM_LANES;
+                                                                        tegra_sinterface         = "serial_d";
+                                                                        embedded_metadata_height = VC_MIPI_METADATA_H;
+                                                                        readout_orientation      = "0";
+                                                                        lane_polarity            = "0";
+
+                                                                        // ----------------------------------------------------
+                                                                        active_l                 = "0";
+                                                                        active_t                 = "0";
+                                                                        active_w                 = "0";
+                                                                        active_h                 = "0";
+
+                                                                        mode_type                = "bayer";
+                                                                        pixel_phase              = "rggb";
+                                                                        csi_pixel_bit_depth      = "10";
+
+                                                                        min_gain_val             = "0";         // mdB
+                                                                        max_gain_val             = "48000";     // mdB
+                                                                        step_gain_val            = "100";       // mdB
+                                                                        default_gain             = "0";         // mdB
+
+                                                                        min_exp_time             = "1";         // us
+                                                                        max_exp_time             = "1000000";   // us
+                                                                        step_exp_time            = "1";         // us
+                                                                        default_exp_time         = "10000";     // us
+
+                                                                        // For applications like argus_camera, there should
+                                                                        // be a minimal frame rate greater than zero!
+                                                                        min_framerate            = "1000";      // mHz
+                                                                        max_framerate            = "60000";     // mHz
+                                                                        step_framerate           = "100";       // mHz
+                                                                        default_framerate        = "60000";     // mHz
+                                                                        // ----------------------------------------------------
+
+                                                                        gain_factor              = "1000";
+                                                                        exposure_factor          = "1000000";
+                                                                        framerate_factor         = "1000";
+                                                                        inherent_gain            = "1";
+                                                                        min_hdr_ratio            = "1";
+                                                                        max_hdr_ratio            = "1";
+
+                                                                        line_length              = "0";
+                                                                        phy_mode                 = "DPHY";
+                                                                        discontinuous_clk        = "no";
+                                                                        mclk_khz                 = "24000";
+
+                                                                        pix_clk_hz               = PIX_CLK_HZ;
+                                                                        mclk_multiplier          = "0.0";		// deprecated
+                                                                        cil_settletime           = "0";
+                                                                        dpcm_enable              = "false";
+
+                                                                        set_mode_delay_ms        = "100000";
+                                                                };
+
+                                                                ports {
+                                                                        #address-cells = <1>;
+                                                                        #size-cells = <0>;
+                                                                        port@0 {
+                                                                                reg = <0>;
+                                                                                vc_mipi_out3: endpoint {
+                                                                                        port-index = <CAM3_PORT_IDX>;
+                                                                                        bus-width = <BUS_WIDTH>;
+                                                                                        remote-endpoint = <&vc_csi_in3>;
+                                                                                };
+                                                                        };
+                                                                };
+                                                        };
+                                                };
+#endif // VC_MIPI_CAM_3
+
+#if VC_MIPI_CAM_4 == 1
+                                                i2c@4 {
+                                                        status = "okay";
+                                                        reg = <4>;
+                                                        i2c-mux,deselect-on-exit;
+                                                        #address-cells = <1>;
+                                                        #size-cells = <0>;
+#if VC_MIPI_MANUFACTURER == 1
+                                                        vc_mipi_cam4: vc_mipi@1a {
+                                                                reg                     = <0x1a>;
+#else
+                                                        vc_mipi_cam4: vc_mipi@60 {
+                                                                reg                     = <0x60>;
+#endif
+                                                                status = "okay";
+
+                                                                compatible              = "nvidia,vc_mipi";
+                                                                devnode                 = "video4";
+                                                                use_sensor_mode_id      = "false";
+                                                                sensor_model            = "vc_mipi";
+
+                                                                num_lanes               = NUM_LANES;
+                                                                trigger_mode            = "0";
+                                                                io_mode                 = "0";
+
+//                                                                reset-gpios = <&pcf8574a_38 4 GPIO_ACTIVE_HIGH>;
+
+                                                                // ----------------------------------------------------
+                                                                // If you want to use GStreamer with nvarguscamerasrc
+                                                                // you have to adjust this settings
+                                                                physical_w              = "1.000";
+                                                                physical_h              = "1.000";
+                                                                // ----------------------------------------------------
+
+                                                                // This node is needed by the Tegra framework.
+                                                                // You don't have to change any settings if just want to use the V4L API.
+                                                                mode0 {
+                                                                        num_lanes                = NUM_LANES;
+                                                                        tegra_sinterface         = "serial_e";
+                                                                        embedded_metadata_height = VC_MIPI_METADATA_H;
+                                                                        readout_orientation      = "0";
+                                                                        lane_polarity            = "0";
+
+                                                                        // ----------------------------------------------------
+                                                                        active_l                 = "0";
+                                                                        active_t                 = "0";
+                                                                        active_w                 = "0";
+                                                                        active_h                 = "0";
+
+                                                                        mode_type                = "bayer";
+                                                                        pixel_phase              = "rggb";
+                                                                        csi_pixel_bit_depth      = "10";
+
+                                                                        min_gain_val             = "0";         // mdB
+                                                                        max_gain_val             = "48000";     // mdB
+                                                                        step_gain_val            = "100";       // mdB
+                                                                        default_gain             = "0";         // mdB
+
+                                                                        min_exp_time             = "1";         // us
+                                                                        max_exp_time             = "1000000";   // us
+                                                                        step_exp_time            = "1";         // us
+                                                                        default_exp_time         = "10000";     // us
+
+                                                                        // For applications like argus_camera, there should
+                                                                        // be a minimal frame rate greater than zero!
+                                                                        min_framerate            = "1000";      // mHz
+                                                                        max_framerate            = "60000";     // mHz
+                                                                        step_framerate           = "100";       // mHz
+                                                                        default_framerate        = "60000";     // mHz
+                                                                        // ----------------------------------------------------
+
+                                                                        gain_factor              = "1000";
+                                                                        exposure_factor          = "1000000";
+                                                                        framerate_factor         = "1000";
+                                                                        inherent_gain            = "1";
+                                                                        min_hdr_ratio            = "1";
+                                                                        max_hdr_ratio            = "1";
+
+                                                                        line_length              = "0";
+                                                                        phy_mode                 = "DPHY";
+                                                                        discontinuous_clk        = "no";
+                                                                        mclk_khz                 = "24000";
+
+                                                                        pix_clk_hz               = PIX_CLK_HZ;
+                                                                        mclk_multiplier          = "0.0";		// deprecated
+                                                                        cil_settletime           = "0";
+                                                                        dpcm_enable              = "false";
+
+                                                                        set_mode_delay_ms        = "100000";
+                                                                };
+
+                                                                ports {
+                                                                        #address-cells = <1>;
+                                                                        #size-cells = <0>;
+                                                                        port@0 {
+                                                                                reg = <0>;
+                                                                                vc_mipi_out4: endpoint {
+                                                                                        port-index = <CAM4_PORT_IDX>;
+                                                                                        bus-width = <BUS_WIDTH>;
+                                                                                        remote-endpoint = <&vc_csi_in4>;
+                                                                                };
+                                                                        };
+                                                                };
+                                                        };
+                                                };
+#endif // VC_MIPI_CAM_4
+
+#if VC_MIPI_CAM_5 == 1
+                                                i2c@5 {
+                                                        status = "okay";
+                                                        reg = <5>;
+                                                        i2c-mux,deselect-on-exit;
+                                                        #address-cells = <1>;
+                                                        #size-cells = <0>;
+#if VC_MIPI_MANUFACTURER == 1
+                                                        vc_mipi_cam5: vc_mipi@1a {
+                                                                reg                     = <0x1a>;
+#else
+                                                        vc_mipi_cam5: vc_mipi@60 {
+                                                                reg                     = <0x60>;
+#endif
+                                                                status = "okay";
+
+                                                                compatible              = "nvidia,vc_mipi";
+                                                                devnode                 = "video5";
+                                                                use_sensor_mode_id      = "false";
+                                                                sensor_model            = "vc_mipi";
+
+                                                                num_lanes               = NUM_LANES;
+                                                                trigger_mode            = "0";
+                                                                io_mode                 = "0";
+
+//                                                                reset-gpios = <&pcf8574a_38 5 GPIO_ACTIVE_HIGH>;
+
+                                                                // ----------------------------------------------------
+                                                                // If you want to use GStreamer with nvarguscamerasrc
+                                                                // you have to adjust this settings
+                                                                physical_w              = "1.000";
+                                                                physical_h              = "1.000";
+                                                                // ----------------------------------------------------
+
+                                                                // This node is needed by the Tegra framework.
+                                                                // You don't have to change any settings if just want to use the V4L API.
+                                                                mode0 {
+                                                                        num_lanes                = NUM_LANES;
+                                                                        tegra_sinterface         = "serial_g";
+                                                                        embedded_metadata_height = VC_MIPI_METADATA_H;
+                                                                        readout_orientation      = "0";
+                                                                        lane_polarity            = "0";
+
+                                                                        // ----------------------------------------------------
+                                                                        active_l                 = "0";
+                                                                        active_t                 = "0";
+                                                                        active_w                 = "0";
+                                                                        active_h                 = "0";
+
+                                                                        mode_type                = "bayer";
+                                                                        pixel_phase              = "rggb";
+                                                                        csi_pixel_bit_depth      = "10";
+
+                                                                        min_gain_val             = "0";         // mdB
+                                                                        max_gain_val             = "48000";     // mdB
+                                                                        step_gain_val            = "100";       // mdB
+                                                                        default_gain             = "0";         // mdB
+
+                                                                        min_exp_time             = "1";         // us
+                                                                        max_exp_time             = "1000000";   // us
+                                                                        step_exp_time            = "1";         // us
+                                                                        default_exp_time         = "10000";     // us
+
+                                                                        // For applications like argus_camera, there should
+                                                                        // be a minimal frame rate greater than zero!
+                                                                        min_framerate            = "1000";      // mHz
+                                                                        max_framerate            = "60000";     // mHz
+                                                                        step_framerate           = "100";       // mHz
+                                                                        default_framerate        = "60000";     // mHz
+                                                                        // ----------------------------------------------------
+
+                                                                        gain_factor              = "1000";
+                                                                        exposure_factor          = "1000000";
+                                                                        framerate_factor         = "1000";
+                                                                        inherent_gain            = "1";
+                                                                        min_hdr_ratio            = "1";
+                                                                        max_hdr_ratio            = "1";
+
+                                                                        line_length              = "0";
+                                                                        phy_mode                 = "DPHY";
+                                                                        discontinuous_clk        = "no";
+                                                                        mclk_khz                 = "24000";
+
+                                                                        pix_clk_hz               = PIX_CLK_HZ;
+                                                                        mclk_multiplier          = "0.0";		// deprecated
+                                                                        cil_settletime           = "0";
+                                                                        dpcm_enable              = "false";
+
+                                                                        set_mode_delay_ms        = "100000";
+                                                                };
+
+                                                                ports {
+                                                                        #address-cells = <1>;
+                                                                        #size-cells = <0>;
+                                                                        port@0 {
+                                                                                reg = <0>;
+                                                                                vc_mipi_out5: endpoint {
+                                                                                        port-index = <CAM5_PORT_IDX>;
+                                                                                        bus-width = <BUS_WIDTH>;
+                                                                                        remote-endpoint = <&vc_csi_in5>;
+                                                                                };
+                                                                        };
+                                                                };
+                                                        };
+                                                };
+#endif // VC_MIPI_CAM_5
+
+// IO Expander
+/*
+                                                i2c@6 {
+                                                        status = "okay";
+                                                        reg = <6>;
+                                                        i2c-mux,deselect-on-exit;
+                                                        #address-cells = <1>;
+                                                        #size-cells = <0>;
+                                                        pcf8574a_38: pcf8574a@38 {
+                                                                status = "okay";
+                                                                compatible = "nxp,pcf8574a";
+                                                                reg = <0x38>;
+                                                                gpio-controller;
+                                                                #gpio-cells = <2>;
+                                                                pcf8574a_38_outlow {
+//                                                                                * GPIO-0 : PWDN_CAM0
+//                                                                                * GPIO-1 : PWDN_CAM1
+//                                                                                * GPIO-2 : PWDN_CAM2
+//                                                                                * GPIO-3 : PWDN_CAM3
+//                                                                                * GPIO-4 : PWDN_CAM4
+//                                                                                * GPIO-5 : PWDN_CAM5
+//                                                                                * GPIO-6 : 
+//                                                                                * GPIO-7 : 
+                                                                        gpio-hog;
+                                                                        gpios = <0 0 1 0 2 0 3 0 4 0 5 0 6 0 7 0>;
+                                                                        output-low;
+                                                                        label = "pcf8574a_38_outlow_0",
+                                                                                "pcf8574a_38_outlow_1",
+                                                                                "pcf8574a_38_outlow_2",
+                                                                                "pcf8574a_38_outlow_3",
+                                                                                "pcf8574a_38_outlow_4",
+                                                                                "pcf8574a_38_outlow_5",
+                                                                                "pcf8574a_38_outlow_6",
+                                                                                "pcf8574a_38_outlow_7";
+                                                                };
+                                                        };
+                                                }; 
+*/
+
+                                        }; // tca9546
+                                }; // i2c@3180000
+
+                                lens@vc_mipi {
+                                        min_focus_distance  = "0.0";
+                                        hyper_focal         = "0.0";
+                                        focal_length        = "6.0";
+                                        f_number            = "2.0";
+                                        aperture            = "0.0";
+                                };
+
+                        }; //bus0
+                };
+        };
+};

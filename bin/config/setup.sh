@@ -57,6 +57,8 @@ soms=(
 "NVIDIA Jetson Orin Nano 8GB SD (devkit) (https://developer.nvidia.com/embedded/jetson-modules#jetson_orin_nano)"        
 "NVIDIA Jetson Orin Nano 4GB NVME (devkit) (https://developer.nvidia.com/embedded/jetson-modules#jetson_orin_nano)"        
 "NVIDIA Jetson Orin Nano 8GB NVME (devkit) (https://developer.nvidia.com/embedded/jetson-modules#jetson_orin_nano)"        
+"NVIDIA Jetson AGX Orin 32GB (devkit) (https://developer.nvidia.com/embedded/jetson-modules#jetson_agx_orin)"
+"NVIDIA Jetson AGX Orin 64GB (devkit) (https://developer.nvidia.com/embedded/jetson-modules#jetson_agx_orin)"
 )
 
 som_keys=(
@@ -74,6 +76,8 @@ som_keys=(
 "OrinNano8GB_SD"
 "OrinNano4GB_NVME"
 "OrinNano8GB_NVME"
+"OrinAGX32GB"
+"OrinAGX64GB"
 )
 
 choose_som() {
@@ -102,6 +106,7 @@ boards=(
 "Auvidea JNX30/JNX30D (https://auvidea.eu/product/70879)"
 "Auvidea JNX42 LM (https://auvidea.eu/product/70784)"
 "Auvidea J20 on Devkit Jetson AGX Xavier or TX2 (https://auvidea.eu/j20)"
+"Videtronic Expander on Devkit Jetson AGX Orin (https://videtronic.pl/product/6-channel-csi-expander-for-nvidia-jetson-agx-orin/)"
 )
 
 board_keys=(
@@ -112,6 +117,7 @@ board_keys=(
 "Auvidea_JNX30"
 "Auvidea_JNX42"
 "Auvidea_J20"
+"Videtronic_Expander"
 )
 
 choose_board() {
@@ -145,6 +151,7 @@ bsps=(
 "NVIDIA L4T 36.2.0 (https://developer.nvidia.com/embedded/jetson-linux-r362)"
 "NVIDIA L4T 36.4.0 (https://developer.nvidia.com/embedded/jetson-linux-r364)"
 "NVIDIA L4T 36.4.3 (https://developer.nvidia.com/embedded/jetson-linux-r3643)"
+"NVIDIA L4T 36.4.4 (https://developer.nvidia.com/embedded/jetson-linux-r3644)"
 )
 
 bsps_keys=(
@@ -160,6 +167,7 @@ bsps_keys=(
 "36.2.0"
 "36.4.0"
 "36.4.3"
+"36.4.4"
 )
 
 choose_bsp() {
@@ -210,7 +218,7 @@ write_configuration() {
 
 setup_driver() {
         print_title $1 $2
-        choose_som 0 1 2 3 4 5 6 7 8 9 10 11 12 13
+        choose_som 0 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15
         case ${som} in
         Nano2GB)
                 choose_board 0
@@ -253,6 +261,11 @@ setup_driver() {
                 esac
 
                 ;;
+        OrinAGX32GB|OrinAGX64GB)
+                choose_board 7
+                choose_bsp 12
+                ;;
+
         esac
         check_configuration $1 $2
         write_configuration

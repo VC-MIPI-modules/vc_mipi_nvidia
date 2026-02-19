@@ -45,6 +45,9 @@ function extract_and_set_key_from_config {
                         part_str_som=$VC_MIPI_SOM
                         part_str_board="${part_str_board}D"
                         ;;
+                OrinAGX32GB|OrinAGX64GB)
+                        part_str_som="OrinAGX"
+                        ;;
                 *)
                         echo "Unknown som detected! Exiting."
                         exit 1

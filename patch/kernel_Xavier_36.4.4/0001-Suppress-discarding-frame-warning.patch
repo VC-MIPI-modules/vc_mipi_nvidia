@@ -1,0 +1,33 @@
+From 3dbb36824630e5d6ad7df1749776625cf2d0e78d Mon Sep 17 00:00:00 2001
+From: "/setup.sh" <support@vision-components.com>
+Date: Wed, 18 Feb 2026 15:06:30 +0100
+Subject: [PATCH] Suppress discarding frame warning.
+
+---
+ .../drivers/media/platform/tegra/camera/vi/vi5_fops.c  | 10 +++++-----
+ 1 file changed, 5 insertions(+), 5 deletions(-)
+
+diff --git a/nvidia-oot/drivers/media/platform/tegra/camera/vi/vi5_fops.c b/nvidia-oot/drivers/media/platform/tegra/camera/vi/vi5_fops.c
+index 0937f45..0b7d46c 100644
+--- a/nvidia-oot/drivers/media/platform/tegra/camera/vi/vi5_fops.c
++++ b/nvidia-oot/drivers/media/platform/tegra/camera/vi/vi5_fops.c
+@@ -553,11 +553,11 @@ static void vi5_capture_dequeue(struct tegra_channel *chan,
+ 				dev_err(vi->dev, "uncorr_err: flags %d, err_data %d\n",
+ 					descr->status.flags, descr->status.err_data);
+ 			} else {
+-				dev_warn(vi->dev,
+-					"corr_err: discarding frame %d, flags: %d, "
+-					"err_data %d\n",
+-					descr->status.frame_id, descr->status.flags,
+-					descr->status.err_data);
++//				dev_warn(vi->dev,
++//					"corr_err: discarding frame %d, flags: %d, "
++//					"err_data %d\n",
++//					descr->status.frame_id, descr->status.flags,
++//					descr->status.err_data);
+ 				frame_err = true;
+ 			}
+ 		} else if (!vi_port) {
+-- 
+2.34.1
+
