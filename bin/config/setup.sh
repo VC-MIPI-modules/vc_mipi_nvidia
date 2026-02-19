@@ -106,6 +106,7 @@ boards=(
 "Auvidea JNX30/JNX30D (https://auvidea.eu/product/70879)"
 "Auvidea JNX42 LM (https://auvidea.eu/product/70784)"
 "Auvidea J20 on Devkit Jetson AGX Xavier or TX2 (https://auvidea.eu/j20)"
+"Forecr DSADDON on Devkit Jetson AGX Orin (https://www.forecr.io/products/dsaddon-mipi-agx-6ch)"
 "Videtronic Expander on Devkit Jetson AGX Orin (https://videtronic.pl/product/6-channel-csi-expander-for-nvidia-jetson-agx-orin/)"
 )
 
@@ -117,6 +118,7 @@ board_keys=(
 "Auvidea_JNX30"
 "Auvidea_JNX42"
 "Auvidea_J20"
+"Forecr_DSADDON"
 "Videtronic_Expander"
 )
 
@@ -262,7 +264,7 @@ setup_driver() {
 
                 ;;
         OrinAGX32GB|OrinAGX64GB)
-                choose_board 7
+                choose_board 7 8
                 choose_bsp 12
                 ;;
 

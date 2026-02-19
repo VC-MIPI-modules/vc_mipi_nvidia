@@ -10,7 +10,7 @@
 #include <dt-bindings/gpio/tegra234-gpio.h>
 
 // ------------------------------------------------------------------------------------------------
-//  Driver Configuration for NVIDIA Jetson AGX Orin Developer Kit on Videtronic 6 channel expander
+//  Driver Configuration for NVIDIA Jetson AGX Orin Developer Kit on Forecr DSADDON
 // ------------------------------------------------------------------------------------------------
 #define VC_MIPI_CAM_0       1   // 1: Enabled, 0: Disabled  (serial_a => CSI Port 0 => VI Stream 0)
 #define VC_MIPI_CAM_1       1   // 1: Enabled, 0: Disabled  (serial_b => CSI Port 1 => VI Stream 1)
@@ -64,6 +64,13 @@
         #define NUM_LANES "2" 
         #define PIX_CLK_HZ "300000000"
 #endif
+/*
+#if VC_MIPI_LANES == 4
+        #define BUS_WIDTH 4
+        #define NUM_LANES "4" 
+        #define PIX_CLK_HZ "600000000"
+#endif
+*/
 
 #define CAM0_PORT_IDX 0
 #define CAM1_PORT_IDX 1
@@ -163,7 +170,6 @@
                                 }; // ports
                         }; // tegra-capture-vi
 
-
                         bus@0 {
                                 host1x@13e00000 {
                                         nvcsi@15a00000 {
@@ -201,6 +207,7 @@
                                                         };
                                                 };
 #endif
+
 #if VC_MIPI_CAM_1 == 1
                                                 vc_csi_chan1: channel@1 {
                                                         status = "okay";
@@ -528,35 +535,6 @@
                                 }; // tegra-camera-platform
 
                                 i2c@3180000 {
-                                        tca9555_20: tca9555@20 {
-                                                status = "okay";
-                                                compatible = "nxp,pca9555";
-                                                reg = <0x20>;
-                                                gpio-controller;
-                                                #gpio-cells = <2>;
-                                                tca9555_20_outlow {
-//                                              * GPIO-0 : PWDN_CAM0
-//                                              * GPIO-1 : PWDN_CAM1
-//                                              * GPIO-2 : PWDN_CAM2
-//                                              * GPIO-3 : PWDN_CAM3
-//                                              * GPIO-4 : PWDN_CAM4
-//                                              * GPIO-5 : PWDN_CAM5
-//                                              * GPIO-6 : 
-//                                              * GPIO-7 : 
-                                                        gpio-hog;
-                                                        gpios = <0 0 1 0 2 0 3 0 4 0 5 0 6 0 7 0>;
-                                                        output-low;
-                                                        label = "tca9555_20_outlow_0",
-                                                                "tca9555_20_outlow_1",
-                                                                "tca9555_20_outlow_2",
-                                                                "tca9555_20_outlow_3",
-                                                                "tca9555_20_outlow_4",
-                                                                "tca9555_20_outlow_5",
-                                                                "tca9555_20_outlow_6",
-                                                                "tca9555_20_outlow_7";
-                                                };
-                                        };
-
                                         tca9548_70: tca9548@70 {
                                                 status = "okay";
                                                 compatible = "nxp,pca9548";
@@ -593,7 +571,7 @@
                                                                 trigger_mode            = "0";
                                                                 io_mode                 = "0";
 
-                                                                reset-gpios = <&tca9555_20 0 GPIO_ACTIVE_HIGH>;
+                                                                reset-gpios = <&pcf8574a_38 0 GPIO_ACTIVE_HIGH>;
 
                                                                 // ----------------------------------------------------
                                                                 // If you want to use GStreamer with nvarguscamerasrc
@@ -700,7 +678,7 @@
                                                                 trigger_mode            = "0";
                                                                 io_mode                 = "0";
 
-                                                                reset-gpios = <&tca9555_20 1 GPIO_ACTIVE_HIGH>;
+                                                                reset-gpios = <&pcf8574a_38 1 GPIO_ACTIVE_HIGH>;
 
                                                                 // ----------------------------------------------------
                                                                 // If you want to use GStreamer with nvarguscamerasrc
@@ -808,7 +786,7 @@
                                                                 trigger_mode            = "0";
                                                                 io_mode                 = "0";
 
-                                                                reset-gpios = <&tca9555_20 2 GPIO_ACTIVE_HIGH>;
+                                                                reset-gpios = <&pcf8574a_38 2 GPIO_ACTIVE_HIGH>;
 
                                                                 // ----------------------------------------------------
                                                                 // If you want to use GStreamer with nvarguscamerasrc
@@ -915,7 +893,7 @@
                                                                 trigger_mode            = "0";
                                                                 io_mode                 = "0";
 
-                                                                reset-gpios = <&tca9555_20 3 GPIO_ACTIVE_HIGH>;
+                                                                reset-gpios = <&pcf8574a_38 3 GPIO_ACTIVE_HIGH>;
 
                                                                 // ----------------------------------------------------
                                                                 // If you want to use GStreamer with nvarguscamerasrc
@@ -1022,7 +1000,7 @@
                                                                 trigger_mode            = "0";
                                                                 io_mode                 = "0";
 
-                                                                reset-gpios = <&tca9555_20 4 GPIO_ACTIVE_HIGH>;
+                                                                reset-gpios = <&pcf8574a_38 4 GPIO_ACTIVE_HIGH>;
 
                                                                 // ----------------------------------------------------
                                                                 // If you want to use GStreamer with nvarguscamerasrc
@@ -1129,7 +1107,7 @@
                                                                 trigger_mode            = "0";
                                                                 io_mode                 = "0";
 
-                                                                reset-gpios = <&tca9555_20 5 GPIO_ACTIVE_HIGH>;
+                                                                reset-gpios = <&pcf8574a_38 5 GPIO_ACTIVE_HIGH>;
 
                                                                 // ----------------------------------------------------
                                                                 // If you want to use GStreamer with nvarguscamerasrc
@@ -1210,6 +1188,45 @@
                                                         };
                                                 };
 #endif // VC_MIPI_CAM_5
+
+// IO Expander
+                                                i2c@6 {
+                                                        status = "okay";
+                                                        reg = <6>;
+                                                        i2c-mux,deselect-on-exit;
+                                                        #address-cells = <1>;
+                                                        #size-cells = <0>;
+                                                        pcf8574a_38: pcf8574a@38 {
+                                                                status = "okay";
+                                                                compatible = "nxp,pcf8574a";
+                                                                reg = <0x38>;
+                                                                gpio-controller;
+                                                                #gpio-cells = <2>;
+                                                                pcf8574a_38_outlow {
+                                                                        /*
+                                                                                * GPIO-0 : PWDN_CAM0
+                                                                                * GPIO-1 : PWDN_CAM1
+                                                                                * GPIO-2 : PWDN_CAM2
+                                                                                * GPIO-3 : PWDN_CAM3
+                                                                                * GPIO-4 : PWDN_CAM4
+                                                                                * GPIO-5 : PWDN_CAM5
+                                                                                * GPIO-6 : 
+                                                                                * GPIO-7 : 
+                                                                                */
+                                                                        gpio-hog;
+                                                                        gpios = <0 0 1 0 2 0 3 0 4 0 5 0 6 0 7 0>;
+                                                                        output-low;
+                                                                        label = "pcf8574a_38_outlow_0",
+                                                                                "pcf8574a_38_outlow_1",
+                                                                                "pcf8574a_38_outlow_2",
+                                                                                "pcf8574a_38_outlow_3",
+                                                                                "pcf8574a_38_outlow_4",
+                                                                                "pcf8574a_38_outlow_5",
+                                                                                "pcf8574a_38_outlow_6",
+                                                                                "pcf8574a_38_outlow_7";
+                                                                };
+                                                        };
+                                                };
 
                                         }; // tca9546
                                 }; // i2c@3180000
