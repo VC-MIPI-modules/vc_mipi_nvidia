@@ -163,6 +163,182 @@
                                 }; // ports
                         }; // tegra-capture-vi
 
+                        tegra-camera-platform {
+                                compatible = "nvidia, tegra-camera-platform";
+
+                                num_csi_lanes = <16>;
+
+                                max_lane_speed = <1500000>;
+                                min_bits_per_pixel = <10>;
+                                vi_peak_byte_per_pixel = <2>;
+                                vi_bw_margin_pct = <25>;
+                                max_pixel_rate = <240000>;
+                                isp_peak_byte_per_pixel = <5>;
+                                isp_bw_margin_pct = <25>;
+
+                                status = "okay";
+
+                                modules {
+#if VC_MIPI_CAM_0 == 1
+                                        cam_module0: module0 {
+                                                status = "okay";
+                                                badge = "bottomleft_vc_mipi";
+                                                position = "bottomleft";
+                                                orientation = "1";
+                                                cam_module0_drivernode0: drivernode0 {
+                                                        pcl_id = "v4l2_sensor";
+                                                        status = "okay";
+#if VC_MIPI_MANUFACTURER == 1
+                                                        devname = "vc_mipi 9-001a";
+                                                        sysfs-device-tree = "/sys/firmware/devicetree/base/bus@0/i2c@3180000/tca9548@70/i2c@0/vc_mipi@1a";
+#else
+                                                        devname = "vc_mipi 9-0060";
+                                                        sysfs-device-tree = "/sys/firmware/devicetree/base/bus@0/i2c@3180000/tca9548@70/i2c@0/vc_mipi@60";
+#endif
+                                                };
+                                                
+                                                cam_module0_drivernode1: drivernode1 {
+                                                        pcl_id = "v4l2_lens";
+                                                        status = "okay";
+                                                        sysfs-device-tree = "/sys/firmware/devicetree/base/bus@0/lens@vc_mipi";
+                                                };
+
+                                        };
+#endif // VC_MIPI_CAM_0
+
+#if VC_MIPI_CAM_1 == 1
+                                        cam_module1: module1 {
+                                                status = "okay";
+
+                                                badge = "centerleft_vc_mipi";
+                                                position = "centerleft";
+                                                orientation = "1";
+                                                cam_module1_drivernode0: drivernode0 {
+                                                        pcl_id = "v4l2_sensor";
+                                                        status = "okay";
+#if VC_MIPI_MANUFACTURER == 1
+                                                        devname = "vc_mipi 10-001a";
+                                                        sysfs-device-tree = "/sys/firmware/devicetree/base/bus@0/i2c@3180000/tca9548@70/i2c@1/vc_mipi@1a";
+#else
+                                                        devname = "vc_mipi 10-0060";
+                                                        sysfs-device-tree = "/sys/firmware/devicetree/base/bus@0/i2c@3180000/tca9548@70/i2c@1/vc_mipi@60";
+#endif	
+                                                };
+                                                
+                                                cam_module1_drivernode1: drivernode1 {
+                                                        pcl_id = "v4l2_lens";
+                                                        status = "okay";
+                                                        sysfs-device-tree = "/sys/firmware/devicetree/base/bus@0/lens@vc_mipi/";
+                                                };
+                                                
+                                        };
+#endif // VC_MIPI_CAM_1
+
+#if VC_MIPI_CAM_2 == 1
+                                        cam_module2: module2 {
+                                                status = "okay";
+
+                                                badge = "centerright_vc_mipi";
+                                                position = "centerright";
+                                                orientation = "1";
+                                                cam_module2_drivernode0: drivernode0 {
+                                                        pcl_id = "v4l2_sensor";
+                                                        status = "okay";
+#if VC_MIPI_MANUFACTURER == 1
+                                                        devname = "vc_mipi 11-001a";
+                                                        sysfs-device-tree = "/sys/firmware/devicetree/base/bus@0/i2c@3180000/tca9548@70/i2c@2/vc_mipi@1a";
+#else
+                                                        devname = "vc_mipi 11-0060";
+                                                        sysfs-device-tree = "/sys/firmware/devicetree/base/bus@0/i2c@3180000/tca9548@70/i2c@2/vc_mipi@60";
+#endif	
+                                                };
+                                                cam_module2_drivernode1: drivernode1 {
+                                                        pcl_id = "v4l2_lens";
+                                                        status = "okay";
+                                                        sysfs-device-tree = "/sys/firmware/devicetree/base/bus@0/lens@vc_mipi/";
+                                                };
+                                        };
+#endif // VC_MIPI_CAM_2
+
+#if VC_MIPI_CAM_3 == 1
+                                        cam_module3: module3 {
+                                                status = "okay";
+
+                                                badge = "topleft_vc_mipi";
+                                                position = "topleft";
+                                                orientation = "1";
+                                                cam_module3_drivernode0: drivernode0 {
+                                                        pcl_id = "v4l2_sensor";
+                                                        status = "okay";
+#if VC_MIPI_MANUFACTURER == 1
+                                                        devname = "vc_mipi 12-001a";
+                                                        sysfs-device-tree = "/sys/firmware/devicetree/base/bus@0/i2c@3180000/tca9548@70/i2c@3/vc_mipi@1a";
+#else
+                                                        devname = "vc_mipi 12-0060";
+                                                        sysfs-device-tree = "/sys/firmware/devicetree/base/bus@0/i2c@3180000/tca9548@70/i2c@3/vc_mipi@60";
+#endif	
+                                                };
+                                                cam_module3_drivernode1: drivernode1 {
+                                                        pcl_id = "v4l2_lens";
+                                                        status = "okay";
+                                                        sysfs-device-tree = "/sys/firmware/devicetree/base/bus@0/lens@vc_mipi/";
+                                                };
+                                        };
+#endif // VC_MIPI_CAM_3
+
+#if VC_MIPI_CAM_4 == 1
+                                        cam_module4: module4 {
+                                                status = "okay";
+
+                                                badge = "bottomright_vc_mipi";
+                                                position = "bottomright";
+                                                orientation = "1";
+                                                cam_module4_drivernode0: drivernode0 {
+                                                        pcl_id = "v4l2_sensor";
+                                                        status = "okay";
+#if VC_MIPI_MANUFACTURER == 1
+                                                        devname = "vc_mipi 13-001a";
+                                                        sysfs-device-tree = "/sys/firmware/devicetree/base/bus@0/i2c@3180000/tca9548@70/i2c@4/vc_mipi@1a";
+#else
+                                                        devname = "vc_mipi 13-0060";
+                                                        sysfs-device-tree = "/sys/firmware/devicetree/base/bus@0/i2c@3180000/tca9548@70/i2c@4/vc_mipi@60";
+#endif	
+                                                };
+                                                cam_module4_drivernode1: drivernode1 {
+                                                        pcl_id = "v4l2_lens";
+                                                        status = "okay";
+                                                        sysfs-device-tree = "/sys/firmware/devicetree/base/bus@0/lens@vc_mipi/";
+                                                };
+                                        };
+#endif // VC_MIPI_CAM_4
+
+#if VC_MIPI_CAM_5 == 1
+                                        cam_module5: module5 {
+                                                status = "okay";
+
+                                                badge = "topright_vc_mipi";
+                                                position = "topright";
+                                                orientation = "1";
+                                                cam_module5_drivernode0: drivernode0 {
+                                                        pcl_id = "v4l2_sensor";
+                                                        status = "okay";
+#if VC_MIPI_MANUFACTURER == 1
+                                                        devname = "vc_mipi 14-001a";
+                                                        sysfs-device-tree = "/sys/firmware/devicetree/base/bus@0/i2c@3180000/tca9548@70/i2c@5/vc_mipi@1a";
+#else
+                                                        devname = "vc_mipi 14-0060";
+                                                        sysfs-device-tree = "/sys/firmware/devicetree/base/bus@0/i2c@3180000/tca9548@70/i2c@5/vc_mipi@60";
+#endif	
+                                                };
+                                                cam_module5_drivernode1: drivernode1 {
+                                                        pcl_id = "v4l2_lens";
+                                                        status = "okay";
+                                                        sysfs-device-tree = "/sys/firmware/devicetree/base/bus@0/lens@vc_mipi/";
+                                                };
+                                        };
+#endif // VC_MIPI_CAM_5
+                                }; // modules
+                        }; // tegra-camera-platform
 
                         bus@0 {
                                 host1x@13e00000 {
@@ -348,184 +524,6 @@
 #endif
                                         }; //nvcsi
                                 }; // host1x
-
-                                tegra-camera-platform {
-                                        compatible = "nvidia, tegra-camera-platform";
-
-                                        num_csi_lanes = <NUM_CSI_LANES>;
-
-                                        max_lane_speed = <1500000>;
-                                        min_bits_per_pixel = <10>;
-                                        vi_peak_byte_per_pixel = <2>;
-                                        vi_bw_margin_pct = <25>;
-                                        max_pixel_rate = <240000>;
-                                        isp_peak_byte_per_pixel = <5>;
-                                        isp_bw_margin_pct = <25>;
-
-                                        status = "okay";
-
-                                        modules {
-#if VC_MIPI_CAM_0 == 1
-                                                cam_module0: module0 {
-                                                        status = "okay";
-
-                                                        badge = "bottomleft_vc_mipi";
-                                                        position = "bottomleft";
-                                                        orientation = "1";
-                                                        cam_module0_drivernode0: drivernode0 {
-                                                                pcl_id = "v4l2_sensor";
-                                                                status = "okay";
-#if VC_MIPI_MANUFACTURER == 1
-                                                                devname = "vc_mipi 9-001a";
-                                                                sysfs-device-tree = "/sys/firmware/devicetree/base/bus@0/i2c@3180000/tca9548@70/i2c@0/vc_mipi@1a";
-#else
-                                                                devname = "vc_mipi 9-0060";
-                                                                sysfs-device-tree = "/sys/firmware/devicetree/base/bus@0/i2c@3180000/tca9548@70/i2c@0/vc_mipi@60";
-#endif
-                                                        };
-                                                        
-                                                        cam_module0_drivernode1: drivernode1 {
-                                                                pcl_id = "v4l2_lens";
-                                                                status = "okay";
-                                                                sysfs-device-tree = "/sys/firmware/devicetree/base/bus@0/lens@vc_mipi";
-                                                        };
-
-                                                };
-#endif // VC_MIPI_CAM_0
-
-#if VC_MIPI_CAM_1 == 1
-                                                cam_module1: module1 {
-                                                        status = "okay";
-
-                                                        badge = "centerleft_vc_mipi";
-                                                        position = "centerleft";
-                                                        orientation = "1";
-                                                        cam_module1_drivernode0: drivernode0 {
-                                                                pcl_id = "v4l2_sensor";
-                                                                status = "okay";
-#if VC_MIPI_MANUFACTURER == 1
-                                                                devname = "vc_mipi 10-001a";
-                                                                sysfs-device-tree = "/sys/firmware/devicetree/base/bus@0/i2c@3180000/tca9548@70/i2c@1/vc_mipi@1a";
-#else
-                                                                devname = "vc_mipi 10-0060";
-                                                                sysfs-device-tree = "/sys/firmware/devicetree/base/bus@0/i2c@3180000/tca9548@70/i2c@1/vc_mipi@60";
-#endif	
-                                                        };
-                                                        
-                                                        cam_module1_drivernode1: drivernode1 {
-                                                                pcl_id = "v4l2_lens";
-                                                                status = "okay";
-                                                                sysfs-device-tree = "/sys/firmware/devicetree/base/bus@0/lens@vc_mipi/";
-                                                        };
-                                                        
-                                                };
-#endif // VC_MIPI_CAM_1
-
-#if VC_MIPI_CAM_2 == 1
-                                                cam_module2: module2 {
-                                                        status = "okay";
-
-                                                        badge = "centerright_vc_mipi";
-                                                        position = "centerright";
-                                                        orientation = "1";
-                                                        cam_module2_drivernode0: drivernode0 {
-                                                                pcl_id = "v4l2_sensor";
-                                                                status = "okay";
-#if VC_MIPI_MANUFACTURER == 1
-                                                                devname = "vc_mipi 11-001a";
-                                                                sysfs-device-tree = "/sys/firmware/devicetree/base/bus@0/i2c@3180000/tca9548@70/i2c@2/vc_mipi@1a";
-#else
-                                                                devname = "vc_mipi 11-0060";
-                                                                sysfs-device-tree = "/sys/firmware/devicetree/base/bus@0/i2c@3180000/tca9548@70/i2c@2/vc_mipi@60";
-#endif	
-                                                        };
-                                                        cam_module2_drivernode1: drivernode1 {
-                                                                pcl_id = "v4l2_lens";
-                                                                status = "okay";
-                                                                sysfs-device-tree = "/sys/firmware/devicetree/base/bus@0/lens@vc_mipi/";
-                                                        };
-                                                };
-#endif // VC_MIPI_CAM_2
-
-#if VC_MIPI_CAM_3 == 1
-                                                cam_module3: module3 {
-                                                        status = "okay";
-
-                                                        badge = "topleft_vc_mipi";
-                                                        position = "topleft";
-                                                        orientation = "1";
-                                                        cam_module3_drivernode0: drivernode0 {
-                                                                pcl_id = "v4l2_sensor";
-                                                                status = "okay";
-#if VC_MIPI_MANUFACTURER == 1
-                                                                devname = "vc_mipi 12-001a";
-                                                                sysfs-device-tree = "/sys/firmware/devicetree/base/bus@0/i2c@3180000/tca9548@70/i2c@3/vc_mipi@1a";
-#else
-                                                                devname = "vc_mipi 12-0060";
-                                                                sysfs-device-tree = "/sys/firmware/devicetree/base/bus@0/i2c@3180000/tca9548@70/i2c@3/vc_mipi@60";
-#endif	
-                                                        };
-                                                        cam_module3_drivernode1: drivernode1 {
-                                                                pcl_id = "v4l2_lens";
-                                                                status = "okay";
-                                                                sysfs-device-tree = "/sys/firmware/devicetree/base/bus@0/lens@vc_mipi/";
-                                                        };
-                                                };
-#endif // VC_MIPI_CAM_3
-
-#if VC_MIPI_CAM_4 == 1
-                                                cam_module4: module4 {
-                                                        status = "okay";
-
-                                                        badge = "bottomright_vc_mipi";
-                                                        position = "bottomright";
-                                                        orientation = "1";
-                                                        cam_module4_drivernode0: drivernode0 {
-                                                                pcl_id = "v4l2_sensor";
-                                                                status = "okay";
-#if VC_MIPI_MANUFACTURER == 1
-                                                                devname = "vc_mipi 13-001a";
-                                                                sysfs-device-tree = "/sys/firmware/devicetree/base/bus@0/i2c@3180000/tca9548@70/i2c@4/vc_mipi@1a";
-#else
-                                                                devname = "vc_mipi 13-0060";
-                                                                sysfs-device-tree = "/sys/firmware/devicetree/base/bus@0/i2c@3180000/tca9548@70/i2c@4/vc_mipi@60";
-#endif	
-                                                        };
-                                                        cam_module4_drivernode1: drivernode1 {
-                                                                pcl_id = "v4l2_lens";
-                                                                status = "okay";
-                                                                sysfs-device-tree = "/sys/firmware/devicetree/base/bus@0/lens@vc_mipi/";
-                                                        };
-                                                };
-#endif // VC_MIPI_CAM_4
-
-#if VC_MIPI_CAM_5 == 1
-                                                cam_module5: module5 {
-                                                        status = "okay";
-
-                                                        badge = "topright_vc_mipi";
-                                                        position = "topright";
-                                                        orientation = "1";
-                                                        cam_module5_drivernode0: drivernode0 {
-                                                                pcl_id = "v4l2_sensor";
-                                                                status = "okay";
-#if VC_MIPI_MANUFACTURER == 1
-                                                                devname = "vc_mipi 14-001a";
-                                                                sysfs-device-tree = "/sys/firmware/devicetree/base/bus@0/i2c@3180000/tca9548@70/i2c@5/vc_mipi@1a";
-#else
-                                                                devname = "vc_mipi 14-0060";
-                                                                sysfs-device-tree = "/sys/firmware/devicetree/base/bus@0/i2c@3180000/tca9548@70/i2c@5/vc_mipi@60";
-#endif	
-                                                        };
-                                                        cam_module5_drivernode1: drivernode1 {
-                                                                pcl_id = "v4l2_lens";
-                                                                status = "okay";
-                                                                sysfs-device-tree = "/sys/firmware/devicetree/base/bus@0/lens@vc_mipi/";
-                                                        };
-                                                };
-#endif // VC_MIPI_CAM_5
-                                        }; // modules
-                                }; // tegra-camera-platform
 
                                 i2c@3180000 {
                                         tca9555_20: tca9555@20 {
