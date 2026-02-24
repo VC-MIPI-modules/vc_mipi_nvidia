@@ -532,26 +532,10 @@
                                                 reg = <0x20>;
                                                 gpio-controller;
                                                 #gpio-cells = <2>;
-                                                tca9555_20_outlow {
-//                                              * GPIO-0 : PWDN_CAM0
-//                                              * GPIO-1 : PWDN_CAM1
-//                                              * GPIO-2 : PWDN_CAM2
-//                                              * GPIO-3 : PWDN_CAM3
-//                                              * GPIO-4 : PWDN_CAM4
-//                                              * GPIO-5 : PWDN_CAM5
-//                                              * GPIO-6 : 
-//                                              * GPIO-7 : 
+                                                cam-pwdn-hog {
                                                         gpio-hog;
-                                                        gpios = <0 0 1 0 2 0 3 0 4 0 5 0 6 0 7 0>;
+                                                        gpios = <1 0 3 0 5 0 7 0 9 0 11 0>;
                                                         output-low;
-                                                        label = "tca9555_20_outlow_0",
-                                                                "tca9555_20_outlow_1",
-                                                                "tca9555_20_outlow_2",
-                                                                "tca9555_20_outlow_3",
-                                                                "tca9555_20_outlow_4",
-                                                                "tca9555_20_outlow_5",
-                                                                "tca9555_20_outlow_6",
-                                                                "tca9555_20_outlow_7";
                                                 };
                                         };
 
@@ -698,7 +682,7 @@
                                                                 trigger_mode            = "0";
                                                                 io_mode                 = "0";
 
-                                                                reset-gpios = <&tca9555_20 1 GPIO_ACTIVE_HIGH>;
+                                                                reset-gpios = <&tca9555_20 2 GPIO_ACTIVE_HIGH>;
 
                                                                 // ----------------------------------------------------
                                                                 // If you want to use GStreamer with nvarguscamerasrc
@@ -806,7 +790,7 @@
                                                                 trigger_mode            = "0";
                                                                 io_mode                 = "0";
 
-                                                                reset-gpios = <&tca9555_20 2 GPIO_ACTIVE_HIGH>;
+                                                                reset-gpios = <&tca9555_20 4 GPIO_ACTIVE_HIGH>;
 
                                                                 // ----------------------------------------------------
                                                                 // If you want to use GStreamer with nvarguscamerasrc
@@ -913,7 +897,7 @@
                                                                 trigger_mode            = "0";
                                                                 io_mode                 = "0";
 
-                                                                reset-gpios = <&tca9555_20 3 GPIO_ACTIVE_HIGH>;
+                                                                reset-gpios = <&tca9555_20 6 GPIO_ACTIVE_HIGH>;
 
                                                                 // ----------------------------------------------------
                                                                 // If you want to use GStreamer with nvarguscamerasrc
@@ -1020,7 +1004,7 @@
                                                                 trigger_mode            = "0";
                                                                 io_mode                 = "0";
 
-                                                                reset-gpios = <&tca9555_20 4 GPIO_ACTIVE_HIGH>;
+                                                                reset-gpios = <&tca9555_20 8 GPIO_ACTIVE_HIGH>;
 
                                                                 // ----------------------------------------------------
                                                                 // If you want to use GStreamer with nvarguscamerasrc
@@ -1127,7 +1111,7 @@
                                                                 trigger_mode            = "0";
                                                                 io_mode                 = "0";
 
-                                                                reset-gpios = <&tca9555_20 5 GPIO_ACTIVE_HIGH>;
+                                                                reset-gpios = <&tca9555_20 10 GPIO_ACTIVE_HIGH>;
 
                                                                 // ----------------------------------------------------
                                                                 // If you want to use GStreamer with nvarguscamerasrc
