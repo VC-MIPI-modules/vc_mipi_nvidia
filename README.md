@@ -574,3 +574,7 @@ LABEL secondary
 ### Troubleshooting
 
 Regarding to flashing issues, please have a look at **[Flashing the device](doc/DEVICE_FLASHING.md)** 
+
+### Docker support
+
+For older setups there is also docker environment available **[Docker support](doc/DOCKER_SUPPORT.md)**
