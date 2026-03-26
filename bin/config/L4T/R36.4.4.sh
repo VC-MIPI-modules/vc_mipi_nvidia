@@ -117,8 +117,6 @@ function L4T_setup_conf_file {
 }
 
 function L4T_setup_dynamic_dtbo_file {
-#        DYNAMIC_DTBO_FILE=${BSP_DIR}/Linux_for_Tegra/source/hardware/nvidia/t23x/nv-public/overlay/tegra234-p3768-0000+p3767-0000-dynamic.dts
-
         case $VC_MIPI_SOM in
         OrinNano4GB_SD|OrinNano8GB_SD|OrinNano4GB_NVME|OrinNano8GB_NVME|OrinNX8GB|OrinNX16GB)
                 DYNAMIC_DTBO_FILE=${BSP_DIR}/Linux_for_Tegra/source/hardware/nvidia/t23x/nv-public/overlay/tegra234-p3768-0000+p3767-0000-dynamic.dts

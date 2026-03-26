@@ -194,7 +194,7 @@ OrinNano4GB_SD|OrinNano8GB_SD|OrinNano4GB_NVME|OrinNano8GB_NVME|OrinNX8GB|OrinNX
         case $VC_MIPI_BOARD in
         Auvidea_JNX42)
                 case $VC_MIPI_BSP in
-                36.2.0|36.3.0|36.4.0|36.4.3)
+                36.2.0|36.3.0|36.4.0|36.4.3|36.4.4)
                         FLASH_BOARD='p3509-a02-p3767-0000'
                         ;;
                 *)
@@ -241,7 +241,8 @@ OrinNano4GB_SD|OrinNano8GB_SD|OrinNano4GB_NVME|OrinNano8GB_NVME|OrinNX8GB|OrinNX
         ;;
 
 OrinAGX32GB|OrinAGX64GB)
-# todo device-tree files...
+        FLASH_BOARD='jetson-agx-orin-devkit'
+        FLASH_PARTITION=$ORIN_FLASH_PARTITION_NVME
         ;;
 
 *)

@@ -55,11 +55,11 @@ flash_all() {
         OrinAGX32GB|OrinAGX64GB)
                 sudo ADDITIONAL_DTB_OVERLAY_OPT="BootOrderNvme.dtbo" \
                         ./tools/kernel_flash/l4t_initrd_flash.sh \
-                        --external-device nvme0n1p1 \
+                        --external-device ${FLASH_PARTITION} \
                         -c tools/kernel_flash/${ORIN_NVME_XML} \
                         -p "-c bootloader/${ORIN_FLASH_CONFIG_FOLDER}/cfg/flash_t234_qspi.xml" \
                         --network usb0 \
-                        jetson-agx-orin-devkit internal
+                        ${FLASH_BOARD} internal
                 ;;
         *)
                 sudo ./flash.sh $FLASH_BOARD $FLASH_PARTITION
@@ -105,7 +105,7 @@ flash_module() {
 
 flash_device_tree() {
         case $VC_MIPI_SOM in
-        OrinNano4GB_SD|OrinNano8GB_SD|OrinNano4GB_NVME|OrinNano8GB_NVME|OrinNX8GB|OrinNX16GB|OrinAGX32GB|OrinAGX64)
+        OrinNano4GB_SD|OrinNano8GB_SD|OrinNano4GB_NVME|OrinNano8GB_NVME|OrinNX8GB|OrinNX16GB|OrinAGX32GB|OrinAGX64GB)
                 echo "Flashing devtree only ..."
                 echo "Please modify /boot/extlinux/extlinux.conf"
                 TMP_DIR=/tmp
@@ -115,10 +115,12 @@ flash_device_tree() {
                         ORIN_DTB_DIR=/boot/dtb
                         ;;
                 36.2.0|36.4.0|36.4.3|36.4.4)
-#bazo dtermine agx file
                         ORIN_DTB_FILE=tegra234-p3767-camera-p3768-vc_mipi-dual.dtbo
-                        SRC_FILE=$BSP_DIR/Linux_for_Tegra/kernel/dtb/$ORIN_DTB_FILE
                         ORIN_DTB_DIR=/boot
+                        if [[ 'OrinAGX32GB' == $VC_MIPI_SOM || 'OrinAGX64GB' = $VC_MIPI_SOM ]]; then
+                                ORIN_DTB_FILE=tegra234-p3737-camera-vc-mipi-cam.dtbo
+                        fi
+                        SRC_FILE=$BSP_DIR/Linux_for_Tegra/kernel/dtb/$ORIN_DTB_FILE
                         ;;
                 esac
                 scp $SRC_FILE $TARGET_USER@$TARGET_IP:$TMP_DIR

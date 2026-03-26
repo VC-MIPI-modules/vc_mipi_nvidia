@@ -134,13 +134,8 @@ setup_som_carrier_specifics() {
 
         L4T_setup_conf_file
 
-#        if [[ "36.4.0" == $VC_MIPI_BSP ]]
-#        then
-#                L4T_setup_dynamic_dtbo_file
-#        fi
-
         case $VC_MIPI_BSP in
-        36.4.0|36.4.4)
+        36.4.0|36.4.3|36.4.4)
                 L4T_setup_dynamic_dtbo_file
                 ;;
         *)
