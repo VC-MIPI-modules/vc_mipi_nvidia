@@ -949,6 +949,17 @@ static void vc_init_ctrl_imx585(struct vc_ctrl *ctrl, struct vc_desc* desc)
 // ------------------------------------------------------------------------------------------------
 //  Settings for IMX900 (Rev.00)
 //  3.2 MegaPixel Pregius S
+#define IMX900_HV_MODE                  0x303c
+#define IMX900_BINNING_MODE_DISABLE     0x00
+#define IMX900_BINNING_MODE_ENABLE      0x10
+#define IMX900_EAV_SELECT               0x3942
+#define IMX900_EAV_SELECT_VALUE         0x03
+
+#define IMX900_GMRWT                    0x30e2
+#define IMX900_GMTWT                    0x30e3
+#define IMX900_GAINDLY                  0x30e5
+#define IMX900_GSDLY                    0x30e6
+#define IMX900_GMRWT2                   0x36e2
 
 static void vc_init_ctrl_imx900(struct vc_ctrl *ctrl, struct vc_desc* desc)
 {
@@ -975,6 +986,23 @@ static void vc_init_ctrl_imx900(struct vc_ctrl *ctrl, struct vc_desc* desc)
         MODE( 4, 4, FORMAT_RAW10, 0,     364,   99, 0xffffff, 1816,  1023,  60,    444204)
         MODE( 5, 4, FORMAT_RAW12, 0,     610,   99, 0xffffff, 1816,  4095, 240,    727542)
 
+        MODE( 6, 2, FORMAT_RAW08, 1,     254,  122, 0xffffff, 1008,   255,  15,    563060)
+        MODE( 7, 2, FORMAT_RAW10, 1,     305,  100, 0xffffff,  976,  1023,  60,    688284)
+        MODE( 8, 2, FORMAT_RAW12, 1,     357,   86, 0xffffff,  950,  4095, 240,    795528)
+        MODE( 9, 4, FORMAT_RAW08, 1,     169,  184, 0xffffff, 1108,   255,  15,    413694)
+        MODE(10, 4, FORMAT_RAW10, 1,     182,  170, 0xffffff, 1084,  1023,  60,    444204)
+        MODE(11, 4, FORMAT_RAW12, 1,     305,  102, 0xffffff,  976,  4095, 240,    727542)
+
+        // special registers for binning mode
+        BINNING_MODE_REGS(  6, { IMX900_GMRWT, 0x28 }, { IMX900_GMTWT, 0x5c }, { IMX900_GAINDLY, 0x04 }, { IMX900_GSDLY, 0x02 }, {IMX900_GMRWT2, 0x1e } );
+        BINNING_MODE_REGS(  7, { IMX900_GMRWT, 0x22 }, { IMX900_GMTWT, 0x4c }, { IMX900_GAINDLY, 0x04 }, { IMX900_GSDLY, 0x02 }, {IMX900_GMRWT2, 0x18 } );
+        BINNING_MODE_REGS(  8, { IMX900_GMRWT, 0x1e }, { IMX900_GMTWT, 0x42 }, { IMX900_GAINDLY, 0x02 }, { IMX900_GSDLY, 0x02 }, {IMX900_GMRWT2, 0x14 } );
+
+        BINNING_MODE_REGS(  9, { IMX900_GMRWT, 0x3c }, { IMX900_GMTWT, 0x8a }, { IMX900_GAINDLY, 0x04 }, { IMX900_GSDLY, 0x04 }, {IMX900_GMRWT2, 0x2e } );
+        BINNING_MODE_REGS( 10, { IMX900_GMRWT, 0x38 }, { IMX900_GMTWT, 0x80 }, { IMX900_GAINDLY, 0x04 }, { IMX900_GSDLY, 0x02 }, {IMX900_GMRWT2, 0x2a } );
+        BINNING_MODE_REGS( 11, { IMX900_GMRWT, 0x22 }, { IMX900_GMTWT, 0x4e }, { IMX900_GAINDLY, 0x04 }, { IMX900_GSDLY, 0x02 }, {IMX900_GMRWT2, 0x18 } );
+
+
         ctrl->flags                     = FLAG_EXPOSURE_SONY;
         ctrl->flags                    |= FLAG_RESET_TRIGMODE_ALWAYS;
         ctrl->flags                    |= FLAG_PREGIUS_S;
@@ -982,11 +1010,20 @@ static void vc_init_ctrl_imx900(struct vc_ctrl *ctrl, struct vc_desc* desc)
         ctrl->flags                    |= FLAG_IO_ENABLED;
         ctrl->flags                    |= FLAG_TRIGGER_EXTERNAL | FLAG_TRIGGER_PULSEWIDTH |
                                           FLAG_TRIGGER_SELF | FLAG_TRIGGER_SINGLE;
+        ctrl->flags                    |= FLAG_USE_BINNING_INDEX;
+
 
         BINNING_START(ctrl->binnings[0], 0, 0)
-                { IMX56X_HV_MODE, IMX56X_BINNING_MODE_DISABLE },
-                { IMX56X_EAV_SELECT, IMX56X_EAV_SELECT_VALUE }
+                { IMX900_HV_MODE, IMX900_BINNING_MODE_DISABLE },
+                { IMX900_EAV_SELECT, IMX900_EAV_SELECT_VALUE }
         BINNING_END(ctrl->binnings[0])
+
+        BINNING_START(ctrl->binnings[1], 2, 2)
+                { IMX900_HV_MODE, IMX900_BINNING_MODE_ENABLE },
+                { IMX900_EAV_SELECT, IMX900_EAV_SELECT_VALUE }
+        BINNING_END(ctrl->binnings[1])
+
+        ctrl->max_binning_modes_used = 1;
 }
 
 // ------------------------------------------------------------------------------------------------
