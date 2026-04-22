@@ -1,5 +1,11 @@
 # Version History
 
+## v0.19.2 (Improvement)
+* Improvement
+  * Added Docker support and description DOCKER_SUPPORT.md
+    * for Jetpack 4 *(only NVIDIA Jetson Nano, TX2, Xavier NX and AGX Xavier)* 
+    * for Jetpack 5 *(only NVIDIA Jetson Xavier NX and AGX Xavier)*
+
 ## v0.19.1 (Support IMX585, Improvement, Bugfix)
 * New Features
   * Added support for IMX585 *(only NVIDIA Jetson Xavier NX, Orin NX and Orin Nano)*
