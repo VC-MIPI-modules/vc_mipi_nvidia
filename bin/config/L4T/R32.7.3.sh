@@ -3,9 +3,10 @@
 . $BIN_DIR/config/L4T/common_functions.sh
 
 #toolchain
-GCC_URL=http://releases.linaro.org/components/toolchain/binaries/7.3-2018.05/aarch64-linux-gnu
+GCC_URL_UNRESOLVED=https://developer.nvidia.com/embedded/dlc/l4t-gcc-7-3-1-toolchain-64-bit
 GCC_FILE=gcc-linaro-7.3.1-2018.05-x86_64_aarch64-linux-gnu.tar.xz
 GCC_DIR=$TOOLCHAIN_DIR/gcc-linaro-7.3.1-2018.05-x86_64_aarch64-linux-gnu
+GCC_FILE_CHECKSUM="6ec789d642584a01e240ab3366599dbb"
 export CROSS_COMPILE=$GCC_DIR/bin/aarch64-linux-gnu-
 
 #downloads
@@ -115,6 +116,16 @@ function L4T_setup_som_carrier_specifics {
 
 function L4T_setup_addon_file {
 # not necessary for this L4T
+        return 0
+}
+
+function L4T_setup_toolchain {
+        echo "Setup toolchain ($VC_MIPI_BSP) ..."
+
+        if [[ ! -e $GCC_DIR ]]; then
+                cd $DOWNLOAD_DIR
+                tar xvf $GCC_FILE -C $TOOLCHAIN_DIR
+        fi
         return 0
 }
 

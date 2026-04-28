@@ -39,6 +39,8 @@
 #define FLAG_RESET_STREAMMODE_ALWAYS    (1 << 19)
 #define FLAG_RESET_TRIGMODE_ALWAYS      (1 << 20)
 
+#define FLAG_TRIGGER_OVERLAP            (1 << 21)
+
 #define FORMAT_RAW08                    0x2a
 #define FORMAT_RAW10                    0x2b
 #define FORMAT_RAW12                    0x2c
@@ -232,6 +234,7 @@ struct vc_state {
         __u8 num_lanes;
         __u8 io_mode;
         __u8 trigger_mode;
+        __u8 trigger_mode_reg;
         __u8 binning_mode;
         __u8 former_binning_mode;
         int power_on;

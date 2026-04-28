@@ -85,7 +85,6 @@ static void vc_init_ctrl_imx183_base(struct vc_ctrl *ctrl, struct vc_desc* desc)
         ctrl->csr.sen.hmax              = (vc_csr4) { .l = 0x7002, .m = 0x7003, .h = 0x0000, .u = 0x0000 };
 
         ctrl->flags                     = FLAG_EXPOSURE_SONY;
-        ctrl->flags                    |= FLAG_INCREASE_FRAME_RATE;
         ctrl->flags                    |= FLAG_IO_ENABLED;
         ctrl->flags                    |= FLAG_TRIGGER_EXTERNAL | FLAG_TRIGGER_SELF |
                                           FLAG_TRIGGER_SINGLE | FLAG_TRIGGER_SYNC;
@@ -167,6 +166,8 @@ static void vc_init_ctrl_imx178(struct vc_ctrl *ctrl, struct vc_desc* desc)
         MODE( 5, 4, FORMAT_RAW10, 0,     600,    9,  0x1ffff,  2126, 1023,   50,   2698560)
         MODE( 6, 4, FORMAT_RAW12, 0,     680,    9,  0x1ffff,  2126, 1023,  200,   2698560)
         MODE( 7, 4, FORMAT_RAW14, 0,    1156,    9,  0x1ffff,  2126, 4095,  800,   2698560)
+
+        ctrl->flags                    |= FLAG_INCREASE_FRAME_RATE;
 }
 
 // ------------------------------------------------------------------------------------------------
@@ -192,6 +193,8 @@ static void vc_init_ctrl_imx183(struct vc_ctrl *ctrl, struct vc_desc* desc)
         MODE( 3, 4, FORMAT_RAW08, 0,     720,    5,  0x1ffff,  3728,  255,   50,   3599997)
         MODE( 4, 4, FORMAT_RAW10, 0,     720,    5,  0x1ffff,  3728,  255,   50,   3599997)
         MODE( 5, 4, FORMAT_RAW12, 0,     862,    5,  0x1ffff,  3728,  255,   50,   3599997)
+
+        ctrl->flags                    |= FLAG_INCREASE_FRAME_RATE;
 }
 
 // ------------------------------------------------------------------------------------------------
@@ -266,6 +269,8 @@ static void vc_init_ctrl_imx252(struct vc_ctrl *ctrl, struct vc_desc* desc)
         MODE( 3, 4, FORMAT_RAW08, 0,     310,   10,  0xfffff,  1582,  255,   15,   1063754)
         MODE( 4, 4, FORMAT_RAW10, 0,     380,   10,  0xfffff,  1582, 1023,   60,   1063754)
         MODE( 5, 4, FORMAT_RAW12, 0,     444,   10,  0xfffff,  1582, 4095,  240,   1063754)
+
+        ctrl->flags                    |= FLAG_TRIGGER_OVERLAP;
 }
 
 // ------------------------------------------------------------------------------------------------
@@ -916,6 +921,32 @@ static void vc_init_ctrl_imx568(struct vc_ctrl *ctrl, struct vc_desc* desc)
 }
 
 // ------------------------------------------------------------------------------------------------
+//  Settings for IMX585 (Rev.03)
+//  8.3 MegaPixel Starvis 2
+
+static void vc_init_ctrl_imx585(struct vc_ctrl *ctrl, struct vc_desc* desc)
+{
+        INIT_MESSAGE("IMX585")
+
+        ctrl->csr.sen.blacklevel        = (vc_csr2) { .l = 0x30dc, .m = 0x30dd };
+        ctrl->csr.sen.hmax              = (vc_csr4) { .l = 0x302c, .m = 0x302d, .h = 0x0000, .u = 0x0000 };
+        ctrl->csr.sen.vmax              = (vc_csr4) { .l = 0x3028, .m = 0x3029, .h = 0x302a, .u = 0x0000 };
+        ctrl->csr.sen.mode_standby      = 0x01;
+        ctrl->csr.sen.mode_operating    = 0x00;
+        ctrl->flags                     = FLAG_EXPOSURE_SONY;
+        ctrl->flags                    |= FLAG_INCREASE_FRAME_RATE;
+        ctrl->flags                    |= FLAG_IO_ENABLED;
+
+        FRAME(0, 0, 3840, 2160)
+        // All read out      binning    hmax  vmax      vmax     vmax    blkl    blkl  retrigger
+        //                      mode           min       max      def     max     def
+        MODE( 0, 2, FORMAT_RAW10, 0,    1100,    8,  0x1ffff,  0x08ca,  0x3ff,   0x32,         0)
+        MODE( 1, 2, FORMAT_RAW12, 0,    1320,    8,  0x1ffff,  0x08ca,  0x3ff,   0x32,         0)
+        MODE( 2, 4, FORMAT_RAW10, 0,    550,     8,  0x1ffff,  0x08ca,  0x3ff,   0x32,         0)
+        MODE( 3, 4, FORMAT_RAW12, 0,    660,     8,  0x1ffff,  0x08ca,  0x3ff,   0x32,         0)
+}
+
+// ------------------------------------------------------------------------------------------------
 //  Settings for IMX900 (Rev.00)
 //  3.2 MegaPixel Pregius S
 
@@ -1058,6 +1089,7 @@ int vc_mod_ctrl_init(struct vc_ctrl* ctrl, struct vc_desc* desc)
         case MOD_ID_IMX566: vc_init_ctrl_imx566(ctrl, desc); break;
         case MOD_ID_IMX567: vc_init_ctrl_imx567(ctrl, desc); break;
         case MOD_ID_IMX568: vc_init_ctrl_imx568(ctrl, desc); break;
+        case MOD_ID_IMX585: vc_init_ctrl_imx585(ctrl, desc); break;
         case MOD_ID_IMX900: vc_init_ctrl_imx900(ctrl, desc); break;
         case MOD_ID_OV7251: vc_init_ctrl_ov7251(ctrl, desc); break;
         case MOD_ID_OV9281: vc_init_ctrl_ov9281(ctrl, desc); break;

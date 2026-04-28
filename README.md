@@ -2,7 +2,7 @@
 
 ![VC MIPI camera](doc/images/mipi_sensor_front_back.png)
 
-## Version 0.19.0 ([History](VERSION.md))
+## Version 0.19.1 ([History](VERSION.md))
 
 * Supported system on modules
   * [NVIDIA Jetson Nano 4GB/2GB (production + devkit)](https://developer.nvidia.com/embedded/jetson-nano)
@@ -43,6 +43,7 @@
   * IMX412
   * IMX415
   * IMX565, IMX566, IMX567, IMX568
+  * IMX585 *(only NVIDIA Jetson Xavier NX, Orin NX and Orin Nano)*
   * IMX900
   * OV7251, OV9281
 * Features
@@ -51,7 +52,7 @@
   * Image Streaming in GREY, Y10, Y12, SRGGB8, SRGGB10, SRGGB12, SGBRG8, SGBRG10, SGBRG12 format
   * **Exposure** can be set via V4L2 control 'exposure'
   * **Gain** can be set via V4L2 control 'gain'
-  * **[Trigger mode](doc/TRIGGER_MODE.md)** '0: disabled', '1: external', '2: pulsewidth', '3: self', '4: single', '5: sync', '6: stream_edge', '7: stream_level' can be set via device tree or V4L2 control 'trigger_mode'
+  * **[Trigger mode](doc/TRIGGER_MODE.md)** '0: disabled', '1: external', '2: pulsewidth', '3: self', '4: single', '5: sync', '6: stream_edge', '7: stream_level', '8: overlap' can be set via device tree or V4L2 control 'trigger_mode'
     * **Software trigger** can be executed by V4L2 control 'single_trigger'
   * **[IO mode](doc/IO_MODE.md)** '0: disabled', '1: flash active high', '2: flash active low', '3: trigger active low', '4: trigger active low and flash active high', '5: trigger and flash active low' can be set via device tree or V4L2 control 'flash_mode'
   * **[Frame rate](doc/FRAME_RATE.md)** can be set via V4L2 control 'frame_rate' *(except OV9281)*
@@ -230,23 +231,23 @@ The property *max_framerate* is given for the number of lanes and the pixel form
 </details>
 
 <details>
-  <summary>GStreamer properties for IMX290, IMX327, IMX335, IMX412, IMX415 and IMX462 (cameras with 2 and 4 lanes support)</summary>
+  <summary>GStreamer properties for IMX290, IMX327, IMX335, IMX412, IMX415, IMX462 and IMX585 (cameras with 2 and 4 lanes support)</summary>
 
-| Property             | IMX290/327 | IMX335     | IMX412     | IMX415     | IMX462     |
-| -------------------- | ---------: | ---------: | ---------: | ---------: | ---------: |
-| physical_w           |      5.568 |      5.184 |      6.250 |      5.568 |      5.568 |
-| physical_h           |      3.132 |      3.888 |      4.712 |      3.132 |      3.132 |
-| active_w             |       1920 |       2592 |       4032 |       3840 |       1920 |
-| active_h             |       1080 |       1944 |       3040 |       2160 |       1080 |
-| pixel_t              |      RG 10 |   RG 10,12 |      RG 10 |      GB 10 |      RG 10 |
-| max_gain_val         |         71 |         72 |         51 |         72 |         71 |
-| step_gain_val        |      0.300 |      0.300 |      0.050 |      0.300 |      0.300 |
-| max_framerate (2L08) |          - |          - |          - |          - |          - |
-| max_framerate (2L10) |       60.0 |       15.0 |       20.0 |       31.7 |       60.0 |
-| max_framerate (2L12) |          - |       15.0 |          - |          - |          - |
-| max_framerate (4L08) |          - |          - |          - |          - |          - |
-| max_framerate (4L10) |       60.0 |       22.3 |       40.0 |       59.9 |      120.0 |
-| max_framerate (4L12) |          - |       22.3 |          - |          - |          - |
+| Property             | IMX290/327 | IMX335     | IMX412     | IMX415     | IMX462     | IMX585     |
+| -------------------- | ---------: | ---------: | ---------: | ---------: | ---------: | ---------: |
+| physical_w           |      5.568 |      5.184 |      6.250 |      5.568 |      5.568 |     11.136 |
+| physical_h           |      3.132 |      3.888 |      4.712 |      3.132 |      3.132 |      6.264 |
+| active_w             |       1920 |       2592 |       4032 |       3840 |       1920 |       3840 |
+| active_h             |       1080 |       1944 |       3040 |       2160 |       1080 |       2160 |
+| pixel_t              |      RG 10 |   RG 10,12 |      RG 10 |      GB 10 |      RG 10 |   RG 10,12 |
+| max_gain_val         |         71 |         72 |         51 |         72 |         71 |         72 |
+| step_gain_val        |      0.300 |      0.300 |      0.050 |      0.300 |      0.300 |      0.300 |
+| max_framerate (2L08) |          - |          - |          - |          - |          - |          - |
+| max_framerate (2L10) |       60.0 |       30.0 |       20.0 |       31.7 |       60.0 |       30.0 |
+| max_framerate (2L12) |          - |       30.0 |          - |          - |          - |       25.0 |
+| max_framerate (4L08) |          - |          - |          - |          - |          - |          - |
+| max_framerate (4L10) |       60.0 |       60.0 |       40.0 |       59.9 |      120.0 |       60.0 |
+| max_framerate (4L12) |          - |       30.3 |          - |          - |          - |       50.0 |
 </details>
 
 <details>
@@ -582,3 +583,7 @@ LABEL secondary
 ### Troubleshooting
 
 Regarding to flashing issues, please have a look at **[Flashing the device](doc/DEVICE_FLASHING.md)** 
+
+### Docker support
+
+For older setups there is also docker environment available **[Docker support](doc/DOCKER_SUPPORT.md)**

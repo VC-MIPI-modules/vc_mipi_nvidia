@@ -3,9 +3,10 @@
 . $BIN_DIR/config/L4T/common_functions.sh
 
 #toolchain
-GCC_URL=http://releases.linaro.org/components/toolchain/binaries/7.3-2018.05/aarch64-linux-gnu
+GCC_URL_UNRESOLVED=https://developer.nvidia.com/embedded/dlc/l4t-gcc-7-3-1-toolchain-64-bit
 GCC_FILE=gcc-linaro-7.3.1-2018.05-x86_64_aarch64-linux-gnu.tar.xz
 GCC_DIR=$TOOLCHAIN_DIR/gcc-linaro-7.3.1-2018.05-x86_64_aarch64-linux-gnu
+GCC_FILE_CHECKSUM="6ec789d642584a01e240ab3366599dbb"
 export CROSS_COMPILE=$GCC_DIR/bin/aarch64-linux-gnu-
 
 DEV_URL=https://developer.nvidia.com/downloads/embedded/l4t/r32_release_v7.5
@@ -116,6 +117,16 @@ function L4T_setup_addon_file {
         echo "Applying DRAM patch ($VC_MIPI_BSP) ..."
         cd $KERNEL_SOURCE/hardware/nvidia/platform/t210/porg/
         git am -3 --whitespace=fix --ignore-whitespace < hardware-nvidia-platform-t210-porg.patch
+}
+
+function L4T_setup_toolchain {
+        echo "Setup toolchain ($VC_MIPI_BSP) ..."
+
+        if [[ ! -e $GCC_DIR ]]; then
+                cd $DOWNLOAD_DIR
+                tar xvf $GCC_FILE -C $TOOLCHAIN_DIR
+        fi
+        return 0
 }
 
 #build

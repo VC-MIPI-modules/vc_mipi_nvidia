@@ -18,6 +18,8 @@
         },
         "C_Cpp.exclusionPolicy": "checkFilesAndFolders",
         "C_Cpp.errorSquiggles": "Disabled",
+        "plantuml.render": "PlantUMLServer",
+        "plantuml.server": "https://www.plantuml.com/plantuml",
         "plantuml.exportOutDir": ".",
         "plantuml.exportSubFolder": false,
         "files.associations": {
