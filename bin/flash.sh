@@ -37,7 +37,7 @@ flash_all() {
                 # sudo ./flash.sh -a EXT_NUM_SECTORS="121536512"
                 sudo $1 ./tools/kernel_flash/l4t_initrd_flash.sh \
                         --external-device ${FLASH_PARTITION} \
-                        -c tools/kernel_flash/flash_l4t_external.xml \
+                        -c tools/kernel_flash/${ORIN_NVME_XML} \
                         -p "-c bootloader/${ORIN_FLASH_CONFIG_FOLDER}/cfg/flash_t234_qspi.xml" \
                         --network usb0 \
                         ${FLASH_BOARD} internal
