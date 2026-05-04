@@ -1,9 +1,10 @@
 # Version History
 
-## v0.19.2 (L4T 35.6.0, Improvement)
+## v0.19.2 (L4T 35.6.0, Support IMX540, Improvement)
 * New Features
   * Added support for board support package
     * NVIDIA L4T 35.6.0 *(only NVIDIA Jetson Xavier NX, AGX Xavier, Orin NX and Orin Nano)*
+  * Added support for IMX540 *(only NVIDIA Jetson Orin Nano)*
 * Improvement
   * Added Docker support and description DOCKER_SUPPORT.md
     * for Jetpack 4 *(only NVIDIA Jetson Nano, TX2, Xavier NX and AGX Xavier)* 

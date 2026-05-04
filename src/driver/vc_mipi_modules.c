@@ -639,6 +639,40 @@ static void vc_init_ctrl_imx462(struct vc_ctrl *ctrl, struct vc_desc *desc)
         MODE( 1, 4, FORMAT_RAW10, 0,     550,    1,  0x3ffff, 0x465,  511,   60,         0)
 }
 
+// ------------------------------------------------------------------------------------------------
+//  Settings for IMX540 (Rev.01)
+//  24.55 MegaPixel Pregius S
+
+static void vc_init_ctrl_imx540(struct vc_ctrl *ctrl, struct vc_desc *desc)
+{
+        INIT_MESSAGE("IMX540")
+
+        ctrl->gain                      = (vc_control) { .min =   0, .max =       480, .def =      0 };
+
+        ctrl->csr.sen.vmax              = (vc_csr4) { .l = 0x02d4, .m = 0x02d5, .h = 0x02d6, .u = 0x0000 };
+        ctrl->csr.sen.blacklevel        = (vc_csr2) { .l = 0x0454, .m = 0x0455 };
+
+        FRAME(0, 0, 5312, 4600)
+
+        //all read out         binning  hmax  vmax      vmax   vmax  blkl  blkl  retrigger
+        //                      mode           min       max    def   max   def
+        MODE( 0, 2, FORMAT_RAW08, 0,    1120,    8, 0xffffff, 4708,   255,  15,    0)
+        MODE( 1, 2, FORMAT_RAW10, 0,    1388,    8, 0xffffff, 4706,  1023,  60,    0)
+        MODE( 2, 2, FORMAT_RAW12, 0,    1648,    6, 0xffffff, 4704,  4095, 240,    0)
+        MODE( 3, 4, FORMAT_RAW08, 0,     716,   10, 0xffffff, 4714,   255,  15,    0)
+        MODE( 4, 4, FORMAT_RAW10, 0,     892,   10, 0xffffff, 4714,  1023,  60,    0)
+        MODE( 5, 4, FORMAT_RAW12, 0,    1067,    8, 0xffffff, 4708,  4095, 240,    0)
+
+        ctrl->flags                     = FLAG_EXPOSURE_SONY;
+        ctrl->flags                    |= FLAG_RESET_TRIGMODE_ALWAYS;
+        ctrl->flags                    |= FLAG_INCREASE_FRAME_RATE;
+        ctrl->flags                    |= FLAG_TRIGGER_EXTERNAL;
+        ctrl->flags                    |= FLAG_IO_ENABLED;
+        ctrl->flags                    |= FLAG_TRIGGER_PULSEWIDTH;
+//        ctrl->flags                    |= FLAG_TRIGGER_SELF;
+        ctrl->flags                    |= FLAG_TRIGGER_SINGLE;
+}
+
 #define IMX56X_HV_MODE                  0x303c
 #define IMX56X_BINNING_MODE_DISABLE     0x00
 #define IMX56X_BINNING_MODE_ENABLE      0x10
@@ -1085,6 +1119,7 @@ int vc_mod_ctrl_init(struct vc_ctrl* ctrl, struct vc_desc* desc)
         case MOD_ID_IMX412: vc_init_ctrl_imx412(ctrl, desc); break;
         case MOD_ID_IMX415: vc_init_ctrl_imx415(ctrl, desc); break;
         case MOD_ID_IMX462: vc_init_ctrl_imx462(ctrl, desc); break;
+        case MOD_ID_IMX540: vc_init_ctrl_imx540(ctrl, desc); break;
         case MOD_ID_IMX565: vc_init_ctrl_imx565(ctrl, desc); break;
         case MOD_ID_IMX566: vc_init_ctrl_imx566(ctrl, desc); break;
         case MOD_ID_IMX567: vc_init_ctrl_imx567(ctrl, desc); break;
