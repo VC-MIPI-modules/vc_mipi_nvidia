@@ -650,9 +650,9 @@ static void vc_init_ctrl_imx540(struct vc_ctrl *ctrl, struct vc_desc *desc)
         ctrl->gain                      = (vc_control) { .min =   0, .max =       480, .def =      0 };
 
         ctrl->csr.sen.vmax              = (vc_csr4) { .l = 0x02d4, .m = 0x02d5, .h = 0x02d6, .u = 0x0000 };
-        ctrl->csr.sen.blacklevel        = (vc_csr2) { .l = 0x0454, .m = 0x0455 };
+        ctrl->csr.sen.blacklevel        = (vc_csr2) { .l = 0x07b4, .m = 0x07b5 };
 
-        FRAME(0, 0, 5312, 4600)
+        FRAME(8, 0, 5312, 4600)
 
         //all read out         binning  hmax  vmax      vmax   vmax  blkl  blkl  retrigger
         //                      mode           min       max    def   max   def
@@ -669,7 +669,7 @@ static void vc_init_ctrl_imx540(struct vc_ctrl *ctrl, struct vc_desc *desc)
         ctrl->flags                    |= FLAG_TRIGGER_EXTERNAL;
         ctrl->flags                    |= FLAG_IO_ENABLED;
         ctrl->flags                    |= FLAG_TRIGGER_PULSEWIDTH;
-//        ctrl->flags                    |= FLAG_TRIGGER_SELF;
+        ctrl->flags                    |= FLAG_TRIGGER_SELF;
         ctrl->flags                    |= FLAG_TRIGGER_SINGLE;
 }
 
