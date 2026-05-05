@@ -42,6 +42,7 @@
   * IMX335
   * IMX412
   * IMX415
+  * IMX540 *(only NVIDIA Jetson Orin Nano Devkit)*
   * IMX565, IMX566, IMX567, IMX568
   * IMX585 *(only NVIDIA Jetson Xavier NX, Orin NX and Orin Nano)*
   * IMX900
@@ -400,6 +401,7 @@ The following table lists the Jetson device and the necessary file:
 * IMX335 (Rev.02)
 * IMX412 (Rev.05)
 * IMX415 (Rev.02)
+* IMX540 (Rev.01)
 * IMX565 (Rev.03), IMX566 (Rev.03), IMX567 (Rev.03), IMX568 (Rev.04)
 * IMX900 (Rev.02)
 * OV7251 (Rev.01), OV9281 (Rev.02)
