@@ -166,6 +166,7 @@ typedef struct vc_mode {
         vc_control vmax;
         vc_control blacklevel;
         __u32      retrigger_min;
+        __u8       gmrwt;
         struct vc_reg binning_mode_regs[MAX_BINNING_MODE_REGS];
 } vc_mode;
 
@@ -271,6 +272,7 @@ int write_binning_mode_regs(struct vc_cam *cam, __u8 num_lanes, __u8 format, __u
 vc_control vc_core_get_vmax(struct vc_cam *cam, __u8 num_lanes, __u8 format, __u8 binning);
 vc_control vc_core_get_blacklevel(struct vc_cam *cam, __u8 num_lanes, __u8 format, __u8 binning);
 __u32 vc_core_get_retrigger(struct vc_cam *cam, __u8 num_lanes, __u8 format, __u8 binning);
+__u8 vc_core_get_gmrwt(struct vc_cam *cam, __u8 num_lanes, __u8 format, __u8 binning);
 
 // --- Function to initialize the vc core --------------------------------------
 int vc_core_init(struct vc_cam *cam, struct i2c_client *client);

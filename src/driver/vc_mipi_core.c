@@ -744,6 +744,11 @@ __u32 vc_core_get_retrigger(struct vc_cam *cam, __u8 num_lanes, __u8 format, __u
         return vc_core_get_mode(cam, num_lanes, format, binning).retrigger_min;
 }
 
+__u8 vc_core_get_gmrwt(struct vc_cam *cam, __u8 num_lanes, __u8 format, __u8 binning)
+{
+        return vc_core_get_mode(cam, num_lanes, format, binning).gmrwt;
+}
+
 // ------------------------------------------------------------------------------------------------
 //  Helper Functions for the VC MIPI Controller Module
 
@@ -1848,6 +1853,7 @@ static void vc_calculate_trig_exposure(struct vc_cam *cam, __u32 exposure_us)
         struct vc_ctrl *ctrl = &cam->ctrl;
         struct vc_state *state = &cam->state;
         struct device *dev = &ctrl->client_sen->dev;
+        struct vc_desc *desc = &cam->desc;
         __u8 num_lanes = state->num_lanes;
         __u8 format = vc_core_v4l2_code_to_format(state->format_code);
         __u8 binning = state->binning_mode;
@@ -1890,7 +1896,26 @@ static void vc_calculate_trig_exposure(struct vc_cam *cam, __u32 exposure_us)
         // if (state->retrigger_cnt < 3240) {
         // 	state->retrigger_cnt = 3240;
         // }
-        state->exposure_cnt = ((__u64)exposure_us * ctrl->clk_ext_trigger) / 1000000;
+
+        if ((MOD_ID_IMX900 == desc->mod_id) && (0 == state->binning_mode)){
+                __u32 period_1H_ns = vc_core_calculate_period_1H(cam, num_lanes, format, binning);
+                __u8 gmrwt = 0;
+                __u32 tGED_ns = 0;
+                __u32 exposure_ns = 0;
+
+                gmrwt = vc_core_get_gmrwt(cam, state->num_lanes, format, state->binning_mode);
+
+                tGED_ns = (period_1H_ns * gmrwt) + 1970;
+                exposure_ns = exposure_us * 1000;
+                if (exposure_ns > tGED_ns) {
+                        exposure_ns-= tGED_ns;
+                } else {
+                        exposure_ns = 0;
+                }
+                state->exposure_cnt = ((__u64)exposure_ns * ctrl->clk_ext_trigger) / 1000000000;
+        } else {
+                state->exposure_cnt = ((__u64)exposure_us * ctrl->clk_ext_trigger) / 1000000;
+        }
 }
 
 int vc_sen_set_exposure(struct vc_cam *cam, int exposure_us)
