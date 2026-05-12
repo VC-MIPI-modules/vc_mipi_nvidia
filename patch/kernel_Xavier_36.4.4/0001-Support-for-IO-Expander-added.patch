@@ -1,0 +1,26 @@
+From 31714d1343af0ee8c49bd149ad45a46d32303443 Mon Sep 17 00:00:00 2001
+From: "/setup.sh" <support@vision-components.com>
+Date: Thu, 19 Feb 2026 09:30:58 +0100
+Subject: [PATCH] Support for IO/Expander added.
+
+---
+ kernel/kernel-jammy-src/arch/arm64/configs/defconfig | 3 +++
+ 1 file changed, 3 insertions(+)
+
+diff --git a/kernel/kernel-jammy-src/arch/arm64/configs/defconfig b/kernel/kernel-jammy-src/arch/arm64/configs/defconfig
+index 4a262fb..d713e2d 100644
+--- a/kernel/kernel-jammy-src/arch/arm64/configs/defconfig
++++ b/kernel/kernel-jammy-src/arch/arm64/configs/defconfig
+@@ -616,6 +616,9 @@ CONFIG_GPIO_PCA953X_IRQ=y
+ CONFIG_GPIO_BD9571MWV=m
+ CONFIG_GPIO_MAX77620=y
+ CONFIG_GPIO_SL28CPLD=m
++
++CONFIG_GPIO_PCF857X=m
++
+ CONFIG_POWER_RESET_MSM=y
+ CONFIG_POWER_RESET_QCOM_PON=m
+ CONFIG_POWER_RESET_XGENE=y
+-- 
+2.34.1
+
