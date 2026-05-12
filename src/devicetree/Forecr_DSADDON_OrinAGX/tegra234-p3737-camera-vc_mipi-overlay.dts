@@ -25,13 +25,14 @@
 //  1   | OV7251, IMX296, IMX297
 //  2   | OV9281, IMX264, IMX265
 //  2,4 | IMX178, IMX183, IMX226, IMX250, IMX252, IMX273, IMX290, IMX327, IMX335, IMX392, 
-//      | IMX412, IMX415, IMX462, IMX565, IMX566, IMX567, IMX568, IMX585, IMX900
+//      | IMX412, IMX415, IMX462, IMX540, IMX565, IMX566, IMX567, IMX568, IMX585, IMX900
 // -----+------------------------------------------------------------------------------------------
 #define VC_MIPI_LANES       2  // 1, 2 Lanes
 // ------------------------------------------------------------------------------------------------
 //  Embedded Metadata Height
 // -----+------------------------------------------------------------------------------------------
-//  0   | IMX178, IMX183, IMX226, IMX250, IMX252, IMX264, IMX265, IMX273, IMX392, OV7251, OV9281
+//  0   | IMX178, IMX183, IMX226, IMX250, IMX252, IMX264, IMX265, IMX273, IMX392, IMX540, 
+//      | OV7251, OV9281
 //  1   | IMX290, IMX327, IMX335, IMX415, IMX462, IMX565, IMX566, IMX567, IMX568, IMX900
 //  2   | IMX296, IMX297, IMX412, IMX585
 // -----+------------------------------------------------------------------------------------------
@@ -52,8 +53,6 @@
 //  this repository https://github.com/VC-MIPI-modules/vc_mipi_nvidia#gstreamer-support
 // ------------------------------------------------------------------------------------------------
 
-//#define CAMERA_I2C_MUX_BUS(x) (0x1E + x)
-
 #if VC_MIPI_LANES == 1
         #define BUS_WIDTH 1
         #define NUM_LANES "1" 
@@ -64,13 +63,6 @@
         #define NUM_LANES "2" 
         #define PIX_CLK_HZ "300000000"
 #endif
-/*
-#if VC_MIPI_LANES == 4
-        #define BUS_WIDTH 4
-        #define NUM_LANES "4" 
-        #define PIX_CLK_HZ "600000000"
-#endif
-*/
 
 #define CAM0_PORT_IDX 0
 #define CAM1_PORT_IDX 1
@@ -179,7 +171,7 @@
                                 min_bits_per_pixel = <10>;
                                 vi_peak_byte_per_pixel = <2>;
                                 vi_bw_margin_pct = <25>;
-                                max_pixel_rate = <240000>;
+                                max_pixel_rate = <7500000>;
                                 isp_peak_byte_per_pixel = <5>;
                                 isp_bw_margin_pct = <25>;
 
@@ -203,13 +195,11 @@
                                                         sysfs-device-tree = "/sys/firmware/devicetree/base/bus@0/i2c@3180000/tca9548@70/i2c@0/vc_mipi@60";
 #endif
                                                 };
-                                                
                                                 cam_module0_drivernode1: drivernode1 {
                                                         pcl_id = "v4l2_lens";
                                                         status = "okay";
                                                         sysfs-device-tree = "/sys/firmware/devicetree/base/bus@0/lens@vc_mipi";
                                                 };
-
                                         };
 #endif // VC_MIPI_CAM_0
 
@@ -231,13 +221,11 @@
                                                         sysfs-device-tree = "/sys/firmware/devicetree/base/bus@0/i2c@3180000/tca9548@70/i2c@1/vc_mipi@60";
 #endif	
                                                 };
-                                                
                                                 cam_module1_drivernode1: drivernode1 {
                                                         pcl_id = "v4l2_lens";
                                                         status = "okay";
                                                         sysfs-device-tree = "/sys/firmware/devicetree/base/bus@0/lens@vc_mipi/";
                                                 };
-                                                
                                         };
 #endif // VC_MIPI_CAM_1
 
@@ -1237,7 +1225,6 @@
                                         f_number            = "2.0";
                                         aperture            = "0.0";
                                 };
-
                         }; //bus0
                 };
         };

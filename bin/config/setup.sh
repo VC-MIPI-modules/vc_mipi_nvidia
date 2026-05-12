@@ -248,24 +248,24 @@ setup_driver() {
                 ;;
         OrinNano4GB_SD|OrinNano8GB_SD|OrinNano4GB_NVME|OrinNano8GB_NVME)
                 choose_board 3 5
-                choose_bsp 7 8 9 10 11 12
+                choose_bsp 7 8 9 10 11 12 13
                 ;;
         OrinNX8GB|OrinNX16GB)
                 choose_board 3 5
 
                 case ${board} in
                 NV_DevKit_OrinNano)
-                        choose_bsp 9 10 11 12
+                        choose_bsp 9 10 11 12 13
                         ;;
                 *)
-                        choose_bsp 6 7 8 9 10 11 12
+                        choose_bsp 6 7 8 9 10 11 12 13
                         ;;
                 esac
 
                 ;;
         OrinAGX32GB|OrinAGX64GB)
                 choose_board 7
-                choose_bsp 12
+                choose_bsp 13
                 ;;
 
         esac

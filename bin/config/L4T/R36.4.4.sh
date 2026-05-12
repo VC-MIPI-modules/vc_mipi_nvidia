@@ -43,7 +43,7 @@ DTSI_DEST_DICT+=(["Auvidea_JNX42_OrinNano"]="$KERNEL_SOURCE/hardware/nvidia/t23x
 DTSI_FILE_DICT+=(["Auvidea_JNX42_OrinNX"]="tegra234-p3767-camera-p3768-vc_mipi-dual.dts")
 DTSI_DEST_DICT+=(["Auvidea_JNX42_OrinNX"]="$KERNEL_SOURCE/hardware/nvidia/t23x/nv-public/overlay")
 
-DTSI_FILE_DICT+=(["Forecr_DSADDON_OrinAGX"]="tegra234-p3737-camera-vc-mipi-cam.dts" )
+DTSI_FILE_DICT+=(["Forecr_DSADDON_OrinAGX"]="tegra234-p3737-camera-vc_mipi-overlay.dts" )
 DTSI_DEST_DICT+=(["Forecr_DSADDON_OrinAGX"]="$KERNEL_SOURCE/hardware/nvidia/t23x/nv-public/overlay")
 
 #setup
