@@ -12,6 +12,7 @@
   * [NVIDIA Jetson TX2 NX](https://developer.nvidia.com/embedded/jetson-tx2-nx)
   * [NVIDIA Jetson Orin Nano 8GB/4GB](https://developer.nvidia.com/embedded/jetson-modules#jetson_orin_nano)
   * [NVIDIA Jetson Orin NX 16GB/8GB](https://developer.nvidia.com/embedded/jetson-modules#jetson_orin_nx)
+  * [NVIDIA Jetson Orin AGX 32GB/64GB](https://developer.nvidia.com/embedded/jetson-modules#jetson_orin_agx)
 * Supported carrier boards
   * [NVIDIA Jetson Nano Developer Kit B01](https://developer.nvidia.com/embedded/jetson-nano-developer-kit)
   * [NVIDIA Jetson Nano 2GB Developer Kit](https://developer.nvidia.com/embedded/jetson-nano-2gb-developer-kit)
@@ -20,6 +21,7 @@
   * [Auvidea JNX30/JNX30D](https://auvidea.eu/product/70879)
   * [Auvidea JNX42 LM](https://auvidea.eu/product/70784) *(only NVIDIA Jetson Nano, Xavier NX, Orin Nano, Orin NX)*
   * [Auvidea J20 on Devkit Jetson AGX Xavier or TX2](https://auvidea.eu/j20/) *(only connector 2+3)*
+  * [Forecr DSADDON on Devkit Jetson Orin AGX](https://www.forecr.io/products/dsaddon-mipi-agx-6ch)
 * Supported board support packages
   * [NVIDIA L4T 32.7.1](https://developer.nvidia.com/embedded/linux-tegra-r3271)
   * [NVIDIA L4T 32.7.2](https://developer.nvidia.com/embedded/linux-tegra-r3272)
