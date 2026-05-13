@@ -135,7 +135,7 @@ setup_som_carrier_specifics() {
         L4T_setup_conf_file
 
         case $VC_MIPI_BSP in
-        36.4.0|36.4.3|36.4.4)
+        36.4.0|36.4.3|36.4.4|36.5.0)
                 L4T_setup_dynamic_dtbo_file
                 ;;
         *)
@@ -161,7 +161,7 @@ setup_addon_file() {
 
 setup_nvidia_prereq_on_target() {
         case $VC_MIPI_BSP in
-        36.2.0|36.4.0|36.4.3|36.4.4)
+        36.2.0|36.4.0|36.4.3|36.4.4|36.5.0)
                 target_dir=${ROOTFS_DIR}/home/${TARGET_USER}
                 src_dir=${WORKING_DIR}/target
 
@@ -219,7 +219,7 @@ create_target_user() {
         echo "Create target user ..."
         cd $BSP_DIR/Linux_for_Tegra
         case $VC_MIPI_BSP in
-        32.7.1|32.7.2|32.7.3|32.7.4|32.7.5|35.1.0|35.2.1|35.3.1|35.4.1|35.6.0|36.2.0|36.4.0|36.4.3|36.4.4)
+        32.7.1|32.7.2|32.7.3|32.7.4|32.7.5|35.1.0|35.2.1|35.3.1|35.4.1|35.6.0|36.2.0|36.4.0|36.4.3|36.4.4|36.5.0)
 
                 sudo ./tools/l4t_create_default_user.sh --username ${TARGET_USER} --password ${TARGET_PW} \
                         --hostname nvidia --autologin --accept-license

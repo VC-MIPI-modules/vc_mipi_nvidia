@@ -163,7 +163,7 @@ LABEL secondary
       OVERLAYS /boot/tegra234-p3767-camera-p3768-vc_mipi-dual.dtbo
 </pre>
 
-### JetPack 6 (L4T 36.4.4)
+### JetPack 6 (L4T 36.4.4 and L4T 36.5.0)
 
 The procedure for Jetson Orin AGX is basically the same as for Jetson Orin Nano or Orin NX, but the filenames are different.
 For the flattened device tree, the kernel_tegra234-<b>p3737</b>-0000+<b>p3701</b>-0005-nv.dtb will be used. And the corresponding overlay file will be tegra234-p3737-camera-vc_mipi-overlay.dtbo.

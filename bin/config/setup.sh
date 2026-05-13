@@ -153,6 +153,7 @@ bsps=(
 "NVIDIA L4T 36.4.0 (https://developer.nvidia.com/embedded/jetson-linux-r364)"
 "NVIDIA L4T 36.4.3 (https://developer.nvidia.com/embedded/jetson-linux-r3643)"
 "NVIDIA L4T 36.4.4 (https://developer.nvidia.com/embedded/jetson-linux-r3644)"
+"NVIDIA L4T 36.5.0 (https://developer.nvidia.com/embedded/jetson-linux-r3650)"
 )
 
 bsps_keys=(
@@ -170,6 +171,7 @@ bsps_keys=(
 "36.4.0"
 "36.4.3"
 "36.4.4"
+"36.5.0"
 )
 
 choose_bsp() {
@@ -248,24 +250,24 @@ setup_driver() {
                 ;;
         OrinNano4GB_SD|OrinNano8GB_SD|OrinNano4GB_NVME|OrinNano8GB_NVME)
                 choose_board 3 5
-                choose_bsp 7 8 9 10 11 12 13
+                choose_bsp 7 8 9 10 11 12 13 14
                 ;;
         OrinNX8GB|OrinNX16GB)
                 choose_board 3 5
 
                 case ${board} in
                 NV_DevKit_OrinNano)
-                        choose_bsp 9 10 11 12 13
+                        choose_bsp 9 10 11 12 13 14
                         ;;
                 *)
-                        choose_bsp 6 7 8 9 10 11 12 13
+                        choose_bsp 6 7 8 9 10 11 12 13 14
                         ;;
                 esac
 
                 ;;
         OrinAGX32GB|OrinAGX64GB)
                 choose_board 7
-                choose_bsp 13
+                choose_bsp 13 14
                 ;;
 
         esac

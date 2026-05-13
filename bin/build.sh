@@ -28,7 +28,7 @@ patch_kernel() {
 
 configure_kernel() {
         case $VC_MIPI_BSP in
-        36.2.0|36.4.0|36.4.3|36.4.4)
+        36.2.0|36.4.0|36.4.3|36.4.4|36.5.0)
                 return 0
                 ;;
         esac

@@ -1,8 +1,9 @@
 # Version History
 
-## v0.19.2 (L4T 36.4.4, L4T 35.6.0, Support IMX540, Improvement)
+## v0.20.0 (L4T 36.5.0, L4T 36.4.4, L4T 35.6.0, Support IMX540, Improvement)
 * New Features
   * Added support for board support package
+    * NVIDIA L4T 36.5.0 *(only NVIDIA Jetson Orin NX, Orin Nano and Orin AGX)*
     * NVIDIA L4T 36.4.4 *(only NVIDIA Jetson Orin NX, Orin Nano and Orin AGX)*
     * NVIDIA L4T 35.6.0 *(only NVIDIA Jetson Xavier NX, AGX Xavier, Orin NX and Orin Nano)*
   * Added support for IMX540 *(only NVIDIA Jetson Orin Nano)*
