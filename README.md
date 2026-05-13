@@ -271,7 +271,7 @@ The property *max_framerate* is given for the number of lanes and the pixel form
 | max_framerate (2L10) |       11.3 |       17.0 |       26.9 |       41.3 |       72.5 |
 | max_framerate (2L12) |        9.5 |       14.2 |       22.6 |       34.6 |       61.3 |
 | max_framerate (4L08) |       22.0 |       40.7 |       68.2 |       96.2 |      121.0 |
-| max_framerate (4L10) |       17.6 |       51.6 |       78.8 |      112.3 |
+| max_framerate (4L10) |       17.6 |       34.3 |       51.6 |       78.8 |      112.3 |
 | max_framerate (4L12) |       14.7 |       27.8 |       43.6 |       66.7 |       67.0 |
 
 </details>
