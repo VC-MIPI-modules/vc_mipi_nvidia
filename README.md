@@ -554,6 +554,39 @@ An update is allowed, respectively recommended:
 sudo apt update
 ```
 
+If an upgrade has already been performed and the target now runs a newer L4T of
+the same series - for instance L4T 36.5.0 upgraded to L4T 36.5.2, which NVIDIA
+ships through the `r36.5` apt repository - the camera is gone: `/dev/video*`
+disappears and the media graph is empty. The new kernel arrives with a stock,
+unpatched nvidia-oot, and the `vc_mipi` modules built for the previous kernel no
+longer match its vermagic.
+
+To recover without reflashing the whole device, reconfigure for the L4T version
+that is now installed and rebuild:
+```
+cd bin
+./setup.sh --reconfigure    # select the L4T version now running on the target
+./setup.sh --kernel         # download and patch the matching sources
+./build.sh --all
+```
+Note that `./flash.sh --module` only transfers `vc_mipi_core.ko` and
+`vc_mipi_camera.ko`. Those alone will not load on an upgraded target: the
+patched nvidia-oot modules have to be replaced as well - `tegra-camera.ko` and
+everything that imports its symbols (`nvhost-nvcsi-t194.ko` and the `nv_*`
+sensor drivers), otherwise the kernel rejects the driver with *disagrees about
+version of symbol tegracam_device_register*. Either flash the target completely
+with `sudo ./flash.sh --all`, or copy those modules together with the two
+`vc_mipi` ones into `/lib/modules/$(uname -r)/updates/...` on the target and run
+`sudo depmod -a`.
+
+Holding the kernel packages afterwards keeps the next `apt upgrade` from
+repeating it:
+```
+sudo apt-mark hold nvidia-l4t-kernel nvidia-l4t-kernel-dtbs \
+                   nvidia-l4t-kernel-headers nvidia-l4t-kernel-oot-headers \
+                   nvidia-l4t-kernel-oot-modules nvidia-l4t-display-kernel
+```
+
 ### For Jetpack 5 (L4T 35.1.0, 35.2.1, 35.3.1, 35.4.1, 35.6.0):
 
 * When the system (NVIDIA Jetson Xavier NX or AGX Xavier) has booted successfully, it is necessary to run the script max_speed.sh from the /target folder as superuser. It will read out the maximum frequencies and set them as the current ones. This is a recommendation from nvidia.

@@ -8,6 +8,7 @@
         this incremental release, so the BSP and rootfs of L4T 36.5.0 are used.
       * The kernel patches of L4T 36.5.0 apply unchanged, so no separate patch
         directory was added.
+  * Documented how to recover the driver after an in-place L4T upgrade on the target.
 
 ## v0.20.0 (L4T 36.5.0, L4T 36.4.4, L4T 35.6.0, Support IMX540, Improvement)
 * New Features
