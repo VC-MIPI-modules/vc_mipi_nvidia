@@ -38,6 +38,7 @@
   * [NVIDIA L4T 36.4.3](https://developer.nvidia.com/embedded/jetson-linux-r3643) *(only NVIDIA Jetson Orin Nano and Orin NX)*
   * [NVIDIA L4T 36.4.4](https://developer.nvidia.com/embedded/jetson-linux-r3644) *(only NVIDIA Jetson Orin Nano, Orin NX and Orin AGX)*
   * [NVIDIA L4T 36.5.0](https://developer.nvidia.com/embedded/jetson-linux-r365) *(only NVIDIA Jetson Orin Nano, Orin NX and Orin AGX)*
+  * [NVIDIA L4T 36.5.2](https://developer.nvidia.com/embedded/jetson-linux-r3652) *(only NVIDIA Jetson Orin Nano, Orin NX and Orin AGX)*
 * Supported [VC MIPI Camera Modules](https://www.vision-components.com/fileadmin/external/documentation/hardware/VC_MIPI_Camera_Module/index.html) 
   * IMX178, IMX183, IMX226
   * IMX250, IMX252, IMX264, IMX265, IMX273, IMX392
@@ -480,6 +481,7 @@ If you have your own BSP, you have to integrate the driver into it. Please follo
    |                          |                  | 36.4.3          | kernel_Xavier_36.4.3 * |
    |                          |                  | 36.4.4          | kernel_Xavier_36.4.4 * |
    |                          |                  | 36.5.0          | kernel_Xavier_36.5.0 * |
+   |                          |                  | 36.5.2          | kernel_Xavier_36.5.0 * |
    |                          | Auvidea JNX42    | 35.3.1          | kernel_Xavier_35.3.1+ |
    |                          |                  | 35.4.1          | kernel_Xavier_35.4.1+ |
    |                          |                  | 35.6.0          | kernel_Xavier_35.6.0  |
@@ -488,12 +490,14 @@ If you have your own BSP, you have to integrate the driver into it. Please follo
    |                          |                  | 36.4.3          | kernel_Xavier_36.4.3 * |
    |                          |                  | 36.4.4          | kernel_Xavier_36.4.4 * |
    |                          |                  | 36.5.0          | kernel_Xavier_36.5.0 * |
+   |                          |                  | 36.5.2          | kernel_Xavier_36.5.0 * |
    | NVIDIA Jetson Orin NX    | NVIDIA DevKit    | 35.6.0          | kernel_Xavier_35.6.0  |
    |                          |                  | 36.2.0          | kernel_Xavier_36.2.0+ * |
    |                          |                  | 36.4.0          | kernel_Xavier_36.4.0+ * |
    |                          |                  | 36.4.3          | kernel_Xavier_36.4.3 * |
    |                          |                  | 36.4.4          | kernel_Xavier_36.4.4 * |
    |                          |                  | 36.5.0          | kernel_Xavier_36.5.0 * |
+   |                          |                  | 36.5.2          | kernel_Xavier_36.5.0 * |
    |                          | Auvidea JNX42    | 35.2.1          | kernel_Xavier_35.2.1+ |
    |                          |                  | 35.3.1          | kernel_Xavier_35.3.1+ |
    |                          |                  | 35.4.1          | kernel_Xavier_35.4.1+ |
@@ -503,8 +507,10 @@ If you have your own BSP, you have to integrate the driver into it. Please follo
    |                          |                  | 36.4.3          | kernel_Xavier_36.4.3 * |
    |                          |                  | 36.4.4          | kernel_Xavier_36.4.4 * |
    |                          |                  | 36.5.0          | kernel_Xavier_36.5.0 * |
+   |                          |                  | 36.5.2          | kernel_Xavier_36.5.0 * |
    | NVIDIA Jetson Orin AGX   | DevKit + DSADDON | 36.4.4          | kernel_Xavier_36.4.4 * |
    |                          |                  | 36.5.0          | kernel_Xavier_36.5.0 * |
+   |                          |                  | 36.5.2          | kernel_Xavier_36.5.0 * |
 *) For L4T 36.x.y, the kernel_common_32.3.1+ must be left out.
 
 2. Copy the camera device tree to the folder listed in the following table
@@ -548,6 +554,39 @@ An update is allowed, respectively recommended:
 sudo apt update
 ```
 
+If an upgrade has already been performed and the target now runs a newer L4T of
+the same series - for instance L4T 36.5.0 upgraded to L4T 36.5.2, which NVIDIA
+ships through the `r36.5` apt repository - the camera is gone: `/dev/video*`
+disappears and the media graph is empty. The new kernel arrives with a stock,
+unpatched nvidia-oot, and the `vc_mipi` modules built for the previous kernel no
+longer match its vermagic.
+
+To recover without reflashing the whole device, reconfigure for the L4T version
+that is now installed and rebuild:
+```
+cd bin
+./setup.sh --reconfigure    # select the L4T version now running on the target
+./setup.sh --kernel         # download and patch the matching sources
+./build.sh --all
+```
+Note that `./flash.sh --module` only transfers `vc_mipi_core.ko` and
+`vc_mipi_camera.ko`. Those alone will not load on an upgraded target: the
+patched nvidia-oot modules have to be replaced as well - `tegra-camera.ko` and
+everything that imports its symbols (`nvhost-nvcsi-t194.ko` and the `nv_*`
+sensor drivers), otherwise the kernel rejects the driver with *disagrees about
+version of symbol tegracam_device_register*. Either flash the target completely
+with `sudo ./flash.sh --all`, or copy those modules together with the two
+`vc_mipi` ones into `/lib/modules/$(uname -r)/updates/...` on the target and run
+`sudo depmod -a`.
+
+Holding the kernel packages afterwards keeps the next `apt upgrade` from
+repeating it:
+```
+sudo apt-mark hold nvidia-l4t-kernel nvidia-l4t-kernel-dtbs \
+                   nvidia-l4t-kernel-headers nvidia-l4t-kernel-oot-headers \
+                   nvidia-l4t-kernel-oot-modules nvidia-l4t-display-kernel
+```
+
 ### For Jetpack 5 (L4T 35.1.0, 35.2.1, 35.3.1, 35.4.1, 35.6.0):
 
 * When the system (NVIDIA Jetson Xavier NX or AGX Xavier) has booted successfully, it is necessary to run the script max_speed.sh from the /target folder as superuser. It will read out the maximum frequencies and set them as the current ones. This is a recommendation from nvidia.
@@ -556,7 +595,7 @@ sudo apt update
   sudo ./max_speed.sh --max
   ```
 
-### For Jetpack 6 (L4T 36.2.0 DP, L4T 36.4.0, L4T 36.4.3, L4T 36.4.4 and L4T 36.5.0):
+### For Jetpack 6 (L4T 36.2.0 DP, L4T 36.4.0, L4T 36.4.3, L4T 36.4.4, L4T 36.5.0 and L4T 36.5.2):
 
 - with L4T 36.x.y version, the tegra part is completely separated from the kernel
 - VC Mipi driver is now running as a couple of kernel modules
