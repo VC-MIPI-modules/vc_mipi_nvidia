@@ -248,6 +248,7 @@ static void vc_init_ctrl_imx250(struct vc_ctrl *ctrl, struct vc_desc* desc)
         MODE( 5, 4, FORMAT_RAW12, 0,     510,   10,  0xfffff,  2094, 4095,  240,   1580040)
 
         ctrl->flags                    |= FLAG_RESET_TRIGMODE_ALWAYS;
+        ctrl->flags                    |= FLAG_TRIGGER_OVERLAP;
 }
 
 // ------------------------------------------------------------------------------------------------
