@@ -8,7 +8,7 @@
 #include "vc_mipi_core.h"
 #include "vc_mipi_modules.h"
 
-#define VERSION "0.20.0_392_probe_remove"
+#define VERSION "0.20.0_392"
 // #define VC_CTRL_VALUE
 
 //prototypes
@@ -660,6 +660,8 @@ static int vc_set_group_hold(struct tegracam_device *tc_dev, bool val) {return 0
 
 // NOTE: Don't remove this function. It is needed by the Tegra Framework. 
 static int vc_power_get(struct tegracam_device *tc_dev) {return 0;}
+// Called unconditionally by tegracam_device_unregister(), must not be NULL
+static int vc_power_put(struct tegracam_device *tc_dev) {return 0;}
 
 // NOTE: Don't remove this function. It is needed by the Tegra Framework. 
 // (called by tegracam_device_register)
@@ -676,6 +678,7 @@ static struct camera_common_sensor_ops vc_sensor_ops = {
         .start_streaming = vc_start_streaming,
         .stop_streaming = vc_stop_streaming,
         .power_get = vc_power_get,
+        .power_put = vc_power_put,
         .parse_dt = vc_parse_dt,
 //bazo tmp removed
 //        .ready_to_stream = vc_ready_to_stream, 
@@ -951,12 +954,12 @@ static int vc_probe(struct i2c_client *client, const struct i2c_device_id *id)
 
         tc_dev = devm_kzalloc(dev, sizeof(struct tegracam_device), GFP_KERNEL);
         if (!tc_dev)
-                return 0;
+                return -ENOMEM;
 
         ret = vc_core_init(cam, client);
         if (ret) {
                 vc_err(dev, "%s(): Error in vc_core_init!\n", __func__);
-                return 0;
+                return ret;
         }
         vc_init_io(dev, cam);
         vc_init_frmfmt(dev, cam);
@@ -975,8 +978,7 @@ static int vc_probe(struct i2c_client *client, const struct i2c_device_id *id)
         ret = tegracam_device_register(tc_dev);
         if (ret) {
                 vc_err(dev, "%s(): Tegra camera device registration failed\n", __FUNCTION__);
-                // goto free_vc_core;
-                return 0;
+                goto release_core;
         }
 
         // Defined in tegracam_core.c
@@ -991,10 +993,9 @@ static int vc_probe(struct i2c_client *client, const struct i2c_device_id *id)
         tc_dev->tcctrl_ops = &vc_ctrl_ops;
         ret = tegracam_v4l2subdev_register(tc_dev, true);
         if (ret) {
-                       vc_err(dev, "%s(): Tegra camera subdev registration failed\n", __FUNCTION__);
-                       // goto unregister_tc_dev;
-                return 0;
-            }
+                vc_err(dev, "%s(): Tegra camera subdev registration failed\n", __FUNCTION__);
+                goto unregister_tc_dev;
+        }
 
         // This functions need tc_dev->s_data to be initialized.
         ret = vc_init_lanes(tc_dev);
@@ -1002,12 +1003,16 @@ static int vc_probe(struct i2c_client *client, const struct i2c_device_id *id)
                 goto unregister_subdev;
 
         vc_init_tegra_controls(tc_dev);
-        
+
         return 0;
 
 unregister_subdev:
         tegracam_v4l2subdev_unregister(tc_dev);
-        return 0;
+unregister_tc_dev:
+        tegracam_device_unregister(tc_dev);
+release_core:
+        vc_core_release(cam);
+        return ret;
 }
 
 #if LINUX_VERSION_CODE >= KERNEL_VERSION(6, 1, 0)
@@ -1017,13 +1022,25 @@ static int vc_remove(struct i2c_client *client)
 #endif
 {
         struct camera_common_data *s_data = to_camera_common_data(&client->dev);
-        struct tegracam_device *tc_dev = s_data->tegracam_ctrl_hdl->tc_dev;
+        struct tegracam_device *tc_dev;
+        struct vc_cam *cam;
+
+        if (!s_data || !s_data->tegracam_ctrl_hdl)
+                goto out;       /* probe ended without registration (e.g. no camera) */
+
+        tc_dev = s_data->tegracam_ctrl_hdl->tc_dev;
+        cam = tegracam_to_cam(tc_dev);
 
         tegracam_v4l2subdev_unregister(tc_dev);
         tegracam_device_unregister(tc_dev);
+        if (cam)
+                vc_core_release(cam);
 
+out:
 #if LINUX_VERSION_CODE < KERNEL_VERSION(6, 1, 0)
         return 0;
+#else
+        return;
 #endif
 }
 
