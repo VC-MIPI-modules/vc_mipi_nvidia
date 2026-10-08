@@ -8,7 +8,7 @@
 #include "vc_mipi_core.h"
 #include "vc_mipi_modules.h"
 
-#define VERSION "0.20.0"
+#define VERSION "0.20.0_392_probe_remove"
 // #define VC_CTRL_VALUE
 
 //prototypes
@@ -21,6 +21,14 @@ void vc_update_tegra_controls(struct tegracam_device *tc_dev);
 int vc_init_frmfmt(struct device *dev, struct vc_cam *cam);
 void vc_init_tegra_controls(struct tegracam_device *tc_dev);
 
+static inline struct media_pad *vc_remote_pad(const struct media_pad *pad)
+{
+#if LINUX_VERSION_CODE >= KERNEL_VERSION(6, 0, 0)
+        return media_pad_remote_pad_first(pad);
+#else
+        return media_entity_remote_pad(pad);
+#endif
+}
 
 static struct vc_cam *tegracam_to_cam(struct tegracam_device *tc_dev)
 {
@@ -63,7 +71,7 @@ struct tegra_channel *get_tegra_channel(struct tegracam_device *tc_dev)
                 return NULL;
         }
 
-        pad_csi = media_entity_remote_pad(&sd->entity.pads[0]);
+        pad_csi = vc_remote_pad(&sd->entity.pads[0]);
         if (NULL == pad_csi) {
                 vc_err(dev, "%s(): pad_csi is NULL!\n", __FUNCTION__);
                 return NULL;
@@ -75,7 +83,7 @@ struct tegra_channel *get_tegra_channel(struct tegracam_device *tc_dev)
                 return NULL;
         }
 
-        pad_vi = media_entity_remote_pad(&sd_csi->entity.pads[1]);
+        pad_vi = vc_remote_pad(&sd_csi->entity.pads[1]);
         if (NULL == pad_vi) {
                 vc_err(dev, "%s(): pad_vi is NULL!\n", __FUNCTION__);
                 return NULL;
@@ -571,6 +579,8 @@ static int vc_stop_streaming(struct tegracam_device *tc_dev)
         return ret;
 }
 
+//bazo tmp removed
+#if 0
 static int vc_ready_to_stream(struct tegracam_device *tc_dev)
 {
         struct vc_cam *cam = tegracam_to_cam(tc_dev);
@@ -643,6 +653,7 @@ static int vc_ready_to_stream(struct tegracam_device *tc_dev)
 
         return ret;
 }
+#endif
 
 // NOTE: Don't remove this function. It is needed by the Tegra Framework. 
 static int vc_set_group_hold(struct tegracam_device *tc_dev, bool val) {return 0;}
@@ -666,7 +677,8 @@ static struct camera_common_sensor_ops vc_sensor_ops = {
         .stop_streaming = vc_stop_streaming,
         .power_get = vc_power_get,
         .parse_dt = vc_parse_dt,
-        .ready_to_stream = vc_ready_to_stream, 
+//bazo tmp removed
+//        .ready_to_stream = vc_ready_to_stream, 
 };
 
 int vc_init_frmfmt(struct device *dev, struct vc_cam *cam)
@@ -908,7 +920,11 @@ static struct tegracam_ctrl_ops vc_ctrl_ops = {
 #endif
 };
 
+#if LINUX_VERSION_CODE >= KERNEL_VERSION(6, 3, 0)
+static int vc_probe(struct i2c_client *client)
+#else
 static int vc_probe(struct i2c_client *client, const struct i2c_device_id *id)
+#endif
 {
         // --------------------------------------------------------------------
         // NOTE: Don't modify this lines of code. It will cause a kernel crash.
@@ -994,14 +1010,21 @@ unregister_subdev:
         return 0;
 }
 
+#if LINUX_VERSION_CODE >= KERNEL_VERSION(6, 1, 0)
+static void vc_remove(struct i2c_client *client)
+#else
 static int vc_remove(struct i2c_client *client)
+#endif
 {
         struct camera_common_data *s_data = to_camera_common_data(&client->dev);
         struct tegracam_device *tc_dev = s_data->tegracam_ctrl_hdl->tc_dev;
 
         tegracam_v4l2subdev_unregister(tc_dev);
         tegracam_device_unregister(tc_dev);
+
+#if LINUX_VERSION_CODE < KERNEL_VERSION(6, 1, 0)
         return 0;
+#endif
 }
 
 static const struct i2c_device_id vc_id[] = {
