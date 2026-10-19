@@ -31,13 +31,9 @@
 
 int vc_mod_is_color_sensor(struct vc_desc *desc)
 {
-        if (desc->sen_type) {
-                __u32 len = strnlen(desc->sen_type, 16);
-                if (len > 0 && len < 17) {
-                        return *(desc->sen_type + len - 1) == 'C';
-                }
-        }
-        return 0;
+        size_t len = strnlen((const char *)desc->sen_type, sizeof(desc->sen_type));
+
+        return len > 0 && desc->sen_type[len - 1] == 'C';
 }
 
 static void vc_init_ctrl(struct vc_ctrl *ctrl, struct vc_desc* desc)

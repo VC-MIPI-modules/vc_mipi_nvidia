@@ -890,7 +890,7 @@ static int vc_mod_setup(struct vc_ctrl *ctrl, int mod_i2c_addr, struct vc_desc *
 
         if (!i2c_check_functionality(adapter, I2C_FUNC_SMBUS_BYTE_DATA)) {
                 vc_err(dev_sen, "%s(): I2C-Adapter doesn't support I2C_FUNC_SMBUS_BYTE\n", __FUNCTION__);
-                return 0;
+                return -EIO;
         }
 
         client_mod = vc_mod_get_client(dev_sen, adapter, mod_i2c_addr);
@@ -919,6 +919,8 @@ static int vc_mod_setup(struct vc_ctrl *ctrl, int mod_i2c_addr, struct vc_desc *
 
         if (desc->num_modes == 0) {
                 vc_err(dev_mod, "%s(): Could not find any module modes! Operation not possible!\n", __FUNCTION__);
+                i2c_unregister_device(client_mod);
+                ctrl->client_mod = NULL;
                 return -EIO;
         }
 
@@ -992,6 +994,7 @@ int vc_core_init(struct vc_cam *cam, struct i2c_client *client)
         }
         ret = vc_mod_ctrl_init(ctrl, desc);
         if (ret) {
+                vc_core_release(cam);
                 return -EIO;
         }
         if (ctrl->frame.width == 0 || ctrl->frame.height == 0) {
@@ -1008,6 +1011,17 @@ int vc_core_init(struct vc_cam *cam, struct i2c_client *client)
         return 0;
 }
 EXPORT_SYMBOL(vc_core_init);
+
+void vc_core_release(struct vc_cam *cam)
+{
+        struct vc_ctrl *ctrl = &cam->ctrl;
+
+        if (ctrl->client_mod) {
+                i2c_unregister_device(ctrl->client_mod);
+                ctrl->client_mod = NULL;
+        }
+}
+EXPORT_SYMBOL(vc_core_release);
 
 static int vc_mod_write_exposure(struct i2c_client *client, __u32 value)
 {
