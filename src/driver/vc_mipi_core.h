@@ -274,6 +274,7 @@ __u32 vc_core_get_retrigger(struct vc_cam *cam, __u8 num_lanes, __u8 format, __u
 
 // --- Function to initialize the vc core --------------------------------------
 int vc_core_init(struct vc_cam *cam, struct i2c_client *client);
+void vc_core_release(struct vc_cam *cam);
 int vc_core_update_controls(struct vc_cam *cam);
 int vc_mod_reset_module(struct vc_cam *cam, __u8 mode);
 

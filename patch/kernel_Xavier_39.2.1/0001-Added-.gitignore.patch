@@ -1,0 +1,41 @@
+From 40262013b6892d98d5e015b2086266ce8d98d372 Mon Sep 17 00:00:00 2001
+From: "/setup.sh" <support@vision-components.com>
+Date: Fri, 2 Oct 2026 10:39:36 +0200
+Subject: [PATCH] Added .gitignore
+
+---
+ .gitignore | 22 ++++++++++++++++++++++
+ 1 file changed, 22 insertions(+)
+ create mode 100644 .gitignore
+
+diff --git a/.gitignore b/.gitignore
+new file mode 100644
+index 000000000..41b96d4e8
+--- /dev/null
++++ b/.gitignore
+@@ -0,0 +1,22 @@
++.vscode*
++build/
++hwpm/
++modules/
++nvdisplay/
++nvethernetrm/
++nvgpu/
++unifiedgpudisp/
++out/
++*.cmd
++*.d
++*.dtb
++*.dtbo
++*.ko
++*.mod*
++*.o
++*.order
++*.*bz2*
++*.sh
++public_sources_sha.txt
++*vc_mipi*
++*vc-mipi*
+-- 
+2.34.1
+

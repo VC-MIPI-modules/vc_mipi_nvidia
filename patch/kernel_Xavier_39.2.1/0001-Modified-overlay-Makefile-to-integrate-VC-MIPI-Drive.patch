@@ -1,0 +1,27 @@
+From 1d4399aef3af708807975851f23b5e5c6c60d9c0 Mon Sep 17 00:00:00 2001
+From: "/setup.sh" <support@vision-components.com>
+Date: Fri, 2 Oct 2026 12:34:06 +0200
+Subject: [PATCH] Modified overlay Makefile to integrate VC MIPI Driver in
+ tegra234-p3767-camera-p3768-vc_mipi-dual.dtbo and
+ tegra234-p3737-camera-vc_mipi-overlay.dtbo.
+
+---
+ hardware/nvidia/t23x/nv-public/overlay/Makefile | 2 ++
+ 1 file changed, 2 insertions(+)
+
+diff --git a/hardware/nvidia/t23x/nv-public/overlay/Makefile b/hardware/nvidia/t23x/nv-public/overlay/Makefile
+index 5750473c4..088ba991b 100644
+--- a/hardware/nvidia/t23x/nv-public/overlay/Makefile
++++ b/hardware/nvidia/t23x/nv-public/overlay/Makefile
+@@ -54,6 +54,8 @@ dtbo-y += tegra234-p3737-camera-imx185-overlay.dtbo
+ dtbo-y += tegra234-p3737-camera-p3762-a00-overlay.dtbo
+ dtbo-y += tegra234-p3740-camera-p3783-a00-overlay.dtbo
+ dtbo-y += tegra234-p3767-camera-p3768-imx219-dual.dtbo
++dtbo-y += tegra234-p3737-camera-vc_mipi-overlay.dtbo
++dtbo-y += tegra234-p3767-camera-p3768-vc_mipi-dual.dtbo
+ dtbo-y += tegra234-p3767-camera-p3768-imx477-dual.dtbo
+ dtbo-y += tegra234-p3767-camera-p3768-imx477-dual-4lane.dtbo
+ dtbo-y += tegra234-p3767-camera-p3768-imx477-imx219.dtbo
+-- 
+2.34.1
+
