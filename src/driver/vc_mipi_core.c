@@ -385,6 +385,14 @@ static int vc_core_get_v4l2_fmt(__u32 code, char *buf)
         case MEDIA_BUS_FMT_SGBRG10_1X10: sprintf(buf, "GB10"); break;
         case MEDIA_BUS_FMT_SGBRG12_1X12: sprintf(buf, "GB12"); break;
         case MEDIA_BUS_FMT_SGBRG14_1X14: sprintf(buf, "GB14"); break;
+        case MEDIA_BUS_FMT_SGRBG8_1X8:   sprintf(buf, "GRBG"); break;
+        case MEDIA_BUS_FMT_SGRBG10_1X10: sprintf(buf, "BA10"); break;
+        case MEDIA_BUS_FMT_SGRBG12_1X12: sprintf(buf, "BA12"); break;
+        case MEDIA_BUS_FMT_SGRBG14_1X14: sprintf(buf, "GR14"); break;
+        case MEDIA_BUS_FMT_SBGGR8_1X8:   sprintf(buf, "BA81"); break;
+        case MEDIA_BUS_FMT_SBGGR10_1X10: sprintf(buf, "BG10"); break;
+        case MEDIA_BUS_FMT_SBGGR12_1X12: sprintf(buf, "BG12"); break;
+        case MEDIA_BUS_FMT_SBGGR14_1X14: sprintf(buf, "BG14"); break;
         default: return -EINVAL;
         }
         return 0;
@@ -396,34 +404,83 @@ static __u8 vc_core_v4l2_code_to_format(__u32 code)
         case MEDIA_BUS_FMT_Y8_1X8:
         case MEDIA_BUS_FMT_SRGGB8_1X8:
         case MEDIA_BUS_FMT_SGBRG8_1X8:
+        case MEDIA_BUS_FMT_SGRBG8_1X8:
+        case MEDIA_BUS_FMT_SBGGR8_1X8:
                 return FORMAT_RAW08;
         case MEDIA_BUS_FMT_Y10_1X10:
         case MEDIA_BUS_FMT_SRGGB10_1X10:
         case MEDIA_BUS_FMT_SGBRG10_1X10:
+        case MEDIA_BUS_FMT_SGRBG10_1X10:
+        case MEDIA_BUS_FMT_SBGGR10_1X10:
                 return FORMAT_RAW10;
         case MEDIA_BUS_FMT_Y12_1X12:
         case MEDIA_BUS_FMT_SRGGB12_1X12:
         case MEDIA_BUS_FMT_SGBRG12_1X12:
+        case MEDIA_BUS_FMT_SGRBG12_1X12:
+        case MEDIA_BUS_FMT_SBGGR12_1X12:
                 return FORMAT_RAW12;
         case MEDIA_BUS_FMT_Y14_1X14:
         case MEDIA_BUS_FMT_SRGGB14_1X14:
         case MEDIA_BUS_FMT_SGBRG14_1X14:
+        case MEDIA_BUS_FMT_SGRBG14_1X14:
+        case MEDIA_BUS_FMT_SBGGR14_1X14:
                 return FORMAT_RAW14;
         }
         return 0;
 }
 
-static __u32 vc_core_format_to_v4l2_code(__u8 format, int is_color, int is_gbrg)
+static enum vc_cfa_pattern vc_core_get_cfa_pattern(struct vc_ctrl *ctrl)
 {
+        if (ctrl->flags & FLAG_FORMAT_BGGR)
+                return VC_CFA_BGGR;
+        if (ctrl->flags & FLAG_FORMAT_GRBG)
+                return VC_CFA_GRBG;
+        if (ctrl->flags & FLAG_FORMAT_GBRG)
+                return VC_CFA_GBRG;
+        return VC_CFA_RGGB;
+}
+
+static __u32 vc_core_format_to_v4l2_code(__u8 format, int is_color, enum vc_cfa_pattern cfa)
+{
+        if (!is_color) {
+                switch (format) {
+                case FORMAT_RAW08: return MEDIA_BUS_FMT_Y8_1X8;
+                case FORMAT_RAW10: return MEDIA_BUS_FMT_Y10_1X10;
+                case FORMAT_RAW12: return MEDIA_BUS_FMT_Y12_1X12;
+                case FORMAT_RAW14: return MEDIA_BUS_FMT_Y14_1X14;
+                }
+                return 0;
+        }
+
         switch (format) {
         case FORMAT_RAW08:
-                return is_color ? (is_gbrg ? MEDIA_BUS_FMT_SGBRG8_1X8 : MEDIA_BUS_FMT_SRGGB8_1X8) : MEDIA_BUS_FMT_Y8_1X8;
+                switch (cfa) {
+                case VC_CFA_GBRG: return MEDIA_BUS_FMT_SGBRG8_1X8;
+                case VC_CFA_GRBG: return MEDIA_BUS_FMT_SGRBG8_1X8;
+                case VC_CFA_BGGR: return MEDIA_BUS_FMT_SBGGR8_1X8;
+                default:          return MEDIA_BUS_FMT_SRGGB8_1X8;
+                }
         case FORMAT_RAW10:
-                return is_color ? (is_gbrg ? MEDIA_BUS_FMT_SGBRG10_1X10 : MEDIA_BUS_FMT_SRGGB10_1X10) : MEDIA_BUS_FMT_Y10_1X10;
+                switch (cfa) {
+                case VC_CFA_GBRG: return MEDIA_BUS_FMT_SGBRG10_1X10;
+                case VC_CFA_GRBG: return MEDIA_BUS_FMT_SGRBG10_1X10;
+                case VC_CFA_BGGR: return MEDIA_BUS_FMT_SBGGR10_1X10;
+                default:          return MEDIA_BUS_FMT_SRGGB10_1X10;
+                }
         case FORMAT_RAW12:
-                return is_color ? (is_gbrg ? MEDIA_BUS_FMT_SGBRG12_1X12 : MEDIA_BUS_FMT_SRGGB12_1X12) : MEDIA_BUS_FMT_Y12_1X12;
+                switch (cfa) {
+                case VC_CFA_GBRG: return MEDIA_BUS_FMT_SGBRG12_1X12;
+                case VC_CFA_GRBG: return MEDIA_BUS_FMT_SGRBG12_1X12;
+                case VC_CFA_BGGR: return MEDIA_BUS_FMT_SBGGR12_1X12;
+                default:          return MEDIA_BUS_FMT_SRGGB12_1X12;
+                }
         case FORMAT_RAW14:
-                return is_color ? (is_gbrg ? MEDIA_BUS_FMT_SGBRG14_1X14 : MEDIA_BUS_FMT_SRGGB14_1X14) : MEDIA_BUS_FMT_Y14_1X14;
+                switch (cfa) {
+                case VC_CFA_GBRG: return MEDIA_BUS_FMT_SGBRG14_1X14;
+                case VC_CFA_GRBG: return MEDIA_BUS_FMT_SGRBG14_1X14;
+                case VC_CFA_BGGR: return MEDIA_BUS_FMT_SBGGR14_1X14;
+                default:          return MEDIA_BUS_FMT_SRGGB14_1X14;
+                }
         }
         return 0;
 }
@@ -433,9 +490,8 @@ static __u32 vc_core_get_default_format(struct vc_cam *cam)
         struct vc_desc *desc = &cam->desc;
         struct vc_ctrl *ctrl = &cam->ctrl;
         __u8 format = desc->modes[0].format;
-        int is_color = vc_mod_is_color_sensor(desc);
-        int is_bgrg = ctrl->flags & FLAG_FORMAT_GBRG;
-        return vc_core_format_to_v4l2_code(format, is_color, is_bgrg);
+        int is_color = cam->force_color_mode ? 1 : vc_mod_is_color_sensor(desc);
+        return vc_core_format_to_v4l2_code(format, is_color, vc_core_get_cfa_pattern(ctrl));
 }
 
 int vc_core_try_format(struct vc_cam *cam, __u32 code)
@@ -620,7 +676,8 @@ __u32 vc_core_get_optimized_vmax(struct vc_cam *cam)
         __u8 binning_mode = state->binning_mode;
         __u8 num_lanes = state->num_lanes;
         __u8 format = vc_core_v4l2_code_to_format(state->format_code);
-        __u32 vmax_def = vc_core_get_vmax(cam, num_lanes, format, binning_mode).def;
+        vc_mode mode = vc_core_get_mode(cam, num_lanes, format, binning_mode);
+        __u32 vmax_def = mode.vmax.def;
         __u32 vmax_res = vmax_def;
         __u32 state_height = state->frame.height;
         __u32 ctrl_height = ctrl->frame.height;
@@ -635,7 +692,18 @@ __u32 vc_core_get_optimized_vmax(struct vc_cam *cam)
 
         // Increase the frame rate when image height is reduced.
         if (ctrl->flags & FLAG_INCREASE_FRAME_RATE && (state_height < ctrl_height)) {
-                vmax_res = vmax_def - (ctrl_height - state_height);
+                __u32 scale = mode.vmax_row_scale > 0 ? mode.vmax_row_scale : 1;
+                __u32 reduction = scale * (ctrl_height - state_height);
+
+                vmax_res = (vmax_def > reduction) ? vmax_def - reduction : vmax_def;
+                // Keep VMAX above the mode's minimum: height + margin, floor (see VMAX_MARGIN).
+                if (mode.vmax_row_margin > 0 || mode.vmax_row_floor > 0 || mode.vmax_row_scale > 0) {
+                        __u32 real_min = state_height + mode.vmax_row_margin;
+                        if (mode.vmax_row_floor > real_min)
+                                real_min = mode.vmax_row_floor;
+                        if (vmax_res < scale * real_min)
+                                vmax_res = scale * real_min;
+                }
                 vc_dbg(dev, "%s(): Increased frame rate: vmax %u/%u, height: %u/%u, vmax result: %u \n", __FUNCTION__,
                         state->vmax, vmax_def, state->frame.height, ctrl->frame.height, vmax_res);
 
@@ -1448,6 +1516,16 @@ void vc_core_calculate_roi(struct vc_cam *cam, __u32 *left, __u32 *right, __u32 
         *bottom = *top + *height;
 }
 
+static int vc_sen_write_hmax(struct vc_ctrl *ctrl, __u32 hmax)
+{
+        struct i2c_client *client = ctrl->client_sen;
+        struct device *dev = &client->dev;
+
+        vc_dbg(dev, "%s(): Write sensor HMAX: 0x%08x (%u)\n", __FUNCTION__, hmax, hmax);
+
+        return i2c_write_reg4(dev, client, &ctrl->csr.sen.hmax, hmax, __FUNCTION__);
+}
+
 int vc_sen_set_roi(struct vc_cam *cam)
 {
         struct vc_ctrl *ctrl = &cam->ctrl;
@@ -1503,6 +1581,12 @@ int vc_sen_set_roi(struct vc_cam *cam)
                 ret |= i2c_write_reg2(dev, client, &ctrl->csr.sen.w_height, w_height, __FUNCTION__);
         }
         ret |= write_binning_mode_regs(cam, state->num_lanes, format, state->binning_mode);
+        // The line length used for the exposure and frame rate calculation
+        // (vc_core_calculate_period_1H()) is the mode's HMAX. Write it, so it
+        // doesn't depend on the module firmware's default.
+        if (ctrl->flags & FLAG_WRITE_HMAX) {
+                ret |= vc_sen_write_hmax(ctrl, vc_core_get_mode(cam, state->num_lanes, format, state->binning_mode).hmax);
+        }
 
         if (ret) {
                 vc_err(dev, "%s(): Couldn't set sensor roi: "
@@ -1516,6 +1600,34 @@ int vc_sen_set_roi(struct vc_cam *cam)
         return ret;
 }
 EXPORT_SYMBOL(vc_sen_set_roi);
+
+// Unlike write_binning_mode_regs(), applied whenever the current
+// (num_lanes, format, binning) mode is selected, regardless of binning_mode
+// or FLAG_USE_BINNING_INDEX (see vc_mode.extra_regs in vc_mipi_core.h).
+int vc_sen_write_extra_mode_regs(struct vc_cam *cam)
+{
+        struct vc_ctrl *ctrl = &cam->ctrl;
+        struct vc_state *state = &cam->state;
+        struct device *dev = &ctrl->client_sen->dev;
+        struct i2c_client *client = ctrl->client_sen;
+        __u8 format = vc_core_v4l2_code_to_format(state->format_code);
+        int mode_index;
+        int iTmp = 0;
+        int ret = 0;
+
+        mode_index = vc_core_get_mode_index(cam, state->num_lanes, format, state->binning_mode);
+        if (mode_index < 0)
+                return 0;
+
+        while (iTmp < MAX_EXTRA_MODE_REGS && ctrl->mode[mode_index].extra_regs[iTmp].address > 0) {
+                ret |= i2c_write_reg(dev, client, ctrl->mode[mode_index].extra_regs[iTmp].address,
+                                     ctrl->mode[mode_index].extra_regs[iTmp].value, __FUNCTION__);
+                iTmp++;
+        }
+
+        return ret;
+}
+EXPORT_SYMBOL(vc_sen_write_extra_mode_regs);
 
 #ifdef READ_VMAX
 static __u32 vc_sen_read_vmax(struct vc_ctrl *ctrl)
@@ -1794,13 +1906,17 @@ static void vc_calculate_exposure_sony(struct vc_cam *cam, __u64 exposure_1H)
 
 static void vc_calculate_exposure_normal(struct vc_cam *cam, __u64 exposure_1H)
 {
+        struct vc_ctrl *ctrl = &cam->ctrl;
         struct vc_state *state = &cam->state;
         __u8 binning = state->binning_mode;
         __u8 format = vc_core_v4l2_code_to_format(state->format_code);
         __u32 shs_min = vc_core_get_vmax(cam, state->num_lanes, format, binning).min;
+        __u32 vmax_max = state->vmax > ctrl->vmax_exposure_margin
+                       ? state->vmax - ctrl->vmax_exposure_margin
+                       : state->vmax;
 
         // Is exposure time greater than shs_min and less than frame time?
-        if (shs_min <= exposure_1H && exposure_1H < state->vmax) {
+        if (shs_min <= exposure_1H && exposure_1H < vmax_max) {
                 // Yes then calculate exposure delay (shs) in between frame time.
                 // |                 VMAX (frame time)             ---> |
                 // +------------------------+---------------------------+
@@ -1818,7 +1934,7 @@ static void vc_calculate_exposure_normal(struct vc_cam *cam, __u64 exposure_1H)
                 // |                 VMAX (frame time)                   ---> |
                 // +----------------------------------------------------------+
                 // |                                       exposure time ---> |
-                state->vmax = exposure_1H;
+                state->vmax = exposure_1H + ctrl->vmax_exposure_margin;
                 state->shs = exposure_1H;
         }
 }

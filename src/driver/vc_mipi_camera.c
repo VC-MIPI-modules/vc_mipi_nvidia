@@ -549,6 +549,7 @@ static int vc_start_streaming(struct tegracam_device *tc_dev)
                 usleep_range(1000*sleepR, 1000*sleepR);
         }
         ret |= vc_sen_set_roi(cam);
+        ret |= vc_sen_write_extra_mode_regs(cam);
         ret |= vc_sen_set_exposure(cam, cam->state.exposure);
         if (!ret && reset) {
                 ret |= vc_sen_set_gain(cam, cam->state.gain);
@@ -951,6 +952,11 @@ static int vc_probe(struct i2c_client *client, const struct i2c_device_id *id)
         tc_dev = devm_kzalloc(dev, sizeof(struct tegracam_device), GFP_KERNEL);
         if (!tc_dev)
                 return -ENOMEM;
+
+        // Has to be set before vc_core_init(), which selects the default format.
+        cam->force_color_mode = of_property_read_bool(dev->of_node, "force-color-mode");
+        if (cam->force_color_mode)
+                vc_notice(dev, "%s(): force-color-mode enabled\n", __func__);
 
         ret = vc_core_init(cam, client);
         if (ret) {

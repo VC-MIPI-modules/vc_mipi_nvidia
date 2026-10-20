@@ -41,6 +41,20 @@
 
 #define FLAG_TRIGGER_OVERLAP            (1 << 21)
 
+#define FLAG_FORMAT_GRBG                (1 << 22)
+#define FLAG_FORMAT_BGGR                (1 << 23)
+
+// Write the mode's HMAX on every vc_sen_set_roi(), instead of relying on the
+// module firmware's default line length (see vc_sen_set_roi()).
+#define FLAG_WRITE_HMAX                 (1 << 24)
+
+enum vc_cfa_pattern {
+        VC_CFA_RGGB = 0,
+        VC_CFA_GBRG,
+        VC_CFA_GRBG,
+        VC_CFA_BGGR,
+};
+
 #define FORMAT_RAW08                    0x2a
 #define FORMAT_RAW10                    0x2b
 #define FORMAT_RAW12                    0x2c
@@ -48,6 +62,7 @@
 
 #define MAX_VC_MODES                    16
 #define MAX_BINNING_MODE_REGS           16
+#define MAX_EXTRA_MODE_REGS             8
 
 #define MAX_I2C_RETRY_COUNT             5
 
@@ -166,7 +181,17 @@ typedef struct vc_mode {
         vc_control vmax;
         vc_control blacklevel;
         __u32      retrigger_min;
+        // Lower bound for the optimized VMAX when FLAG_INCREASE_FRAME_RATE
+        // shrinks it for a reduced image height (see VMAX_MARGIN and
+        // vc_core_get_optimized_vmax()). All 0 = no bound (previous behaviour).
+        __u32      vmax_row_margin;
+        __u32      vmax_row_floor;
+        __u32      vmax_row_scale;
         struct vc_reg binning_mode_regs[MAX_BINNING_MODE_REGS];
+        // Extra registers written whenever this mode is selected (unlike
+        // binning_mode_regs, not gated on binning_mode > 0 /
+        // FLAG_USE_BINNING_INDEX), see vc_sen_write_extra_mode_regs().
+        struct vc_reg extra_regs[MAX_EXTRA_MODE_REGS];
 } vc_mode;
 
 typedef struct vc_binning {
@@ -215,6 +240,9 @@ struct vc_ctrl {
         // Flash
         __u32 flash_factor;
         __s32 flash_toffset;
+        // Minimum distance in lines between SHS and VMAX for
+        // FLAG_EXPOSURE_NORMAL/OMNIVISION (0 = SHS may reach VMAX - 1)
+        __u32 vmax_exposure_margin;
         // Special features
         __u32 flags;
 };
@@ -246,6 +274,7 @@ struct vc_cam {
         struct vc_desc desc;
         struct vc_ctrl ctrl;
         struct vc_state state;
+        u32 force_color_mode; // Set to 1 to treat a mono sensor as color (from DT: force-color-mode)
 };
 
 // --- Helper functions to allow i2c communication for customization ----------
@@ -290,6 +319,7 @@ int vc_mod_get_io_mode(struct vc_cam *cam);
 
 // --- Functions for the VC MIPI Sensors --------------------------------------
 int vc_sen_set_roi(struct vc_cam *cam);
+int vc_sen_write_extra_mode_regs(struct vc_cam *cam);
 int vc_sen_set_exposure(struct vc_cam *cam, int exposure);
 int vc_sen_set_gain(struct vc_cam *cam, int gain);
 

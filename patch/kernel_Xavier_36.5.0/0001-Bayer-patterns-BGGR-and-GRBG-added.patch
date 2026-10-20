@@ -1,0 +1,49 @@
+From 1bb5f26a41257cd7e44888961090dd6fa3e18ae4 Mon Sep 17 00:00:00 2001
+From: "/setup.sh" <support@vision-components.com>
+Date: Tue, 20 Oct 2026 12:16:51 +0200
+Subject: [PATCH] Bayer patterns BGGR and GRBG added.
+
+---
+ .../media/platform/tegra/camera/camera_common.c        | 10 ++++++++++
+ .../media/platform/tegra/camera/sensor_common.c        |  4 ++++
+ 2 files changed, 14 insertions(+)
+
+diff --git a/nvidia-oot/drivers/media/platform/tegra/camera/camera_common.c b/nvidia-oot/drivers/media/platform/tegra/camera/camera_common.c
+index 5283007..b06aede 100644
+--- a/nvidia-oot/drivers/media/platform/tegra/camera/camera_common.c
++++ b/nvidia-oot/drivers/media/platform/tegra/camera/camera_common.c
+@@ -98,6 +98,16 @@ static const struct camera_common_colorfmt camera_common_color_fmts[] = {
+ 		V4L2_COLORSPACE_SRGB,
+ 		V4L2_PIX_FMT_SGBRG8,
+ 	},
++	{
++		MEDIA_BUS_FMT_SGRBG8_1X8,
++		V4L2_COLORSPACE_SRGB,
++		V4L2_PIX_FMT_SGRBG8,
++	},
++	{
++		MEDIA_BUS_FMT_SBGGR8_1X8,
++		V4L2_COLORSPACE_SRGB,
++		V4L2_PIX_FMT_SBGGR8,
++	},
+ 	{
+ 		MEDIA_BUS_FMT_YUYV8_1X16,
+ 		V4L2_COLORSPACE_SRGB,
+diff --git a/nvidia-oot/drivers/media/platform/tegra/camera/sensor_common.c b/nvidia-oot/drivers/media/platform/tegra/camera/sensor_common.c
+index 3cb01a7..59306b6 100644
+--- a/nvidia-oot/drivers/media/platform/tegra/camera/sensor_common.c
++++ b/nvidia-oot/drivers/media/platform/tegra/camera/sensor_common.c
+@@ -308,6 +308,10 @@ static int extract_pixel_format(
+ 		*format = V4L2_PIX_FMT_SRGGB8;
+ 	else if (strncmp(pixel_t, "bayer_gbrg8", size) == 0)
+ 		*format = V4L2_PIX_FMT_SGBRG8;
++	else if (strncmp(pixel_t, "bayer_grbg8", size) == 0)
++		*format = V4L2_PIX_FMT_SGRBG8;
++	else if (strncmp(pixel_t, "bayer_bggr8", size) == 0)
++		*format = V4L2_PIX_FMT_SBGGR8;
+ 	else {
+ 		pr_err("%s: Need to extend format%s\n", __func__, pixel_t);
+ 		return -EINVAL;
+-- 
+2.34.1
+
