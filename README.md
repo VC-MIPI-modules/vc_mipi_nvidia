@@ -51,10 +51,11 @@
   * IMX585 *(only NVIDIA Jetson Xavier NX, Orin NX and Orin Nano)*
   * IMX900
   * OV7251, OV9281
+  * AR2020 *(only NVIDIA Jetson Orin Nano Devkit)*
 * Features
   * Quickstart script for an easier installation process
   * Auto detection of VC MIPI camera modules
-  * Image Streaming in GREY, Y10, Y12, SRGGB8, SRGGB10, SRGGB12, SGBRG8, SGBRG10, SGBRG12 format
+  * Image Streaming in GREY, Y10, Y12, SRGGB8, SRGGB10, SRGGB12, SGBRG8, SGBRG10, SGBRG12, SGRBG8, SGRBG10, SGRBG12 format
   * **Exposure** can be set via V4L2 control 'exposure'
   * **Gain** can be set via V4L2 control 'gain'
   * **[Trigger mode](doc/TRIGGER_MODE.md)** '0: disabled', '1: external', '2: pulsewidth', '3: self', '4: single', '5: sync', '6: stream_edge', '7: stream_level', '8: overlap' can be set via device tree or V4L2 control 'trigger_mode'
@@ -196,23 +197,23 @@ The property *max_framerate* is given for the number of lanes and the pixel form
 </details>
 
 <details>
-  <summary>GStreamer properties for IMX178, IMX183, IMX226 (cameras with 2 and 4 lanes support)</summary>
+  <summary>GStreamer properties for IMX178, IMX183, IMX226, AR2020 (cameras with 2 and 4 lanes support)</summary>
 
-| Property             | IMX178     | IMX183     | IMX226     |
-| -------------------- | ---------: | ---------: | ---------: |
-| physical_w           |      7.373 |     13.056 |      7.222 |
-| physical_h           |      4.915 |      8.755 |      5.550 |
-| active_w             |       3072 |       5440 |       3904 |
-| active_h             |       2048 |       3648 |       3000 |
-| pixel_t              | RG 8,10,12 | RG 8,10,12 | GB 8,10,12 |
-| max_gain_val         |         48 |         27 |         27 |
-| step_gain_val        |      0.100 |      0.026 |      0.014 |
-| max_framerate (2L08) |       51.3 |       13.4 |       21.8 |
-| max_framerate (2L10) |       41.6 |       13.4 |       21.8 |
-| max_framerate (2L12) |       35.4 |       11.2 |       18.1 |
-| max_framerate (4L08) |       58.2 |       26.8 |       43.6 |
-| max_framerate (4L10) |       58.2 |       26.8 |       43.6 |
-| max_framerate (4L12) |       51.3 |       22.4 |       36.3 |
+| Property             | IMX178     | IMX183     | IMX226     | AR2020     |
+| -------------------- | ---------: | ---------: | ---------: | ---------: |
+| physical_w           |      7.373 |     13.056 |      7.222 |      7.168 |
+| physical_h           |      4.915 |      8.755 |      5.550 |      5.376 |
+| active_w             |       3072 |       5440 |       3904 |       5120 |
+| active_h             |       2048 |       3648 |       3000 |       3840 |
+| pixel_t              | RG 8,10,12 | RG 8,10,12 | GB 8,10,12 | GR 8,10,12 |
+| max_gain_val         |         48 |         27 |         27 |         30 |
+| step_gain_val        |      0.100 |      0.026 |      0.014 |      0.100 |
+| max_framerate (2L08) |       51.3 |       13.4 |       21.8 |        7.9 |
+| max_framerate (2L10) |       41.6 |       13.4 |       21.8 |        7.9 |
+| max_framerate (2L12) |       35.4 |       11.2 |       18.1 |        7.9 |
+| max_framerate (4L08) |       58.2 |       26.8 |       43.6 |       17.7 |
+| max_framerate (4L10) |       58.2 |       26.8 |       43.6 |       17.7 |
+| max_framerate (4L12) |       51.3 |       22.4 |       36.3 |       14.0 |
 </details>
 
 <details>
