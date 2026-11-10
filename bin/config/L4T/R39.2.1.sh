@@ -14,8 +14,10 @@ export CROSS_COMPILE=$GCC_DIR/bin/aarch64-none-linux-gnu-
 DEV_URL=https://developer.nvidia.com/downloads/embedded/L4T/r39_Release_v2.1
 
 case $VC_MIPI_SOM in
-        AGXXavier|XavierNX|XavierNXSD|AGXOrin|OrinNX8GB|OrinNX16GB|OrinNano4GB_SD|OrinNano8GB_SD|OrinNano4GB_NVME|OrinNano8GB_NVME|OrinAGX32GB|OrinAGX64GB|ThorAGX)
+        OrinNX8GB|OrinNX16GB|OrinNano4GB_SD|OrinNano8GB_SD|OrinNano4GB_NVME|OrinNano8GB_NVME|OrinAGX32GB|OrinAGX64GB)
                 BSP_FILE=Jetson_Linux_R39.2.1_aarch64.tbz2
+                ADDON_FILE=Jetson_customer_iq_migration_tools_r39.2.1_JP_7.2.1_GA.zip
+                ADDON_URL=$DEV_URL
                 ;;
 esac
 
@@ -28,6 +30,7 @@ CHECK4MD5=0
 BSP_FILE_CHECKSUM="ee9e28b60dcb06ba1c651ce55d6b3deb"
 RFS_FILE_CHECKSUM="5408d757d855ae24a114117e28f3bf69"
 SRC_FILE_CHECKSUM="a6bb0b58e55847f26f3a51ac5df9ee21"
+ADDON_FILE_CHECKSUM="7bbeb419d6c076c3019f4e4eff962394"
 
 . $BIN_DIR/config/L4T/urls_35.1.0+.sh
 
@@ -88,6 +91,7 @@ function L4T_add_kernel_to_repo {
 }
 
 function L4T_setup_nvidia_driver {
+        cd $KERNEL_SOURCE
         tar xvf nvidia_unified_gpu_display_driver_source.tbz2
 
         return 0
@@ -95,7 +99,7 @@ function L4T_setup_nvidia_driver {
 
 function L4T_setup_flash_prerequisites {
         case $VC_MIPI_SOM in
-        OrinNano4GB_SD|OrinNano8GB_SD|OrinNano4GB_NVME|OrinNano8GB_NVME|OrinNX8GB|OrinNX16GB|OrinAGX32GB|OrinAGX64GB|ThorAGX)
+        OrinNano4GB_SD|OrinNano8GB_SD|OrinNano4GB_NVME|OrinNano8GB_NVME|OrinNX8GB|OrinNX16GB|OrinAGX32GB|OrinAGX64GB)
                 echo "Setting up flash prerequisites ($VC_MIPI_BSP) ..."
                 sudo ./tools/l4t_flash_prerequisites.sh
                 ;;
@@ -155,7 +159,18 @@ function L4T_setup_dynamic_dtbo_file {
 }
 
 function L4T_setup_addon_file {
-# not necessary for this L4T
+        echo "Setup addon file ($VC_MIPI_BSP) ..."
+
+        cd $DOWNLOAD_DIR
+        download_and_check_file ADDON
+
+        unzip Jetson_customer_iq_migration_tools_r39.2.1_JP_7.2.1_GA.zip
+
+        target_dir=${ROOTFS_DIR}/home/${TARGET_USER}
+
+        sudo cp -p Jetson_customer_iq_migration_tools/camera_hotfix/camera_hotfix.tbz2 $target_dir/
+        sudo cp -p $WORKING_DIR/target/install_camera_hotfix_3921.sh $target_dir/
+
         return 0
 }
 

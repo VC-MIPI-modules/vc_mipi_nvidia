@@ -1,0 +1,25 @@
+From 369d7c68f59111d6951031510982b3d0f0cff923 Mon Sep 17 00:00:00 2001
+From: "/setup.sh" <support@vision-components.com>
+Date: Mon, 9 Nov 2026 12:44:10 +0100
+Subject: [PATCH] Reduced TEGRA_MIN_HEIGHT to 4 lines.
+
+---
+ nvidia-oot/include/media/tegra_camera_core.h | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/nvidia-oot/include/media/tegra_camera_core.h b/nvidia-oot/include/media/tegra_camera_core.h
+index be84820cc..593938c16 100644
+--- a/nvidia-oot/include/media/tegra_camera_core.h
++++ b/nvidia-oot/include/media/tegra_camera_core.h
+@@ -25,7 +25,7 @@
+ /* Minimum and maximum width and height common to Tegra video input device. */
+ #define TEGRA_MIN_WIDTH		32U
+ #define TEGRA_MAX_WIDTH		32768U
+-#define TEGRA_MIN_HEIGHT	32U
++#define TEGRA_MIN_HEIGHT	4U
+ #define TEGRA_MAX_HEIGHT	32768U
+ /* Width alignment */
+ #define TEGRA_WIDTH_ALIGNMENT	1
+-- 
+2.34.1
+

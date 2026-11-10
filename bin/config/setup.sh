@@ -153,8 +153,8 @@ bsps=(
 "NVIDIA L4T 36.4.0 (https://developer.nvidia.com/embedded/jetson-linux-r364)"
 "NVIDIA L4T 36.4.3 (https://developer.nvidia.com/embedded/jetson-linux-r3643)"
 "NVIDIA L4T 36.4.4 (https://developer.nvidia.com/embedded/jetson-linux-r3644)"
-"NVIDIA L4T 36.5.0 (https://developer.nvidia.com/embedded/jetson-linux-r3650)"
-"NVIDIA L4T 39.2.1 (https://developer.nvidia.com/embedded/jetson-linux-r3921)"
+"NVIDIA L4T 36.5.0 (https://developer.nvidia.com/embedded/jetson-linux-r365)"
+"NVIDIA L4T 39.2.1 (https://developer.nvidia.com/embedded/jetpack/downloads/archive-7.2.1)"
 )
 
 bsps_keys=(

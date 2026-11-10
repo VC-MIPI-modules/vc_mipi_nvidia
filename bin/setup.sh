@@ -39,6 +39,7 @@ install_system_tools() {
         sudo apt install -y libssl-dev
         sudo apt install -y python3-pip
         sudo apt install -y kmod
+        sudo apt install -y unzip
 }
 
 setup_toolchain() {
@@ -156,6 +157,11 @@ setup_addon_file() {
                         return 0
                         ;;
                 esac
+        fi
+
+        if [[ "39.2.1" == $VC_MIPI_BSP ]]
+        then
+                L4T_setup_addon_file
         fi
 }
 

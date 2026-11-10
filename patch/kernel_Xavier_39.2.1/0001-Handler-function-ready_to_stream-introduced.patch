@@ -1,0 +1,135 @@
+From 2e0d9f7d0086ac526cd930e5242313cc2c9c35df Mon Sep 17 00:00:00 2001
+From: "/setup.sh" <support@vision-components.com>
+Date: Wed, 4 Nov 2026 16:31:12 +0100
+Subject: [PATCH] Handler function ready_to_stream introduced.
+
+---
+ .../platform/tegra/camera/tegracam_v4l2.c     | 35 +++++++++++++++++++
+ .../media/platform/tegra/camera/vi/channel.c  | 28 ++++++++++++++-
+ nvidia-oot/include/media/camera_common.h      |  9 +++++
+ 3 files changed, 71 insertions(+), 1 deletion(-)
+
+diff --git a/nvidia-oot/drivers/media/platform/tegra/camera/tegracam_v4l2.c b/nvidia-oot/drivers/media/platform/tegra/camera/tegracam_v4l2.c
+index b7b1ed8..e7a30e8 100644
+--- a/nvidia-oot/drivers/media/platform/tegra/camera/tegracam_v4l2.c
++++ b/nvidia-oot/drivers/media/platform/tegra/camera/tegracam_v4l2.c
+@@ -136,8 +136,43 @@ static struct v4l2_subdev_video_ops v4l2sd_video_ops = {
+ 	.g_input_status = v4l2sd_g_input_status,
+ };
+ 
++static long v4l2sd_command(struct v4l2_subdev *sd, unsigned int cmd, void *arg)
++{
++	struct i2c_client *client = v4l2_get_subdevdata(sd);
++	struct camera_common_data *s_data = to_camera_common_data(&client->dev);
++	struct camera_common_sensor_ops *sensor_ops;
++	long err;
++
++	if (cmd != TEGRACAM_SD_CMD_READY_TO_STREAM)
++		return -ENOIOCTLCMD;
++
++	if (!s_data) {
++		return -EINVAL;
++	}
++
++	sensor_ops = s_data->ops;
++	/* sensor driver without a check: always ready */
++	if (!sensor_ops || !sensor_ops->ready_to_stream) {
++		return 0;
++	}
++
++	if (!try_module_get(s_data->owner)) {
++		return -ENODEV;
++	}
++
++	err = sensor_ops->ready_to_stream(to_tegracam_device(s_data));
++	if (err) {
++		dev_err(&client->dev, "%s: not ready to stream (%ld)\n", __func__, err);
++	}
++
++	module_put(s_data->owner);
++
++	return err;
++}
++
+ static struct v4l2_subdev_core_ops v4l2sd_core_ops = {
+ 	.s_power	= camera_common_s_power,
++	.command	= v4l2sd_command,
+ };
+ 
+ static int v4l2sd_get_fmt(struct v4l2_subdev *sd,
+diff --git a/nvidia-oot/drivers/media/platform/tegra/camera/vi/channel.c b/nvidia-oot/drivers/media/platform/tegra/camera/vi/channel.c
+index 6c5a50f..f618a43 100644
+--- a/nvidia-oot/drivers/media/platform/tegra/camera/vi/channel.c
++++ b/nvidia-oot/drivers/media/platform/tegra/camera/vi/channel.c
+@@ -2486,6 +2486,32 @@ static int tegra_channel_s_input(struct file *file, void *priv, unsigned int i)
+ 	return 0;
+ }
+ 
++/*
++ * Ask the sensor subdev before starting the stream whether its current
++ * configuration (format, binning, ...) is valid, and reject STREAMON otherwise.
++ * Subdevs that do not implement the command are not affected.
++ */
++static int tegra_channel_streamon(struct file *file, void *priv,
++			enum v4l2_buf_type i)
++{
++	struct video_device *vdev = video_devdata(file);
++	struct tegra_channel *chan = vb2_get_drv_priv(vdev->queue);
++	long ret;
++
++	if (chan->subdev_on_csi) {
++		ret = v4l2_subdev_call(chan->subdev_on_csi, core, command,
++				TEGRACAM_SD_CMD_READY_TO_STREAM, NULL);
++		if (ret && ret != -ENOIOCTLCMD) {
++			dev_err(chan->vi->dev, "%s: sensor not ready to stream (%ld)\n",
++				__func__, ret);
++			return -EINVAL;
++		}
++	}
++
++	/* includes the queue ownership (busy) check and vb2_streamon() */
++	return vb2_ioctl_streamon(file, priv, i);
++}
++
+ static int tegra_channel_log_status(struct file *file, void *priv)
+ {
+ 	struct tegra_channel *chan = video_drvdata(file);
+@@ -2549,7 +2575,7 @@ static const struct v4l2_ioctl_ops tegra_channel_ioctl_ops = {
+ 	.vidioc_dqbuf			= vb2_ioctl_dqbuf,
+ 	.vidioc_create_bufs		= vb2_ioctl_create_bufs,
+ 	.vidioc_expbuf			= vb2_ioctl_expbuf,
+-	.vidioc_streamon		= vb2_ioctl_streamon,
++	.vidioc_streamon		= tegra_channel_streamon,
+ 	.vidioc_streamoff		= vb2_ioctl_streamoff,
+ 	.vidioc_g_edid			= tegra_channel_g_edid,
+ 	.vidioc_s_edid			= tegra_channel_s_edid,
+diff --git a/nvidia-oot/include/media/camera_common.h b/nvidia-oot/include/media/camera_common.h
+index 84d4ced..7e86c36 100644
+--- a/nvidia-oot/include/media/camera_common.h
++++ b/nvidia-oot/include/media/camera_common.h
+@@ -152,6 +152,13 @@ struct camera_common_framesync {
+ struct tegracam_device ;
+ struct camera_common_data;
+ 
++/*
++ * Command for v4l2_subdev_core_ops.command: ask the sensor driver whether the
++ * current configuration (format, binning, ...) can be streamed. Called by the
++ * VI channel before STREAMON; a non-zero result rejects STREAMON.
++ */
++#define TEGRACAM_SD_CMD_READY_TO_STREAM		0x56430001
++
+ struct camera_common_sensor_ops {
+ 	u32 numfrmfmts;
+ 	const struct camera_common_frmfmt *frmfmt_table;
+@@ -169,6 +176,8 @@ struct camera_common_sensor_ops {
+ 	int (*set_mode)(struct tegracam_device *tc_dev);
+ 	int (*start_streaming)(struct tegracam_device *tc_dev);
+ 	int (*stop_streaming)(struct tegracam_device *tc_dev);
++	/* optional: return 0 if the current configuration can be streamed */
++	int (*ready_to_stream)(struct tegracam_device *tc_dev);
+ };
+ 
+ struct tegracam_sensor_data {
+-- 
+2.34.1
+

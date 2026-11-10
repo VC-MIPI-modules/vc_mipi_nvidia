@@ -579,8 +579,6 @@ static int vc_stop_streaming(struct tegracam_device *tc_dev)
         return ret;
 }
 
-//bazo tmp removed
-#if 0
 static int vc_ready_to_stream(struct tegracam_device *tc_dev)
 {
         struct vc_cam *cam = tegracam_to_cam(tc_dev);
@@ -653,7 +651,6 @@ static int vc_ready_to_stream(struct tegracam_device *tc_dev)
 
         return ret;
 }
-#endif
 
 // NOTE: Don't remove this function. It is needed by the Tegra Framework. 
 static int vc_set_group_hold(struct tegracam_device *tc_dev, bool val) {return 0;}
@@ -680,8 +677,7 @@ static struct camera_common_sensor_ops vc_sensor_ops = {
         .power_get = vc_power_get,
         .power_put = vc_power_put,
         .parse_dt = vc_parse_dt,
-//bazo tmp removed
-//        .ready_to_stream = vc_ready_to_stream, 
+        .ready_to_stream = vc_ready_to_stream, 
 };
 
 int vc_init_frmfmt(struct device *dev, struct vc_cam *cam)

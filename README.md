@@ -38,6 +38,7 @@
   * [NVIDIA L4T 36.4.3](https://developer.nvidia.com/embedded/jetson-linux-r3643) *(only NVIDIA Jetson Orin Nano and Orin NX)*
   * [NVIDIA L4T 36.4.4](https://developer.nvidia.com/embedded/jetson-linux-r3644) *(only NVIDIA Jetson Orin Nano, Orin NX and Orin AGX)*
   * [NVIDIA L4T 36.5.0](https://developer.nvidia.com/embedded/jetson-linux-r365) *(only NVIDIA Jetson Orin Nano, Orin NX and Orin AGX)*
+  * [NVIDIA L4T 39.2.1](https://developer.nvidia.com/embedded/jetpack/downloads/archive-7.2.1) *(only NVIDIA Jetson Orin Nano, Orin NX and Orin AGX)*
 * Supported [VC MIPI Camera Modules](https://www.vision-components.com/fileadmin/external/documentation/hardware/VC_MIPI_Camera_Module/index.html) 
   * IMX178, IMX183, IMX226
   * IMX250, IMX252, IMX264, IMX265, IMX273, IMX392
@@ -480,6 +481,7 @@ If you have your own BSP, you have to integrate the driver into it. Please follo
    |                          |                  | 36.4.3          | kernel_Xavier_36.4.3 * |
    |                          |                  | 36.4.4          | kernel_Xavier_36.4.4 * |
    |                          |                  | 36.5.0          | kernel_Xavier_36.5.0 * |
+   |                          |                  | 39.2.1          | kernel_Xavier_39.2.1 * |
    |                          | Auvidea JNX42    | 35.3.1          | kernel_Xavier_35.3.1+ |
    |                          |                  | 35.4.1          | kernel_Xavier_35.4.1+ |
    |                          |                  | 35.6.0          | kernel_Xavier_35.6.0  |
@@ -488,12 +490,14 @@ If you have your own BSP, you have to integrate the driver into it. Please follo
    |                          |                  | 36.4.3          | kernel_Xavier_36.4.3 * |
    |                          |                  | 36.4.4          | kernel_Xavier_36.4.4 * |
    |                          |                  | 36.5.0          | kernel_Xavier_36.5.0 * |
+   |                          |                  | 39.2.1          | kernel_Xavier_39.2.1 * |
    | NVIDIA Jetson Orin NX    | NVIDIA DevKit    | 35.6.0          | kernel_Xavier_35.6.0  |
    |                          |                  | 36.2.0          | kernel_Xavier_36.2.0+ * |
    |                          |                  | 36.4.0          | kernel_Xavier_36.4.0+ * |
    |                          |                  | 36.4.3          | kernel_Xavier_36.4.3 * |
    |                          |                  | 36.4.4          | kernel_Xavier_36.4.4 * |
    |                          |                  | 36.5.0          | kernel_Xavier_36.5.0 * |
+   |                          |                  | 39.2.1          | kernel_Xavier_39.2.1 * |
    |                          | Auvidea JNX42    | 35.2.1          | kernel_Xavier_35.2.1+ |
    |                          |                  | 35.3.1          | kernel_Xavier_35.3.1+ |
    |                          |                  | 35.4.1          | kernel_Xavier_35.4.1+ |
@@ -503,9 +507,11 @@ If you have your own BSP, you have to integrate the driver into it. Please follo
    |                          |                  | 36.4.3          | kernel_Xavier_36.4.3 * |
    |                          |                  | 36.4.4          | kernel_Xavier_36.4.4 * |
    |                          |                  | 36.5.0          | kernel_Xavier_36.5.0 * |
+   |                          |                  | 39.2.1          | kernel_Xavier_39.2.1 * |
    | NVIDIA Jetson Orin AGX   | DevKit + DSADDON | 36.4.4          | kernel_Xavier_36.4.4 * |
    |                          |                  | 36.5.0          | kernel_Xavier_36.5.0 * |
-*) For L4T 36.x.y, the kernel_common_32.3.1+ must be left out.
+   |                          |                  | 39.2.1          | kernel_Xavier_39.2.1 * |
+*) For L4T > 36.x.y, the kernel_common_32.3.1+ must be left out.
 
 2. Copy the camera device tree to the folder listed in the following table
 
@@ -521,12 +527,12 @@ If you have your own BSP, you have to integrate the driver into it. Please follo
    | NVIDIA Jetson TX2        | DevKit + J20     | Auvidea_J20_TX2/tegra186-camera-vc-mipi-cam.dtsi <br> => /hardware/nvidia/platform/t18x/common/kernel-dts/t18x-common-modules |
    | NVIDIA Jetson TX2 NX     | Auvidea JNX30D   | Auvidea_JNX30D_TX2NX/tegra186-camera-vc-mipi-cam.dtsi <br> => /hardware/nvidia/platform/t18x/lanai/kernel-dts/common |
    | NVIDIA Jetson Orin Nano  | NVIDIA DevKit    | NV_DevKit_OrinNano/tegra234-camera-vc-mipi-cam.dtsi <br> => /hardware/nvidia/platform/t23x/p3768/kernel-dts/cvb <br> (device tree include file used for Jetpack 5) |
-   |                          |                  | NV_DevKit_OrinNano/tegra234-p3767-camera-p3768-vc_mipi-dual.dts <br> => /hardware/nvidia/t23x/nv-public/overlay <br> (device tree overlay file for Jetpack 6) |
+   |                          |                  | NV_DevKit_OrinNano/tegra234-p3767-camera-p3768-vc_mipi-dual.dts <br> => /hardware/nvidia/t23x/nv-public/overlay <br> (device tree overlay file for Jetpack 6 and 7) |
    |                          | Auvidea JNX42    | Auvidea_JNX42_OrinNano/tegra234-camera-vc-mipi-cam.dtsi <br> => /hardware/nvidia/platform/t23x/p3768/kernel-dts/cvb <br> (device tree include file used for Jetpack 5) |
-   |                          |                  | Auvidea_JNX42_OrinNano/tegra234-p3767-camera-p3768-vc_mipi-dual.dts <br> => /hardware/nvidia/t23x/nv-public/overlay <br> (device tree overlay file for Jetpack 6) |
+   |                          |                  | Auvidea_JNX42_OrinNano/tegra234-p3767-camera-p3768-vc_mipi-dual.dts <br> => /hardware/nvidia/t23x/nv-public/overlay <br> (device tree overlay file for Jetpack 6 and 7) |
    | NVIDIA Jetson Orin NX    | Auvidea JNX42    | Auvidea_JNX42_OrinNX/tegra234-camera-vc-mipi-cam.dtsi <br> => /hardware/nvidia/platform/t23x/p3768/kernel-dts/cvb <br> (device tree include file used for Jetpack 5) |
-   |                          |                  | Auvidea_JNX42_OrinNX/tegra234-p3767-camera-p3768-vc_mipi-dual.dts <br> => /hardware/nvidia/t23x/nv-public/overlay <br> (device tree overlay file for Jetpack 6) |
-   | NVIDIA Jetson Orin AGX   | DevKit + DSADDON | Forecr_DSADDON_OrinAGX/tegra234-p3737-camera-vc_mipi-overlay.dts <br> => /hardware/nvidia/t23x/nv-public/overlay <br> (device tree overlay file for Jetpack 6) |
+   |                          |                  | Auvidea_JNX42_OrinNX/tegra234-p3767-camera-p3768-vc_mipi-dual.dts <br> => /hardware/nvidia/t23x/nv-public/overlay <br> (device tree overlay file for Jetpack 6 and 7) |
+   | NVIDIA Jetson Orin AGX   | DevKit + DSADDON | Forecr_DSADDON_OrinAGX/tegra234-p3737-camera-vc_mipi-overlay.dts <br> => /hardware/nvidia/t23x/nv-public/overlay <br> (device tree overlay file for Jetpack 6 and 7) |
 
 3. Copy all driver files from folder **src/driver** to either <br> 
 **/kernel/nvidia/drivers/media/i2c** (Jetpack 5) or <br>
@@ -591,6 +597,62 @@ LABEL secondary
 
    > * this version has been tested with two identical IMX565, IMX567/8, IMX296, IMX226, IMX415 sensors
    > * there might be problems when using only a single sensor
+
+### For Jetpack 7 (L4T 39.2.1):
+
+The device tree overlay mechanism is the same as in JetPack 6, and the `setup_nvidia.sh`
+script still has to be executed.
+
+Since JetPack 7.2 (L4T R39.2), the Argus camera daemon (`nvargus-daemon`) expects a
+**.nito file** (NVIDIA Image Tuning Object) for each camera module by default. A .nito file
+contains the ISP tuning data for one or more sensor modes, and these modes must match the
+sensor modes in the device tree. Without a matching .nito file, Argus does not list the
+camera, so streaming through the ISP (e.g. `nvarguscamerasrc`, `argus_camera`) no longer
+works. Raw streaming via V4L2 is not affected.
+
+NVIDIA provides a camera hotfix for L4T R39.2.1 (JetPack 7.2.1, part of the *Jetson Customer
+IQ Migration Tools*) that restores support for the legacy text-based ISP configuration.
+The script `install_camera_hotfix_3921.sh` installs this hotfix (with a backup of all
+replaced files) and configures `nvargus-daemon` in one of these modes:
+
+- `legacy`: text-based configuration. Uses `camera_overrides.isp` if present, otherwise the
+  NVIDIA default tuning. Recommended by NVIDIA for Argus.
+- `generate`: creates a .nito file for each camera, either from a `camera_overrides.isp`
+  (e.g. the color tuning from Vision Components) or from the NVIDIA defaults, installs it
+  and switches to NITO mode.
+- `nito`: NITO mode with an existing .nito file.
+
+The hotfix is built for L4T R39.2.1 only; the script checks the version before installing.
+
+Run:
+```bash
+# install the hotfix and use the legacy text configuration
+sudo ./install_camera_hotfix_3921.sh --mode legacy
+sudo ./install_camera_hotfix_3921.sh --mode legacy -i camera_overrides.isp
+
+# generate a .nito for sensor 0, sensor mode 0 (from camera_overrides.isp or NVIDIA defaults)
+sudo ./install_camera_hotfix_3921.sh --mode generate -s 0 -M 0 [-i camera_overrides.isp]
+
+# use an existing .nito file
+sudo ./install_camera_hotfix_3921.sh --mode nito -n jakku_front_vc_mipi.nito
+
+# remove the hotfix again
+sudo ./install_camera_hotfix_3921.sh --restore
+```
+
+The hotfix is installed only once; `--mode` can be changed any time later. Other locations
+of the tarball can be given with `-t FILE`. `--help` lists all options.
+
+Check:
+
+```bash
+systemctl show nvargus-daemon -p Environment
+nvargus_nvraw --lps
+```
+
+   > Device tree note:
+   > For Argus, `active_w` / `active_h` of every sensor mode in the device tree must be set to the real image size (not 0), otherwise no camera is listed.
+
 
 
 ### For NVIDIA Jetson TX2 NX
