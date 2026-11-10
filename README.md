@@ -345,13 +345,13 @@ If you want to change some settings of a camera in the device tree, please follo
    | NVIDIA Jetson TX2 | Auvidea J20 on DevKit | src/devicetree/Auvidea_J20_TX2/tegra186-camera-vc-mipi-cam.dtsi |
    | NVIDIA Jetson TX2 NX | Auvidea JNX30D | src/devicetree/Auvidea_JNX30D_TX2NX/tegra186-camera-vc-mipi-cam.dtsi |
    | NVIDIA Jetson Orin Nano | NVIDIA Jetson Orin Nano Developer Kit | src/devicetree/NV_DevKit_OrinNano/tegra234-camera-vc-mipi-cam.dtsi <br> Jetpack 5 (L4T 35.3.1, L4T 35.4.1, L4T 35.6.0)|
-   | NVIDIA Jetson Orin Nano | NVIDIA Jetson Orin Nano Developer Kit | src/devicetree/NV_DevKit_OrinNano/tegra234-p3767-camera-p3768-vc_mipi-dual.dts <br> Jetpack 6 (L4T 36.x.y)|
+   | NVIDIA Jetson Orin Nano | NVIDIA Jetson Orin Nano Developer Kit | src/devicetree/NV_DevKit_OrinNano/tegra234-p3767-camera-p3768-vc_mipi-dual.dts <br> Jetpack 6 and 7 (L4T > 36.x.y)|
    | NVIDIA Jetson Orin Nano | Auvidea JNX42 | src/devicetree/Auvidea_JNX42_OrinNano/tegra234-camera-vc-mipi-cam.dtsi <br> Jetpack 5 (L4T 35.3.1, L4T 35.4.1, L4T 35.6.0) |
-   | NVIDIA Jetson Orin Nano | Auvidea JNX42 | src/devicetree/NV_DevKit_OrinNano/tegra234-p3767-camera-p3768-vc_mipi-dual.dts <br> Jetpack 6 (L4T 36.x.y)|
-   | NVIDIA Jetson Orin NX   | NVIDIA Jetson Orin Nano Developer Kit | src/devicetree/NV_DevKit_OrinNano/tegra234-p3767-camera-p3768-vc_mipi-dual.dts <br> Jetpack 6 (L4T 36.x.y)|
+   | NVIDIA Jetson Orin Nano | Auvidea JNX42 | src/devicetree/NV_DevKit_OrinNano/tegra234-p3767-camera-p3768-vc_mipi-dual.dts <br> Jetpack 6 and 7 (L4T > 36.x.y)|
+   | NVIDIA Jetson Orin NX   | NVIDIA Jetson Orin Nano Developer Kit | src/devicetree/NV_DevKit_OrinNano/tegra234-p3767-camera-p3768-vc_mipi-dual.dts <br> Jetpack 6 and 7 (L4T > 36.x.y)|
    | NVIDIA Jetson Orin NX   | Auvidea JNX42 | src/devicetree/Auvidea_JNX42_OrinNX/tegra234-camera-vc-mipi-cam.dtsi <br> Jetpack 5 (L4T 35.2.1, L4T 35.3.1, L4T 35.4.1, L4T 35.6.0)|
-   | NVIDIA Jetson Orin NX   | Auvidea JNX42 | src/devicetree/Auvidea_JNX42_OrinNX/tegra234-p3767-camera-p3768-vc_mipi-dual.dts <br> Jetpack 6 (L4T 36.x.y)|
-   | NVIDIA Jetson Orin AGX  | Forecr DSADDON on DevKit | src/devicetree/Forecr_DSADDON_OrinAGX/tegra234-p3737-camera-vc_mipi-overlay.dts <br> Jetpack 6 (L4T 36.x.y)|
+   | NVIDIA Jetson Orin NX   | Auvidea JNX42 | src/devicetree/Auvidea_JNX42_OrinNX/tegra234-p3767-camera-p3768-vc_mipi-dual.dts <br> Jetpack 6 and 7 (L4T > 36.x.y)|
+   | NVIDIA Jetson Orin AGX  | Forecr DSADDON on DevKit | src/devicetree/Forecr_DSADDON_OrinAGX/tegra234-p3737-camera-vc_mipi-overlay.dts <br> Jetpack 6 and 7 (L4T > 36.x.y)|
 
    To edit the correct device tree file you can simply use the setup script. It will open the correct device tree file in the nano editor.
 
@@ -536,7 +536,7 @@ If you have your own BSP, you have to integrate the driver into it. Please follo
 
 3. Copy all driver files from folder **src/driver** to either <br> 
 **/kernel/nvidia/drivers/media/i2c** (Jetpack 5) or <br>
-**/nvidia-oot/drivers/media/i2c/vc_mipi** (Jetpack 6) <br>
+**/nvidia-oot/drivers/media/i2c/vc_mipi** (Jetpack 6 and 7) <br>
 
 ## Testing the camera
 
