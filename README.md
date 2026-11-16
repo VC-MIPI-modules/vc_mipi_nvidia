@@ -1,4 +1,4 @@
-# Vision Components MIPI CSI-2 driver for NVIDIA Jetson Nano, Xavier NX, AGX Xavier, TX2, Orin Nano, Orin NX and Orin AGX
+# Vision Components MIPI CSI-2 driver for NVIDIA Jetson Nano, Xavier NX, AGX Xavier, Orin Nano, Orin NX and Orin AGX
 
 ![VC MIPI camera](doc/images/mipi_sensor_front_back.png)
 
@@ -8,8 +8,6 @@
   * [NVIDIA Jetson Nano 4GB/2GB (production + devkit)](https://developer.nvidia.com/embedded/jetson-nano)
   * [NVIDIA Jetson Xavier NX (production + devkit)](https://developer.nvidia.com/embedded/jetson-xavier-nx)
   * [NVIDIA Jetson AGX Xavier](https://developer.nvidia.com/embedded/jetson-agx-xavier-developer-kit)
-  * [NVIDIA Jetson TX2](https://developer.nvidia.com/embedded/jetson-tx2-developer-kit)
-  * [NVIDIA Jetson TX2 NX](https://developer.nvidia.com/embedded/jetson-tx2-nx)
   * [NVIDIA Jetson Orin Nano 8GB/4GB](https://developer.nvidia.com/embedded/jetson-modules#jetson_orin_nano)
   * [NVIDIA Jetson Orin NX 16GB/8GB](https://developer.nvidia.com/embedded/jetson-modules#jetson_orin_nx)
   * [NVIDIA Jetson Orin AGX 32GB/64GB](https://developer.nvidia.com/embedded/jetson-modules#jetson_orin_agx)
@@ -20,21 +18,13 @@
   * [NVIDIA Jetson Orin Nano Developer Kit](https://developer.nvidia.com/embedded/learn/get-started-jetson-orin-nano-devkit)
   * [Auvidea JNX30/JNX30D](https://auvidea.eu/product/70879)
   * [Auvidea JNX42 LM](https://auvidea.eu/product/70784) *(only NVIDIA Jetson Nano, Xavier NX, Orin Nano, Orin NX)*
-  * [Auvidea J20 on Devkit Jetson AGX Xavier or TX2](https://auvidea.eu/j20/) *(only connector 2+3)*
+  * [Auvidea J20 on Devkit Jetson AGX Xavier](https://auvidea.eu/j20/) *(only connector 2+3)*
   * [Forecr DSADDON on Devkit Jetson Orin AGX](https://www.forecr.io/products/dsaddon-mipi-agx-6ch)
 * Supported board support packages
-  * [NVIDIA L4T 32.7.1](https://developer.nvidia.com/embedded/linux-tegra-r3271) *will be removed in 0.21.0*
-  * [NVIDIA L4T 32.7.2](https://developer.nvidia.com/embedded/linux-tegra-r3272) *will be removed in 0.21.0*
-  * [NVIDIA L4T 32.7.3](https://developer.nvidia.com/embedded/linux-tegra-r3273) *will be removed in 0.21.0*
-  * [NVIDIA L4T 32.7.4](https://developer.nvidia.com/embedded/linux-tegra-r3274) *(only NVIDIA Jetson Nano) will be removed in 0.21.0*
   * [NVIDIA L4T 32.7.5](https://developer.nvidia.com/embedded/linux-tegra-r3275) *(only NVIDIA Jetson Nano)*
-  * [NVIDIA L4T 35.1.0](https://developer.nvidia.com/embedded/jetson-linux-r351) *(only NVIDIA Jetson Xavier NX and AGX Xavier) will be removed in 0.21.0*
-  * [NVIDIA L4T 35.2.1](https://developer.nvidia.com/embedded/jetson-linux-r3521) *(only NVIDIA Jetson Xavier NX, AGX Xavier and Orin NX) will be removed in 0.21.0*
   * [NVIDIA L4T 35.3.1](https://developer.nvidia.com/embedded/jetson-linux-r3531) *(only NVIDIA Jetson Xavier NX, AGX Xavier, Orin NX and Orin Nano)*
   * [NVIDIA L4T 35.4.1](https://developer.nvidia.com/embedded/jetson-linux-r3541) *(only NVIDIA Jetson Xavier NX, AGX Xavier, Orin NX and Orin Nano)*
   * [NVIDIA L4T 35.6.0](https://developer.nvidia.com/embedded/jetson-linux-r3560) *(only NVIDIA Jetson Xavier NX, AGX Xavier, Orin NX and Orin Nano)*
-  * [NVIDIA L4T 36.2.0](https://developer.nvidia.com/embedded/jetson-linux-r362) *(only NVIDIA Jetson Orin Nano and Orin NX) will be removed in 0.21.0*
-  * [NVIDIA L4T 36.4.0](https://developer.nvidia.com/embedded/jetson-linux-r3640) *(only NVIDIA Jetson Orin Nano and Orin NX) will be removed in 0.21.0*
   * [NVIDIA L4T 36.4.3](https://developer.nvidia.com/embedded/jetson-linux-r3643) *(only NVIDIA Jetson Orin Nano and Orin NX)*
   * [NVIDIA L4T 36.4.4](https://developer.nvidia.com/embedded/jetson-linux-r3644) *(only NVIDIA Jetson Orin Nano, Orin NX and Orin AGX)*
   * [NVIDIA L4T 36.5.0](https://developer.nvidia.com/embedded/jetson-linux-r365) *(only NVIDIA Jetson Orin Nano, Orin NX and Orin AGX)*
@@ -80,7 +70,7 @@
 
    [Quick Start Guide L4T 35.3.1](https://docs.nvidia.com/jetson/archives/r35.3.1/DeveloperGuide/text/IN/QuickStart.html) (NVIDIA Jetson Orin Nano, Orin NX, Xavier NX and AGX Xavier)
 
-   [Quick Start Guide L4T 32.7.3](https://docs.nvidia.com/jetson/archives/l4t-archived/l4t-3273/index.html#page/Tegra%20Linux%20Driver%20Package%20Development%20Guide/quick_start.html) (NVIDIA Jetson Nano, TX2, Xavier NX and AGX Xavier)
+   [Quick Start Guide L4T 32.7.5](https://docs.nvidia.com/jetson/archives/l4t-archived/l4t-3275/index.html#page/Tegra%20Linux%20Driver%20Package%20Development%20Guide/quick_start.html) (NVIDIA Jetson Nano)
 
 2. Create a directory and clone the repository.
 
@@ -342,14 +332,12 @@ If you want to change some settings of a camera in the device tree, please follo
    | NVIDIA Jetson Xavier NX | Auvidea JNX30 | src/devicetree/Auvidea_JNX30_XavierNX/tegra194-camera-vc-mipi-cam.dtsi |
    | NVIDIA Jetson Xavier NX | Auvidea JNX42 | src/devicetree/Auvidea_JNX42_XavierNX/tegra194-camera-vc-mipi-cam.dtsi |
    | NVIDIA Jetson AGX Xavier | Auvidea J20 on DevKit | src/devicetree/Auvidea_J20_AGXXavier/tegra194-camera-vc-mipi-cam.dtsi |
-   | NVIDIA Jetson TX2 | Auvidea J20 on DevKit | src/devicetree/Auvidea_J20_TX2/tegra186-camera-vc-mipi-cam.dtsi |
-   | NVIDIA Jetson TX2 NX | Auvidea JNX30D | src/devicetree/Auvidea_JNX30D_TX2NX/tegra186-camera-vc-mipi-cam.dtsi |
    | NVIDIA Jetson Orin Nano | NVIDIA Jetson Orin Nano Developer Kit | src/devicetree/NV_DevKit_OrinNano/tegra234-camera-vc-mipi-cam.dtsi <br> Jetpack 5 (L4T 35.3.1, L4T 35.4.1, L4T 35.6.0)|
    | NVIDIA Jetson Orin Nano | NVIDIA Jetson Orin Nano Developer Kit | src/devicetree/NV_DevKit_OrinNano/tegra234-p3767-camera-p3768-vc_mipi-dual.dts <br> Jetpack 6 and 7 (L4T > 36.x.y)|
    | NVIDIA Jetson Orin Nano | Auvidea JNX42 | src/devicetree/Auvidea_JNX42_OrinNano/tegra234-camera-vc-mipi-cam.dtsi <br> Jetpack 5 (L4T 35.3.1, L4T 35.4.1, L4T 35.6.0) |
    | NVIDIA Jetson Orin Nano | Auvidea JNX42 | src/devicetree/NV_DevKit_OrinNano/tegra234-p3767-camera-p3768-vc_mipi-dual.dts <br> Jetpack 6 and 7 (L4T > 36.x.y)|
    | NVIDIA Jetson Orin NX   | NVIDIA Jetson Orin Nano Developer Kit | src/devicetree/NV_DevKit_OrinNano/tegra234-p3767-camera-p3768-vc_mipi-dual.dts <br> Jetpack 6 and 7 (L4T > 36.x.y)|
-   | NVIDIA Jetson Orin NX   | Auvidea JNX42 | src/devicetree/Auvidea_JNX42_OrinNX/tegra234-camera-vc-mipi-cam.dtsi <br> Jetpack 5 (L4T 35.2.1, L4T 35.3.1, L4T 35.4.1, L4T 35.6.0)|
+   | NVIDIA Jetson Orin NX   | Auvidea JNX42 | src/devicetree/Auvidea_JNX42_OrinNX/tegra234-camera-vc-mipi-cam.dtsi <br> Jetpack 5 (L4T 35.3.1, L4T 35.4.1, L4T 35.6.0)|
    | NVIDIA Jetson Orin NX   | Auvidea JNX42 | src/devicetree/Auvidea_JNX42_OrinNX/tegra234-p3767-camera-p3768-vc_mipi-dual.dts <br> Jetpack 6 and 7 (L4T > 36.x.y)|
    | NVIDIA Jetson Orin AGX  | Forecr DSADDON on DevKit | src/devicetree/Forecr_DSADDON_OrinAGX/tegra234-p3737-camera-vc_mipi-overlay.dts <br> Jetpack 6 and 7 (L4T > 36.x.y)|
 
@@ -361,7 +349,7 @@ If you want to change some settings of a camera in the device tree, please follo
 
 2. Enter recovery mode by following the instructions in one of the guides:<br>
 [Quick Start Guide L4T 35.3.1](https://docs.nvidia.com/jetson/archives/r35.3.1/DeveloperGuide/text/IN/QuickStart.html) (NVIDIA Jetson Orin Nano, Orin NX, Xavier NX and AGX Xavier) <br>
-[Quick Start Guide L4T 32.7.3](https://docs.nvidia.com/jetson/archives/l4t-archived/l4t-3273/index.html#page/Tegra%20Linux%20Driver%20Package%20Development%20Guide/quick_start.html) (NVIDIA Jetson Nano, TX2, Xavier NX and AGX Xavier)
+[Quick Start Guide L4T 32.7.5](https://docs.nvidia.com/jetson/archives/l4t-archived/l4t-3275/index.html#page/Tegra%20Linux%20Driver%20Package%20Development%20Guide/quick_start.html) (NVIDIA Jetson Nano)
 
 3. Build and flash the device tree files to the target.
 
@@ -377,20 +365,17 @@ If you want to change some settings of a camera in the device tree, please follo
 
 If you want to use your camera in an application with long exposure times or external trigger and the time between two consecutively triggers is potentially long (> 5 seconds) it is necessary to adjust the timeout of the csi receiver. <br>
 
-Since different Jetson devices are using different video inputs (VI2, VI4 and VI5), the adjustment has to be done at the appropriate location. <br>
+Since different Jetson devices are using different video inputs (VI2 and VI5), the adjustment has to be done at the appropriate location. <br>
 
    | video input | file       | location                             | call                                    |
    | ----------- | ---------- | ------------------------------------ | --------------------------------------- |
    | VI2         | vi2_fops.c | function tegra_channel_ec_init       | chan->timeout = msecs_to_jiffies(5000); |
-   | VI4         | vi4_fops.c | function vi4_channel_start_streaming | chan->timeout = msecs_to_jiffies(5000); |
    | VI5         | vi5_fops.c | define                               | #define CAPTURE_TIMEOUT_MS	5000         |
 
 The following table lists the Jetson device and the necessary file:
    | system on module         | in file                                                          |
    | ------------------------ | ---------------------------------------------------------------- |
    | NVIDIA Jetson Nano       | /kernel/nvidia/drivers/media/platform/tegra/camera/vi/vi2_fops.c |
-   | NVIDIA Jetson TX2        | /kernel/nvidia/drivers/media/platform/tegra/camera/vi/vi4_fops.c |
-   | NVIDIA Jetson TX2 NX     | /kernel/nvidia/drivers/media/platform/tegra/camera/vi/vi4_fops.c |
    | NVIDIA Jetson Xavier NX  | /kernel/nvidia/drivers/media/platform/tegra/camera/vi/vi5_fops.c |
    | NVIDIA Jetson AGX Xavier | /kernel/nvidia/drivers/media/platform/tegra/camera/vi/vi5_fops.c |
    | NVIDIA Jetson Orin Nano  | /kernel/nvidia/drivers/media/platform/tegra/camera/vi/vi5_fops.c |
@@ -432,52 +417,24 @@ If you have your own BSP, you have to integrate the driver into it. Please follo
 
    | system on module         | carrier board    | BSP             | all patches in folder patch/... |
    | ------------------------ | ---------------- | --------------- | --------------------- |
-   | NVIDIA Jetson Nano       | NVIDIA DevKit    | 32.7.1 - 32.7.3 | kernel_Nano_32.6.1+   |
-   |                          |                  | 32.7.4          | kernel_Nano_32.6.1+ <br> kernel_Nano_32.7.4 |
-   |                          |                  | 32.7.5          | kernel_Nano_32.6.1+ <br> kernel_Nano_32.7.5 |
-   |                          | Auvidea JNX30    | 32.7.1 - 32.7.3 | kernel_Nano_32.6.1+ <br> dt_Auvidea_JNX30_Nano_32.5.0+ |
-   |                          |                  | 32.7.4          | kernel_Nano_32.6.1+ <br> kernel_Nano_32.7.4 <br> dt_Auvidea_JNX30_Nano_32.5.0+ |
-   |                          |                  | 32.7.5          | kernel_Nano_32.6.1+ <br> kernel_Nano_32.7.5 <br> dt_Auvidea_JNX30_Nano_32.5.0+ |
-   |                          | Auvidea JNX42    | 32.7.1 - 32.7.3 | kernel_Nano_32.6.1+ <br> dt_Auvidea_JNX30_Nano_32.5.0+ |
-   |                          |                  | 32.7.4          | kernel_Nano_32.6.1+ <br> kernel_Nano_32.7.4 <br> dt_Auvidea_JNX30_Nano_32.5.0+ |
-   |                          |                  | 32.7.5          | kernel_Nano_32.6.1+ <br> kernel_Nano_32.7.5 <br> dt_Auvidea_JNX30_Nano_32.5.0+ |
-   | NVIDIA Jetson Xavier NX  | NVIDIA DevKit    | 32.7.1 - 32.7.2 | kernel_Xavier_32.6.1+ |
-   |                          |                  | 32.7.3          | kernel_Xavier_32.7.3+ |
-   |                          |                  | 35.1.0          | kernel_Xavier_35.1.0+ |
-   |                          |                  | 35.2.1          | kernel_Xavier_35.2.1+ |
-   |                          |                  | 35.3.1          | kernel_Xavier_35.3.1+ |
+   | NVIDIA Jetson Nano       | NVIDIA DevKit    | 32.7.5          | kernel_Nano_32.6.1+ <br> kernel_Nano_32.7.5 |
+   |                          | Auvidea JNX30    | 32.7.5          | kernel_Nano_32.6.1+ <br> kernel_Nano_32.7.5 <br> dt_Auvidea_JNX30_Nano_32.5.0+ |
+   |                          | Auvidea JNX42    | 32.7.5          | kernel_Nano_32.6.1+ <br> kernel_Nano_32.7.5 <br> dt_Auvidea_JNX30_Nano_32.5.0+ |
+   | NVIDIA Jetson Xavier NX  | NVIDIA DevKit    | 35.3.1          | kernel_Xavier_35.3.1+ |
    |                          |                  | 35.4.1          | kernel_Xavier_35.4.1+ |
    |                          |                  | 35.6.0          | kernel_Xavier_35.6.0  |
-   |                          | Auvidea JNX30    | 32.7.1 - 32.7.2 | kernel_Xavier_32.6.1+ <br> dt_Auvidea_JNX30_XavierNX_32.5.0+ |
-   |                          |                  | 32.7.3          | kernel_Xavier_32.7.3+ <br> dt_Auvidea_JNX30_XavierNX_32.5.0+ |
-   |                          |                  | 35.1.0          | kernel_Xavier_35.1.0+ |
-   |                          |                  | 35.2.1          | kernel_Xavier_35.2.1+ |
-   |                          |                  | 35.3.1          | kernel_Xavier_35.3.1+ |
+   |                          | Auvidea JNX30    | 35.3.1          | kernel_Xavier_35.3.1+ |
    |                          |                  | 35.4.1          | kernel_Xavier_35.4.1+ |
    |                          |                  | 35.6.0          | kernel_Xavier_35.6.0  |
-   |                          | Auvidea JNX42    | 32.7.1 - 32.7.2 | kernel_Xavier_32.6.1+ <br> dt_Auvidea_JNX30_XavierNX_32.5.0+ |
-   |                          |                  | 32.7.3          | kernel_Xavier_32.7.3+ <br> dt_Auvidea_JNX30_XavierNX_32.5.0+ |
-   |                          |                  | 35.1.0          | kernel_Xavier_35.1.0+ |
-   |                          |                  | 35.2.1          | kernel_Xavier_35.2.1+ |
-   |                          |                  | 35.3.1          | kernel_Xavier_35.3.1+ |
+   |                          | Auvidea JNX42    | 35.3.1          | kernel_Xavier_35.3.1+ |
    |                          |                  | 35.4.1          | kernel_Xavier_35.4.1+ |
    |                          |                  | 35.6.0          | kernel_Xavier_35.6.0  |
-   | NVIDIA Jetson AGX Xavier | DevKit + J20     | 32.7.1 - 32.7.2 | kernel_Xavier_32.6.1+ |
-   |                          |                  | 32.7.3          | kernel_Xavier_32.7.3+ |
-   |                          |                  | 35.1.0          | kernel_Xavier_35.1.0+ |
-   |                          |                  | 35.2.1          | kernel_Xavier_35.2.1+ |
-   |                          |                  | 35.3.1          | kernel_Xavier_35.3.1+ |
+   | NVIDIA Jetson AGX Xavier | DevKit + J20     | 35.3.1          | kernel_Xavier_35.3.1+ |
    |                          |                  | 35.4.1          | kernel_Xavier_35.4.1+ |
    |                          |                  | 35.6.0          | kernel_Xavier_35.6.0  |
-   | NVIDIA Jetson TX2        | DevKit + J20     | 32.7.1 - 32.7.2 | kernel_Xavier_32.6.1+ |
-   |                          |                  | 32.7.3          | kernel_Xavier_32.7.3+ |
-   | NVIDIA Jetson TX2 NX     | Auvidea JNX30D   | 32.7.1 - 32.7.2 | kernel_Xavier_32.6.1+ |
-   |                          |                  | 32.7.3          | kernel_Xavier_32.7.3+ |
    | NVIDIA Jetson Orin Nano  | NVIDIA DevKit    | 35.3.1          | kernel_Xavier_35.3.1+ |
    |                          |                  | 35.4.1          | kernel_Xavier_35.4.1+ |
    |                          |                  | 35.6.0          | kernel_Xavier_35.6.0  |
-   |                          |                  | 36.2.0          | kernel_Xavier_36.2.0+ * |
-   |                          |                  | 36.4.0          | kernel_Xavier_36.4.0+ * |
    |                          |                  | 36.4.3          | kernel_Xavier_36.4.3 * |
    |                          |                  | 36.4.4          | kernel_Xavier_36.4.4 * |
    |                          |                  | 36.5.0          | kernel_Xavier_36.5.0 * |
@@ -485,25 +442,20 @@ If you have your own BSP, you have to integrate the driver into it. Please follo
    |                          | Auvidea JNX42    | 35.3.1          | kernel_Xavier_35.3.1+ |
    |                          |                  | 35.4.1          | kernel_Xavier_35.4.1+ |
    |                          |                  | 35.6.0          | kernel_Xavier_35.6.0  |
-   |                          |                  | 36.2.0          | kernel_Xavier_36.2.0+ * |
-   |                          |                  | 36.4.0          | kernel_Xavier_36.4.0+ * |
    |                          |                  | 36.4.3          | kernel_Xavier_36.4.3 * |
    |                          |                  | 36.4.4          | kernel_Xavier_36.4.4 * |
    |                          |                  | 36.5.0          | kernel_Xavier_36.5.0 * |
    |                          |                  | 39.2.1          | kernel_Xavier_39.2.1 * |
-   | NVIDIA Jetson Orin NX    | NVIDIA DevKit    | 35.6.0          | kernel_Xavier_35.6.0  |
-   |                          |                  | 36.2.0          | kernel_Xavier_36.2.0+ * |
-   |                          |                  | 36.4.0          | kernel_Xavier_36.4.0+ * |
-   |                          |                  | 36.4.3          | kernel_Xavier_36.4.3 * |
-   |                          |                  | 36.4.4          | kernel_Xavier_36.4.4 * |
-   |                          |                  | 36.5.0          | kernel_Xavier_36.5.0 * |
-   |                          |                  | 39.2.1          | kernel_Xavier_39.2.1 * |
-   |                          | Auvidea JNX42    | 35.2.1          | kernel_Xavier_35.2.1+ |
-   |                          |                  | 35.3.1          | kernel_Xavier_35.3.1+ |
+   | NVIDIA Jetson Orin NX    | NVIDIA DevKit    | 35.3.1          | kernel_Xavier_35.3.1+ |
    |                          |                  | 35.4.1          | kernel_Xavier_35.4.1+ |
    |                          |                  | 35.6.0          | kernel_Xavier_35.6.0  |
-   |                          |                  | 36.2.0          | kernel_Xavier_36.2.0+ * |
-   |                          |                  | 36.4.0          | kernel_Xavier_36.4.0+ * |
+   |                          |                  | 36.4.3          | kernel_Xavier_36.4.3 * |
+   |                          |                  | 36.4.4          | kernel_Xavier_36.4.4 * |
+   |                          |                  | 36.5.0          | kernel_Xavier_36.5.0 * |
+   |                          |                  | 39.2.1          | kernel_Xavier_39.2.1 * |
+   |                          | Auvidea JNX42    | 35.3.1          | kernel_Xavier_35.3.1+ |
+   |                          |                  | 35.4.1          | kernel_Xavier_35.4.1+ |
+   |                          |                  | 35.6.0          | kernel_Xavier_35.6.0  |
    |                          |                  | 36.4.3          | kernel_Xavier_36.4.3 * |
    |                          |                  | 36.4.4          | kernel_Xavier_36.4.4 * |
    |                          |                  | 36.5.0          | kernel_Xavier_36.5.0 * |
@@ -524,8 +476,6 @@ If you have your own BSP, you have to integrate the driver into it. Please follo
    |                          | Auvidea JNX30    | Auvidea_JNX30_XavierNX/tegra194-camera-vc-mipi-cam.dtsi <br> => /hardware/nvidia/platform/t19x/jakku/kernel-dts/common |
    |                          | Auvidea JNX42    | Auvidea_JNX42_XavierNX/tegra194-camera-vc-mipi-cam.dtsi <br> => /hardware/nvidia/platform/t19x/jakku/kernel-dts/common |
    | NVIDIA Jetson AGX Xavier | DevKit + J20     | Auvidea_J20_AGXXavier/tegra194-camera-vc-mipi-cam.dtsi <br> => /hardware/nvidia/platform/t19x/common/kernel-dts/t19x-common-modules |
-   | NVIDIA Jetson TX2        | DevKit + J20     | Auvidea_J20_TX2/tegra186-camera-vc-mipi-cam.dtsi <br> => /hardware/nvidia/platform/t18x/common/kernel-dts/t18x-common-modules |
-   | NVIDIA Jetson TX2 NX     | Auvidea JNX30D   | Auvidea_JNX30D_TX2NX/tegra186-camera-vc-mipi-cam.dtsi <br> => /hardware/nvidia/platform/t18x/lanai/kernel-dts/common |
    | NVIDIA Jetson Orin Nano  | NVIDIA DevKit    | NV_DevKit_OrinNano/tegra234-camera-vc-mipi-cam.dtsi <br> => /hardware/nvidia/platform/t23x/p3768/kernel-dts/cvb <br> (device tree include file used for Jetpack 5) |
    |                          |                  | NV_DevKit_OrinNano/tegra234-p3767-camera-p3768-vc_mipi-dual.dts <br> => /hardware/nvidia/t23x/nv-public/overlay <br> (device tree overlay file for Jetpack 6 and 7) |
    |                          | Auvidea JNX42    | Auvidea_JNX42_OrinNano/tegra234-camera-vc-mipi-cam.dtsi <br> => /hardware/nvidia/platform/t23x/p3768/kernel-dts/cvb <br> (device tree include file used for Jetpack 5) |
@@ -554,7 +504,7 @@ An update is allowed, respectively recommended:
 sudo apt update
 ```
 
-### For Jetpack 5 (L4T 35.1.0, 35.2.1, 35.3.1, 35.4.1, 35.6.0):
+### For Jetpack 5 (35.3.1, 35.4.1 and 35.6.0):
 
 * When the system (NVIDIA Jetson Xavier NX or AGX Xavier) has booted successfully, it is necessary to run the script max_speed.sh from the /target folder as superuser. It will read out the maximum frequencies and set them as the current ones. This is a recommendation from nvidia.
 
@@ -562,7 +512,7 @@ sudo apt update
   sudo ./max_speed.sh --max
   ```
 
-### For Jetpack 6 (L4T 36.2.0 DP, L4T 36.4.0, L4T 36.4.3, L4T 36.4.4 and L4T 36.5.0):
+### For Jetpack 6 (L4T 36.4.3, L4T 36.4.4 and L4T 36.5.0):
 
 - with L4T 36.x.y version, the tegra part is completely separated from the kernel
 - VC Mipi driver is now running as a couple of kernel modules
@@ -654,12 +604,6 @@ nvargus_nvraw --lps
    > For Argus, `active_w` / `active_h` of every sensor mode in the device tree must be set to the real image size (not 0), otherwise no camera is listed.
 
 
-
-### For NVIDIA Jetson TX2 NX
-
-* Currently the following camera modules do not work with the TX2 NX
-  * IMX178, IMX183
-  * IMX250, IMX252, IMX264, IMX265, IMX273, IMX392
 
 ### Troubleshooting
 

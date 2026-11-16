@@ -1,7 +1,7 @@
 # Docker support
 
 There is a docker environment available for JetPack 4 and JetPack 5 setups. <br>
-But only NVIDIA Jetson Nano, Xavier NX, AGX Xavier and TX2 are fully supported by this docker environment. <br>
+But only NVIDIA Jetson Nano, Xavier NX and AGX Xavier are fully supported by this docker environment. <br>
 With fully supported is meant, that the quickstart.sh script can be used for the complete setup/build/flash procedure. <br>
 
 By calling 

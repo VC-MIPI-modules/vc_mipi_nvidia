@@ -85,7 +85,7 @@ flash_kernel() {
 
 flash_module() {
         case $VC_MIPI_BSP in
-        36.2.0|36.4.0|36.4.3|36.4.4|36.5.0|39.2.1)
+        36.4.3|36.4.4|36.5.0|39.2.1)
                 echo "Flashing module only ..."
                 TMP_DIR=/tmp
                 MODULE_FILES=$(find $KERNEL_SOURCE/nvidia-oot/drivers/media/i2c -name "vc_mipi*.ko")
@@ -110,11 +110,11 @@ flash_device_tree() {
                 echo "Please modify /boot/extlinux/extlinux.conf"
                 TMP_DIR=/tmp
                 case $VC_MIPI_BSP in
-                35.1.0|35.2.1|35.3.1|35.4.1|35.6.0)
+                35.3.1|35.4.1|35.6.0)
                         SRC_FILE=$KERNEL_OUT/arch/arm64/boot/dts/nvidia/$ORIN_DTB_FILE
                         ORIN_DTB_DIR=/boot/dtb
                         ;;
-                36.2.0|36.4.0|36.4.3|36.4.4|36.5.0|39.2.1)
+                36.4.3|36.4.4|36.5.0|39.2.1)
                         ORIN_DTB_FILE=tegra234-p3767-camera-p3768-vc_mipi-dual.dtbo
                         ORIN_DTB_DIR=/boot
                         if [[ 'OrinAGX32GB' == $VC_MIPI_SOM || 'OrinAGX64GB' = $VC_MIPI_SOM ]]; then

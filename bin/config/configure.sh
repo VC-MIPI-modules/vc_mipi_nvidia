@@ -16,7 +16,7 @@ case $VC_MIPI_SOM in
 Nano|NanoSD|Nano2GB|TX1)
         BSP_DIR=$BUILD_DIR/Nano\_$VC_MIPI_BSP
         ;;
-AGXXavier|XavierNX|XavierNXSD|TX2|TX2i|TX2NX|OrinNano4GB_SD|OrinNano8GB_SD|OrinNano4GB_NVME|OrinNano8GB_NVME|OrinNX8GB|OrinNX16GB|OrinAGX32GB|OrinAGX64GB)
+AGXXavier|XavierNX|XavierNXSD|OrinNano4GB_SD|OrinNano8GB_SD|OrinNano4GB_NVME|OrinNano8GB_NVME|OrinNX8GB|OrinNX16GB|OrinAGX32GB|OrinAGX64GB)
         BSP_DIR=$BUILD_DIR/Xavier\_$VC_MIPI_BSP
         ;;
 esac
@@ -40,26 +40,22 @@ fi
 
 DTSI_FILE_DICT+=( 
          ["Auvidea_J20_AGXXavier"]="tegra194-camera-vc-mipi-cam.dtsi" 
-               ["Auvidea_J20_TX2"]="tegra186-camera-vc-mipi-cam.dtsi"
             ["Auvidea_JNX30_Nano"]="tegra210-camera-vc-mipi-cam.dtsi"
             ["Auvidea_JNX42_Nano"]="tegra210-camera-vc-mipi-cam.dtsi"
         ["Auvidea_JNX30_XavierNX"]="tegra194-camera-vc-mipi-cam.dtsi"
         ["Auvidea_JNX42_XavierNX"]="tegra194-camera-vc-mipi-cam.dtsi"
                 ["NV_DevKit_Nano"]="tegra210-camera-vc-mipi-cam.dtsi" 
             ["NV_DevKit_XavierNX"]="tegra194-camera-vc-mipi-cam.dtsi"
-          ["Auvidea_JNX30D_TX2NX"]="tegra186-camera-vc-mipi-cam.dtsi"
 )
 
 DTSI_DEST_DICT+=( 
          ["Auvidea_J20_AGXXavier"]="$KERNEL_SOURCE/hardware/nvidia/platform/t19x/common/kernel-dts/t19x-common-modules" 
-               ["Auvidea_J20_TX2"]="$KERNEL_SOURCE/hardware/nvidia/platform/t18x/common/kernel-dts/t18x-common-modules"
             ["Auvidea_JNX30_Nano"]="$KERNEL_SOURCE/hardware/nvidia/platform/t210/porg/kernel-dts/porg-platforms"
             ["Auvidea_JNX42_Nano"]="$KERNEL_SOURCE/hardware/nvidia/platform/t210/porg/kernel-dts/porg-platforms"
         ["Auvidea_JNX30_XavierNX"]="$KERNEL_SOURCE/hardware/nvidia/platform/t19x/jakku/kernel-dts/common"
         ["Auvidea_JNX42_XavierNX"]="$KERNEL_SOURCE/hardware/nvidia/platform/t19x/jakku/kernel-dts/common"
                 ["NV_DevKit_Nano"]="$KERNEL_SOURCE/hardware/nvidia/platform/t210/porg/kernel-dts/porg-platforms" 
             ["NV_DevKit_XavierNX"]="$KERNEL_SOURCE/hardware/nvidia/platform/t19x/jakku/kernel-dts/common"
-          ["Auvidea_JNX30D_TX2NX"]="$KERNEL_SOURCE/hardware/nvidia/platform/t18x/lanai/kernel-dts/common"
 )
 
 if [[ ${!DTSI_FILE_DICT[@]} != ${!DTSI_DEST_DICT[@]} ]]
@@ -119,7 +115,7 @@ Nano|NanoSD|Nano2GB)
         case $VC_MIPI_BOARD in
         Auvidea_JNX30|Auvidea_JNX42)
                 case $VC_MIPI_BSP in
-                32.7.1|32.7.2|32.7.3|32.7.4|32.7.5)
+                32.7.5)
                         PATCHES+=('dt_Auvidea_JNX30_Nano_32.5.0+')
                         ;;
                 esac
@@ -142,20 +138,6 @@ AGXXavier)
         ;;
 
 XavierNX|XavierNXSD)
-        # Carrier board dependant settings
-        case $VC_MIPI_BOARD in
-        Auvidea_JNX30|Auvidea_JNX42)
-                case $VC_MIPI_BSP in
-                32.7.1|32.7.2|32.7.3)
-                        PATCHES+=('dt_Auvidea_JNX30_XavierNX_32.5.0+')
-                        ;;
-                35.1.0|35.2.1|35.3.1|35.4.1|35.6.0|36.2.0|36.4.0|36.4.3|36.4.4|36.5.0|39.2.1)
-                        # Comment
-                ;;
-                esac
-                ;;
-        esac
-
         # Carrier board independant settings
         FLASH_DT='kernel-dtb'
         case $VC_MIPI_SOM in
@@ -165,28 +147,6 @@ XavierNX|XavierNXSD)
         FLASH_PARTITION='mmcblk0p1'
         ;;
 
-TX2)
-        # Carrier board independant settings
-        FLASH_DT='kernel-dtb'
-        FLASH_BOARD='jetson-tx2'
-        FLASH_PARTITION='mmcblk0p1'
-        ;;
-
-TX2i)
-        # Carrier board independant settings
-        FLASH_DT='kernel-dtb'
-        FLASH_BOARD='jetson-tx2i'
-        FLASH_PARTITION='mmcblk0p1'
-        ;;
-
-TX2NX)
-        # Carrier board independant settings
-        FLASH_DT='kernel-dtb'
-        FLASH_BOARD='jetson-xavier-nx-devkit-tx2-nx'
-        FLASH_PARTITION='mmcblk0p1'
-        ;;
-
-
 OrinNano4GB_SD|OrinNano8GB_SD|OrinNano4GB_NVME|OrinNano8GB_NVME|OrinNX8GB|OrinNX16GB)
         ORIN_DTB_PREFIX='tegra234-p3767-'
         ORIN_DTB_SKU=''
@@ -194,7 +154,7 @@ OrinNano4GB_SD|OrinNano8GB_SD|OrinNano4GB_NVME|OrinNano8GB_NVME|OrinNX8GB|OrinNX
         case $VC_MIPI_BOARD in
         Auvidea_JNX42)
                 case $VC_MIPI_BSP in
-                36.2.0|36.3.0|36.4.0|36.4.3|36.4.4|36.5.0|39.2.1)
+                36.4.3|36.4.4|36.5.0|39.2.1)
                         FLASH_BOARD='p3509-a02-p3767-0000'
                         ;;
                 *)

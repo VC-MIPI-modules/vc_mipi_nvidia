@@ -46,7 +46,7 @@ or the documentation on [v4l2-test](https://github.com/pmliquify/v4l2-test)
 ## ISP streaming
 
 ### gstreamer
-With the gst-launch application (gstreamer) you have got the possibility to use the nvarguscamerasrc binary as a streaming source. On most L4T versions it is already deployed. With JetPack 6 (L4T 36.2.0 and upwards) it must be installed separately. Therefor you can use the following script from the target folder: <br>
+With the gst-launch application (gstreamer) you have got the possibility to use the nvarguscamerasrc binary as a streaming source. On most L4T versions it is already deployed. With JetPack 6 (L4T 36.4.3 and upwards) it must be installed separately. Therefor you can use the following script from the target folder: <br>
 <pre>
 ./setup_nvidia.sh
 </pre>

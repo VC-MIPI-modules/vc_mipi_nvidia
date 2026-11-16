@@ -38,12 +38,8 @@ function extract_and_set_key_from_config {
                 OrinNano4GB_SD|OrinNano8GB_SD|OrinNano4GB_NVME|OrinNano8GB_NVME)
                         part_str_som="OrinNano"
                         ;;
-                AGXXavier|TX2)
+                AGXXavier)
                         part_str_som=$VC_MIPI_SOM
-                        ;;
-                TX2NX) 
-                        part_str_som=$VC_MIPI_SOM
-                        part_str_board="${part_str_board}D"
                         ;;
                 OrinAGX32GB|OrinAGX64GB)
                         part_str_som="OrinAGX"

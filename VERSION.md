@@ -1,5 +1,16 @@
 # Version History
 
+## v0.21.0 (L4T39.2.1, Improvements, Bugfix)
+* New Features
+  * Added support for board support package
+    * NVIDIA L4T 39.2.1 *(only NVIDIA Jetson Orin NX, Orin Nano and Orin AGX)*
+* Improvements
+  * Added overlap trigger mode for IMX250 *(Rev. 15)*
+  * Lanespeed for IMX900 reduced to 1188 MBit/s
+  * Removed elder L4T versions
+* Bugfix
+  * Kernel panic removed while unloading vc_mipi modules in Jetpack 6 and 7
+
 ## v0.20.0 (L4T 36.5.0, L4T 36.4.4, L4T 35.6.0, Support IMX540, Improvement)
 * New Features
   * Added support for board support package

@@ -24,15 +24,6 @@ case $VC_MIPI_SOM in
                 SRC_FILE_CHECKSUM="7e165f36b363cb23c3c477323434a972"
                 ADDON_FILE_CHECKSUM="406dc6a814e6ca20b87322fbcc8dfc1c"
                 ;;
-        AGXXavier|XavierNX|XavierNXSD|TX2|TX2i|TX2NX)
-                BSP_FILE=jetson_linux_r32.7.5_aarch64.tbz2
-
-                CHECK4MD5=1
-
-                BSP_FILE_CHECKSUM=""
-                RFS_FILE_CHECKSUM=""
-                SRC_FILE_CHECKSUM=""
-                ;;
 esac
 
 RFS_FILE=tegra_linux_sample-root-filesystem_r32.7.5_aarch64.tbz2

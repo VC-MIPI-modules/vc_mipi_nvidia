@@ -21,7 +21,7 @@ If you have set up your system without the `quickstart.sh` script, then you must
 
 For the initial flash, the target must be in forced recovery mode. <br>
 [Quick Start Guide L4T 35.3.1](https://docs.nvidia.com/jetson/archives/r35.3.1/DeveloperGuide/text/IN/QuickStart.html) (NVIDIA Jetson Orin Nano, Orin NX, Xavier NX and AGX Xavier) <br>
-[Quick Start Guide L4T 32.7.3](https://docs.nvidia.com/jetson/archives/l4t-archived/l4t-3273/index.html#page/Tegra%20Linux%20Driver%20Package%20Development%20Guide/quick_start.html) (NVIDIA Jetson Nano, TX2, Xavier NX and AGX Xavier)
+[Quick Start Guide L4T 32.7.5](https://docs.nvidia.com/jetson/archives/l4t-archived/l4t-3275/index.html#page/Tegra%20Linux%20Driver%20Package%20Development%20Guide/quick_start.html) (NVIDIA Jetson Nano)
 
 ## Flashing issues
 
@@ -78,7 +78,7 @@ If your system has been successfully flashed and you want to modify your camera 
 
 For flashing the device tree only, the JetPack version must be considered:
 
-### JetPack 4 (L4T 32.7.1 - L4T 32.7.4)
+### JetPack 4 (L4T 32.7.5)
 
 This applies to Jetson Nano, Jetson Xavier NX and Jetson AGX Xavier.
 The device must be in forced recovery mode! Just call:
@@ -86,7 +86,7 @@ The device must be in forced recovery mode! Just call:
 ./flash.sh --dt
 ```
 
-### JetPack 5 (L4T 35.1.0 - L4T 35.6.0)
+### JetPack 5 (L4T 35.3.1 - L4T 35.6.0)
 
  For changing device trees only, there must be a differentiation between Orin and Non-Orin Targets:
   * For targets like Xavier NX and AGX Xavier, you will have to modify your /boot/extlinux/extlinux.conf on your target machine by removing the FDT entry or by commenting out with '#'. Otherwise you will have to flash your complete linux image for every device tree change to take effect.
