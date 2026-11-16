@@ -59,7 +59,7 @@ In the table below you can find, which camera supports which trigger mode.
 | IMX178 | yes |   - | yes | yes | yes |   - |   - |   - |
 | IMX183 | yes |   - | yes | yes | yes |   - |   - |   - |
 | IMX226 | yes |   - | yes | yes | yes | yes | yes |   - |
-| IMX250 | yes | yes | yes | yes |   - |   - |   - |   - |
+| IMX250 | yes | yes | yes | yes |   - |   - |   - | yes |
 | IMX290 |   - |   - |   - |   - |   - |   - |   - |   - |
 | IMX252 | yes | yes | yes | yes |   - |   - |   - | yes |
 | IMX264 | yes | yes | yes | yes |   - |   - |   - |   - |
