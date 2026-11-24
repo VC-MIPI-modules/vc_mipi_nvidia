@@ -70,7 +70,7 @@ ORIN_FLASH_CONFIG_FOLDER="generic"
 ORIN_FLASH_PARTITION_MMC="mmcblk0p1"
 ORIN_FLASH_PARTITION_NVME="nvme0n1p1"
 
-ORIN_NVME_XML="flash_l4t_external.xml"
+ORIN_NVME_XML="flash_l4t_t234_nvme.xml"
 
 function L4T_extract_kernel_packages {
         echo "Extracting kernel packages ($VC_MIPI_BSP) ..."

@@ -6,8 +6,8 @@
     * NVIDIA L4T 39.2.1 *(only NVIDIA Jetson Orin NX, Orin Nano and Orin AGX)*
 * Improvements
   * Added overlap trigger mode for IMX250 *(Rev. 15)*
-  * Lanespeed for IMX900 reduced to 1188 MBit/s
-  * Removed elder L4T versions
+  * Reduced lane speed to 1188 MBit/s for IMX900 *(Rev. 03)*
+  * Removed older L4T versions
 * Bugfix
   * Kernel panic removed while unloading vc_mipi modules in Jetpack 6 and 7
 

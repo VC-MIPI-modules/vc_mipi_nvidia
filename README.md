@@ -2,7 +2,7 @@
 
 ![VC MIPI camera](doc/images/mipi_sensor_front_back.png)
 
-## Version 0.20.0 ([History](VERSION.md))
+## Version 0.21.0 ([History](VERSION.md))
 
 * Supported system on modules
   * [NVIDIA Jetson Nano 4GB/2GB (production + devkit)](https://developer.nvidia.com/embedded/jetson-nano)
@@ -37,9 +37,9 @@
   * IMX335
   * IMX412
   * IMX415
-  * IMX540 *(only NVIDIA Jetson Orin Nano Devkit)*
+  * IMX540 *(an additional 5V supply voltage is needed)*
   * IMX565, IMX566, IMX567, IMX568
-  * IMX585 *(only NVIDIA Jetson Xavier NX, Orin NX and Orin Nano)*
+  * IMX585
   * IMX900
   * OV7251, OV9281
 * Features
@@ -387,15 +387,16 @@ The following table lists the Jetson device and the necessary file:
 ## Tested with VC MIPI Camera Module Revision
 
 * IMX178 (Rev.02), IMX183 (Rev.15), IMX226 (Rev.16), 
-* IMX250 (Rev.09), IMX252 (Rev.15), IMX264 (Rev.05), IMX265 (Rev.05), IMX273 (Rev.16), IMX392 (Rev.08)
+* IMX250 (Rev.15), IMX252 (Rev.17), IMX264 (Rev.05), IMX265 (Rev.05), IMX273 (Rev.16), IMX392 (Rev.08)
 * IMX290 (Rev.02), IMX327 (Rev.02), IMX462 (Rev.01)
 * IMX296 (Rev.43), IMX297 (Rev.43)
 * IMX335 (Rev.02)
 * IMX412 (Rev.05)
 * IMX415 (Rev.02)
 * IMX540 (Rev.01)
-* IMX565 (Rev.03), IMX566 (Rev.03), IMX567 (Rev.03), IMX568 (Rev.04)
-* IMX900 (Rev.02)
+* IMX565 (Rev.03), IMX566 (Rev.03), IMX567 (Rev.03), IMX568 (Rev.05)
+* IMX585 (Rev.03)
+* IMX900 (Rev.03)
 * OV7251 (Rev.01), OV9281 (Rev.02)
 
 You can find the revision of the camera module in the dmesg log.
